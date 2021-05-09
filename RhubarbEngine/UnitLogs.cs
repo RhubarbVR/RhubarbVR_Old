@@ -53,7 +53,7 @@ namespace RhubarbEngine
             }
         }
 
-        public void close()
+        public void cleanUP()
         {
             try
             {

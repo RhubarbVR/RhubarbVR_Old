@@ -10,7 +10,7 @@ namespace RhubarbVR
         {
             engine.initialize(_args, true);
 
-            engine.close();
+            engine.cleanUP();
             return;
         }
     }

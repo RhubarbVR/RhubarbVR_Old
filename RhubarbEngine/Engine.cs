@@ -9,6 +9,8 @@ namespace RhubarbEngine
 
         public WorldManager worldManager;
 
+        public PlatformInfoManager platformInfo;
+
         public UnitLogs logger;
 
         public EngineInitializer engineInitializer;
@@ -24,9 +26,9 @@ namespace RhubarbEngine
 
         }
 
-        public void close()
+        public void cleanUP()
         {
-            logger.close();
+            logger.cleanUP();
         }
     }
 }

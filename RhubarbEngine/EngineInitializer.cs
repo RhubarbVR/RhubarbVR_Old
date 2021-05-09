@@ -24,6 +24,11 @@ namespace RhubarbEngine
             {
                 engine.logger.Log("Starting Managers");
 
+                intphase = "Platform Info Manager";
+                engine.logger.Log("Starting Platform Info Manager:");
+                engine.platformInfo = new PlatformInfoManager();
+                engine.platformInfo.initialize(engine);
+
                 intphase = "World Manager";
                 engine.logger.Log("Starting World Manager:");
                 engine.worldManager = new WorldManager();
