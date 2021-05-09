@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhubarbEngine", "RhubarbEngine\RhubarbEngine.csproj", "{A5B00FE8-70D0-4C32-9FF9-686A386B89F3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{38278926-B381-4580-8033-70BE859F5481}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Builds", "Builds", "{B5C671C4-3FC1-4A69-BD77-0AAA5F37C7A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhubarbVR", "RhubarbVR\RhubarbVR.csproj", "{9C5E2578-5743-41AF-89C8-C5FB1CE05905}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A5B00FE8-70D0-4C32-9FF9-686A386B89F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5B00FE8-70D0-4C32-9FF9-686A386B89F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5B00FE8-70D0-4C32-9FF9-686A386B89F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5B00FE8-70D0-4C32-9FF9-686A386B89F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C5E2578-5743-41AF-89C8-C5FB1CE05905}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C5E2578-5743-41AF-89C8-C5FB1CE05905}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C5E2578-5743-41AF-89C8-C5FB1CE05905}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C5E2578-5743-41AF-89C8-C5FB1CE05905}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A5B00FE8-70D0-4C32-9FF9-686A386B89F3} = {38278926-B381-4580-8033-70BE859F5481}
+		{9C5E2578-5743-41AF-89C8-C5FB1CE05905} = {B5C671C4-3FC1-4A69-BD77-0AAA5F37C7A9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BE7279B2-ACCA-439E-AE76-42519D5F459D}
+	EndGlobalSection
+EndGlobal
