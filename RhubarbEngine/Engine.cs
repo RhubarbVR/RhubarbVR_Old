@@ -5,7 +5,7 @@ namespace RhubarbEngine
 {
     public class Engine
     {
-        public bool verbose = false;
+        public bool verbose;
 
         public WorldManager worldManager;
 
@@ -41,10 +41,7 @@ namespace RhubarbEngine
         public void Loop(DateTime startTime, DateTime Frame)
         {
             windowManager.Update();
-            if (windowManager.mainWindowOpen)
-            {
-
-            }
+            
         }
 
         public void cleanUP()

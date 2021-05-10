@@ -8,7 +8,7 @@ namespace RhubarbVR
        public static Engine engine = new Engine();
         public static void Main(string[] _args)
         {
-            engine.initialize(_args, true);
+            engine.initialize(_args);
             engine.startUpdateLoop();
             engine.cleanUP();
             return;

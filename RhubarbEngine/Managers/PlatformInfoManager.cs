@@ -59,7 +59,7 @@ namespace RhubarbEngine.Managers
                 engine.logger.Log("Failed to get CPU: " + e);
             }
             
-            engine.logger.Log("Platform: " + platform.ToString()+ "/" + os.Platform + " CPU: " + CPU + " RamBytes: " + memoryBytes + " GPU: " + GPU + " VRAMBytes: " + vRAM_Bytes);
+            engine.logger.Log("Platform: " + platform.ToString()+ "/" + os.Platform + " CPU: " + CPU + " RamBytes: " + memoryBytes + " GPU: " + GPU + " VRAMBytes: " + vRAM_Bytes,true);
             return this;
         }
     }

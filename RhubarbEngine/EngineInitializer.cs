@@ -58,6 +58,10 @@ namespace RhubarbEngine
 
         public void loadArguments(string[] _args)
         {
+            foreach(string arg in _args)
+            {
+                engine.logger.Log(arg, true);
+            }
             Parser.Default.ParseArguments<CommandLineOptions>(_args)
                 .WithParsed<CommandLineOptions>(o =>
                 {
@@ -65,7 +69,7 @@ namespace RhubarbEngine
                     {
                         engine.verbose = true;
                     }
-               });
+                });
         }
     }
 }

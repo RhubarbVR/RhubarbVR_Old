@@ -35,9 +35,9 @@ namespace RhubarbEngine
         {
             if (_alwaysLog || engine.verbose)
             {
-                writeLog( String.Format("{0}: {1}", DateTime.Now, _log));
-                Console.WriteLine(String.Format("{0}: {1}", DateTime.Now, _log));
+                writeLog(String.Format("{0}: {1}", DateTime.Now, _log));
             }
+            Console.WriteLine(String.Format("{0}: {1}", DateTime.Now, _log));
         }
         public bool writeLog(string strMessage)
         {

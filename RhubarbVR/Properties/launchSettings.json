@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RhubarbVR": {
+      "commandName": "Project",
+      "commandLineArgs": "-verbose"
+    }
+  }
+}
