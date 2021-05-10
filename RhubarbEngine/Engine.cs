@@ -11,6 +11,8 @@ namespace RhubarbEngine
 
         public PlatformInfoManager platformInfo;
 
+        public Managers.WindowManager windowManager;
+
         public UnitLogs logger;
 
         public EngineInitializer engineInitializer;
@@ -24,6 +26,25 @@ namespace RhubarbEngine
             engineInitializer.initializeManagers();
 
 
+        }
+
+        public void startUpdateLoop()
+        {
+            while (windowManager.mainWindowOpen)
+            {
+                Loop(platformInfo.startTime, platformInfo.Frame);
+                platformInfo.Frame = DateTime.UtcNow;
+                platformInfo.FrameCount++;
+            }
+        }
+
+        public void Loop(DateTime startTime, DateTime Frame)
+        {
+            windowManager.Update();
+            if (windowManager.mainWindowOpen)
+            {
+
+            }
         }
 
         public void cleanUP()

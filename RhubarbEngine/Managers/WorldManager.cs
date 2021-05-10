@@ -10,6 +10,7 @@ namespace RhubarbEngine.Managers
     public class WorldManager : IManager
     {
         private Engine engine;
+
         public IManager initialize(Engine _engine)
         {
             engine = _engine;

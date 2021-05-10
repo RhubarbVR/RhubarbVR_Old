@@ -9,7 +9,7 @@ namespace RhubarbVR
         public static void Main(string[] _args)
         {
             engine.initialize(_args, true);
-
+            engine.startUpdateLoop();
             engine.cleanUP();
             return;
         }

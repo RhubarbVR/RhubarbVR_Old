@@ -19,8 +19,14 @@ namespace RhubarbEngine.Managers
         public string CPU { get; private set; } = "UNKNOWN";
         public string GPU { get; private set; } = "UNKNOWN";
         public long memoryBytes { get; private set; } = -1L;
+
         public long vRAM_Bytes { get; private set; } = -1L;
 
+        public DateTime startTime = DateTime.UtcNow;
+
+        public DateTime Frame = DateTime.UtcNow;
+
+        public ulong FrameCount = 0;
         public IManager initialize(Engine _engine)
         {
             engine = _engine;
