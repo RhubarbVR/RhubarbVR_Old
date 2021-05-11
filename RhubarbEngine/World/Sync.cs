@@ -44,9 +44,19 @@ namespace RhubarbEngine.World
             return obj;
         }
 
-        public void deSerialize(DataNodeGroup data)
+        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>), Dictionary<RefID, RefIDResign> latterResign = default(Dictionary<RefID, RefIDResign>))
         {
-
+            if (NewRefIDs)
+            {
+                newRefID.Add(((DataNode<RefID>)data.getValue("referenceID")).Value, referenceID);
+                latterResign[((DataNode<RefID>)data.getValue("referenceID")).Value](referenceID);
+            }
+            else
+            {
+                referenceID = ((DataNode<RefID>)data.getValue("referenceID")).Value;
+                world.addWorldObj(this);
+            }
+            _value = ((DataNode<T>)data.getValue("Value")).Value;
         }
     }
 }

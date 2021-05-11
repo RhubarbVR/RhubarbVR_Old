@@ -22,7 +22,7 @@ namespace RhubarbEngine.World
         bool IsRemoved { get; }
         DataNodeGroup serialize();
 
-        void deSerialize(DataNodeGroup data,bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>));
+        void deSerialize(DataNodeGroup data,bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>), Dictionary<RefID, RefIDResign> latterResign = default(Dictionary<RefID, RefIDResign>));
 
     }
 }
