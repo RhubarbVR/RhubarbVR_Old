@@ -10,6 +10,7 @@ using System.IO;
 
 namespace RhubarbEngine.World.DataStructure
 {
+    [Serializable()]
     public class DataNodeGroup : IDataNode
     {
 
@@ -38,7 +39,7 @@ namespace RhubarbEngine.World.DataStructure
         }
         public void setValue(string key, IDataNode obj)
         {
-            NodeGroup.Add(key,obj);
+            NodeGroup.Add(key, obj);
         }
         public void setByteArray(byte[] arrBytes)
         {
@@ -68,6 +69,11 @@ namespace RhubarbEngine.World.DataStructure
         public DataNodeGroup(NetDataReader reader)
         {
             Deserialize(reader);
+        }
+
+        public DataNodeGroup(byte[] data)
+        {
+            setByteArray(data);
         }
     }
 }

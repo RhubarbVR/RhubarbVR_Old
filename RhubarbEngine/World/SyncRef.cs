@@ -7,7 +7,7 @@ using RhubarbEngine.World.DataStructure;
 
 namespace RhubarbEngine.World
 {
-    public class SyncRef<T> : Worker<SyncRef<T>> where T : IWorldObject
+    public class SyncRef<T> : Worker<SyncRef<T>>, IWorldObject where T : IWorldObject
     {
 
         private RefID targetRefID;
@@ -32,6 +32,11 @@ namespace RhubarbEngine.World
 
         public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>), Dictionary<RefID, RefIDResign> latterResign = default(Dictionary<RefID, RefIDResign>))
         {
+            if (data == null)
+            {
+                world.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
+                return;
+            }
             targetRefID = ((DataNode<RefID>)data.getValue("targetRefID")).Value;
             if (NewRefIDs)
             {

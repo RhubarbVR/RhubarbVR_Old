@@ -10,6 +10,7 @@ using System.IO;
 
 namespace RhubarbEngine.World.DataStructure
 {
+    [Serializable()]
     public class DataNode<T>: IDataNode
     {
         public DataNode(T def = default(T))

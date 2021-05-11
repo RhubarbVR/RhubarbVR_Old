@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using RhubarbEngine.Managers;
 
 namespace RhubarbEngine
@@ -45,6 +46,7 @@ namespace RhubarbEngine
                 platformInfo.Frame = DateTime.UtcNow;
                 platformInfo.FrameCount++;
             }
+            //File.WriteAllBytes("testWorld.World", worldManager.focusedWorldToBytes());
         }
 
         public void Loop(DateTime startTime, DateTime Frame)

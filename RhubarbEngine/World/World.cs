@@ -118,6 +118,18 @@ namespace RhubarbEngine.World
         public World(WorldManager _worldManager)
         {
             worldManager = _worldManager;
+
+        }
+
+        public World(WorldManager _worldManager, DataNodeGroup node, bool networkload = false)
+        {
+            worldManager = _worldManager;
+            Random random = new Random();
+            posoffset = (byte)random.Next();
+            Name = new Sync<string>(this, this);
+            _maxUsers = new Sync<int>(this, this);
+            RootEntity = new Entity(this);
+            deSerialize(node);
         }
 
         public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false)
@@ -142,11 +154,11 @@ namespace RhubarbEngine.World
 
         public DataNodeGroup serialize()
         {
-            FieldInfo[] fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo[] fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             DataNodeGroup obj = new DataNodeGroup();
             foreach (var field in fields)
             {
-                if (field.GetType() == typeof(Worker<>))
+                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))
                 {
                     obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize());
                 }
@@ -156,10 +168,10 @@ namespace RhubarbEngine.World
 
         public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>), Dictionary<RefID, RefIDResign> latterResign = default(Dictionary<RefID, RefIDResign>))
         {
-            FieldInfo[] fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo[] fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
             {
-                if (field.GetType() == typeof(Worker<>))
+                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))
                 {
                     ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), NewRefIDs, newRefID, latterResign);
                 }

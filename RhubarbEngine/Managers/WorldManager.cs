@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine;
 using RhubarbEngine.World;
+using RhubarbEngine.World.DataStructure;
 
 namespace RhubarbEngine.Managers
 {
@@ -20,6 +22,32 @@ namespace RhubarbEngine.Managers
 
         public World.World focusedWorld;
 
+        public void createNewWorld()
+        {
+
+        }
+
+        public World.World loadWorldFromBytes(byte[] data)
+        {
+            DataNodeGroup node = new DataNodeGroup(data);
+            World.World tempWorld = new World.World(this, node, false);
+            return tempWorld;
+        }
+        public byte[] worldToBytes(World.World world)
+        {
+            byte[] val = new byte[] { };
+            if (focusedWorld != null)
+            {
+                DataNodeGroup node = world.serialize();
+                val = node.getByteArray();
+            }
+            return val;
+        }
+
+        public byte[] focusedWorldToBytes()
+        {
+            return worldToBytes(focusedWorld);
+        }
 
 
         public IManager initialize(Engine _engine)
@@ -32,9 +60,13 @@ namespace RhubarbEngine.Managers
             worlds.Add(privateOverlay);
 
             engine.logger.Log("Starting Local World");
-            localWorld = new World.World(this,"LoaclWorld",16);
+            //localWorld = new World.World(this,"LoaclWorld",16);
+            localWorld = loadWorldFromBytes(File.ReadAllBytes("testWorld.World"));
             localWorld.Focus = World.World.FocusLevel.Focused;
-            worlds.Add(privateOverlay);
+            worlds.Add(localWorld);
+            focusedWorld = localWorld;
+
+            Console.WriteLine(localWorld.Name.value);
 
             return this;
         }
