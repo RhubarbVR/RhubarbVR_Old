@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine.Managers;
 using RhubarbEngine.World.ECS;
+using RhubarbEngine.World.DataStructure;
+using System.Reflection;
+
 
 namespace RhubarbEngine.World
 {
@@ -29,8 +32,10 @@ namespace RhubarbEngine.World
         public byte user = 0;
 
         private Sync<int> _maxUsers;
-        public int maxUsers { 
-            get {
+        public int maxUsers
+        {
+            get
+            {
                 if (userspace)
                 {
                     return 1;
@@ -115,7 +120,7 @@ namespace RhubarbEngine.World
             worldManager = _worldManager;
         }
 
-        public World(WorldManager _worldManager,string _Name, int MaxUsers, bool _userspace = false)
+        public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false)
         {
             worldManager = _worldManager;
             Random random = new Random();
@@ -132,9 +137,27 @@ namespace RhubarbEngine.World
         public RefID buildRefID()
         {
             position = position + posoffset;
-            RefID tempid = RefID.BuildID(position, user);
-            worldManager.engine.logger.Log(tempid.getID().ToString());
-            return RefID.BuildID(position++, user);
+            return RefID.BuildID(position, user);
         }
+
+        public DataNodeGroup serialize()
+        {
+            FieldInfo[] fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+            DataNodeGroup obj = new DataNodeGroup();
+            foreach (var field in fields)
+            {
+                if (field.GetType() == typeof(Worker<>))
+                {
+                    obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize());
+                }
+            }
+            return obj;
+        }
+
+        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>))
+        {
+
+        }
+
     }
 }

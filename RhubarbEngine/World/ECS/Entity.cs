@@ -7,7 +7,7 @@ using System.Numerics;
 
 namespace RhubarbEngine.World.ECS
 {
-    public class Entity: Worker
+    public class Entity: Worker<Entity>
     {
         public Sync<Vector3> position;
 

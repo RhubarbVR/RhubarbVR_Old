@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.World
 {
-    public class SyncRef<T> : Worker where T : IWorldObject
+    public class SyncRef<T> : Worker<SyncRef<T>> where T : IWorldObject
     {
 
         private Sync<RefID> targetRefID;
