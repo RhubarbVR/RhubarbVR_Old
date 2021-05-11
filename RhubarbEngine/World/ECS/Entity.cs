@@ -17,14 +17,18 @@ namespace RhubarbEngine.World.ECS
 
         public Sync<string> name;
 
-
-        public Entity(IWorldObject _parent):base(_parent.World, _parent)
+        public override void buildSyncObjs()
         {
             position = new Sync<Vector3>(this);
             scale = new Sync<Vector3>(this);
             scale.value = Vector3.One;
             rotation = new Sync<Quaternion>(this);
             name = new Sync<string>(this);
+        }
+
+        public Entity(IWorldObject _parent):base(_parent.World, _parent)
+        {
+
         }
     }
 }

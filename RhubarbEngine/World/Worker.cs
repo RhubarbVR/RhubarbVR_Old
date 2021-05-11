@@ -31,13 +31,20 @@ namespace RhubarbEngine.World
         {
             world = _world;
             parent = _parent;
+            buildSyncObjs();
             if (newRefID)
             {
                 referenceID = _world.buildRefID();
+                _world.addWorldObj(this);
             }
-            _world.addWorldObj(this);
         }
-        public virtual DataNodeGroup serialize() {
+
+        public virtual void buildSyncObjs()
+        {
+
+        }
+
+      public virtual DataNodeGroup serialize() {
             FieldInfo[] fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
             DataNodeGroup obj = new DataNodeGroup();
             foreach (var field in fields)
@@ -52,8 +59,9 @@ namespace RhubarbEngine.World
             return obj;
         }
 
-        public virtual void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>)) {
-        
+        public virtual void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>))
+        {
+            
         }
 
     }
