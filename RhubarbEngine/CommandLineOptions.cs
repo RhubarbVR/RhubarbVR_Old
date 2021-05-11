@@ -13,7 +13,5 @@ namespace RhubarbEngine
         [Option('v', "verbose", Required = false, HelpText = "Set output to verbose messages.")]
         public bool verbose { get; set; }
 
-        [Option('i', "ip", Required = false, HelpText = "Ip to conect to")]
-        public string ip { get; set; }
     }
 }

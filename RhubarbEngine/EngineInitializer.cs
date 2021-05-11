@@ -15,6 +15,9 @@ namespace RhubarbEngine
         private Engine engine;
 
         public string intphase;
+
+        public bool Initialised = false;
+
         public EngineInitializer(Engine _engine)
         {
             engine = _engine;
@@ -52,7 +55,7 @@ namespace RhubarbEngine
                 engine.logger.Log("Starting World Manager:");
                 engine.worldManager = new WorldManager();
                 engine.worldManager.initialize(engine);
-
+                Initialised = true;
             }
             catch (Exception _e)
             {
@@ -74,7 +77,6 @@ namespace RhubarbEngine
                     {
                         engine.verbose = true;
                     }
-                    engine.ip = o.ip;
 
                 });
         }

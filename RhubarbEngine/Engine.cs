@@ -17,8 +17,6 @@ namespace RhubarbEngine
 
         public UnitLogs logger;
 
-        public string ip;
-
         public EngineInitializer engineInitializer;
         public void initialize(string[] _args, bool _verbose = false, bool _Rendering = true)
         {
@@ -29,12 +27,18 @@ namespace RhubarbEngine
             engineInitializer.loadArguments(_args);
             engineInitializer.initializeManagers();
 
-
         }
 
         public void startUpdateLoop()
         {
-            netManager.addClient(ip);
+            if (engineInitializer.Initialised)
+            {
+                engineInitializer = null;
+            }
+            else
+            {
+                throw new ArgumentException("Engine not Initialised");
+            }
             while (windowManager.mainWindowOpen)
             {
                 Loop(platformInfo.startTime, platformInfo.Frame);
@@ -46,6 +50,7 @@ namespace RhubarbEngine
         public void Loop(DateTime startTime, DateTime Frame)
         {
             windowManager.Update();
+            worldManager.Update(startTime, Frame);
             netManager.Update();
         }
 

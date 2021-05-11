@@ -26,7 +26,7 @@ namespace RhubarbEngine.Managers
             return this;
         }
 
-        public void addClient(string _ip = "localhost", int _port = 9050, string _key = "gay")
+        public void addClient(string _ip = "localhost", int _port = 9050, string _key = "")
         {
             engine.logger.Log("Starting Client");
             Client client = new Client(this);

@@ -18,7 +18,7 @@ namespace RhubarbEngine.NetManager
 
         public LiteNetLib.NetManager client;
 
-        public void initialize(string _ip = "localhost", int _port = 9050, string _key = "gay")
+        public void initialize(string _ip = "localhost", int _port = 9050, string _key = "")
         {
             listener = new EventBasedNetListener();
             client = new LiteNetLib.NetManager(listener);
