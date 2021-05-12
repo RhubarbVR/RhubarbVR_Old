@@ -8,7 +8,7 @@ using BaseR;
 
 namespace RhubarbEngine.World
 {
-    public class SyncRef<T> : Worker<SyncRef<T>>, IWorldObject where T : IWorldObject
+    public class SyncRef<T> : Worker, IWorldObject where T : IWorldObject
     {
 
         private RefID targetRefID;
@@ -16,7 +16,15 @@ namespace RhubarbEngine.World
         {
 
         }
+        public SyncRef(IWorldObject _parent) : base(_parent.World, _parent)
+        {
 
+        }
+
+        public SyncRef(IWorldObject _parent,bool newrefid = true) : base(_parent.World, _parent, newrefid)
+        {
+
+        }
         public DataNodeGroup serialize()
         {
             DataNodeGroup obj = new DataNodeGroup();

@@ -9,7 +9,7 @@ using BaseR;
 
 namespace RhubarbEngine.World
 {
-    public class Worker<T> : IWorldObject
+    public class Worker : IWorldObject
     {
         public World world { get; protected set; }
 
@@ -35,7 +35,7 @@ namespace RhubarbEngine.World
         {
             world = _world;
             parent = _parent;
-            buildSyncObjs();
+            buildSyncObjs(newRefID);
             if (newRefID)
             {
                 referenceID = _world.buildRefID();
@@ -43,13 +43,28 @@ namespace RhubarbEngine.World
             }
         }
 
-        public virtual void buildSyncObjs()
+        public void initialize(World _world, IWorldObject _parent, bool newRefID = true)
+        {
+            world = _world;
+            parent = _parent;
+            buildSyncObjs(newRefID);
+            if (newRefID)
+            {
+                referenceID = _world.buildRefID();
+                _world.addWorldObj(this);
+            }
+        }
+        public Worker()
+        {
+
+        }
+        public virtual void buildSyncObjs(bool newRefIds)
         {
 
         }
 
       public virtual DataNodeGroup serialize() {
-            FieldInfo[] fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             DataNodeGroup obj = new DataNodeGroup();
             if (Persistent)
             {
@@ -84,7 +99,7 @@ namespace RhubarbEngine.World
                 world.addWorldObj(this);
             }
 
-            FieldInfo[] fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
             {
                 if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))

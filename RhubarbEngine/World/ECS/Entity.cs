@@ -7,7 +7,7 @@ using BaseR;
 
 namespace RhubarbEngine.World.ECS
 {
-    public class Entity: Worker<Entity>
+    public class Entity: Worker
     {
         public Sync<Vector3> position;
 
@@ -17,13 +17,13 @@ namespace RhubarbEngine.World.ECS
 
         public Sync<string> name;
 
-        public override void buildSyncObjs()
+        public override void buildSyncObjs(bool newRefIds)
         {
-            position = new Sync<Vector3>(this);
-            scale = new Sync<Vector3>(this);
+            position = new Sync<Vector3>(this, newRefIds);
+            scale = new Sync<Vector3>(this, newRefIds);
             scale.value = Vector3.One;
-            rotation = new Sync<Quaternion>(this);
-            name = new Sync<string>(this);
+            rotation = new Sync<Quaternion>(this, newRefIds);
+            name = new Sync<string>(this, newRefIds);
         }
 
         public Entity(IWorldObject _parent):base(_parent.World, _parent)
