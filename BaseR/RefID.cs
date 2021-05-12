@@ -23,8 +23,7 @@ namespace BaseR
 
         public static RefID BuildID(ulong position, byte user)
         {
-            ulong temp = (((position >> 8) << 32) | ((((ulong)user*2) & 511) << 16) | (position & 511));
-            return new RefID((temp << 16)| (temp >> 16));
+            return new RefID(((position << 16)&0xFFFF0000) | ((((ulong)user) & 0xFF) << 8)|(position&0xFF));
         }
 
     }

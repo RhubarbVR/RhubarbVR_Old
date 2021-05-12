@@ -133,6 +133,10 @@ namespace RhubarbEngine.World
             worldManager = _worldManager;
             Random random = new Random();
             posoffset = (byte)random.Next();
+            if (posoffset <= 0)
+            {
+                posoffset = 12;
+            }
             Name = new Sync<string>(this, this);
             _maxUsers = new Sync<int>(this, this);
             RootEntity = new Entity(this);
