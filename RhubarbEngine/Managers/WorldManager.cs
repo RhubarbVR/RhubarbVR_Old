@@ -60,23 +60,30 @@ namespace RhubarbEngine.Managers
             worlds.Add(privateOverlay);
 
             engine.logger.Log("Starting Local World");
-            //localWorld = new World.World(this,"LoaclWorld",16);
-            localWorld = loadWorldFromBytes(File.ReadAllBytes("testWorld.World"));
+            if(File.Exists(engine.dataPath + "/LocalWorld.World"))
+            {
+                localWorld = loadWorldFromBytes(File.ReadAllBytes(engine.dataPath + "/LocalWorld.World"));
+            }
+            else
+            {
+                localWorld = new World.World(this,"LoaclWorld",16);
+            }
             localWorld.Focus = World.World.FocusLevel.Focused;
             worlds.Add(localWorld);
             focusedWorld = localWorld;
-
-            Console.WriteLine(localWorld.Name.value);
-
             return this;
         }
 
         public void Update(DateTime startTime, DateTime Frame)
         {
-            foreach(World.World world in worlds)
+            foreach (World.World world in worlds)
             {
                 world.Update(startTime, Frame);
             }
+        }
+        public void CleanUp()
+        {
+            File.WriteAllBytes(engine.dataPath + "/LocalWorld.World", worldToBytes(localWorld));
         }
     }
 }

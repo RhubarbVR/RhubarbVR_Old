@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RhubarbEngine.World
+namespace BaseR
 {
     [Serializable()]
-    public class RefID
+    public struct RefID
     {
         private readonly ulong id;
 

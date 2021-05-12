@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine.Managers;
 using CommandLine;
 using RhubarbEngine.PlatformInfo;
-
-
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 namespace RhubarbEngine
 {
     public class EngineInitializer
@@ -27,6 +28,10 @@ namespace RhubarbEngine
         {
             try
             {
+                engine.logger.Log("Fixing Sterilizing");
+                intphase = "Fixing Type Sterilizing";
+                fixDataTypes();
+
                 engine.logger.Log("Starting Managers");
 
                 intphase = "Platform Info Manager";
@@ -34,7 +39,7 @@ namespace RhubarbEngine
                 engine.platformInfo = new PlatformInfoManager();
                 engine.platformInfo.initialize(engine);
 
-                if(engine.platformInfo.platform != Platform.Android)
+                if (engine.platformInfo.platform != Platform.Android)
                 {
                     intphase = "Window Manager";
                     engine.logger.Log("Starting Window Manager:");
@@ -46,6 +51,11 @@ namespace RhubarbEngine
 
                 }
 
+                intphase = "Net Api Manager";
+                engine.logger.Log("Starting Net Api Manager:");
+                engine.netApiManager = new Managers.NetApiManager();
+                engine.netApiManager.initialize(engine);
+
                 intphase = "Net Manager";
                 engine.logger.Log("Starting Net Manager:");
                 engine.netManager = new Managers.NetManager();
@@ -55,15 +65,32 @@ namespace RhubarbEngine
                 engine.logger.Log("Starting World Manager:");
                 engine.worldManager = new WorldManager();
                 engine.worldManager.initialize(engine);
+
                 Initialised = true;
             }
             catch (Exception _e)
             {
-                engine.logger.Log("Failed at " + intphase + " Error: "+ _e);
+                engine.logger.Log("Failed at " + intphase + " Error: " + _e);
             }
 
         }
 
+        public void fixDataTypes()
+        {
+            fixDataType(typeof(Vector3));
+            fixDataType(typeof(Quaternion));
+        }
+
+        public void fixDataType(Type w)
+          {
+            PropertyDescriptorCollection properties;
+
+            AssociatedMetadataTypeTypeDescriptionProvider typeDescriptionProvider;
+
+            properties = TypeDescriptor.GetProperties(w);
+            typeDescriptionProvider = new AssociatedMetadataTypeTypeDescriptionProvider(typeof(SerializableAttribute));
+            TypeDescriptor.AddProviderTransparent(typeDescriptionProvider, w);
+          }
         public void loadArguments(string[] _args)
         {
             foreach(string arg in _args)
@@ -76,6 +103,10 @@ namespace RhubarbEngine
                     if (o.verbose)
                     {
                         engine.verbose = true;
+                    }
+                    if (o.datapath != null)
+                    {
+                        engine.dataPath = o.datapath;
                     }
 
                 });

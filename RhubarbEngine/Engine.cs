@@ -16,7 +16,11 @@ namespace RhubarbEngine
 
         public Managers.WindowManager windowManager;
 
+        public Managers.NetApiManager netApiManager;
+
         public UnitLogs logger;
+
+        public string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
         public EngineInitializer engineInitializer;
         public void initialize(string[] _args, bool _verbose = false, bool _Rendering = true)
@@ -27,7 +31,6 @@ namespace RhubarbEngine
             logger.Log("Loading Arguments:", true);
             engineInitializer.loadArguments(_args);
             engineInitializer.initializeManagers();
-
         }
 
         public void startUpdateLoop()
@@ -46,7 +49,6 @@ namespace RhubarbEngine
                 platformInfo.Frame = DateTime.UtcNow;
                 platformInfo.FrameCount++;
             }
-            //File.WriteAllBytes("testWorld.World", worldManager.focusedWorldToBytes());
         }
 
         public void Loop(DateTime startTime, DateTime Frame)
@@ -58,6 +60,7 @@ namespace RhubarbEngine
 
         public void cleanUP()
         {
+            worldManager.CleanUp();
             logger.cleanUP();
             netManager.cleanup();
         }

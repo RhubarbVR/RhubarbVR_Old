@@ -13,5 +13,7 @@ namespace RhubarbEngine
         [Option('v', "verbose", Required = false, HelpText = "Set output to verbose messages.")]
         public bool verbose { get; set; }
 
+        [Option('d', "datapath", Required = false, HelpText = "Set Data Path.")]
+        public string datapath { get; set; }
     }
 }

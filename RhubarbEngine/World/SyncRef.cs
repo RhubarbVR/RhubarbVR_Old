@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine.World.DataStructure;
+using BaseR;
 
 namespace RhubarbEngine.World
 {
@@ -42,7 +43,7 @@ namespace RhubarbEngine.World
             {
                 newRefID.Add(((DataNode<RefID>)data.getValue("referenceID")).Value, referenceID);
                 latterResign[((DataNode<RefID>)data.getValue("referenceID")).Value](referenceID);
-                if (newRefID[targetRefID]  != null)
+                if (newRefID[targetRefID].getID()  != 0)
                 {
                     targetRefID = newRefID[targetRefID];
                 }

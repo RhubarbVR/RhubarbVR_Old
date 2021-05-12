@@ -25,6 +25,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BaseR\BaseR.csproj" />
+    <ProjectReference Include="..\RhubarbCloudApi\RhubarbCloudApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="VirtualReality\native\win-x64\openvr_api.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <PackagePath>./</PackagePath>
