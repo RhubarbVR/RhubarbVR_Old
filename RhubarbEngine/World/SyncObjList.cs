@@ -10,14 +10,19 @@ namespace RhubarbEngine.World
 {
     public class SyncObjList<T> : Worker, IWorldObject where T : Worker, new()
     {
-        private List<T> _synclist;
+        private List<T> _synclist = new List<T>();
 
-        IWorldObject this[int i]
+        public T this[int i]
         {
             get
             {
                 return _synclist[i];
             }
+        }
+
+        public int Count()
+        {
+            return _synclist.Count;
         }
 
         public T Add(bool Refid = true)
@@ -36,7 +41,7 @@ namespace RhubarbEngine.World
         {
 
         }
-        public SyncObjList(IWorldObject _parent) : base(_parent.World, _parent)
+        public SyncObjList(IWorldObject _parent,bool refid=true) : base(_parent.World, _parent, refid)
         {
 
         }
@@ -57,7 +62,7 @@ namespace RhubarbEngine.World
         {
             if (data == null)
             {
-                world.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
+                world.worldManager.engine.logger.Log("Node did not exsets When loading SyncObjList");
                 return;
             }
             if (NewRefIDs)

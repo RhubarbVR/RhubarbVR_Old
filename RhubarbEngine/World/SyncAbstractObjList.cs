@@ -8,11 +8,11 @@ using BaseR;
 
 namespace RhubarbEngine.World
 {
-    public class SyncValueList<T>: Worker, IWorldObject
+    public class SyncAbstractObjList<T> : Worker, IWorldObject where T : Worker
     {
-        private List<Sync<T>> _synclist = new List<Sync<T>>();
+        private List<T> _synclist = new List<T>();
 
-        Sync<T> this[int i]
+        public T this[int i]
         {
             get
             {
@@ -20,9 +20,14 @@ namespace RhubarbEngine.World
             }
         }
 
-        public Sync<T> Add(bool Refid = true)
+        public int Count()
         {
-            _synclist.Add(new Sync<T>(this.world, this, Refid));
+            return _synclist.Count;
+        }
+        public T Add(T val,bool Refid = true)
+        {
+            val.initialize(this.world, this, Refid);
+            _synclist.Add(val);
             return _synclist[_synclist.Count - 1];
         }
 
@@ -30,11 +35,11 @@ namespace RhubarbEngine.World
         {
             _synclist.Clear();
         }
-        public SyncValueList(World _world, IWorldObject _parent) : base(_world, _parent)
+        public SyncAbstractObjList(World _world, IWorldObject _parent) : base(_world, _parent)
         {
 
         }
-        public SyncValueList(IWorldObject _parent) : base(_parent.World, _parent)
+        public SyncAbstractObjList(IWorldObject _parent,bool refid=true) : base(_parent.World, _parent, refid)
         {
 
         }
@@ -44,9 +49,12 @@ namespace RhubarbEngine.World
             DataNode<RefID> Refid = new DataNode<RefID>(referenceID);
             obj.setValue("referenceID", Refid);
             DataNodeList list = new DataNodeList();
-            foreach (Sync<T> val in _synclist)
+            foreach (T val in _synclist)
             {
-                list.Add(val.serialize());
+                DataNodeGroup listobj = new DataNodeGroup();
+                listobj.setValue("Value", val.serialize());
+                listobj.setValue("Type",new DataNode<string>(val.GetType().FullName));
+                list.Add(listobj);
             }
             obj.setValue("list", list);
             return obj;
@@ -55,7 +63,7 @@ namespace RhubarbEngine.World
         {
             if (data == null)
             {
-                world.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
+                world.worldManager.engine.logger.Log("Node did not exsets When loading SyncAbstractObjList");
                 return;
             }
             if (NewRefIDs)
@@ -70,7 +78,9 @@ namespace RhubarbEngine.World
             }
             foreach (DataNodeGroup val in ((DataNodeList)data.getValue("list")))
             {
-                Add(NewRefIDs).deSerialize(val, NewRefIDs, newRefID, latterResign);
+                Type ty = Type.GetType(((DataNode<string>)val.getValue("Type")).Value);
+                T obj = (T)Activator.CreateInstance(ty);
+                Add(obj,NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), NewRefIDs, newRefID, latterResign);
             }
         }
     }

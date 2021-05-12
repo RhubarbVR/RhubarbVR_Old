@@ -12,6 +12,35 @@ namespace RhubarbEngine.World
     {
 
         private RefID targetRefID;
+
+        public T target
+        {
+            get
+            {
+                return (T)world.getWorldObj(targetRefID);
+            }
+            set
+            {
+                if (value == null)
+                {
+                    targetRefID = default(RefID);
+                    return;
+                }
+                targetRefID = value.ReferenceID;
+            }
+        }
+
+        public RefID value
+        {
+            get
+            {
+                return targetRefID;
+            }
+            set
+            {
+                targetRefID = value;
+            }
+        }
         public SyncRef(World _world, IWorldObject _parent) : base(_world, _parent)
         {
 

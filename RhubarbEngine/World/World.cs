@@ -95,6 +95,12 @@ namespace RhubarbEngine.World
             worldObjects.Add(obj.ReferenceID, obj);
         }
 
+        public IWorldObject getWorldObj(RefID refid)
+        {
+            return worldObjects[refid];
+        }
+
+
         public void removeWorldObj(IWorldObject obj)
         {
             worldObjects.Remove(obj.ReferenceID);

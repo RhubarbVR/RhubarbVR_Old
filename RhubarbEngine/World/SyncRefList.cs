@@ -10,7 +10,7 @@ namespace RhubarbEngine.World
 {
     public class SyncRefList<T> : Worker, IWorldObject where T : IWorldObject
     {
-        private List<SyncRef<T>> _syncreflist;
+        private List<SyncRef<T>> _syncreflist = new List<SyncRef<T>>();
 
         SyncRef<T> this[int i]
         {

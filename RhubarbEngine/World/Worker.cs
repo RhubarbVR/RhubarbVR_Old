@@ -40,6 +40,7 @@ namespace RhubarbEngine.World
             {
                 referenceID = _world.buildRefID();
                 _world.addWorldObj(this);
+                onLoaded();
             }
         }
 
@@ -52,6 +53,7 @@ namespace RhubarbEngine.World
             {
                 referenceID = _world.buildRefID();
                 _world.addWorldObj(this);
+                onLoaded();
             }
         }
         public Worker()
@@ -60,10 +62,13 @@ namespace RhubarbEngine.World
         }
         public virtual void buildSyncObjs(bool newRefIds)
         {
-
         }
 
-      public virtual DataNodeGroup serialize() {
+        public virtual void onLoaded()
+        {
+
+        }
+        public virtual DataNodeGroup serialize() {
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             DataNodeGroup obj = new DataNodeGroup();
             if (Persistent)
@@ -104,9 +109,14 @@ namespace RhubarbEngine.World
             {
                 if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))
                 {
+                    if (((IWorldObject)field.GetValue(this)) == null)
+                    {
+                        throw new Exception("Sync not initialized on " + this.GetType().FullName + " Firld: " + field.Name);
+                    }
                     ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), NewRefIDs, newRefID, latterResign);
                 }
             }
+            onLoaded();
         }
 
     }
