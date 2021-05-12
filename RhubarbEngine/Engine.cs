@@ -20,7 +20,9 @@ namespace RhubarbEngine
 
         public UnitLogs logger;
 
-        public string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        public string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+"\\RhubarbVR";
+
+        public FileStream lockFile;
 
         public EngineInitializer engineInitializer;
         public void initialize(string[] _args, bool _verbose = false, bool _Rendering = true)
@@ -30,6 +32,23 @@ namespace RhubarbEngine
             engineInitializer = new EngineInitializer(this);
             logger.Log("Loading Arguments:", true);
             engineInitializer.loadArguments(_args);
+            logger.Log("Datapath: "+ dataPath);
+            //Build DataFolder
+            if (!Directory.Exists(dataPath))
+            {
+                logger.Log("Created data path folder");
+                Directory.CreateDirectory(dataPath);
+            }
+
+            try
+            {
+                lockFile = new FileStream(dataPath + "\\locker.lock", FileMode.OpenOrCreate);
+            }
+            catch
+            {
+                logger.Log("Another instance is running at data path " + dataPath, true);
+                throw new Exception("Another instance is running at data path ");
+            }
             engineInitializer.initializeManagers();
         }
 
@@ -41,7 +60,7 @@ namespace RhubarbEngine
             }
             else
             {
-                throw new ArgumentException("Engine not Initialised");
+                throw new Exception("Engine not Initialised");
             }
             while (windowManager.mainWindowOpen)
             {

@@ -60,9 +60,9 @@ namespace RhubarbEngine.Managers
             worlds.Add(privateOverlay);
 
             engine.logger.Log("Starting Local World");
-            if(File.Exists(engine.dataPath + "/LocalWorld.World"))
+            if(File.Exists(engine.dataPath + "/LocalWorld.RWorld"))
             {
-                localWorld = loadWorldFromBytes(File.ReadAllBytes(engine.dataPath + "/LocalWorld.World"));
+                localWorld = loadWorldFromBytes(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
             }
             else
             {
@@ -83,7 +83,7 @@ namespace RhubarbEngine.Managers
         }
         public void CleanUp()
         {
-            File.WriteAllBytes(engine.dataPath + "/LocalWorld.World", worldToBytes(localWorld));
+            File.WriteAllBytes(engine.dataPath + "/LocalWorld.RWorld", worldToBytes(localWorld));
         }
     }
 }
