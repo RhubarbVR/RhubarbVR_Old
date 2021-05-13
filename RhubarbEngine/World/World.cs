@@ -88,11 +88,23 @@ namespace RhubarbEngine.World
             }
         }
 
+        private List<Entity> Entitys = new List<Entity>();
+
         private Dictionary<RefID, IWorldObject> worldObjects = new Dictionary<RefID, IWorldObject>();
 
         public void addWorldObj(IWorldObject obj)
         {
             worldObjects.Add(obj.ReferenceID, obj);
+        }
+
+        public void addWorldEntity(Entity obj)
+        {
+            Entitys.Add(obj);
+        }
+
+        public void removeWorldEntity(Entity obj)
+        {
+            Entitys.Remove(obj);
         }
 
         public IWorldObject getWorldObj(RefID refid)
@@ -120,7 +132,10 @@ namespace RhubarbEngine.World
 
         public void Update(DateTime startTime, DateTime Frame)
         {
-
+            foreach(Entity obj in Entitys)
+            {
+                obj.Update(startTime, Frame);
+            }
         }
         public World(WorldManager _worldManager)
         {
@@ -188,6 +203,9 @@ namespace RhubarbEngine.World
                 }
             }
         }
+        public virtual void Dispose()
+        {
 
+        }
     }
 }

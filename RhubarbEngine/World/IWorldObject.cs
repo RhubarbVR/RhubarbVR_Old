@@ -8,7 +8,7 @@ using BaseR;
 
 namespace RhubarbEngine.World
 {
-    public interface IWorldObject
+    public interface IWorldObject: IDisposable
     {
         RefID ReferenceID { get; }
 

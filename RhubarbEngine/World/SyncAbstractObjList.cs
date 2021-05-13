@@ -20,6 +20,13 @@ namespace RhubarbEngine.World
             }
         }
 
+        public IEnumerator<T> GetEnumerator()
+        {
+            for (int i = 0; i < _synclist.Count; i++)
+            {
+                yield return this[i];
+            }
+        }
         public int Count()
         {
             return _synclist.Count;

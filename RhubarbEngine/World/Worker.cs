@@ -35,6 +35,7 @@ namespace RhubarbEngine.World
         {
             world = _world;
             parent = _parent;
+            inturnalSyncObjs(newRefID);
             buildSyncObjs(newRefID);
             if (newRefID)
             {
@@ -48,6 +49,7 @@ namespace RhubarbEngine.World
         {
             world = _world;
             parent = _parent;
+            inturnalSyncObjs(newRefID);
             buildSyncObjs(newRefID);
             if (newRefID)
             {
@@ -60,11 +62,28 @@ namespace RhubarbEngine.World
         {
 
         }
+
+        public virtual void inturnalSyncObjs(bool newRefIds)
+        {
+
+        }
+
+
         public virtual void buildSyncObjs(bool newRefIds)
         {
+
         }
 
         public virtual void onLoaded()
+        {
+
+        }
+
+        public virtual void Dispose()
+        {
+            world.removeWorldObj(this);
+        }
+        public virtual void CommonUpdate()
         {
 
         }

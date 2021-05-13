@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BaseR;
-using RhubarbEngine.World.ECS.Components;
 
 namespace RhubarbEngine.World.ECS
 {
@@ -25,6 +24,11 @@ namespace RhubarbEngine.World.ECS
         private SyncObjList<Entity> _children;
 
         private SyncAbstractObjList<Component> _components;
+
+        public override void inturnalSyncObjs(bool newRefIds)
+        {
+            world.addWorldEntity(this);
+        }
 
         public override void buildSyncObjs(bool newRefIds)
         {
@@ -56,24 +60,20 @@ namespace RhubarbEngine.World.ECS
         }
         public override void onLoaded()
         {
-            if (_components.Count() <= 0)
-            {
-                world.worldManager.engine.logger.Log("AddedComp");
-                attachComponent<TestComp>();
 
-            }
-            if((_children.Count() <= 0)& name.value == "Root")
+        }
+
+        public override void Dispose()
+        {
+            world.removeWorldObj(this);
+            world.removeWorldEntity(this);
+        }
+
+        public void Update(DateTime startTime, DateTime Frame)
+        {
+            foreach (Component comp in _components)
             {
-                addChild("test1");
-                addChild("test2");
-                addChild("test3");
-            }
-            else
-            {
-                for (int i = 0; i < _children.Count(); i++)
-                {
-                    world.worldManager.engine.logger.Log(_children[i].name.value);
-                }
+                comp.CommonUpdate( startTime, Frame);
             }
         }
 
