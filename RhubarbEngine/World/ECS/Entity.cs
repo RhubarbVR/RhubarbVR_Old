@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BaseR;
+using RhubarbEngine.Render;
 
 namespace RhubarbEngine.World.ECS
 {
@@ -63,10 +64,24 @@ namespace RhubarbEngine.World.ECS
 
         }
 
-        public void Render()
+        public void addToRenderQueue(RenderQueue gu, Vector3 playpos)
         {
-
-        } 
+            if (!enabled.value)
+            {
+                return;
+            }
+            foreach (object comp in _components)
+            {
+                if ((Renderable)comp != null)
+                {
+                    gu.Add(((Renderable)comp), playpos.ToSystemNumrics());
+                }
+            }
+            foreach(Entity child in _children)
+            {
+                child.addToRenderQueue(gu, playpos);
+            }
+        }
 
         public override void Dispose()
         {

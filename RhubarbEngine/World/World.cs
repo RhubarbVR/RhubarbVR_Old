@@ -8,12 +8,23 @@ using RhubarbEngine.World.ECS;
 using RhubarbEngine.World.DataStructure;
 using System.Reflection;
 using BaseR;
-
+using RhubarbEngine.Render;
 
 namespace RhubarbEngine.World
 {
     public class World : IWorldObject
     {
+        public Vector3 playerPosition;
+
+        public Vector3 playerRotation;
+
+        public Vector3 playerScale;
+
+        public void addToRenderQueue(RenderQueue gu)
+        {
+            RootEntity.addToRenderQueue(gu, playerPosition);
+        }
+
         public enum FocusLevel
         {
             Background,

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using RhubarbEngine;
 using RhubarbEngine.World;
 using RhubarbEngine.World.DataStructure;
+using RhubarbEngine.Render;
 
 namespace RhubarbEngine.Managers
 {
@@ -21,6 +22,17 @@ namespace RhubarbEngine.Managers
         public World.World localWorld;
 
         public World.World focusedWorld;
+
+        public void addToRenderQueue(RenderQueue gu)
+        {
+            foreach(World.World world in worlds)
+            {
+                if ((int)world.Focus > 1)
+                {
+                    world.addToRenderQueue(gu);
+                }
+            }
+        } 
 
         public void createNewWorld()
         {

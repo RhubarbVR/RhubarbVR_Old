@@ -9,16 +9,18 @@ using Veldrid.Sdl2;
 using Veldrid.Utilities;
 using Veldrid;
 using RhubarbEngine.VirtualReality;
-
+using RhubarbEngine.Render;
 
 
 namespace RhubarbEngine.Managers
 {
     public class RenderManager : IManager
     {
-        private static Vector3 _userPosition = Vector3.Zero;
-
         private Engine engine;
+
+        private Vector3 _userPosition => engine.worldManager.focusedWorld.playerPosition.ToSystemNumrics();
+
+        private RenderQueue mainQueue;
 
         public VRContext vrContext;
 
@@ -59,6 +61,7 @@ namespace RhubarbEngine.Managers
             lastFrameTime = sw.Elapsed.TotalSeconds;
             windowCL = gd.ResourceFactory.CreateCommandList();
             eyesCL = gd.ResourceFactory.CreateCommandList();
+            mainQueue = new RenderQueue();
             return this;
         }
 
@@ -85,11 +88,18 @@ namespace RhubarbEngine.Managers
             }
         }
 
-        private static void RenderEye(CommandList cl, Framebuffer fb,  Matrix4x4 proj, Matrix4x4 view)
+        private void BuildMainRenderQueue()
+        {
+            mainQueue.Clear();
+            engine.worldManager.addToRenderQueue(mainQueue);
+        }
+
+        private void RenderEye(CommandList cl, Framebuffer fb,  Matrix4x4 proj, Matrix4x4 view)
         {
             cl.SetFramebuffer(fb);
             cl.ClearDepthStencil(1f);
             cl.ClearColorTarget(0, RgbaFloat.CornflowerBlue);
+            BuildMainRenderQueue();
 
 //            mesh.Render(cl, new UBO(
 //                proj,
