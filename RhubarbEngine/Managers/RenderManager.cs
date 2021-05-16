@@ -120,7 +120,7 @@ namespace RhubarbEngine.Managers
             windowCL.Begin();
             windowCL.SetFramebuffer(sc.Framebuffer);
             windowCL.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0.2f, 1f));
-            vrContext.RenderMirrorTexture(windowCL, sc.Framebuffer, eyeSource);
+            vrContext.RenderMirrorTexture(windowCL, sc.Framebuffer, (engine.outputType != OutputType.Screen)? eyeSource : MirrorTextureEyeSource.LeftEye);
             windowCL.End();
             gd.SubmitCommands(windowCL);
             gd.SwapBuffers(sc);
@@ -129,22 +129,18 @@ namespace RhubarbEngine.Managers
 
             // Render Eyes
             eyesCL.Begin();
-            if(engine.outputType != OutputType.Screen)
-            {
                 eyesCL.PushDebugGroup("Left Eye");
                 Matrix4x4 leftView = poses.CreateView(VREye.Left, _userPosition, -Vector3.UnitZ, Vector3.UnitY);
                 RenderEye(eyesCL, vrContext.LeftEyeFramebuffer, poses.LeftEyeProjection, leftView);
                 eyesCL.PopDebugGroup();
-
+            if (engine.outputType != OutputType.Screen)
+            {
                 eyesCL.PushDebugGroup("Right Eye");
                 Matrix4x4 rightView = poses.CreateView(VREye.Right, _userPosition, -Vector3.UnitZ, Vector3.UnitY);
                 RenderEye(eyesCL, vrContext.RightEyeFramebuffer, poses.RightEyeProjection, rightView);
                 eyesCL.PopDebugGroup();
             }
-            else
-            {
 
-            }
 
             eyesCL.End();
             gd.SubmitCommands(eyesCL);

@@ -44,22 +44,7 @@ namespace RhubarbEngine.VirtualReality
         public override void Initialize(GraphicsDevice gd)
         {
             _gd = gd;
-
-            StringBuilder sb = new StringBuilder(512);
-            ETrackedPropertyError error = ETrackedPropertyError.TrackedProp_Success;
-            if (error != ETrackedPropertyError.TrackedProp_Success)
-            {
-                _deviceName = "<Unknown OpenVR Device>";
-            }
-            else
-            {
-                _deviceName = sb.ToString();
-            }
-
-            uint eyeWidth = 0;
-            uint eyeHeight = 0;
-
-
+            _leftEyeFB = CreateFramebuffer(1920, 1080);
 
             //Matrix4x4 eyeToHeadLeft = ToSysMatrix(_vrSystem.GetEyeToHeadTransform(EVREye.Eye_Left));
             //Matrix4x4.Invert(eyeToHeadLeft, out _headToEyeLeft);
@@ -71,6 +56,23 @@ namespace RhubarbEngine.VirtualReality
             //_projRight = ToSysMatrix(_vrSystem.GetProjectionMatrix(EVREye.Eye_Right, 0.1f, 1000f));
         }
 
+        private Framebuffer CreateFramebuffer(uint width, uint height)
+        {
+            ResourceFactory factory = _gd.ResourceFactory;
+            Texture colorTarget = factory.CreateTexture(TextureDescription.Texture2D(
+                width, height,
+                1, 1,
+                PixelFormat.R8_G8_B8_A8_UNorm_SRgb,
+                TextureUsage.RenderTarget | TextureUsage.Sampled,
+                _options.EyeFramebufferSampleCount));
+            Texture depthTarget = factory.CreateTexture(TextureDescription.Texture2D(
+                width, height,
+                1, 1,
+                PixelFormat.R32_Float,
+                TextureUsage.DepthStencil,
+                _options.EyeFramebufferSampleCount));
+            return factory.CreateFramebuffer(new FramebufferDescription(depthTarget, colorTarget));
+        }
         public override (string[] instance, string[] device) GetRequiredVulkanExtensions()
         {
             StringBuilder sb = new StringBuilder(1024);
@@ -82,8 +84,6 @@ namespace RhubarbEngine.VirtualReality
 
         public override HmdPoseState WaitForPoses()
         {
-            Matrix4x4 deviceToAbsolute = default(Matrix4x4);
-
             Matrix4x4 viewLeft = default(Matrix4x4);
             Matrix4x4 viewRight = default(Matrix4x4);
 

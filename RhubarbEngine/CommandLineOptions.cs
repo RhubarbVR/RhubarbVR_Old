@@ -21,7 +21,7 @@ namespace RhubarbEngine
         [Option('g', "graphicsbackend", Required = false, HelpText = "Change backend to Direct3D11,Vulkan,OpenGL,Metal,OpenGLES")]
         public GraphicsBackend graphicsBackend { get; set; }
 
-        [Option('o', "outputdevice", Required = false, HelpText = "Change output device to Screen,SteamVR,OculusVR")]
+        [Option('o', "outputdevice", Required = false, HelpText = "Change output device to Auto,Screen,SteamVR,OculusVR")]
         public OutputType outputType { get; set; }
     }
 }

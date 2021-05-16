@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Render\" />
     <Compile Include="..\Veldrid\Vk\VkFormats.VdToVkPixelFormat.cs" Link="VkFormats.VdToVkPixelFormat.cs" />
   </ItemGroup>
 

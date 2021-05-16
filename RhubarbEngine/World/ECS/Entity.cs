@@ -63,6 +63,11 @@ namespace RhubarbEngine.World.ECS
 
         }
 
+        public void Render()
+        {
+
+        } 
+
         public override void Dispose()
         {
             world.removeWorldObj(this);
