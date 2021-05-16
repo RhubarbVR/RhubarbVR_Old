@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine.World.DataStructure;
 using BaseR;
+using RhubarbEngine.World.ECS;
 
 namespace RhubarbEngine.World
 {
@@ -86,8 +87,44 @@ namespace RhubarbEngine.World
             foreach (DataNodeGroup val in ((DataNodeList)data.getValue("list")))
             {
                 Type ty = Type.GetType(((DataNode<string>)val.getValue("Type")).Value);
-                T obj = (T)Activator.CreateInstance(ty);
-                Add(obj,NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), NewRefIDs, newRefID, latterResign);
+                if(ty == typeof(MissingComponent))
+                {
+                    ty = Type.GetType(((DataNode<string>)((DataNodeGroup)val.getValue("Value")).getValue("type")).Value, true);
+                    if (ty == null)
+                    {
+                        world.worldManager.engine.logger.Log("Component still not found" + ((DataNode<string>)val.getValue("Type")).Value);
+                        T obj = (T)Activator.CreateInstance(typeof(MissingComponent));
+                        Add(obj, NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), NewRefIDs, newRefID, latterResign);
+                    }
+                    else
+                    {
+                        if ((ty).IsAssignableFrom(typeof(T))) { 
+                            T obj = (T)Activator.CreateInstance(ty);
+                            Add(obj, NewRefIDs).deSerialize(((DataNodeGroup)((DataNodeGroup)val.getValue("Value")).getValue("Data")), NewRefIDs, newRefID, latterResign);
+                        }
+                        else
+                        {
+                            world.worldManager.engine.logger.Log("Something is broken or someone is messing with things", true);
+                        }
+                    }
+                }
+                else
+                {
+                    if (ty == null)
+                    {
+                        world.worldManager.engine.logger.Log("Type not found" + ((DataNode<string>)val.getValue("Type")).Value,true);
+                        if (typeof(T) == typeof(Component))
+                        {
+                            T obj = (T)Activator.CreateInstance(typeof(MissingComponent));
+                            Add(obj, NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), NewRefIDs, newRefID, latterResign);
+                        }
+                    }
+                    else
+                    {
+                        T obj = (T)Activator.CreateInstance(ty);
+                        Add(obj, NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), NewRefIDs, newRefID, latterResign);
+                    }
+                }
             }
         }
     }

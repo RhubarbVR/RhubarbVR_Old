@@ -17,6 +17,7 @@ namespace RhubarbEngine.World.DataStructure
         private List<IDataNode> NodeGroup;
         public byte[] getByteArray()
         {
+            //Need to change to more secure method like binarywriter 
             BinaryFormatter formatter = new BinaryFormatter();
             try
             {
@@ -58,6 +59,7 @@ namespace RhubarbEngine.World.DataStructure
         }
         public void setByteArray(byte[] arrBytes)
         {
+            //Need to change to more secure method like binarywriter 
             using (var memStream = new MemoryStream())
             {
                 var binForm = new BinaryFormatter();

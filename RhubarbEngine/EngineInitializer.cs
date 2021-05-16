@@ -51,6 +51,16 @@ namespace RhubarbEngine
 
                 }
 
+                intphase = "Input Manager";
+                engine.logger.Log("Starting Input Manager:");
+                engine.inputManager = new Managers.InputManager();
+                engine.inputManager.initialize(engine);
+
+                intphase = "Render Manager";
+                engine.logger.Log("Starting Render Manager:");
+                engine.renderManager = new Managers.RenderManager();
+                engine.renderManager.initialize(engine);
+
                 intphase = "Net Api Manager";
                 engine.logger.Log("Starting Net Api Manager:");
                 engine.netApiManager = new Managers.NetApiManager();
@@ -108,7 +118,14 @@ namespace RhubarbEngine
                     {
                         engine.dataPath = o.datapath;
                     }
-
+                    if (o.graphicsBackend != null)
+                    {
+                        engine.backend = o.graphicsBackend;
+                    }
+                    if (o.outputType != null)
+                    {
+                        engine.outputType = o.outputType;
+                    }
                 });
         }
     }

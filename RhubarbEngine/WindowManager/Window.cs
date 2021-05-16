@@ -33,21 +33,7 @@ namespace RhubarbEngine.WindowManager
             window.PumpEvents();
         }
         public bool windowOpen => window.Exists;
-
-        public (GraphicsDevice gd, Swapchain sc) NormGrafics(GraphicsBackend backend)
-        {
-            GraphicsDeviceOptions options = new GraphicsDeviceOptions
-            {
-                PreferStandardClipSpaceYDirection = true,
-                PreferDepthRangeZeroToOne = true
-            };
-            GraphicsDevice gd = VeldridStartup.CreateGraphicsDevice(window, options, backend);
-            Swapchain sc = gd.MainSwapchain;
-            return (gd, sc);
-        }
-
-
-        public (GraphicsDevice gd, Swapchain sc) VRGrafics(VRContext vrc, GraphicsBackend backend)
+        public (GraphicsDevice gd, Swapchain sc) CreateScAndGD(VRContext vrc, GraphicsBackend backend)
         {
             GraphicsDeviceOptions gdo = new GraphicsDeviceOptions(false, null, false, ResourceBindingModel.Improved, true, true, true);
             if (backend == GraphicsBackend.Vulkan)

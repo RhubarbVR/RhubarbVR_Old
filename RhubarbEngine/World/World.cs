@@ -132,7 +132,7 @@ namespace RhubarbEngine.World
 
         public void Update(DateTime startTime, DateTime Frame)
         {
-            foreach(Entity obj in Entitys)
+            foreach (Entity obj in Entitys)
             {
                 obj.Update(startTime, Frame);
             }
@@ -207,5 +207,9 @@ namespace RhubarbEngine.World
         {
 
         }
+
+
+
+
     }
 }

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommandLine;
+using Veldrid;
+using RhubarbEngine.VirtualReality;
 
 namespace RhubarbEngine
 {
@@ -15,5 +17,11 @@ namespace RhubarbEngine
 
         [Option('d', "datapath", Required = false, HelpText = "Set Data Path.")]
         public string datapath { get; set; }
+
+        [Option('g', "graphicsbackend", Required = false, HelpText = "Change backend to Direct3D11,Vulkan,OpenGL,Metal,OpenGLES")]
+        public GraphicsBackend graphicsBackend { get; set; }
+
+        [Option('o', "outputdevice", Required = false, HelpText = "Change output device to Screen,SteamVR,OculusVR")]
+        public OutputType outputType { get; set; }
     }
 }

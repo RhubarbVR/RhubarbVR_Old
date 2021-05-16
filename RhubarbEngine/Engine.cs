@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using RhubarbEngine.Managers;
+using Veldrid;
+using RhubarbEngine.VirtualReality;
 
 namespace RhubarbEngine
 {
@@ -10,9 +12,17 @@ namespace RhubarbEngine
 
         public WorldManager worldManager;
 
+        public InputManager inputManager;
+
+        public RenderManager renderManager;
+
         public Managers.NetManager netManager;
 
         public PlatformInfoManager platformInfo;
+
+        public GraphicsBackend backend = GraphicsBackend.Vulkan;
+
+        public OutputType outputType;
 
         public Managers.WindowManager windowManager;
 
@@ -72,6 +82,8 @@ namespace RhubarbEngine
 
         public void Loop(DateTime startTime, DateTime Frame)
         {
+            inputManager.Update();
+            renderManager.Update();
             windowManager.Update();
             worldManager.Update(startTime, Frame);
             netManager.Update();
