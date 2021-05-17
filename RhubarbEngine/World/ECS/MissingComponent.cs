@@ -9,6 +9,7 @@ using BaseR;
 
 namespace RhubarbEngine.World.ECS
 {
+    [Category(new string[] { "International" })]
     public class MissingComponent : Component
     {
         public Sync<string> type;

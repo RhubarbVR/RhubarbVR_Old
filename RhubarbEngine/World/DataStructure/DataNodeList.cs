@@ -10,24 +10,31 @@ using System.IO;
 
 namespace RhubarbEngine.World.DataStructure
 {
-    [Serializable()]
     public class DataNodeList : IDataNode
     {
 
-        private List<IDataNode> NodeGroup;
+        private List<IDataNode> NodeGroup = new List<IDataNode>();
         public byte[] getByteArray()
         {
-            //Need to change to more secure method like binarywriter 
-            BinaryFormatter formatter = new BinaryFormatter();
             try
             {
                 using (var ms = new MemoryStream())
                 {
-                    formatter.Serialize(ms, NodeGroup);
+                    using (BinaryWriter writer = new BinaryWriter(ms))
+                    {
+                        writer.Write(NodeGroup.Count);
+                        for (int i = 0; i < NodeGroup.Count; i++)
+                        {
+                            byte[] value = NodeGroup[i].getByteArray();
+                            writer.Write(((object)NodeGroup[i]).GetType().FullName);
+                            writer.Write(value.Count());
+                            writer.Write(value);
+                        }
+                    }
                     return ms.ToArray();
                 }
             }
-            catch (SerializationException e)
+            catch (Exception e)
             {
                 Console.WriteLine("Failed to serialize. Reason: " + e.Message);
                 throw;
@@ -59,13 +66,31 @@ namespace RhubarbEngine.World.DataStructure
         }
         public void setByteArray(byte[] arrBytes)
         {
-            //Need to change to more secure method like binarywriter 
+            NodeGroup.Clear();
             using (var memStream = new MemoryStream())
             {
-                var binForm = new BinaryFormatter();
                 memStream.Write(arrBytes, 0, arrBytes.Length);
                 memStream.Seek(0, SeekOrigin.Begin);
-                NodeGroup = (List<IDataNode>)binForm.Deserialize(memStream);
+                using (BinaryReader reader = new BinaryReader(memStream))
+                {
+                    int Count = reader.ReadInt32();
+                    for (int i = 0; i < Count; i++)
+                    {
+                        Type ty = Type.GetType(reader.ReadString());
+                        int ValueCount = reader.ReadInt32();
+                        byte[] value = reader.ReadBytes(ValueCount);
+                        if (typeof(IDataNode).IsAssignableFrom(ty))
+                        {
+                            IDataNode valueobj = (IDataNode)Activator.CreateInstance(ty);
+                            valueobj.setByteArray(value);
+                            NodeGroup.Add(valueobj);
+                        }
+                        else
+                        {
+                            throw new Exception("Type is not valid when loading data.");
+                        }
+                    }
+                }
             }
         }
 
@@ -80,7 +105,6 @@ namespace RhubarbEngine.World.DataStructure
 
         public DataNodeList()
         {
-            NodeGroup = new List<IDataNode>();
         }
 
         public DataNodeList(NetDataReader reader)

@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BaseR;
+using g3;
 using RhubarbEngine.Render;
 
 namespace RhubarbEngine.World.ECS
 {
     public class Entity: Worker
     {
-        public Sync<Vector3> position;
+        public Sync<Vector3f> position;
 
-        public Sync<Quaternion> rotation;
+        public Sync<Quaternionf> rotation;
 
-        public Sync<Vector3> scale;
+        public Sync<Vector3f> scale;
 
         public SyncRef<Entity> parent;
 
@@ -33,10 +33,10 @@ namespace RhubarbEngine.World.ECS
 
         public override void buildSyncObjs(bool newRefIds)
         {
-            position = new Sync<Vector3>(this, newRefIds);
-            scale = new Sync<Vector3>(this, newRefIds);
-            scale.value = Vector3.One;
-            rotation = new Sync<Quaternion>(this, newRefIds);
+            position = new Sync<Vector3f>(this, newRefIds);
+            scale = new Sync<Vector3f>(this, newRefIds);
+            scale.value = Vector3f.One;
+            rotation = new Sync<Quaternionf>(this, newRefIds);
             name = new Sync<string>(this, newRefIds);
             enabled = new Sync<bool>(this, newRefIds);
             _children = new SyncObjList<Entity>(this, newRefIds);
@@ -64,7 +64,7 @@ namespace RhubarbEngine.World.ECS
 
         }
 
-        public void addToRenderQueue(RenderQueue gu, Vector3 playpos)
+        public void addToRenderQueue(RenderQueue gu, Vector3f playpos)
         {
             if (!enabled.value)
             {

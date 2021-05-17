@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BaseR\BaseR.csproj" />
+    <ProjectReference Include="..\Numerics\Numerics.csproj" />
     <ProjectReference Include="..\RhubarbCloudApi\RhubarbCloudApi.csproj" />
   </ItemGroup>
 

@@ -8,17 +8,18 @@ using RhubarbEngine.World.ECS;
 using RhubarbEngine.World.DataStructure;
 using System.Reflection;
 using BaseR;
+using g3;
 using RhubarbEngine.Render;
 
 namespace RhubarbEngine.World
 {
     public class World : IWorldObject
     {
-        public Vector3 playerPosition;
+        public Vector3f playerPosition;
 
-        public Vector3 playerRotation;
+        public Vector3f playerRotation;
 
-        public Vector3 playerScale;
+        public Vector3f playerScale;
 
         public void addToRenderQueue(RenderQueue gu)
         {

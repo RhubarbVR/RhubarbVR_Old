@@ -11,9 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Builds", "Builds", "{B5C671
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhubarbVR", "RhubarbVR\RhubarbVR.csproj", "{9C5E2578-5743-41AF-89C8-C5FB1CE05905}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhubarbCloudApi", "RhubarbCloudApi\RhubarbCloudApi.csproj", "{D0BFB272-911F-4F90-A244-83378F442D6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhubarbCloudApi", "RhubarbCloudApi\RhubarbCloudApi.csproj", "{D0BFB272-911F-4F90-A244-83378F442D6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseR", "BaseR\BaseR.csproj", "{3C27100D-922C-4B1F-BF3B-E570868BE68B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Numerics", "Numerics\Numerics.csproj", "{3C27100D-922C-4B1F-BF3B-E570868BE68B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
