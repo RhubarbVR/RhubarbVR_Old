@@ -28,10 +28,6 @@ namespace RhubarbEngine
         {
             try
             {
-                engine.logger.Log("Fixing Sterilizing");
-                intphase = "Fixing Type Sterilizing";
-                fixDataTypes();
-
                 engine.logger.Log("Starting Managers");
 
                 intphase = "Platform Info Manager";
@@ -85,22 +81,6 @@ namespace RhubarbEngine
 
         }
 
-        public void fixDataTypes()
-        {
-            fixDataType(typeof(Vector3));
-            fixDataType(typeof(Quaternion));
-        }
-
-        public void fixDataType(Type w)
-          {
-            PropertyDescriptorCollection properties;
-
-            AssociatedMetadataTypeTypeDescriptionProvider typeDescriptionProvider;
-
-            properties = TypeDescriptor.GetProperties(w);
-            typeDescriptionProvider = new AssociatedMetadataTypeTypeDescriptionProvider(typeof(SerializableAttribute));
-            TypeDescriptor.AddProviderTransparent(typeDescriptionProvider, w);
-          }
         public void loadArguments(string[] _args)
         {
             foreach(string arg in _args)
