@@ -391,13 +391,24 @@ namespace g3
             for (int i = 0; i < N; ++i)
                 yield return i;
         }
-        public IEnumerable<int> TriangleIndices() { 
+        public IEnumerable<int> TriangleIndices()
+        {
             int N = TriangleCount;
             for (int i = 0; i < N; ++i)
                 yield return i;
         }
 
-
+        public IEnumerable<int> RenderIndices()
+        {
+            int N = TriangleCount;
+            for (int i = 0; i < N; ++i)
+            {
+                yield return GetTriangle(i).a;
+                yield return GetTriangle(i).b;
+                yield return GetTriangle(i).c;
+            }
+        }
+        
         // setters
 
         public void SetVertex(int i, Vector3d v) {

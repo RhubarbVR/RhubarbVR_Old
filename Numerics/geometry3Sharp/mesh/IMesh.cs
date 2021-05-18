@@ -31,7 +31,7 @@ namespace g3
     public interface IMesh : IPointSet, IAsset
     {
         int TriangleCount { get; }
-		int MaxTriangleID { get; }
+        int MaxTriangleID { get; }
 
         bool HasVertexUVs { get; }
         Vector2f GetVertexUV(int i);
@@ -47,6 +47,8 @@ namespace g3
 
         // iterators allow us to work with gaps in index space
         System.Collections.Generic.IEnumerable<int> TriangleIndices();
+
+        System.Collections.Generic.IEnumerable<int> RenderIndices();
     }
 
 

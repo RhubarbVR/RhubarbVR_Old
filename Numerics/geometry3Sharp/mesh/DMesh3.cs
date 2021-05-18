@@ -622,7 +622,16 @@ namespace g3
             }
         }
 
-
+        public IEnumerable<int> RenderIndices()
+        {
+            int N = TriangleCount;
+            for (int i = 0; i < N; ++i)
+            {
+                yield return GetTriangle(i).a;
+                yield return GetTriangle(i).b;
+                yield return GetTriangle(i).c;
+            }
+        }
 
         public int GetTriangleGroup(int tID) { 
 			return (triangle_groups == null) ? -1 

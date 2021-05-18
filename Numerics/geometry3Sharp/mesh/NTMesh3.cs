@@ -306,9 +306,18 @@ namespace g3
 			vi.bHaveUV = false;
 			return vi;
 		}
-        
 
 
+        public IEnumerable<int> RenderIndices()
+        {
+            int N = TriangleCount;
+            for (int i = 0; i < N; ++i)
+            {
+                yield return GetTriangle(i).a;
+                yield return GetTriangle(i).b;
+                yield return GetTriangle(i).c;
+            }
+        }
 
         public Index3i GetTriangle(int tID) {
             debug_check_is_triangle(tID);

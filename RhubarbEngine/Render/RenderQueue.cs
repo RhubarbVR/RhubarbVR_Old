@@ -13,6 +13,7 @@ namespace RhubarbEngine.Render
         private readonly List<RenderItemIndex> _indices = new List<RenderItemIndex>(DefaultCapacity);
         private readonly List<Renderable> _renderables = new List<Renderable>(DefaultCapacity);
 
+        public List<Renderable> Renderables { get { return _renderables; } }
         public int Count => _renderables.Count;
 
         public void Clear()

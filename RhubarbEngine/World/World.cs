@@ -112,7 +112,7 @@ namespace RhubarbEngine.World
             }
             catch
             {
-                worldManager.engine.logger.Log("RefId already existed: "+ obj.ReferenceID.ToString());
+                worldManager.engine.logger.Log("RefId already existed: "+ obj.ReferenceID.getID().ToString());
             }
         }
 

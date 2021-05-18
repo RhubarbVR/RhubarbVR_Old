@@ -38,7 +38,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             AxisZ = new Sync<Vector3d>(this, newRefIds);
             AxisZ.value = Vector3d.AxisZ;
             Extent = new Sync<Vector3d>(this, newRefIds);
-            Extent.value = Vector3d.One / 2;
+            Extent.value = Vector3d.One * 2;
             NoSharedVertices = new Sync<bool>(this, newRefIds);
         }
         public override void onChanged()
@@ -49,6 +49,11 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             boxgen.Box.AxisZ = AxisZ.value;
             boxgen.Box.Extent = Extent.value;
             boxgen.NoSharedVertices = NoSharedVertices.value;
+            MeshGenerator newmesh = boxgen.Generate();
+            load(newmesh.MakeSimpleMesh());
+        }
+        public override void onLoaded()
+        {
             MeshGenerator newmesh = boxgen.Generate();
             load(newmesh.MakeSimpleMesh());
         }

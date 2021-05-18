@@ -10,6 +10,9 @@ using Veldrid.Utilities;
 using Veldrid;
 using RhubarbEngine.VirtualReality;
 using RhubarbEngine.Render;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using System.IO;
 
 
 namespace RhubarbEngine.Managers
@@ -24,7 +27,7 @@ namespace RhubarbEngine.Managers
 
         public VRContext vrContext;
 
-        private GraphicsDevice gd;
+        public GraphicsDevice gd;
 
         private Swapchain sc;
 
@@ -34,7 +37,9 @@ namespace RhubarbEngine.Managers
 
         private CommandList eyesCL;
 
-        private CommandList windowCL;
+        public CommandList windowCL;
+
+        public Skybox skybox;
 
         public MirrorTextureEyeSource eyeSource = MirrorTextureEyeSource.BothEyes;
         public IManager initialize(Engine _engine)
@@ -62,6 +67,15 @@ namespace RhubarbEngine.Managers
             windowCL = gd.ResourceFactory.CreateCommandList();
             eyesCL = gd.ResourceFactory.CreateCommandList();
             mainQueue = new RenderQueue();
+            skybox = new Skybox(
+    Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_ft.png")),
+    Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_bk.png")),
+    Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_lf.png")),
+    Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_rt.png")),
+    Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_up.png")),
+    Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_dn.png")));
+            skybox.CreateDeviceObjects(gd, vrContext.LeftEyeFramebuffer.OutputDescription);
+
             return this;
         }
 
@@ -99,13 +113,14 @@ namespace RhubarbEngine.Managers
             cl.SetFramebuffer(fb);
             cl.ClearDepthStencil(1f);
             cl.ClearColorTarget(0, RgbaFloat.CornflowerBlue);
-            BuildMainRenderQueue();
-
-//            mesh.Render(cl, new UBO(
-//                proj,
-//                view,
-//                Matrix4x4.CreateScale(1.5f) * Matrix4x4.CreateTranslation(0.5f, -1, -2f)));
-
+            foreach(Renderable renderObj in mainQueue.Renderables)
+            {
+                renderObj.Render(gd,cl, RenderPasses.Standard, new UBO(
+                proj,
+                view,
+                renderObj.entity.globalTrans()));
+            }
+            skybox.Render(cl, fb, proj, view);
         }
 
 
@@ -144,6 +159,7 @@ namespace RhubarbEngine.Managers
             gd.SwapBuffers(sc);
 
             HmdPoseState poses = vrContext.WaitForPoses();
+            BuildMainRenderQueue();
 
             // Render Eyes
             eyesCL.Begin();

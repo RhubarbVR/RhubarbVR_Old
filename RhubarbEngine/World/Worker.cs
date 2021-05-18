@@ -46,7 +46,7 @@ namespace RhubarbEngine.World
             }
         }
 
-        public void initialize(World _world, IWorldObject _parent, bool newRefID = true)
+        public virtual void initialize(World _world, IWorldObject _parent, bool newRefID = true)
         {
             world = _world;
             parent = _parent;
@@ -57,8 +57,9 @@ namespace RhubarbEngine.World
                 {
                     if (typeof(IChangeable).IsAssignableFrom(field.FieldType))
                     {
-                        ((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
-                    }
+                         ((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
+
+                   }
                 }     
             if (newRefID)
             {
