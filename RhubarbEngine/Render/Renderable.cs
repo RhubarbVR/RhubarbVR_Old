@@ -7,10 +7,12 @@ using Veldrid;
 using System.Numerics;
 using RhubarbEngine.Utilities;
 using Veldrid.Utilities;
+using RhubarbEngine.World.ECS;
+using RhubarbEngine.World;
 
 namespace RhubarbEngine.Render
 {
-    public abstract class Renderable : IDisposable
+    public abstract class Renderable : Component, IDisposable
     {
         public abstract void UpdatePerFrameResources(GraphicsDevice gd, CommandList cl);
         public abstract void Render(GraphicsDevice gd, CommandList cl, RenderPasses renderPass);
@@ -18,6 +20,14 @@ namespace RhubarbEngine.Render
         public abstract void DestroyDeviceObjects();
         public abstract RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition);
         public virtual RenderPasses RenderPasses => RenderPasses.Standard;
+
+        public Renderable(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        {
+
+        }
+        public Renderable()
+        {
+        }
 
         public void Dispose()
         {

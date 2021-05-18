@@ -100,7 +100,7 @@ namespace g3
     // TODO:
     //  - DVector w/ 'stride' option, so that we can guarantee that tuples are in single block.
     //    The can have custom accessor that looks up entire tuple
-    public partial class DMesh3 : IDeformableMesh
+    public partial class DMesh3 : IDeformableMesh, IAsset
     {
         public const int InvalidID = -1;
         public const int NonManifoldID = -2;

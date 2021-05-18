@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using g3;
 using RhubarbEngine.Render;
+using RhubarbEngine.Components;
+using RhubarbEngine.Components.Rendering;
+using RhubarbEngine.Components.Assets.Procedural_Meshes;
 
 namespace RhubarbEngine.World.ECS
 {
@@ -61,7 +64,11 @@ namespace RhubarbEngine.World.ECS
         }
         public override void onLoaded()
         {
-
+            if(_components.Count() <= 0)
+            {
+                MeshRender val = attachComponent<MeshRender>();
+                val.source.target = attachComponent<BoxMesh>();
+            }
         }
 
         public void addToRenderQueue(RenderQueue gu, Vector3f playpos)
@@ -72,9 +79,13 @@ namespace RhubarbEngine.World.ECS
             }
             foreach (object comp in _components)
             {
-                if ((Renderable)comp != null)
+                try
                 {
                     gu.Add(((Renderable)comp), playpos.ToSystemNumrics());
+                }
+                catch
+                {
+
                 }
             }
             foreach(Entity child in _children)
