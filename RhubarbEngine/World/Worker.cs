@@ -9,8 +9,9 @@ using BaseR;
 
 namespace RhubarbEngine.World
 {
-    public class Worker : IWorldObject
+    public class Worker : IChangeable, IWorldObject
     {
+        public event Action<IChangeable> Changed;
         public World world { get; protected set; }
 
         private IWorldObject parent;
@@ -51,6 +52,14 @@ namespace RhubarbEngine.World
             parent = _parent;
             inturnalSyncObjs(newRefID);
             buildSyncObjs(newRefID);
+            FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                foreach (var field in fields)
+                {
+                    if (typeof(IChangeable).IsAssignableFrom(field.FieldType))
+                    {
+                        ((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
+                    }
+                }     
             if (newRefID)
             {
                 referenceID = _world.buildRefID();
@@ -79,9 +88,31 @@ namespace RhubarbEngine.World
 
         }
 
+        public virtual void onUpdate()
+        {
+
+        }
+
+        public void onChangeInternal(IChangeable newValue)
+        {
+            if(Changed != null)
+            {
+                Changed(this);
+            }
+            onChanged();
+        }
+        public virtual void onChanged()
+        {
+
+        }
+        public virtual void Removed()
+        {
+
+        }
         public virtual void Dispose()
         {
             world.removeWorldObj(this);
+            Removed();
         }
         public virtual void CommonUpdate()
         {

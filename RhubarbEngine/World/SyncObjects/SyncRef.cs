@@ -8,25 +8,35 @@ using BaseR;
 
 namespace RhubarbEngine.World
 {
-    public class SyncRef<T> : Worker, IWorldObject where T : IWorldObject
+    public class SyncRef<T> : Worker, IChangeable, IWorldObject where T : class,IWorldObject
     {
+        public event Action<IChangeable> Changed;
 
         private RefID targetRefID;
+
+        private T _target;
 
         public T target
         {
             get
             {
-                return (T)world.getWorldObj(targetRefID);
+                if (this._target == null || this._target.IsRemoved)
+                {
+                    return null;
+                }
+                return this._target;
             }
             set
             {
+                _target = value;
                 if (value == null)
                 {
                     targetRefID = default(RefID);
                     return;
                 }
                 targetRefID = value.ReferenceID;
+
+                onChangeInternal(this);
             }
         }
 
@@ -38,7 +48,8 @@ namespace RhubarbEngine.World
             }
             set
             {
-                targetRefID = value;
+                target = (T)world.getWorldObj(value);
+                onChangeInternal(this);
             }
         }
         public SyncRef(World _world, IWorldObject _parent) : base(_world, _parent)

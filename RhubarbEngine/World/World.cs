@@ -148,6 +148,13 @@ namespace RhubarbEngine.World
             {
                 obj.Update(startTime, Frame);
             }
+            foreach (IWorldObject val in worldObjects.Values)
+            {
+                if (((Worker)val) != null)
+                {
+                    ((Worker)val).onUpdate();
+                }
+            }
         }
         public World(WorldManager _worldManager)
         {
