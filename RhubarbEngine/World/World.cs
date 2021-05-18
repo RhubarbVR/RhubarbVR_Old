@@ -106,7 +106,14 @@ namespace RhubarbEngine.World
 
         public void addWorldObj(IWorldObject obj)
         {
-            worldObjects.Add(obj.ReferenceID, obj);
+            try
+            {
+                worldObjects.Add(obj.ReferenceID, obj);
+            }
+            catch
+            {
+                worldManager.engine.logger.Log("RefId already existed: "+ obj.ReferenceID.ToString());
+            }
         }
 
         public void addWorldEntity(Entity obj)

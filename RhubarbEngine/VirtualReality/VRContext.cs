@@ -17,6 +17,8 @@ namespace RhubarbEngine.VirtualReality
 
         public abstract string DeviceName { get; }
 
+        public bool Disposed;
+
         public abstract Framebuffer LeftEyeFramebuffer { get; }
         public abstract Framebuffer RightEyeFramebuffer { get; }
 

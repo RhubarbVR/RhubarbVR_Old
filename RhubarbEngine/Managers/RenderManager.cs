@@ -113,8 +113,12 @@ namespace RhubarbEngine.Managers
         {
             if(type != engine.outputType)
             {
+                engine.logger.Log("Output Device Change:" + type.ToString());
                 engine.outputType = type;
-                vrContext.Dispose();
+                if (!vrContext.Disposed)
+                {
+                    vrContext.Dispose();
+                }
                 vrContext = buildVRContext();
                 vrContext.Initialize(gd);
             }
@@ -123,6 +127,10 @@ namespace RhubarbEngine.Managers
 
         public void Update()
         {
+            if (vrContext.Disposed)
+            {
+               switchVRContext(OutputType.Screen);
+            }
             double newFrameTime = sw.Elapsed.TotalSeconds;
             double deltaSeconds = newFrameTime - lastFrameTime;
             lastFrameTime = newFrameTime;

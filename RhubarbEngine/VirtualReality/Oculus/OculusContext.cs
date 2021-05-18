@@ -150,6 +150,10 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
         public override void SubmitFrame()
         {
+            if (Disposed)
+            {
+                return;
+            }
             if (_gd.GetOpenGLInfo(out BackendInfoOpenGL glInfo))
             {
                 glInfo.FlushAndFinish();
@@ -241,6 +245,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
         public override void Dispose()
         {
+            Disposed = true;
             foreach (OculusSwapchain sc in _eyeSwapchains)
             {
                 sc.Dispose();

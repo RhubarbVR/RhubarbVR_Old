@@ -26,9 +26,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
         private Matrix4x4 _headToEyeLeft;
         private Matrix4x4 _headToEyeRight;
         private TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[1];
-
         public override string DeviceName => _deviceName;
-
         public override Framebuffer LeftEyeFramebuffer => _leftEyeFB;
 
         public override Framebuffer RightEyeFramebuffer => _rightEyeFB;
@@ -39,7 +37,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
         {
             _options = options;
             EVRInitError initError = EVRInitError.None;
-            _vrSystem = OVR.Init(ref initError, EVRApplicationType.VRApplication_Scene);
+            _vrSystem = OVR.Init(ref initError, EVRApplicationType.VRApplication_Scene, OVR.k_pch_SteamVR_NeverKillProcesses_Bool+"true");
             if (initError != EVRInitError.None)
             {
                 throw new VeldridException($"Failed to initialize OpenVR: {OVR.GetStringForHmdError(initError)}");
@@ -118,6 +116,10 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
         public override HmdPoseState WaitForPoses()
         {
+            if (Disposed)
+            {
+                return default(HmdPoseState);
+            }
             EVRCompositorError compositorError = _compositor.WaitGetPoses(_devicePoses, Array.Empty<TrackedDevicePose_t>());
 
             TrackedDevicePose_t hmdPose = _devicePoses[OVR.k_unTrackedDeviceIndex_Hmd];
@@ -139,24 +141,51 @@ namespace RhubarbEngine.VirtualReality.OpenVR
                 leftRotation, rightRotation);
         }
 
+        public bool PollNextEvent(ref VREvent_t pEvent)
+        {
+            var size = (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VREvent_t));
+            return _vrSystem.PollNextEvent( ref pEvent, size);
+        }
+
         public override void SubmitFrame()
         {
+            if (Disposed)
+            {
+                return;
+            }
+            VREvent_t _vrevent = new VREvent_t();
+            if (PollNextEvent(ref _vrevent))
+            {
+                if(_vrevent.eventType == 700)
+                {
+                    _vrSystem.AcknowledgeQuit_Exiting();
+                    Dispose();
+                    return;
+                }
+            }
             if (_gd.GetOpenGLInfo(out BackendInfoOpenGL glInfo))
             {
                 glInfo.FlushAndFinish();
             }
-
             SubmitTexture(_compositor, LeftEyeFramebuffer.ColorTargets[0].Target, EVREye.Eye_Left);
             SubmitTexture(_compositor, RightEyeFramebuffer.ColorTargets[0].Target, EVREye.Eye_Right);
         }
 
         public override void RenderMirrorTexture(CommandList cl, Framebuffer fb, MirrorTextureEyeSource source)
         {
+            if (Disposed)
+            {
+                return;
+            }
             _mirrorTexture.Render(cl, fb, source);
         }
 
         private void SubmitTexture(CVRCompositor compositor, Texture colorTex, EVREye eye)
         {
+            if (Disposed)
+            {
+                return;
+            }
             Texture_t texT;
 
             if (_gd.GetD3D11Info(out BackendInfoD3D11 d3dInfo))
@@ -228,6 +257,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
         public override void Dispose()
         {
+            Disposed = true;
             _mirrorTexture.Dispose();
 
             _leftEyeFB.ColorTargets[0].Target.Dispose();
