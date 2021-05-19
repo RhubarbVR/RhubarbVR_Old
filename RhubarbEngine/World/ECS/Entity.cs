@@ -32,6 +32,8 @@ namespace RhubarbEngine.World.ECS
 
         private SyncAbstractObjList<Component> _components;
 
+        public Sync<int> remderlayer;
+
         public override void inturnalSyncObjs(bool newRefIds)
         {
             world.addWorldEntity(this);
@@ -70,7 +72,7 @@ namespace RhubarbEngine.World.ECS
             rotation.value = new Quaternionf(newrotation.X, newrotation.Y, newrotation.Z, newrotation.W);
             scale.value = new Vector3f(newscale.X, newscale.Y, newscale.Z);
             cashedGlobalTrans = newtrans;
-        }
+        } 
         public override void buildSyncObjs(bool newRefIds)
         {
             position = new Sync<Vector3f>(this, newRefIds);
@@ -83,7 +85,8 @@ namespace RhubarbEngine.World.ECS
             _components = new SyncAbstractObjList<Component>(this, newRefIds);
             enabled.value = true;
             parent = new SyncRef<Entity>(this, newRefIds);
-
+            remderlayer = new Sync<int>(this, newRefIds);
+            remderlayer.value = (int)RemderLayers.normal;
             position.Changed += onTransChange;
             rotation.Changed += onTransChange;
             scale.Changed += onTransChange;
@@ -123,7 +126,7 @@ namespace RhubarbEngine.World.ECS
         }
         public override void onLoaded()
         {
-            if(_components.Count() <= 0)
+            if (_components.Count() <= 0 && !world.userspace && parent.target == null)
             {
                 MeshRender val = attachComponent<MeshRender>();
                 val.source.target = attachComponent<BoxMesh>();
@@ -131,9 +134,9 @@ namespace RhubarbEngine.World.ECS
             }
         }
 
-        public void addToRenderQueue(RenderQueue gu, Vector3 playpos)
+        public void addToRenderQueue(RenderQueue gu, Vector3 playpos, RemderLayers layer)
         {
-            if (!enabled.value)
+            if (!enabled.value|| ((int)layer & remderlayer.value) <= 0)
             {
                 return;
             }
@@ -144,13 +147,11 @@ namespace RhubarbEngine.World.ECS
                     gu.Add(((Renderable)comp), playpos);
                 }
                 catch
-                {
-
-                }
+                {}
             }
             foreach(Entity child in _children)
             {
-                child.addToRenderQueue(gu, playpos);
+                child.addToRenderQueue(gu, playpos, layer);
             }
         }
 

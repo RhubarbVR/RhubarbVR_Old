@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using RhubarbEngine.World.DataStructure;
-using BaseR;
+using RhubarbDataTypes;
 using System.Numerics;
 using RhubarbEngine.World.ECS;
 using RhubarbEngine.World;
@@ -44,7 +44,7 @@ namespace RhubarbEngine.Components.Users
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
-            float deltaSeconds = 0.01f;
+            float deltaSeconds = (float)world.worldManager.engine.platformInfo.deltaSeconds;
             float sprintFactor = world.worldManager.engine.inputManager.mainWindows.GetKey(Key.ControlLeft)
                ? 0.1f
                : world.worldManager.engine.inputManager.mainWindows.GetKey(Key.ShiftLeft)

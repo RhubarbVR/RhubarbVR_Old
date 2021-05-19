@@ -7,7 +7,7 @@ using LiteNetLib.Utils;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.IO;
-using BaseR;
+using RhubarbDataTypes;
 
 namespace RhubarbEngine.World.DataStructure
 {
@@ -32,7 +32,6 @@ namespace RhubarbEngine.World.DataStructure
                 {
                     using (BinaryWriter writer = new BinaryWriter(ms))
                     {
-                        writer.Write(typeof(T).FullName);
                         RhubarbIO.Serialize<T>(writer, Value);
                     }
                     return ms.ToArray();
@@ -53,11 +52,6 @@ namespace RhubarbEngine.World.DataStructure
                 memStream.Seek(0, SeekOrigin.Begin);
                 using (BinaryReader reader = new BinaryReader(memStream))
                 {
-                    string typestr = reader.ReadString();
-                    if(typestr != typeof(T).FullName)
-                    {
-                        throw new Exception("Type not the same as old type");
-                    }
                     Value = (T)RhubarbIO.DeSerialize<T>(reader);
                 }
             }

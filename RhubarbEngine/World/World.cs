@@ -7,7 +7,7 @@ using RhubarbEngine.Managers;
 using RhubarbEngine.World.ECS;
 using RhubarbEngine.World.DataStructure;
 using System.Reflection;
-using BaseR;
+using RhubarbDataTypes;
 using g3;
 using RhubarbEngine.Render;
 using System.Numerics;
@@ -21,9 +21,24 @@ namespace RhubarbEngine.World
 
         public UserRoot userRoot;
 
-        public void addToRenderQueue(RenderQueue gu)
+        public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
         {
-            RootEntity.addToRenderQueue(gu, playerTrans.Translation);
+            switch (focus)
+            {
+                case FocusLevel.Background:
+                    return;
+                    break;
+                case FocusLevel.Focused:
+                    if ((layer & RemderLayers.normal) <= 0) return;
+                    break;
+                case FocusLevel.Overlay:
+                    if ((layer & RemderLayers.overlay) <= 0) return;
+                    break;
+                case FocusLevel.PrivateOverlay:
+                    if ((layer & RemderLayers.privateOverlay) <= 0) return;
+                    break;
+            }
+            RootEntity.addToRenderQueue(gu, playerTrans.Translation, layer);
         }
 
         public enum FocusLevel

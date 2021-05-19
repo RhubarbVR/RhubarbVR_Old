@@ -26,7 +26,7 @@ namespace RhubarbEngine.World.DataStructure
                         for (int i = 0; i < NodeGroup.Count; i++)
                         {
                             byte[] value = NodeGroup[i].getByteArray();
-                            writer.Write(((object)NodeGroup[i]).GetType().FullName);
+                            writer.Write(Array.IndexOf(DatatNodeTools.dataNode, ((object)NodeGroup[i]).GetType()));
                             writer.Write(value.Count());
                             writer.Write(value);
                         }
@@ -76,7 +76,7 @@ namespace RhubarbEngine.World.DataStructure
                     int Count = reader.ReadInt32();
                     for (int i = 0; i < Count; i++)
                     {
-                        Type ty = Type.GetType(reader.ReadString());
+                        Type ty = DatatNodeTools.dataNode[reader.ReadInt32()];
                         int ValueCount = reader.ReadInt32();
                         byte[] value = reader.ReadBytes(ValueCount);
                         if (typeof(IDataNode).IsAssignableFrom(ty))

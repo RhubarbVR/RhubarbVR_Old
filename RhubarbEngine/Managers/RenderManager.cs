@@ -107,7 +107,7 @@ namespace RhubarbEngine.Managers
         private void BuildMainRenderQueue()
         {
             mainQueue.Clear();
-            engine.worldManager.addToRenderQueue(mainQueue);
+            engine.worldManager.addToRenderQueue(mainQueue, RemderLayers.normal_overlay_privateOverlay);
         }
 
         private void RenderEye(CommandList cl, Framebuffer fb,  Matrix4x4 proj, Matrix4x4 view)

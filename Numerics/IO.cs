@@ -6,12 +6,67 @@ using System.Threading.Tasks;
 using g3;
 using System.IO;
 
-namespace BaseR
+namespace RhubarbDataTypes
 {
-    public static class RhubarbIO
+
+public static class RhubarbIO
     {
 
-            public static void Serialize<T>(BinaryWriter writer, object obj)
+        public static Type[] Generics = new Type[]
+        {
+                //Generic System 
+                typeof(int),
+                typeof(uint),
+                typeof(bool),
+                typeof(char),
+                typeof(string),
+                typeof(float),
+                typeof(double),
+                typeof(long),
+                typeof(ulong),
+                typeof(byte),
+                typeof(sbyte),
+                //Generic System Types
+
+                //List Types
+                typeof(List<int>),
+                typeof(List<float>),
+                typeof(List<double>),
+                //list Types
+
+                //Numerics Types
+                typeof(Vector2f),
+                typeof(Vector2d),
+                typeof(Vector3f),
+                typeof(Vector3d),
+                typeof(Quaternionf),
+                typeof(Frame3f),
+                typeof(AxisAlignedBox2d),
+                typeof(DCurve3),
+                typeof(PolyLine2d),
+                typeof(Polygon2d),
+                typeof(GeneralPolygon2d),
+                typeof(Segment2d),
+                typeof(Arc2d),
+                typeof(Circle2d),
+                typeof(ParametricCurveSequence2),
+                typeof(IParametricCurve2d),
+                typeof(PlanarSolid2d),
+                typeof(DMesh3),
+                //Numerics Types
+
+                //DVector Types
+                typeof(DVector<double>),
+                typeof(DVector<float>),
+                typeof(DVector<int>),
+                typeof(DVector<short>),
+                //DVector Types
+
+                typeof(NetPointer),
+        };
+
+
+        public static void Serialize<T>(BinaryWriter writer, object obj)
         {
             Type ty = typeof(T);
             switch (ty)
@@ -119,9 +174,6 @@ namespace BaseR
                 case Type _ when ty == typeof(DMesh3):
                     gSerialization.Store((DMesh3)obj, writer);
                     return;
-                case Type _ when ty == typeof(DMesh3):
-                    gSerialization.Store((DMesh3)obj, writer);
-                    return;
                 //Numerics Types
 
                 //DVector Types
@@ -139,11 +191,11 @@ namespace BaseR
                     return;
                 //DVector Types
 
-                //BaseRTypes
+
                 case Type _ when ty == typeof(NetPointer):
                     writer.Write(((NetPointer)obj).getID());
                     return;
-                //BaseRTypes
+
 
                 default:
                     throw new Exception("Unknown type to Serialize " + ty.FullName);
@@ -291,10 +343,10 @@ namespace BaseR
                     return DVector_short_val;
                 //DVector Types
 
-                //BaseRTypes
+
                 case Type _ when ty == typeof(NetPointer):
                     return  new NetPointer(reader.ReadUInt64());
-                //BaseRTypes
+
 
                 default:
                     throw new Exception("Unknown type to DeSerialize " + ty.FullName);

@@ -23,13 +23,13 @@ namespace RhubarbEngine.Managers
 
         public World.World focusedWorld;
 
-        public void addToRenderQueue(RenderQueue gu)
+        public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
         {
             foreach(World.World world in worlds)
             {
-                if ((int)world.Focus > 1)
+                if (world.Focus != World.World.FocusLevel.Background)
                 {
-                    world.addToRenderQueue(gu);
+                    world.addToRenderQueue(gu, layer);
                 }
             }
         } 
