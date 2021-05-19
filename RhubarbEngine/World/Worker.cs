@@ -16,11 +16,11 @@ namespace RhubarbEngine.World
 
         private IWorldObject parent;
 
-        public RefID referenceID { get; protected set; }
+        public NetPointer referenceID { get; protected set; }
 
         public bool Persistent = true;
 
-        RefID IWorldObject.ReferenceID => referenceID;
+        NetPointer IWorldObject.ReferenceID => referenceID;
 
         World IWorldObject.World => world;
 
@@ -131,13 +131,13 @@ namespace RhubarbEngine.World
                         obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize());
                     }
                 }
-                DataNode<RefID> Refid = new DataNode<RefID>(referenceID);
+                DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
                 obj.setValue("referenceID", Refid);
             }
             return obj;
         }
 
-        public virtual void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>), Dictionary<RefID, RefIDResign> latterResign = default(Dictionary<RefID, RefIDResign>))
+        public virtual void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<NetPointer, NetPointer> newRefID = default(Dictionary<NetPointer, NetPointer>), Dictionary<NetPointer, RefIDResign> latterResign = default(Dictionary<NetPointer, RefIDResign>))
         {
             if(data == null)
             {
@@ -146,12 +146,12 @@ namespace RhubarbEngine.World
             }
             if (NewRefIDs)
             {
-                newRefID.Add(((DataNode<RefID>)data.getValue("referenceID")).Value, referenceID);
-                latterResign[((DataNode<RefID>)data.getValue("referenceID")).Value](referenceID);
+                newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value, referenceID);
+                latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value](referenceID);
             }
             else
             {
-                referenceID = ((DataNode<RefID>)data.getValue("referenceID")).Value;
+                referenceID = ((DataNode<NetPointer>)data.getValue("referenceID")).Value;
                 world.addWorldObj(this);
             }
 

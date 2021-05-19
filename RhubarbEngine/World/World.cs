@@ -10,20 +10,20 @@ using System.Reflection;
 using BaseR;
 using g3;
 using RhubarbEngine.Render;
+using System.Numerics;
+using RhubarbEngine.Components.Users;
 
 namespace RhubarbEngine.World
 {
     public class World : IWorldObject
     {
-        public Vector3f playerPosition;
+        public Matrix4x4 playerTrans => (userRoot != null)? userRoot.entity.globalTrans() : Matrix4x4.CreateScale(1f);
 
-        public Vector3f playerRotation;
-
-        public Vector3f playerScale;
+        public UserRoot userRoot;
 
         public void addToRenderQueue(RenderQueue gu)
         {
-            RootEntity.addToRenderQueue(gu, playerPosition);
+            RootEntity.addToRenderQueue(gu, playerTrans.Translation);
         }
 
         public enum FocusLevel
@@ -102,7 +102,7 @@ namespace RhubarbEngine.World
 
         private List<Entity> Entitys = new List<Entity>();
 
-        private Dictionary<RefID, IWorldObject> worldObjects = new Dictionary<RefID, IWorldObject>();
+        private Dictionary<NetPointer, IWorldObject> worldObjects = new Dictionary<NetPointer, IWorldObject>();
 
         public void addWorldObj(IWorldObject obj)
         {
@@ -126,7 +126,7 @@ namespace RhubarbEngine.World
             Entitys.Remove(obj);
         }
 
-        public IWorldObject getWorldObj(RefID refid)
+        public IWorldObject getWorldObj(NetPointer refid)
         {
             return worldObjects[refid];
         }
@@ -136,7 +136,7 @@ namespace RhubarbEngine.World
         {
             worldObjects.Remove(obj.ReferenceID);
         }
-        RefID IWorldObject.ReferenceID => RefID.BuildID(1, 0);
+        NetPointer IWorldObject.ReferenceID => NetPointer.BuildID(1, 0);
 
         World IWorldObject.World => this;
 
@@ -151,6 +151,11 @@ namespace RhubarbEngine.World
 
         public void Update(DateTime startTime, DateTime Frame)
         {
+            if(userRoot == null)
+            {
+                Entity rootent = RootEntity.addChild();
+                userRoot = rootent.attachComponent<UserRoot>();
+            }
             foreach (Entity obj in Entitys)
             {
                 obj.Update(startTime, Frame);
@@ -198,10 +203,10 @@ namespace RhubarbEngine.World
             userspace = _userspace;
         }
 
-        public RefID buildRefID()
+        public NetPointer buildRefID()
         {
             position = position + posoffset;
-            return RefID.BuildID(position, user);
+            return NetPointer.BuildID(position, user);
         }
 
         public DataNodeGroup serialize()
@@ -212,20 +217,26 @@ namespace RhubarbEngine.World
             {
                 if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))
                 {
-                    obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize());
+                    if (((IWorldObject)field.GetValue(this)) != null)
+                    {
+                        obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize());
+                    }
                 }
             }
             return obj;
         }
 
-        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>), Dictionary<RefID, RefIDResign> latterResign = default(Dictionary<RefID, RefIDResign>))
+        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<NetPointer, NetPointer> newRefID = default(Dictionary<NetPointer, NetPointer>), Dictionary<NetPointer, RefIDResign> latterResign = default(Dictionary<NetPointer, RefIDResign>))
         {
             FieldInfo[] fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
             {
                 if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))
                 {
-                    ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), NewRefIDs, newRefID, latterResign);
+                    if (((IWorldObject)field.GetValue(this)) != null)
+                    {
+                        ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), NewRefIDs, newRefID, latterResign);
+                    }
                 }
             }
         }

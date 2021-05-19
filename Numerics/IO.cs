@@ -10,7 +10,8 @@ namespace BaseR
 {
     public static class RhubarbIO
     {
-        public static void Serialize<T>(BinaryWriter writer, object obj)
+
+            public static void Serialize<T>(BinaryWriter writer, object obj)
         {
             Type ty = typeof(T);
             switch (ty)
@@ -139,8 +140,8 @@ namespace BaseR
                 //DVector Types
 
                 //BaseRTypes
-                case Type _ when ty == typeof(RefID):
-                    writer.Write(((RefID)obj).getID());
+                case Type _ when ty == typeof(NetPointer):
+                    writer.Write(((NetPointer)obj).getID());
                     return;
                 //BaseRTypes
 
@@ -291,8 +292,8 @@ namespace BaseR
                 //DVector Types
 
                 //BaseRTypes
-                case Type _ when ty == typeof(RefID):
-                    return  new RefID(reader.ReadUInt64());
+                case Type _ when ty == typeof(NetPointer):
+                    return  new NetPointer(reader.ReadUInt64());
                 //BaseRTypes
 
                 default:

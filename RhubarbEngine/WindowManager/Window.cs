@@ -14,6 +14,12 @@ namespace RhubarbEngine.WindowManager
     {
         public Sdl2Window window;
 
+        public int width => window.Width;
+
+        public int height => window.Height;
+
+        public float aspectRatio => (float)window.Width / (float)window.Height;
+
         public Window(string windowName = "RhubarbVR", int Xpos = 100, int Ypos = 100, int windowWidth = 960, int windowHeight = 540)
         {
             WindowCreateInfo windowCI = new WindowCreateInfo()
@@ -28,9 +34,10 @@ namespace RhubarbEngine.WindowManager
 
         }
 
-        public void Update()
+        public InputSnapshot Update()
         {
-            window.PumpEvents();
+            InputSnapshot temp = window.PumpEvents();
+            return temp;
         }
         public bool windowOpen => window.Exists;
         public (GraphicsDevice gd, Swapchain sc) CreateScAndGD(VRContext vrc, GraphicsBackend backend)

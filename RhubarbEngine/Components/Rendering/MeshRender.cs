@@ -20,6 +20,7 @@ using Veldrid.SPIRV;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp;
 using System.Runtime.CompilerServices;
+using System.IO;
 
 namespace RhubarbEngine.Components.Rendering
 {
@@ -140,7 +141,7 @@ void main()
             _wvpBuffer = factory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _disposables.Add(_wvpBuffer);
 
-            _texture = new ImageSharpTexture("C:\\Rhubarb\\veldrid-master\\src\\Veldrid.VirtualReality.Sample\\cat\\cat_diff.png", true, true).CreateDeviceTexture(gd, factory);
+            _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_dn.png"), true, true).CreateDeviceTexture(gd, factory);
             _view = factory.CreateTextureView(_texture);
             _disposables.Add(_texture);
             _disposables.Add(_view);

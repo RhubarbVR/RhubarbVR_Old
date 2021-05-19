@@ -11,7 +11,7 @@ namespace RhubarbEngine.World
     public interface Driveable : IWorldObject
     {
         bool isDriven { get; }
-        RefID drivenFrom { get; }
+        NetPointer drivenFrom { get; }
 
         void killDrive();
     }

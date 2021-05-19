@@ -44,7 +44,7 @@ namespace RhubarbEngine.World.DataStructure
             catch (Exception e)
             {
                 Console.WriteLine("Failed to serialize. Reason: " + e.Message);
-                throw;
+                return new byte[]{ };
             }
         }
 

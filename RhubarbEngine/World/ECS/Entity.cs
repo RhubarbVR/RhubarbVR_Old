@@ -57,7 +57,20 @@ namespace RhubarbEngine.World.ECS
         {
             return cashedGlobalTrans;
         }
-
+        public void setGlobalTrans(Matrix4x4 newtrans)
+        {
+            Matrix4x4 parentMatrix = Matrix4x4.CreateScale(Vector3.One);
+            if (parent.target != null)
+            {
+                parentMatrix = parent.target.globalTrans();
+            }
+            Matrix4x4 newlocal = Matrix4x4.Subtract(newtrans, parentMatrix);
+            Matrix4x4.Decompose(newlocal, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
+            position.value = new Vector3f(newtranslation.X, newtranslation.Y, newtranslation.Z);
+            rotation.value = new Quaternionf(newrotation.X, newrotation.Y, newrotation.Z, newrotation.W);
+            scale.value = new Vector3f(newscale.X, newscale.Y, newscale.Z);
+            cashedGlobalTrans = newtrans;
+        }
         public override void buildSyncObjs(bool newRefIds)
         {
             position = new Sync<Vector3f>(this, newRefIds);
@@ -118,7 +131,7 @@ namespace RhubarbEngine.World.ECS
             }
         }
 
-        public void addToRenderQueue(RenderQueue gu, Vector3f playpos)
+        public void addToRenderQueue(RenderQueue gu, Vector3 playpos)
         {
             if (!enabled.value)
             {
@@ -128,7 +141,7 @@ namespace RhubarbEngine.World.ECS
             {
                 try
                 {
-                    gu.Add(((Renderable)comp), playpos.ToSystemNumrics());
+                    gu.Add(((Renderable)comp), playpos);
                 }
                 catch
                 {

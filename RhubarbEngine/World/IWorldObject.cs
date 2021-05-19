@@ -10,7 +10,7 @@ namespace RhubarbEngine.World
 {
     public interface IWorldObject: IDisposable
     {
-        RefID ReferenceID { get; }
+        NetPointer ReferenceID { get; }
 
         World World { get; }
 
@@ -23,7 +23,7 @@ namespace RhubarbEngine.World
         bool IsRemoved { get; }
         DataNodeGroup serialize();
 
-        void deSerialize(DataNodeGroup data,bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>), Dictionary<RefID, RefIDResign> latterResign = default(Dictionary<RefID, RefIDResign>));
+        void deSerialize(DataNodeGroup data,bool NewRefIDs = false, Dictionary<NetPointer, NetPointer> newRefID = default(Dictionary<NetPointer, NetPointer>), Dictionary<NetPointer, RefIDResign> latterResign = default(Dictionary<NetPointer, RefIDResign>));
 
     }
 }

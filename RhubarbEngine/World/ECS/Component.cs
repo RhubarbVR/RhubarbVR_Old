@@ -10,13 +10,12 @@ namespace RhubarbEngine.World.ECS
     {
         public Sync<int> updateOrder;
 
-        private SyncRef<Entity> _entity;
+        private Entity _entity;
 
-        public Entity entity{ get { return _entity.target; } }
+        public Entity entity{ get { return _entity; } }
         public override void inturnalSyncObjs(bool newRefIds)
         {
             updateOrder = new Sync<int>(this, newRefIds);
-            _entity = new SyncRef<Entity>(this, newRefIds);
         }
 
         public virtual void CommonUpdate(DateTime startTime, DateTime Frame)
@@ -30,7 +29,7 @@ namespace RhubarbEngine.World.ECS
         public override void initialize(World _world, IWorldObject _parent, bool newRefID = true)
         {
             base.initialize(_world, _parent, newRefID);
-            _entity.target = (Entity)(_parent.Parent);
+            _entity = (Entity)(_parent.Parent);
         }
 
         public Component()

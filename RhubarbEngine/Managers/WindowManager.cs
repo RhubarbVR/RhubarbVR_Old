@@ -39,7 +39,7 @@ namespace RhubarbEngine.Managers
         {
             foreach (var window in windows)
             {
-                window.Update();
+                engine.inputManager.mainWindows.UpdateFrameInput(window.Update(),window.window);
             }
         }
 

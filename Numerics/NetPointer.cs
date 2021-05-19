@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace BaseR
 {
-    [Serializable()]
-    public struct RefID
+    public struct NetPointer
     {
         private readonly ulong id;
 
-        public RefID(ulong _id)
+        public NetPointer(ulong _id)
         {
             id = _id;
         }
@@ -21,9 +20,9 @@ namespace BaseR
             return id;
         }
 
-        public static RefID BuildID(ulong position, byte user)
+        public static NetPointer BuildID(ulong position, byte user)
         {
-            return new RefID(((position << 16)&0xFFFF0000) | ((((ulong)user) & 0xFF) << 8)|(position&0xFF));
+            return new NetPointer(((position << 16)&0xFFFF0000) | ((((ulong)user) & 0xFF) << 8)|(position&0xFF));
         }
 
     }

@@ -19,9 +19,17 @@ namespace RhubarbEngine.Managers
 {
     public class RenderManager : IManager
     {
+        public float fieldOfView = 1f;
+        public float aspectRatio => engine.windowManager.mainWindow.aspectRatio;
+
+        public float nearPlaneDistance = 1f;
+
+        public float farPlaneDistance = 1000f;
+
+
         private Engine engine;
 
-        private Vector3 _userPosition => engine.worldManager.focusedWorld.playerPosition.ToSystemNumrics();
+        private Matrix4x4 _userTrans => engine.worldManager.focusedWorld.playerTrans;
 
         private RenderQueue mainQueue;
 
@@ -29,11 +37,7 @@ namespace RhubarbEngine.Managers
 
         public GraphicsDevice gd;
 
-        private Swapchain sc;
-
-        private Stopwatch sw;
-
-        private double lastFrameTime;
+        public Swapchain sc;
 
         private CommandList eyesCL;
 
@@ -62,8 +66,6 @@ namespace RhubarbEngine.Managers
             vrContext = buildVRContext();
             (gd, sc) = engine.windowManager.mainWindow.CreateScAndGD(vrContext, engine.backend);
             vrContext.Initialize(gd);
-            sw = Stopwatch.StartNew();
-            lastFrameTime = sw.Elapsed.TotalSeconds;
             windowCL = gd.ResourceFactory.CreateCommandList();
             eyesCL = gd.ResourceFactory.CreateCommandList();
             mainQueue = new RenderQueue();
@@ -88,7 +90,7 @@ namespace RhubarbEngine.Managers
             switch (engine.outputType)
             {
                 case OutputType.Screen:
-                    return VRContext.CreateScreen(options);
+                    return VRContext.CreateScreen(options,engine);
                     break;
                 case OutputType.SteamVR:
                     return VRContext.CreateOpenVR(options);
@@ -97,7 +99,7 @@ namespace RhubarbEngine.Managers
                     return VRContext.CreateOculus(options);
                     break;
                 default:
-                    return VRContext.CreateScreen(options);
+                    return VRContext.CreateScreen(options, engine);
                     break;
             }
         }
@@ -146,9 +148,6 @@ namespace RhubarbEngine.Managers
             {
                switchVRContext(OutputType.Screen);
             }
-            double newFrameTime = sw.Elapsed.TotalSeconds;
-            double deltaSeconds = newFrameTime - lastFrameTime;
-            lastFrameTime = newFrameTime;
 
             windowCL.Begin();
             windowCL.SetFramebuffer(sc.Framebuffer);
@@ -160,17 +159,16 @@ namespace RhubarbEngine.Managers
 
             HmdPoseState poses = vrContext.WaitForPoses();
             BuildMainRenderQueue();
-
             // Render Eyes
             eyesCL.Begin();
                 eyesCL.PushDebugGroup("Left Eye");
-                Matrix4x4 leftView = poses.CreateView(VREye.Left, _userPosition, -Vector3.UnitZ, Vector3.UnitY);
+                Matrix4x4 leftView = (engine.outputType != OutputType.Screen)? _userTrans * poses.CreateView(VREye.Left, Vector3.Zero, -Vector3.UnitZ, Vector3.UnitY): _userTrans;
                 RenderEye(eyesCL, vrContext.LeftEyeFramebuffer, poses.LeftEyeProjection, leftView);
                 eyesCL.PopDebugGroup();
             if (engine.outputType != OutputType.Screen)
             {
                 eyesCL.PushDebugGroup("Right Eye");
-                Matrix4x4 rightView = poses.CreateView(VREye.Right, _userPosition, -Vector3.UnitZ, Vector3.UnitY);
+                Matrix4x4 rightView = _userTrans *  poses.CreateView(VREye.Right, Vector3.Zero, -Vector3.UnitZ, Vector3.UnitY);
                 RenderEye(eyesCL, vrContext.RightEyeFramebuffer, poses.RightEyeProjection, rightView);
                 eyesCL.PopDebugGroup();
             }

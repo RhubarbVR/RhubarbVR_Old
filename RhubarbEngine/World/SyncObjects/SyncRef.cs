@@ -12,7 +12,7 @@ namespace RhubarbEngine.World
     {
         public event Action<IChangeable> Changed;
 
-        private RefID targetRefID;
+        private NetPointer targetRefID;
 
         private T _target;
 
@@ -31,7 +31,7 @@ namespace RhubarbEngine.World
                 _target = value;
                 if (value == null)
                 {
-                    targetRefID = default(RefID);
+                    targetRefID = default(NetPointer);
                     return;
                 }
                 targetRefID = value.ReferenceID;
@@ -40,7 +40,7 @@ namespace RhubarbEngine.World
             }
         }
 
-        public RefID value
+        public NetPointer value
         {
             get
             {
@@ -68,29 +68,29 @@ namespace RhubarbEngine.World
         public DataNodeGroup serialize()
         {
             DataNodeGroup obj = new DataNodeGroup();
-            DataNode<RefID> Refid = new DataNode<RefID>(referenceID);
+            DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
             obj.setValue("referenceID", Refid);
-            DataNode<RefID> Value = new DataNode<RefID>(targetRefID);
+            DataNode<NetPointer> Value = new DataNode<NetPointer>(targetRefID);
             obj.setValue("targetRefID", Value);
             return obj;
         }
 
-        public void RefIDResign(RefID NewID) {
+        public void RefIDResign(NetPointer NewID) {
             targetRefID = NewID;
         }
 
-        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>), Dictionary<RefID, RefIDResign> latterResign = default(Dictionary<RefID, RefIDResign>))
+        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<NetPointer, NetPointer> newRefID = default(Dictionary<NetPointer, NetPointer>), Dictionary<NetPointer, RefIDResign> latterResign = default(Dictionary<NetPointer, RefIDResign>))
         {
             if (data == null)
             {
                 world.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
                 return;
             }
-            targetRefID = ((DataNode<RefID>)data.getValue("targetRefID")).Value;
+            targetRefID = ((DataNode<NetPointer>)data.getValue("targetRefID")).Value;
             if (NewRefIDs)
             {
-                newRefID.Add(((DataNode<RefID>)data.getValue("referenceID")).Value, referenceID);
-                latterResign[((DataNode<RefID>)data.getValue("referenceID")).Value](referenceID);
+                newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value, referenceID);
+                latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value](referenceID);
                 if (newRefID[targetRefID].getID()  != 0)
                 {
                     targetRefID = newRefID[targetRefID];
@@ -103,7 +103,7 @@ namespace RhubarbEngine.World
             }
             else
             {
-                referenceID = ((DataNode<RefID>)data.getValue("referenceID")).Value;
+                referenceID = ((DataNode<NetPointer>)data.getValue("referenceID")).Value;
                 world.addWorldObj(this);
             }
         }

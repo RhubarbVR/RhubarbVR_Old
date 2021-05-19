@@ -13,6 +13,7 @@ namespace RhubarbEngine.VirtualReality
     internal class ScreenContext : VRContext
     {
         private readonly VRContextOptions _options;
+        private readonly ScreenMirrorTexture _mirrorTexture;
         private GraphicsDevice _gd;
         private string _deviceName;
         private Framebuffer _leftEyeFB;
@@ -31,9 +32,14 @@ namespace RhubarbEngine.VirtualReality
 
         internal GraphicsDevice GraphicsDevice => _gd;
 
-        public ScreenContext(VRContextOptions options)
+        private Engine _eng;
+
+
+        public ScreenContext(VRContextOptions options, Engine eng)
         {
             _options = options;
+            _eng = eng;
+            _mirrorTexture = new ScreenMirrorTexture(this);
         }
 
         internal static bool IsSupported()
@@ -41,19 +47,17 @@ namespace RhubarbEngine.VirtualReality
             return true;
         }
 
+        public void changeProject(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
+        {
+            _projLeft = Matrix4x4.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance);
+        }
+
         public override void Initialize(GraphicsDevice gd)
         {
             _gd = gd;
-            _leftEyeFB = CreateFramebuffer(1920, 1080);
+            _leftEyeFB = CreateFramebuffer((uint)_eng.windowManager.mainWindow.width, (uint)_eng.windowManager.mainWindow.height);
 
-            //Matrix4x4 eyeToHeadLeft = ToSysMatrix(_vrSystem.GetEyeToHeadTransform(EVREye.Eye_Left));
-            //Matrix4x4.Invert(eyeToHeadLeft, out _headToEyeLeft);
-
-            //Matrix4x4 eyeToHeadRight = ToSysMatrix(_vrSystem.GetEyeToHeadTransform(EVREye.Eye_Right));
-            //Matrix4x4.Invert(eyeToHeadRight, out _headToEyeRight);
-
-            //_projLeft = ToSysMatrix(_vrSystem.GetProjectionMatrix(EVREye.Eye_Left, 0.1f, 1000f));
-            //_projRight = ToSysMatrix(_vrSystem.GetProjectionMatrix(EVREye.Eye_Right, 0.1f, 1000f));
+            changeProject(_eng.renderManager.fieldOfView, _eng.renderManager.aspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
         }
 
         private Framebuffer CreateFramebuffer(uint width, uint height)
@@ -109,7 +113,11 @@ namespace RhubarbEngine.VirtualReality
 
         public override void RenderMirrorTexture(CommandList cl, Framebuffer fb, MirrorTextureEyeSource source)
         {
-
+            if (Disposed)
+            {
+                return;
+            }
+            _mirrorTexture.Render(cl, fb, source);
         }
 
 
@@ -119,10 +127,6 @@ namespace RhubarbEngine.VirtualReality
             _leftEyeFB.ColorTargets[0].Target.Dispose();
             _leftEyeFB.DepthTarget?.Target.Dispose();
             _leftEyeFB.Dispose();
-
-            _rightEyeFB.ColorTargets[0].Target.Dispose();
-            _rightEyeFB.DepthTarget?.Target.Dispose();
-            _rightEyeFB.Dispose();
         }
 
     }

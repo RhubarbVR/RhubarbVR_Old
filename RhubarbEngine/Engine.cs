@@ -35,6 +35,8 @@ namespace RhubarbEngine
         public FileStream lockFile;
 
         public EngineInitializer engineInitializer;
+
+
         public void initialize(string[] _args, bool _verbose = false, bool _Rendering = true)
         {
             verbose = _verbose;
@@ -80,6 +82,15 @@ namespace RhubarbEngine
             }
         }
 
+        public double lastTimemark;
+        //For performance testing
+        public void timeMark(string mark)
+        {
+            double newtime = platformInfo.sw.Elapsed.TotalSeconds;
+            Console.WriteLine(mark + " : " + (newtime - lastTimemark).ToString());
+            lastTimemark = newtime;
+        }
+
         public void Loop(DateTime startTime, DateTime Frame)
         {
             inputManager.Update();
@@ -87,6 +98,7 @@ namespace RhubarbEngine
             windowManager.Update();
             worldManager.Update(startTime, Frame);
             netManager.Update();
+            platformInfo.Update();
         }
 
         public void cleanUP()

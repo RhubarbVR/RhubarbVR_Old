@@ -38,7 +38,7 @@ namespace RhubarbEngine.World
         public DataNodeGroup serialize()
         {
             DataNodeGroup obj = new DataNodeGroup();
-            DataNode<RefID> Refid = new DataNode<RefID>(referenceID);
+            DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
             obj.setValue("referenceID", Refid);
             DataNodeList list = new DataNodeList();
             foreach(SyncRef<T> val in _syncreflist)
@@ -48,7 +48,7 @@ namespace RhubarbEngine.World
             obj.setValue("list", list);
             return obj;
         }
-        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<RefID, RefID> newRefID = default(Dictionary<RefID, RefID>), Dictionary<RefID, RefIDResign> latterResign = default(Dictionary<RefID, RefIDResign>))
+        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<NetPointer, NetPointer> newRefID = default(Dictionary<NetPointer, NetPointer>), Dictionary<NetPointer, RefIDResign> latterResign = default(Dictionary<NetPointer, RefIDResign>))
         {
             if (data == null)
             {
@@ -57,12 +57,12 @@ namespace RhubarbEngine.World
             }
             if (NewRefIDs)
             {
-                newRefID.Add(((DataNode<RefID>)data.getValue("referenceID")).Value, referenceID);
-                latterResign[((DataNode<RefID>)data.getValue("referenceID")).Value](referenceID);
+                newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value, referenceID);
+                latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value](referenceID);
             }
             else
             {
-                referenceID = ((DataNode<RefID>)data.getValue("referenceID")).Value;
+                referenceID = ((DataNode<NetPointer>)data.getValue("referenceID")).Value;
                 world.addWorldObj(this);
             }
             foreach (DataNodeGroup val in ((DataNodeList)data.getValue("list")))

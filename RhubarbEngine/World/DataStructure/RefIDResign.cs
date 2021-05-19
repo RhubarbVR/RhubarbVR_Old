@@ -7,5 +7,5 @@ using BaseR;
 
 namespace RhubarbEngine.World.DataStructure
 {
-    public delegate void RefIDResign(RefID NewID);
+    public delegate void RefIDResign(NetPointer NewID);
 }
