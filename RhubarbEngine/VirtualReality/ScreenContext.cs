@@ -88,8 +88,8 @@ namespace RhubarbEngine.VirtualReality
 
         public override HmdPoseState WaitForPoses()
         {
-            Matrix4x4 viewLeft = default(Matrix4x4);
-            Matrix4x4 viewRight = default(Matrix4x4);
+            Matrix4x4 viewLeft = Matrix4x4.CreateScale(1f);
+            Matrix4x4 viewRight = Matrix4x4.CreateScale(1f);
 
             Matrix4x4.Invert(viewLeft, out Matrix4x4 invViewLeft);
             Matrix4x4.Decompose(invViewLeft, out _, out Quaternion leftRotation, out Vector3 leftPosition);

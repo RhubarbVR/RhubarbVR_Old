@@ -8,10 +8,8 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-    public class SyncRef<T> : Worker, IChangeable, IWorldObject where T : class,IWorldObject
+    public class SyncRef<T> : Worker, IWorldObject where T : class,IWorldObject
     {
-        public event Action<IChangeable> Changed;
-
         private NetPointer targetRefID;
 
         private T _target;

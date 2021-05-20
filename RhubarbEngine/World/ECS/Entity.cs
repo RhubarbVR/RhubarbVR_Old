@@ -22,6 +22,8 @@ namespace RhubarbEngine.World.ECS
 
         private Matrix4x4 cashedGlobalTrans = Matrix4x4.CreateScale(Vector3.One);
 
+        private Matrix4x4 cashedLocalMatrix = Matrix4x4.CreateScale(Vector3.One);
+
         public SyncRef<Entity> parent;
 
         public Sync<string> name;
@@ -59,6 +61,12 @@ namespace RhubarbEngine.World.ECS
         {
             return cashedGlobalTrans;
         }
+
+        public Matrix4x4 localTrans()
+        {
+            return cashedLocalMatrix;
+        }
+
         public void setGlobalTrans(Matrix4x4 newtrans)
         {
             Matrix4x4 parentMatrix = Matrix4x4.CreateScale(Vector3.One);
@@ -72,7 +80,18 @@ namespace RhubarbEngine.World.ECS
             rotation.value = new Quaternionf(newrotation.X, newrotation.Y, newrotation.Z, newrotation.W);
             scale.value = new Vector3f(newscale.X, newscale.Y, newscale.Z);
             cashedGlobalTrans = newtrans;
-        } 
+        }
+
+        public void setLocalTrans(Matrix4x4 newtrans)
+        {
+            Matrix4x4.Decompose(newtrans, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
+            position.value = new Vector3f(newtranslation.X, newtranslation.Y, newtranslation.Z);
+            rotation.value = new Quaternionf(newrotation.X, newrotation.Y, newrotation.Z, newrotation.W);
+            scale.value = new Vector3f(newscale.X, newscale.Y, newscale.Z);
+        }
+
+
+
         public override void buildSyncObjs(bool newRefIds)
         {
             position = new Sync<Vector3f>(this, newRefIds);
@@ -103,8 +122,9 @@ namespace RhubarbEngine.World.ECS
             {
                 parentMatrix = parent.target.globalTrans();
             }
-            Matrix4x4 localMatrix = (new Matrix4x4())+ Matrix4x4.CreateTranslation(position.value.x, position.value.y, position.value.z) + Matrix4x4.CreateScale(scale.value.x, scale.value.y, scale.value.z) + Matrix4x4.CreateFromQuaternion(new Quaternion(rotation.value.x, rotation.value.y, rotation.value.z, rotation.value.w));
-            cashedGlobalTrans = Matrix4x4.Add(localMatrix, parentMatrix);
+            Matrix4x4 localMatrix = Matrix4x4.CreateScale(scale.value.x, scale.value.y, scale.value.z) * Matrix4x4.CreateFromQuaternion(new Quaternion(rotation.value.x, rotation.value.y, rotation.value.z, rotation.value.w))* Matrix4x4.CreateTranslation(position.value.x, position.value.y, position.value.z) ;
+            cashedGlobalTrans = localMatrix * parentMatrix;
+            cashedLocalMatrix = localMatrix;
             foreach (Entity entity in _children)
             {
                 entity.updateGlobalTrans();
@@ -126,7 +146,7 @@ namespace RhubarbEngine.World.ECS
         }
         public override void onLoaded()
         {
-            if (_components.Count() <= 0 && !world.userspace && parent.target == null)
+            if (_components.Count() <= 0)
             {
                 MeshRender val = attachComponent<MeshRender>();
                 val.source.target = attachComponent<BoxMesh>();

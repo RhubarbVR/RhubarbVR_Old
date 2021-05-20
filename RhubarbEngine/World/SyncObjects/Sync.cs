@@ -10,8 +10,6 @@ namespace RhubarbEngine.World
 {
     public class Sync<T> : Worker, DriveMember<T>, IWorldObject
     {
-        public event Action<IChangeable> Changed;
-
         public IDriver drivenFromobj;
         public NetPointer drivenFrom { get { return drivenFromobj.ReferenceID; } }
 

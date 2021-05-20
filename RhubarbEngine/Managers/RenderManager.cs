@@ -14,7 +14,6 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System.IO;
 
-
 namespace RhubarbEngine.Managers
 {
     public class RenderManager : IManager
@@ -29,7 +28,7 @@ namespace RhubarbEngine.Managers
 
         private Engine engine;
 
-        private Matrix4x4 _userTrans => engine.worldManager.focusedWorld.playerTrans;
+        private Matrix4x4 _userTrans => (engine.worldManager.focusedWorld != null)?engine.worldManager.focusedWorld.playerTrans: engine.worldManager.privateOverlay.playerTrans;
 
         private RenderQueue mainQueue;
 
@@ -117,7 +116,7 @@ namespace RhubarbEngine.Managers
             cl.ClearColorTarget(0, RgbaFloat.CornflowerBlue);
             foreach(Renderable renderObj in mainQueue.Renderables)
             {
-                renderObj.Render(gd,cl, RenderPasses.Standard, new UBO(
+                renderObj.Render(gd, cl, RenderPasses.Standard, new UBO(
                 proj,
                 view,
                 renderObj.entity.globalTrans()));
@@ -160,15 +159,16 @@ namespace RhubarbEngine.Managers
             HmdPoseState poses = vrContext.WaitForPoses();
             BuildMainRenderQueue();
             // Render Eyes
-            eyesCL.Begin();
+
+            
                 eyesCL.PushDebugGroup("Left Eye");
-                Matrix4x4 leftView = (engine.outputType != OutputType.Screen)? _userTrans * poses.CreateView(VREye.Left, Vector3.Zero, -Vector3.UnitZ, Vector3.UnitY): _userTrans;
+                Matrix4x4 leftView = poses.CreateView(VREye.Left, _userTrans, - Vector3.UnitZ, Vector3.UnitY);
                 RenderEye(eyesCL, vrContext.LeftEyeFramebuffer, poses.LeftEyeProjection, leftView);
                 eyesCL.PopDebugGroup();
             if (engine.outputType != OutputType.Screen)
             {
                 eyesCL.PushDebugGroup("Right Eye");
-                Matrix4x4 rightView = _userTrans *  poses.CreateView(VREye.Right, Vector3.Zero, -Vector3.UnitZ, Vector3.UnitY);
+                Matrix4x4 rightView = poses.CreateView(VREye.Right, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
                 RenderEye(eyesCL, vrContext.RightEyeFramebuffer, poses.RightEyeProjection, rightView);
                 eyesCL.PopDebugGroup();
             }

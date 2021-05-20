@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Numerics;
 
-#if G3_USING_UNITY
-using UnityEngine;
-#endif
+
 
 
 namespace g3
@@ -12,6 +11,11 @@ namespace g3
     {
         // note: in Wm5 version, this is a 4-element array stored in order (w,x,y,z).
         public float x, y, z, w;
+
+        public Quaternion ToSystemNumric()
+        {
+            return new Quaternion(x, y, z, w);
+        }
 
         public Quaternionf(float x, float y, float z, float w) { this.x = x; this.y = y; this.z = z; this.w = w; }
         public Quaternionf(float[] v2) { x = v2[0]; y = v2[1]; z = v2[2]; w = v2[3]; }
@@ -405,7 +409,40 @@ namespace g3
                    (float)Math.Abs(z - q2.z) <= epsilon &&
                    (float)Math.Abs(w - q2.w) <= epsilon;
         }
+        /// <summary>
+        /// Creates a new Quaternion from the given yaw, pitch, and roll, in radians.
+        /// </summary>
+        /// <param name="yaw">The yaw angle, in radians, around the Y-axis.</param>
+        /// <param name="pitch">The pitch angle, in radians, around the X-axis.</param>
+        /// <param name="roll">The roll angle, in radians, around the Z-axis.</param>
+        /// <returns></returns>
+        public static Quaternionf CreateFromYawPitchRoll(float yaw, float pitch, float roll)
+        {
+            //  Roll first, about axis the object is facing, then
+            //  pitch upward, then yaw to face into the new heading
+            float sr, cr, sp, cp, sy, cy;
 
+            float halfRoll = roll * 0.5f;
+            sr = (float)Math.Sin(halfRoll);
+            cr = (float)Math.Cos(halfRoll);
+
+            float halfPitch = pitch * 0.5f;
+            sp = (float)Math.Sin(halfPitch);
+            cp = (float)Math.Cos(halfPitch);
+
+            float halfYaw = yaw * 0.5f;
+            sy = (float)Math.Sin(halfYaw);
+            cy = (float)Math.Cos(halfYaw);
+
+            Quaternionf result;
+
+            result.x = cy * sp * cr + sy * cp * sr;
+            result.y = sy * cp * cr - cy * sp * sr;
+            result.z = cy * cp * sr - sy * sp * cr;
+            result.w = cy * cp * cr + sy * sp * sr;
+
+            return result;
+        }
 
         public override string ToString() {
             return string.Format("{0:F8} {1:F8} {2:F8} {3:F8}", x, y, z, w);
@@ -413,18 +450,5 @@ namespace g3
         public string ToString(string fmt) {
             return string.Format("{0} {1} {2} {3}", x.ToString(fmt), y.ToString(fmt), z.ToString(fmt), w.ToString(fmt));
         }
-
-
-#if G3_USING_UNITY
-        public static implicit operator Quaternionf(Quaternion q)
-        {
-            return new Quaternionf(q.x, q.y, q.z, q.w);
-        }
-        public static implicit operator Quaternion(Quaternionf q)
-        {
-            return new Quaternion(q.x, q.y, q.z, q.w);
-        }
-#endif
-
     }
 }

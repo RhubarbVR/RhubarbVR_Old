@@ -18,24 +18,11 @@ namespace RhubarbEngine.Components.Users
     [Category(new string[] { "Users" })]
     public class UserRoot : Component
     {
-        private Vector3 _position = new Vector3(0, 3, 0);
-
-        private Vector3 _lookDirection = new Vector3(0, -.3f, -1f);
-
         private Vector2 _mousePressedPos;
-
-        public Vector3 Position { get => _position; set { _position = value; UpdateViewMatrix(); } }
 
         private float _moveSpeed = 10.0f;
 
-        private float _yaw;
-
-        private float _pitch;
-
         private bool _mousePressed = false;
-
-        public float Yaw { get => _yaw; set { _yaw = value; UpdateViewMatrix(); } }
-        public float Pitch { get => _pitch; set { _pitch = value; UpdateViewMatrix(); } }
 
         public override void buildSyncObjs(bool newRefIds)
         {
@@ -51,6 +38,7 @@ namespace RhubarbEngine.Components.Users
                ? 2.5f
                  : 1f;
             Vector3 motionDir = Vector3.Zero;
+            Quaternion lookRotation = default;
             if (world.worldManager.engine.inputManager.mainWindows.GetKey(Key.A))
             {
                 motionDir += -Vector3.UnitX;
@@ -88,8 +76,10 @@ namespace RhubarbEngine.Components.Users
                 }
                 Vector2 mouseDelta = _mousePressedPos - world.worldManager.engine.inputManager.mainWindows.MousePosition;
                 Sdl2Native.SDL_WarpMouseInWindow(world.worldManager.engine.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
-                Yaw += mouseDelta.X * 0.002f;
-                Pitch += mouseDelta.Y * 0.002f;
+                float Yaw = mouseDelta.X * 0.002f;
+                float Pitch = mouseDelta.Y * 0.002f;
+                lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
+
             }
             else if (_mousePressed)
             {
@@ -98,20 +88,12 @@ namespace RhubarbEngine.Components.Users
                 Sdl2Native.SDL_ShowCursor(1);
                 _mousePressed = false;
             }
-            if (motionDir != Vector3.Zero)
+            if (motionDir != Vector3.Zero|| lookRotation != default)
             {
-                Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
                 motionDir = Vector3.Transform(motionDir, lookRotation);
-                _position += motionDir * _moveSpeed * sprintFactor * deltaSeconds;
-                UpdateViewMatrix();
+                Matrix4x4 addTo = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(lookRotation) * Matrix4x4.CreateTranslation(motionDir * _moveSpeed * sprintFactor * deltaSeconds);
+                entity.setGlobalTrans(addTo* entity.globalTrans());
             }
-        }
-        private void UpdateViewMatrix()
-        {
-            Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
-            Vector3 lookDir = Vector3.Transform(-Vector3.UnitZ, lookRotation);
-            _lookDirection = lookDir;
-            entity.setGlobalTrans(Matrix4x4.CreateLookAt(_position, _position + _lookDirection, Vector3.UnitY));
         }
         public UserRoot(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {

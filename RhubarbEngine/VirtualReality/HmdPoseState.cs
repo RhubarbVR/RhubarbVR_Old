@@ -53,10 +53,12 @@ namespace RhubarbEngine.VirtualReality
             }
         }
 
-        public Matrix4x4 CreateView(VREye eye, Vector3 positionOffset, Vector3 forward, Vector3 up)
+        public Matrix4x4 CreateView(VREye eye, Matrix4x4 worldpos, Vector3 forward, Vector3 up)
         {
-            Vector3 eyePos = GetEyePosition(eye) + positionOffset;
-            Quaternion eyeQuat = GetEyeRotation(eye);
+            Quaternion E = GetEyeRotation(eye);
+            Vector3 eyPos = GetEyePosition(eye);
+            Matrix4x4 eyematrix = Matrix4x4.CreateScale(1f)* Matrix4x4.CreateFromQuaternion(E)* Matrix4x4.CreateTranslation(eyPos);
+            Matrix4x4.Decompose(eyematrix* worldpos, out Vector3 scale, out Quaternion eyeQuat, out Vector3 eyePos);
             Vector3 forwardTransformed = Vector3.Transform(forward, eyeQuat);
             Vector3 upTransformed = Vector3.Transform(up, eyeQuat);
             return Matrix4x4.CreateLookAt(eyePos, eyePos + forwardTransformed, upTransformed);

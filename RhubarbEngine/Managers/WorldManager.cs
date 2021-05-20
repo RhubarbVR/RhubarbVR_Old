@@ -6,8 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine;
 using RhubarbEngine.World;
+using RhubarbEngine.World.ECS;
 using RhubarbEngine.World.DataStructure;
 using RhubarbEngine.Render;
+using g3;
+using RhubarbEngine.Components.Transform;
+
 
 namespace RhubarbEngine.Managers
 {
@@ -70,19 +74,25 @@ namespace RhubarbEngine.Managers
             privateOverlay = new World.World(this, "Private Overlay", 1);
             privateOverlay.Focus = World.World.FocusLevel.PrivateOverlay;
             worlds.Add(privateOverlay);
-
-            engine.logger.Log("Starting Local World");
-            if(File.Exists(engine.dataPath + "/LocalWorld.RWorld"))
-            {
-                localWorld = loadWorldFromBytes(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
-            }
-            else
-            {
-                localWorld = new World.World(this,"LoaclWorld",16);
-            }
-            localWorld.Focus = World.World.FocusLevel.Focused;
-            worlds.Add(localWorld);
-            focusedWorld = localWorld;
+            Entity ent = privateOverlay.RootEntity.addChild();
+            ent.position.value = Vector3f.One;
+            Entity ent2 = privateOverlay.RootEntity.addChild();
+            ent2.position.value = Vector3f.Zero;
+            ent2.attachComponent<Spinner>();
+            Entity ent3 = ent2.addChild();
+            ent3.position.value = new Vector3f(10f, 10f, 10f);
+            //engine.logger.Log("Starting Local World");
+            //if(File.Exists(engine.dataPath + "/LocalWorld.RWorld"))
+            //{
+            //    localWorld = loadWorldFromBytes(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
+            //}
+            //else
+            //{
+            //   localWorld = new World.World(this,"LoaclWorld",16);
+            //}
+            //localWorld.Focus = World.World.FocusLevel.Focused;
+            //worlds.Add(localWorld);
+            //focusedWorld = localWorld;
             return this;
         }
 

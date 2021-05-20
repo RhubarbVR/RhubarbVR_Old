@@ -45,7 +45,9 @@ layout (location = 0) out vec2 fsin_UV;
 
 void main()
 {
-    gl_Position = Proj * View * World * vec4(vsin_Position, 1);
+    vec4 worldPosition = World * vec4(vsin_Position, 1);
+    vec4 viewPosition = View * worldPosition;
+    gl_Position = Proj * viewPosition;
     fsin_UV = vsin_UV;
 }
 ";
