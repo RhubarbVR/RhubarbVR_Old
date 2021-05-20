@@ -79,11 +79,7 @@ namespace RhubarbEngine.VirtualReality
         }
         public override (string[] instance, string[] device) GetRequiredVulkanExtensions()
         {
-            StringBuilder sb = new StringBuilder(1024);
-            string[] instance = sb.ToString().Split(' ');
-            sb.Clear();
-            string[] device = sb.ToString().Split(' ');
-            return (instance, device);
+            return (new string[] { }, new string[] { });
         }
 
         public override HmdPoseState WaitForPoses()
