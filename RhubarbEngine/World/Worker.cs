@@ -11,6 +11,12 @@ namespace RhubarbEngine.World
 {
     public class Worker : IChangeable, IWorldObject
     {
+        private List<IDisposable> _disposables = new List<IDisposable>();
+        public void addDisposable(IDisposable add)
+        {
+            _disposables.Add(add);
+        }
+
         public event Action<IChangeable> Changed;
         public World world { get; protected set; }
 
@@ -36,6 +42,7 @@ namespace RhubarbEngine.World
         {
             world = _world;
             parent = _parent;
+            parent.addDisposable(this);
             inturnalSyncObjs(newRefID);
             buildSyncObjs(newRefID);
             if (newRefID)
@@ -112,8 +119,12 @@ namespace RhubarbEngine.World
         }
         public virtual void Dispose()
         {
-            world.removeWorldObj(this);
             Removed();
+            world.removeWorldObj(this);
+            foreach(IDisposable dep in _disposables)
+            {
+                dep.Dispose();
+            }
         }
         public virtual void CommonUpdate()
         {

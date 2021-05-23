@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
+    <PackageReference Include="GLSLhelper" Version="0.3.52" />
     <PackageReference Include="LiteNetLib" Version="0.9.4" />
     <PackageReference Include="Veldrid" Version="4.8.0" />
     <PackageReference Include="Veldrid.ImageSharp" Version="4.8.0" />
@@ -37,10 +38,6 @@
       <PackagePath>./</PackagePath>
       <Pack>true</Pack>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="World\Asset\Providers\" />
   </ItemGroup>
 
 </Project>

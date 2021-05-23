@@ -11,7 +11,7 @@ using RhubarbEngine.World.DataStructure;
 using RhubarbEngine.Render;
 using g3;
 using RhubarbEngine.Components.Transform;
-
+using RhubarbEngine.World.Asset;
 
 namespace RhubarbEngine.Managers
 {
@@ -65,6 +65,31 @@ namespace RhubarbEngine.Managers
             return worldToBytes(focusedWorld);
         }
 
+        private const string fragmentGlsl =
+@"
+#version 450
+
+layout (set = 0, binding = 0) uniform WVP
+{
+    mat4 Proj;
+    mat4 View;
+    mat4 World;
+};
+
+layout (location = 0) in vec3 vsin_Position;
+layout (location = 1) in vec2 vsin_UV;
+
+layout (location = 0) out vec2 fsin_UV;
+
+void main()
+{
+    vec4 worldPosition = World * vec4(vsin_Position, 1);
+    vec4 viewPosition = View * worldPosition;
+    gl_Position = Proj * viewPosition;
+    fsin_UV = vsin_UV;
+}
+";
+
 
         public IManager initialize(Engine _engine)
         {
@@ -74,13 +99,8 @@ namespace RhubarbEngine.Managers
             privateOverlay = new World.World(this, "Private Overlay", 1);
             privateOverlay.Focus = World.World.FocusLevel.PrivateOverlay;
             worlds.Add(privateOverlay);
-            Entity ent = privateOverlay.RootEntity.addChild();
-            ent.position.value = Vector3f.One;
-            Entity ent2 = privateOverlay.RootEntity.addChild();
-            ent2.position.value = Vector3f.Zero;
-            ent2.attachComponent<Spinner>();
-            Entity ent3 = ent2.addChild();
-            ent3.position.value = new Vector3f(10f, 10f, 10f);
+
+
             //engine.logger.Log("Starting Local World");
             //if(File.Exists(engine.dataPath + "/LocalWorld.RWorld"))
             //{

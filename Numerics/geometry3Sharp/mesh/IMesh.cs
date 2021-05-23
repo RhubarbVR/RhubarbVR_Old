@@ -28,7 +28,7 @@ namespace g3
 
 
 
-    public interface IMesh : IPointSet, IAsset
+    public interface IMesh : IPointSet
     {
         int TriangleCount { get; }
         int MaxTriangleID { get; }

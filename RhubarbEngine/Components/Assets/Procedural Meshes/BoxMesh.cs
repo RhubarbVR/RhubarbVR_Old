@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using RhubarbEngine.World.DataStructure;
-using RhubarbDataTypes;
-using RhubarbEngine.World.ECS;
+﻿using g3;
 using RhubarbEngine.World;
-using g3;
 using RhubarbEngine.World.Asset;
+using RhubarbEngine.World.ECS;
 
 namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 {
 
     [Category(new string[] { "Assets/Procedural Meshes" })]
-    public class BoxMesh : AssetProvider<IMesh>
+    public class BoxMesh : AssetProvider<RMesh>
     {
         private TrivialBox3Generator boxgen = new TrivialBox3Generator();
 
@@ -49,13 +41,18 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             boxgen.Box.AxisZ = AxisZ.value;
             boxgen.Box.Extent = Extent.value;
             boxgen.NoSharedVertices = NoSharedVertices.value;
+            updateMesh();
+        }
+
+        private void updateMesh()
+        {
             MeshGenerator newmesh = boxgen.Generate();
-            load(newmesh.MakeSimpleMesh());
+            load(new RMesh(newmesh.MakeSimpleMesh()));
+            base.value.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
         }
         public override void onLoaded()
         {
-            MeshGenerator newmesh = boxgen.Generate();
-            load(newmesh.MakeSimpleMesh());
+            updateMesh();
         }
         public BoxMesh(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
         {

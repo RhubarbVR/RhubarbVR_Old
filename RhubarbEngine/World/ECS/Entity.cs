@@ -149,8 +149,7 @@ namespace RhubarbEngine.World.ECS
             if (_components.Count() <= 0)
             {
                 MeshRender val = attachComponent<MeshRender>();
-                val.source.target = attachComponent<BoxMesh>();
-                val.onLoaded();
+                val.Mesh.target = attachComponent<BoxMesh>();
             }
         }
 

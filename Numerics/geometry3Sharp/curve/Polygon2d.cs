@@ -7,7 +7,7 @@ using System.Text;
 
 namespace g3
 {
-	public class Polygon2d : IDuplicatable<Polygon2d>, IAsset
+	public class Polygon2d : IDuplicatable<Polygon2d>
     {
         protected List<Vector2d> vertices;
 		public int Timestamp;

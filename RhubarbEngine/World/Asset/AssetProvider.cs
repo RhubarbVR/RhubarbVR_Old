@@ -14,6 +14,9 @@ namespace RhubarbEngine.World.Asset
     public abstract class AssetProvider<A> : Component where A: IAsset
     {
         private A _value;
+
+        public event Action<A> onLoadedCall;
+
         public A value{get{
                 return _value;
         } }
@@ -21,7 +24,11 @@ namespace RhubarbEngine.World.Asset
         public void load(A data)
         {
             _value = data;
+            onLoadedCall?.Invoke(data);
+            loaded = (data != null);
         }
+
+        public bool loaded = false;
         
         public AssetProvider(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {

@@ -17,6 +17,10 @@ namespace RhubarbEngine.World
 {
     public class World : IWorldObject
     {
+        public void addDisposable(IDisposable val)
+        {
+
+        }
         public Matrix4x4 playerTrans => (userRoot != null)? userRoot.entity.globalTrans() : Matrix4x4.CreateScale(1f);
 
         public UserRoot userRoot;
