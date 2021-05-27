@@ -51,12 +51,9 @@ namespace RhubarbEngine.Components.Rendering
         }
 
         private GraphicsDevice _gd;
-        private List<IDisposable> _disposables = new List<IDisposable>();
         private List<MeshPiece> _meshPieces = new List<MeshPiece>();
         private Pipeline _pipeline;
         private DeviceBuffer _wvpBuffer;
-        private Texture _texture;
-        private TextureView _view;
         private ResourceSet _rs;
         private bool loaded;
         public override void UpdatePerFrameResources(GraphicsDevice gd, CommandList cl) { 
@@ -80,7 +77,6 @@ namespace RhubarbEngine.Components.Rendering
         public override void CreateDeviceObjects(GraphicsDevice gd, CommandList cl)
         {
             _gd = gd;
-
         }
 
         public override void DestroyDeviceObjects() {

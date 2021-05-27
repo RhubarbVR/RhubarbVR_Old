@@ -30,7 +30,7 @@ namespace RhubarbEngine
 
         public UnitLogs logger;
 
-        public string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+"\\RhubarbVR";
+        public string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\RhubarbVR";
 
         public FileStream lockFile;
 
@@ -51,7 +51,6 @@ namespace RhubarbEngine
                 logger.Log("Created data path folder");
                 Directory.CreateDirectory(dataPath);
             }
-
             try
             {
                 lockFile = new FileStream(dataPath + "\\locker.lock", FileMode.OpenOrCreate);

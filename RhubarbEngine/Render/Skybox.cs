@@ -62,7 +62,7 @@ namespace RhubarbEngine.Render
                     new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3))
             };
 
-            Shader[] shaders = factory.CreateFromSpirv(
+            Veldrid.Shader[] shaders = factory.CreateFromSpirv(
                 new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(VertexShader), "main"),
                 new ShaderDescription(ShaderStages.Fragment, Encoding.ASCII.GetBytes(FragmentShader), "main"));
             _disposables.Add(shaders[0]);

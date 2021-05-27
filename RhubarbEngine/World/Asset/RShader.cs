@@ -13,34 +13,72 @@ using Veldrid;
 using System.Runtime.CompilerServices;
 using RhubarbEngine.Render;
 using System.Numerics;
+using RhubarbEngine.Render.Shader;
 
 namespace RhubarbEngine.World.Asset
 {
     public class RShader : IAsset
     {
-        private string _shaderCode = "";
+        public MainFragShader mainFragCode = new MainFragShader();
+        public ShadowFragShader shadowFragCode = new ShadowFragShader();
+        public MainVertShader mainVertCode = new MainVertShader();
+        public ShadowVertShader shadowVertCode = new ShadowVertShader();
+
+        public Veldrid.Shader mainVertShader;
+
+        public Veldrid.Shader mainFragShader;
+
+        public Veldrid.Shader shadowVertShader;
+
+        public Veldrid.Shader shadowFragShader;
+
+        public bool shaderLoaded;
 
         public List<(string type, string name)> Fields = new List<(string type, string name)>();
 
+        public List<IDisposable> disposable = new List<IDisposable>();
         public void Dispose()
         {
-
+            shaderLoaded = false;
+            foreach (IDisposable dep in disposable)
+            {
+                dep.Dispose();
+            }
         }
 
-        public void setCode(string code)
-        {
 
-        }
 
-        public Shader LoadShader(GraphicsDevice gd, IWorldObject owner)
+        public void LoadShader(GraphicsDevice gd)
         {
-            Shader veldridShader = gd.ResourceFactory.CreateShader(createShaderDescription());
-            owner.addDisposable(veldridShader);
-            return veldridShader;
+            try
+            {
+                Dispose();
+                string mainFragShader_Code = mainFragCode.getCode();
+                string shadowFragShader_Code = shadowFragCode.getCode();
+                string mainVertShader_Code = mainVertCode.getCode();
+                string shadowVertShader_Code = shadowVertCode.getCode();
+
+
+
+
+                mainFragShader = gd.ResourceFactory.CreateShader(createShaderDescription(ShaderStages.Fragment, mainFragShader_Code));
+                shadowFragShader = gd.ResourceFactory.CreateShader(createShaderDescription(ShaderStages.Fragment, shadowFragShader_Code));
+                mainVertShader = gd.ResourceFactory.CreateShader(createShaderDescription(ShaderStages.Vertex, mainVertShader_Code));
+                shadowVertShader = gd.ResourceFactory.CreateShader(createShaderDescription(ShaderStages.Vertex, shadowVertShader_Code));
+                disposable.Add(mainFragShader);
+                disposable.Add(shadowFragShader);
+                disposable.Add(mainVertShader);
+                disposable.Add(shadowVertShader);
+
+                shaderLoaded = true;
+            }
+            catch
+            {
+                shaderLoaded = false;
+            }
         }
-        public ShaderDescription createShaderDescription()
+        public ShaderDescription createShaderDescription(ShaderStages stage,string _shaderCode)
         {
-            ShaderStages stage = ShaderStages.None;
             return new ShaderDescription(stage, Encoding.ASCII.GetBytes(_shaderCode), "main");
         }
 
