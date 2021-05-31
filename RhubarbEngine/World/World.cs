@@ -42,7 +42,14 @@ namespace RhubarbEngine.World
                     if ((layer & RemderLayers.privateOverlay) <= 0) return;
                     break;
             }
-            RootEntity.addToRenderQueue(gu, playerTrans.Translation, layer);
+            foreach(Entity ent in RootEntity._children)
+            {
+                if (ent.enabled.value && ent.parentEnabled)
+                {
+                    ent.addToRenderQueue(gu, playerTrans.Translation, layer);
+                }
+            }
+            
         }
 
         public enum FocusLevel

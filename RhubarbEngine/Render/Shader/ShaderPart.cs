@@ -8,6 +8,8 @@ namespace RhubarbEngine.Render.Shader
 {
     public abstract class ShaderPart
     {
+        public static string TopCode = "";
+
         public Dictionary<string, Uniform> uniforms = new Dictionary<string, Uniform>();
 
         public string getUniformString()

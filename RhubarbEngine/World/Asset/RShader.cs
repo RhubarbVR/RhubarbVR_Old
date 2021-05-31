@@ -20,8 +20,11 @@ namespace RhubarbEngine.World.Asset
     public class RShader : IAsset
     {
         public MainFragShader mainFragCode = new MainFragShader();
+
         public ShadowFragShader shadowFragCode = new ShadowFragShader();
+
         public MainVertShader mainVertCode = new MainVertShader();
+
         public ShadowVertShader shadowVertCode = new ShadowVertShader();
 
         public Veldrid.Shader mainVertShader;
@@ -57,9 +60,6 @@ namespace RhubarbEngine.World.Asset
                 string shadowFragShader_Code = shadowFragCode.getCode();
                 string mainVertShader_Code = mainVertCode.getCode();
                 string shadowVertShader_Code = shadowVertCode.getCode();
-
-
-
 
                 mainFragShader = gd.ResourceFactory.CreateShader(createShaderDescription(ShaderStages.Fragment, mainFragShader_Code));
                 shadowFragShader = gd.ResourceFactory.CreateShader(createShaderDescription(ShaderStages.Fragment, shadowFragShader_Code));

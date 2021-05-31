@@ -30,11 +30,24 @@ namespace RhubarbEngine.World.ECS
 
         public Sync<bool> enabled;
 
-        private SyncObjList<Entity> _children;
+        public SyncObjList<Entity> _children;
 
-        private SyncAbstractObjList<Component> _components;
+        public SyncAbstractObjList<Component> _components;
 
         public Sync<int> remderlayer;
+
+        public bool parentEnabled = true;
+        public void parentEnabledChange(bool _parentEnabled)
+        {
+            if (_parentEnabled != enabled.value)
+            {
+                parentEnabled = _parentEnabled;
+                foreach (Entity item in _children)
+                {
+                    item.parentEnabledChange(_parentEnabled);
+                }
+            }
+        }
 
         public override void inturnalSyncObjs(bool newRefIds)
         {
@@ -109,12 +122,20 @@ namespace RhubarbEngine.World.ECS
             position.Changed += onTransChange;
             rotation.Changed += onTransChange;
             scale.Changed += onTransChange;
+            enabled.Changed += onEnableChange;
         }
         public void onTransChange(IChangeable newValue)
         {
             updateGlobalTrans();
         }
 
+        public void onEnableChange(IChangeable newValue)
+        {
+            foreach (Entity item in _children)
+            {
+                item.parentEnabledChange(enabled.value);
+            }
+        }
         public void updateGlobalTrans()
         {
             Matrix4x4 parentMatrix = Matrix4x4.CreateScale(Vector3.One);
@@ -155,7 +176,7 @@ namespace RhubarbEngine.World.ECS
 
         public void addToRenderQueue(RenderQueue gu, Vector3 playpos, RemderLayers layer)
         {
-            if (!enabled.value|| ((int)layer & remderlayer.value) <= 0)
+            if (((int)layer & remderlayer.value) <= 0)
             {
                 return;
             }
@@ -167,10 +188,6 @@ namespace RhubarbEngine.World.ECS
                 }
                 catch
                 {}
-            }
-            foreach(Entity child in _children)
-            {
-                child.addToRenderQueue(gu, playpos, layer);
             }
         }
 

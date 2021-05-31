@@ -26,11 +26,12 @@ using RhubarbEngine.Components.Assets;
 namespace RhubarbEngine.Components.Rendering
 {
     [Category(new string[] { "Rendering" })]
-    public class MeshRender : Renderable
+    public class MeshRender : CullRenderable
     {
 
         public AssetRef<RMesh> Mesh;
         public SyncAssetRefList<RMaterial> Materials;
+        public override BoundingBox BoundingBox => Mesh.Asset.boundingBox;
 
         public override void buildSyncObjs(bool newRefIds)
         {
@@ -45,7 +46,7 @@ namespace RhubarbEngine.Components.Rendering
             _meshPieces = mesh.meshPieces;
         }
 
-        private void loadMaterial(RMaterial mesh)
+        private void loadMaterial(RMaterial mit)
         {
 
         }

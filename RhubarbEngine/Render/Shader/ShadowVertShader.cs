@@ -8,5 +8,6 @@ namespace RhubarbEngine.Render.Shader
 {
     public class ShadowVertShader : ShaderPart
     {
+
     }
 }

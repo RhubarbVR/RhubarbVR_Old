@@ -45,6 +45,16 @@ namespace RhubarbEngine.Render.Shader
         Val_mat2,
         Val_mat3,
         Val_mat4,
-
+        Val_sampler1D,
+        Val_sampler2D,
+        Val_sampler3D,
+        Val_samplerCube,
+        Val_sampler2DRect,
+        Val_samplerBuffer,
+        Val_sampler2DMS,
+        Val_sampler1DShadow,
+        Val_sampler2DShadow,
+        Val_samplerCubeShadow,
+        Val_sampler2DRectShadow,
     }
 }

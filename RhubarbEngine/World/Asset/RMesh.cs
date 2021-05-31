@@ -13,7 +13,7 @@ using Veldrid;
 using System.Runtime.CompilerServices;
 using RhubarbEngine.Render;
 using System.Numerics;
-
+using Veldrid.Utilities;
 namespace RhubarbEngine.World.Asset
 {
     public class RMesh : IAsset
@@ -30,6 +30,12 @@ namespace RhubarbEngine.World.Asset
             {
                 return meshes.Count;
             }
+        }
+
+        public BoundingBox boundingBox;
+        public void buildBoundingBox()
+        {
+        
         }
 
 
