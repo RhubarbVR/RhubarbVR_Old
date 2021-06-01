@@ -49,7 +49,6 @@ namespace RhubarbEngine.World
             {
                 referenceID = _world.buildRefID();
                 _world.addWorldObj(this);
-                onLoaded();
             }
         }
 

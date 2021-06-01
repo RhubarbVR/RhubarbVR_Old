@@ -14,19 +14,28 @@ namespace RhubarbEngine.Render
 {
     public abstract class RenderObject : Component, IDisposable
     {
-           
 
-        public Renderable(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public override void LoadToWorld()
+        {
+            world.RenderObjects.Add(this);
+        }
+        public RenderObject(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public Renderable()
+        public RenderObject()
         {
         }
 
         public void Dispose()
         {
-            DestroyDeviceObjects();
+            try
+            {
+                world.RenderObjects.Remove(this);
+            }
+            catch {
+
+            }
         }
     }
 

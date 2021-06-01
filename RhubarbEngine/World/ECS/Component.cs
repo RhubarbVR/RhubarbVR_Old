@@ -16,6 +16,11 @@ namespace RhubarbEngine.World.ECS
         public override void inturnalSyncObjs(bool newRefIds)
         {
             updateOrder = new Sync<int>(this, newRefIds);
+            LoadToWorld();
+        }
+        public virtual void LoadToWorld()
+        {
+
         }
 
         public virtual void CommonUpdate(DateTime startTime, DateTime Frame)

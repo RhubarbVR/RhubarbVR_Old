@@ -128,6 +128,8 @@ namespace RhubarbEngine.World
 
         private List<Entity> Entitys = new List<Entity>();
 
+        public List<RenderObject> RenderObjects = new List<RenderObject>();
+
         private Dictionary<NetPointer, IWorldObject> worldObjects = new Dictionary<NetPointer, IWorldObject>();
 
         public void addWorldObj(IWorldObject obj)
