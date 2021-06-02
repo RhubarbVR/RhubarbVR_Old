@@ -116,7 +116,7 @@ namespace RhubarbEngine.Managers
             cl.ClearColorTarget(0, RgbaFloat.CornflowerBlue);
             foreach(Renderable renderObj in mainQueue.Renderables)
             {
-                renderObj.Render(gd, cl, RenderPasses.Standard, new UBO(
+                renderObj.Render(gd, cl, new UBO(
                 proj,
                 view,
                 renderObj.entity.globalTrans()));

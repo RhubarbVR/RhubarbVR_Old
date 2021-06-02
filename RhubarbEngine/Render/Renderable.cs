@@ -45,12 +45,11 @@ namespace RhubarbEngine.Render
     public abstract class Renderable : Component, IDisposable
     {
         public abstract void UpdatePerFrameResources(GraphicsDevice gd, CommandList cl);
-        public abstract void Render(GraphicsDevice gd, CommandList cl, RenderPasses renderPass, UBO ubo);
+        public abstract void Render(GraphicsDevice gd, CommandList cl, UBO ubo);
+        public abstract void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo);
         public abstract void CreateDeviceObjects(GraphicsDevice gd, CommandList cl);
         public abstract void DestroyDeviceObjects();
-        public abstract RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition);
-        public virtual RenderPasses RenderPasses => RenderPasses.Standard;
-        
+        public abstract RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition);        
 
         public Renderable(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {

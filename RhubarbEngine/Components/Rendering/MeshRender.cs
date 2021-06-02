@@ -57,9 +57,28 @@ namespace RhubarbEngine.Components.Rendering
         private DeviceBuffer _wvpBuffer;
         private ResourceSet _rs;
         private bool loaded;
-        public override void UpdatePerFrameResources(GraphicsDevice gd, CommandList cl) { 
+        public override void UpdatePerFrameResources(GraphicsDevice gd, CommandList cl)
+        {
         }
-        public override void Render(GraphicsDevice gd, CommandList cl, RenderPasses renderPass, UBO ubo) {
+        public override void Render(GraphicsDevice gd, CommandList cl, UBO ubo)
+        {
+            if (!loaded)
+            {
+                return;
+            }
+            cl.UpdateBuffer(_wvpBuffer, 0, ubo);
+            cl.SetPipeline(_pipeline);
+            foreach (MeshPiece piece in _meshPieces)
+            {
+                cl.SetVertexBuffer(0, piece.Positions);
+                cl.SetVertexBuffer(1, piece.TexCoords);
+                cl.SetIndexBuffer(piece.Indices, IndexFormat.UInt32);
+                cl.SetGraphicsResourceSet(0, _rs);
+                cl.DrawIndexed(piece.IndexCount);
+            }
+        }
+        public override void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo)
+        {
             if (!loaded)
             {
                 return;
@@ -97,7 +116,7 @@ namespace RhubarbEngine.Components.Rendering
         }
         public override void onChanged()
         {
-            CreateDeviceObjects(world.worldManager.engine.renderManager.gd, world.worldManager.engine.renderManager.windowCL);
+            CreateDeviceObjects(engine.renderManager.gd, engine.renderManager.windowCL);
         }
         public MeshRender(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
         {
