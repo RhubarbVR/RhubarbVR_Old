@@ -14,6 +14,7 @@ using System.Runtime.CompilerServices;
 using RhubarbEngine.Render;
 using System.Numerics;
 using RhubarbEngine.Render.Shader;
+using Veldrid.SPIRV;
 
 namespace RhubarbEngine.World.Asset
 {
@@ -51,7 +52,7 @@ namespace RhubarbEngine.World.Asset
 
 
 
-        public void LoadShader(GraphicsDevice gd)
+        public void LoadShader(GraphicsDevice gd, UnitLogs log)
         {
             try
             {
@@ -60,11 +61,21 @@ namespace RhubarbEngine.World.Asset
                 string shadowFragShader_Code = shadowFragCode.getCode();
                 string mainVertShader_Code = mainVertCode.getCode();
                 string shadowVertShader_Code = shadowVertCode.getCode();
+                log.Log("ShaderCode \n" + mainFragShader_Code + "\n" + shadowFragShader_Code + "\n" + mainVertShader_Code + "\n" + shadowVertShader_Code);
 
-                mainFragShader = gd.ResourceFactory.CreateShader(createShaderDescription(ShaderStages.Fragment, mainFragShader_Code));
-                shadowFragShader = gd.ResourceFactory.CreateShader(createShaderDescription(ShaderStages.Fragment, shadowFragShader_Code));
-                mainVertShader = gd.ResourceFactory.CreateShader(createShaderDescription(ShaderStages.Vertex, mainVertShader_Code));
-                shadowVertShader = gd.ResourceFactory.CreateShader(createShaderDescription(ShaderStages.Vertex, shadowVertShader_Code));
+                Shader[] mainshaders = gd.ResourceFactory.CreateFromSpirv(
+                    createShaderDescription(ShaderStages.Vertex, mainVertShader_Code),
+                  createShaderDescription(ShaderStages.Fragment, mainFragShader_Code)
+                   );
+
+                Shader[] shadowshaders = gd.ResourceFactory.CreateFromSpirv(
+                      createShaderDescription(ShaderStages.Vertex, shadowVertShader_Code),
+                      createShaderDescription(ShaderStages.Fragment, shadowFragShader_Code));
+
+                mainFragShader = mainshaders[0];
+                shadowFragShader = shadowshaders[0];
+                mainVertShader = mainshaders[1];
+                shadowVertShader = shadowshaders[1];
                 disposable.Add(mainFragShader);
                 disposable.Add(shadowFragShader);
                 disposable.Add(mainVertShader);
@@ -72,9 +83,10 @@ namespace RhubarbEngine.World.Asset
 
                 shaderLoaded = true;
             }
-            catch
+            catch (Exception e)
             {
                 shaderLoaded = false;
+                log.Log("Failed to load shader" + e.ToString(), true);
             }
         }
         public ShaderDescription createShaderDescription(ShaderStages stage,string _shaderCode)

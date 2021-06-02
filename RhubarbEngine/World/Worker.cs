@@ -24,6 +24,11 @@ namespace RhubarbEngine.World
 
         public NetPointer referenceID { get; protected set; }
 
+        public UnitLogs logger => world.worldManager.engine.logger;
+
+        public Engine engine => world.worldManager.engine;
+
+
         public bool Persistent = true;
 
         NetPointer IWorldObject.ReferenceID => referenceID;

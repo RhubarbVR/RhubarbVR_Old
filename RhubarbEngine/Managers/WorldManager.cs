@@ -12,6 +12,9 @@ using RhubarbEngine.Render;
 using g3;
 using RhubarbEngine.Components.Transform;
 using RhubarbEngine.World.Asset;
+using RhubarbEngine.Components.Assets;
+using RhubarbEngine.Components.Assets.Procedural_Meshes;
+using RhubarbEngine.Components.Rendering;
 
 namespace RhubarbEngine.Managers
 {
@@ -65,32 +68,6 @@ namespace RhubarbEngine.Managers
             return worldToBytes(focusedWorld);
         }
 
-        private const string fragmentGlsl =
-@"
-#version 450
-
-layout (set = 0, binding = 0) uniform WVP
-{
-    mat4 Proj;
-    mat4 View;
-    mat4 World;
-};
-
-layout (location = 0) in vec3 vsin_Position;
-layout (location = 1) in vec2 vsin_UV;
-
-layout (location = 0) out vec2 fsin_UV;
-
-void main()
-{
-    vec4 worldPosition = World * vec4(vsin_Position, 1);
-    vec4 viewPosition = View * worldPosition;
-    gl_Position = Proj * viewPosition;
-    fsin_UV = vsin_UV;
-}
-";
-
-
         public IManager initialize(Engine _engine)
         {
             engine = _engine;
@@ -101,18 +78,26 @@ void main()
             worlds.Add(privateOverlay);
 
 
-            //engine.logger.Log("Starting Local World");
-            //if(File.Exists(engine.dataPath + "/LocalWorld.RWorld"))
-            //{
-            //    localWorld = loadWorldFromBytes(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
-            //}
-            //else
-            //{
-            //   localWorld = new World.World(this,"LoaclWorld",16);
-            //}
-            //localWorld.Focus = World.World.FocusLevel.Focused;
-            //worlds.Add(localWorld);
-            //focusedWorld = localWorld;
+            engine.logger.Log("Starting Local World");
+            if(File.Exists(engine.dataPath + "/LocalWorld.RWorld"))
+            {
+                localWorld = loadWorldFromBytes(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
+            }
+            else
+            {
+                localWorld = new World.World(this, "LoaclWorld", 16);
+                Entity e = localWorld.RootEntity.addChild();
+                StaicMainShader shader = e.attachComponent<StaicMainShader>();
+                BoxMesh bmesh = e.attachComponent<BoxMesh>();
+                RMaterial mit = e.attachComponent<RMaterial>();
+                MeshRender meshRender = e.attachComponent<MeshRender>();
+                mit.Shaders.Add().target = shader;
+                meshRender.Materials.Add().target = mit;
+                meshRender.Mesh.target = bmesh;
+            }
+            localWorld.Focus = World.World.FocusLevel.Focused;
+            worlds.Add(localWorld);
+            focusedWorld = localWorld;
             return this;
         }
 
@@ -125,7 +110,7 @@ void main()
         }
         public void CleanUp()
         {
-            File.WriteAllBytes(engine.dataPath + "/LocalWorld.RWorld", worldToBytes(localWorld));
+            //File.WriteAllBytes(engine.dataPath + "/LocalWorld.RWorld", worldToBytes(localWorld));
         }
     }
 }

@@ -25,6 +25,7 @@ namespace RhubarbEngine.World
 
         public UserRoot userRoot;
 
+
         public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
         {
             switch (focus)

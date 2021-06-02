@@ -167,11 +167,6 @@ namespace RhubarbEngine.World.ECS
         }
         public override void onLoaded()
         {
-            if (_components.Count() <= 0)
-            {
-                MeshRender val = attachComponent<MeshRender>();
-                val.Mesh.target = attachComponent<BoxMesh>();
-            }
         }
 
         public void addToRenderQueue(RenderQueue gu, Vector3 playpos, RemderLayers layer)
