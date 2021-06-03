@@ -61,6 +61,7 @@ namespace RhubarbEngine.World
             {
                 DataNodeGroup listobj = new DataNodeGroup();
                 listobj.setValue("Value", val.serialize());
+                //Need To add Constant Type Strings for better compression 
                 listobj.setValue("Type",new DataNode<string>(val.GetType().FullName));
                 list.Add(listobj);
             }
