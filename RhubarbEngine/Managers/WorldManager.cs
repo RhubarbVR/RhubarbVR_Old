@@ -110,7 +110,7 @@ namespace RhubarbEngine.Managers
         }
         public void CleanUp()
         {
-            //File.WriteAllBytes(engine.dataPath + "/LocalWorld.RWorld", worldToBytes(localWorld));
+            File.WriteAllBytes(engine.dataPath + "/LocalWorld.RWorld", worldToBytes(localWorld));
         }
     }
 }

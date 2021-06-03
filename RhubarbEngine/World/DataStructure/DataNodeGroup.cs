@@ -31,7 +31,9 @@ namespace RhubarbEngine.World.DataStructure
                         NodeGroup.Values.CopyTo(values,0);
                         for (int i = 0; i < NodeGroup.Count; i++)
                         {
-                            writer.Write(keys[i]);
+                            byte[] keyBytes = packer(keys[i]);
+                            writer.Write(keyBytes.Count());
+                            writer.Write(keyBytes);
                             byte[] value = values[i].getByteArray();
                             writer.Write(Array.IndexOf(DatatNodeTools.dataNode, ((object)values[i]).GetType()));
                             writer.Write(value.Count());
@@ -47,7 +49,56 @@ namespace RhubarbEngine.World.DataStructure
                 return new byte[]{ };
             }
         }
+        //31 max hardpack values
+        public static string[] HardPack = new String[] { "","Value", "referenceID", "targetRefID", "list", "enabled", "updateOrder" , "remderlayer", "parent", "_children", "Entity", "name", "rotation", "scale", "position", "Type" };
 
+        public string unPacker(byte[] inputeval)
+        {
+            try
+            {
+            ASCIIEncoding ascii = new ASCIIEncoding();
+            int hardPackval = ((int)(inputeval[0])) - 1;
+                if (hardPackval < HardPack.Length)
+                {
+                    return HardPack[hardPackval];
+                }
+                else
+                {
+                    return ascii.GetString(inputeval);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("UnPack Failed with Bytes:" + inputeval.ToString() + " Error:" + e.Message);
+            }
+        }
+
+        public byte[] packer(String inputeval)
+        {
+            try
+            {
+                ASCIIEncoding ascii = new ASCIIEncoding();
+                string val = inputeval;
+                int hardpackvalue = Array.IndexOf(HardPack, inputeval);
+                if (hardpackvalue > 0)
+                {
+                    hardpackvalue++;
+                    val = ((char)hardpackvalue).ToString();
+                }
+                byte[] bytes = new byte[1];
+                int count = ascii.GetByteCount(val);
+                if (count >= bytes.Length)
+                {
+                    Array.Resize(ref bytes, count);
+                }
+                ascii.GetBytes(val, 0, val.Length, bytes, 0);
+                return bytes;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Pack Failed with string:" + inputeval + " Error:" + e.Message);
+            }
+        }
         public IDataNode getValue(string key)
         {
             return NodeGroup.GetValueOrDefault(key);
@@ -68,7 +119,7 @@ namespace RhubarbEngine.World.DataStructure
                     int Count = reader.ReadInt32();
                     for (int i = 0; i < Count; i++)
                     {
-                        string key = reader.ReadString();
+                        string key = unPacker(reader.ReadBytes(reader.ReadInt32()));
                         Type ty = DatatNodeTools.dataNode[reader.ReadInt32()];
                         int ValueCount = reader.ReadInt32();
                         byte[] value = reader.ReadBytes(ValueCount);

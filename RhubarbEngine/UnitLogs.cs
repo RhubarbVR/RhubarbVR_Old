@@ -44,6 +44,7 @@ namespace RhubarbEngine
             try
             {
                 objStreamWriter.WriteLine(strMessage);
+                objStreamWriter.FlushAsync();
                 return true;
             }
             catch (Exception ex)
