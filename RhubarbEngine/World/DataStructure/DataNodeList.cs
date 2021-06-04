@@ -25,10 +25,17 @@ namespace RhubarbEngine.World.DataStructure
                         writer.Write(NodeGroup.Count);
                         for (int i = 0; i < NodeGroup.Count; i++)
                         {
-                            byte[] value = NodeGroup[i].getByteArray();
-                            writer.Write(Array.IndexOf(DatatNodeTools.dataNode, ((object)NodeGroup[i]).GetType()));
-                            writer.Write(value.Count());
-                            writer.Write(value);
+                            if(((object)NodeGroup[i]) == null)
+                            {
+                                writer.Write(0);
+                            }
+                            else
+                            {
+                                byte[] value = NodeGroup[i].getByteArray();
+                                writer.Write(Array.IndexOf(DatatNodeTools.dataNode, ((object)NodeGroup[i]).GetType()));
+                                writer.Write(value.Count());
+                                writer.Write(value);
+                            }
                         }
                     }
                     return ms.ToArray();
@@ -76,18 +83,22 @@ namespace RhubarbEngine.World.DataStructure
                     int Count = reader.ReadInt32();
                     for (int i = 0; i < Count; i++)
                     {
-                        Type ty = DatatNodeTools.dataNode[reader.ReadInt32()];
-                        int ValueCount = reader.ReadInt32();
-                        byte[] value = reader.ReadBytes(ValueCount);
-                        if (typeof(IDataNode).IsAssignableFrom(ty))
+                        int typeVal = reader.ReadInt32();
+                        Type ty = DatatNodeTools.dataNode[typeVal];
+                        if (typeVal != 0)
                         {
-                            IDataNode valueobj = (IDataNode)Activator.CreateInstance(ty);
-                            valueobj.setByteArray(value);
-                            NodeGroup.Add(valueobj);
-                        }
-                        else
-                        {
-                            throw new Exception("Type is not valid when loading data.");
+                            int ValueCount = reader.ReadInt32();
+                            byte[] value = reader.ReadBytes(ValueCount);
+                            if (typeof(IDataNode).IsAssignableFrom(ty))
+                            {
+                                IDataNode valueobj = (IDataNode)Activator.CreateInstance(ty);
+                                valueobj.setByteArray(value);
+                                NodeGroup.Add(valueobj);
+                            }
+                            else
+                            {
+                                throw new Exception("Type is not valid when loading data.");
+                            }
                         }
                     }
                 }

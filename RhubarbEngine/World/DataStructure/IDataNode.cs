@@ -19,6 +19,7 @@ namespace RhubarbEngine.World.DataStructure
     public static class DatatNodeTools
     {
         public static Type[] dataNode = new Type[]{
+            typeof(object),
             typeof(DataNodeList),
             typeof(DataNodeGroup),
             

@@ -144,11 +144,10 @@ namespace RhubarbEngine.World
         }
         public virtual DataNodeGroup serialize() {
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            DataNodeGroup obj = new DataNodeGroup();
-            DataNode<bool> Persistentnode = new DataNode<bool>(Persistent);
-            obj.setValue("Persistent", Persistentnode);
+            DataNodeGroup obj = null;
             if (Persistent)
             {
+                obj = new DataNodeGroup();
                 foreach (var field in fields)
                 {
                     if (isValidTypeToSave(field.FieldType) && (field.GetCustomAttributes(typeof(NoSaveAttribute),false).Length <= 0))
@@ -167,10 +166,6 @@ namespace RhubarbEngine.World
         public virtual void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
 
-            if (!((DataNode<bool>)data.getValue("Persistent")).Value)
-            {
-                return;
-            }
             if (data == null)
             {
                 world.worldManager.engine.logger.Log("Node did not exsets When loading Node: " + this.GetType().FullName);

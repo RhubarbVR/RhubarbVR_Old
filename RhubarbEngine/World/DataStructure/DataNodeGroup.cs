@@ -58,7 +58,7 @@ namespace RhubarbEngine.World.DataStructure
             }
         }
         //31 max hardpack values
-        public static string[] HardPack = new String[] { "","Value", "referenceID", "targetRefID", "list", "enabled", "updateOrder" , "remderlayer", "parent", "_children", "name", "rotation", "scale", "position", "Type", "_components", "Persistent", "persistence" };
+        public static string[] HardPack = new String[] { "","Value", "referenceID", "targetRefID", "list", "enabled", "updateOrder" , "remderlayer", "parent", "_children", "name", "rotation", "scale", "position", "Type", "_components", "persistence" };
 
         public string unPacker(byte[] inputeval)
         {
