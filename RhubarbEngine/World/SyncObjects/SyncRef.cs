@@ -73,11 +73,11 @@ namespace RhubarbEngine.World
             return obj;
         }
 
-        public void RefIDResign(NetPointer NewID) {
-            targetRefID = NewID;
+        public void RefIDResign(ulong NewID) {
+            targetRefID = new NetPointer(NewID);
         }
 
-        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<NetPointer, NetPointer> newRefID = default(Dictionary<NetPointer, NetPointer>), Dictionary<NetPointer, RefIDResign> latterResign = default(Dictionary<NetPointer, RefIDResign>))
+        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
             if (data == null)
             {
@@ -87,15 +87,25 @@ namespace RhubarbEngine.World
             targetRefID = ((DataNode<NetPointer>)data.getValue("targetRefID")).Value;
             if (NewRefIDs)
             {
-                newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value, referenceID);
-                latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value](referenceID);
-                if (newRefID[targetRefID].getID()  != 0)
+                newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID(), referenceID.getID());
+                if (latterResign.ContainsKey(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()))
                 {
-                    targetRefID = newRefID[targetRefID];
+                    foreach (RefIDResign func in latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()])
+                    {
+                        func(referenceID.getID());
+                    }
+                }
+                if (newRefID.ContainsKey(targetRefID.getID()))
+                {
+                    targetRefID = new NetPointer(newRefID[targetRefID.getID()]);
                 }
                 else
                 {
-                    latterResign[targetRefID] = RefIDResign;
+                    if (!latterResign.ContainsKey(targetRefID.getID()))
+                    {
+                        latterResign.Add(targetRefID.getID(), new List<RefIDResign>());
+                    }
+                    latterResign[targetRefID.getID()].Add(RefIDResign);
                 }
 
             }

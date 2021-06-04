@@ -7,5 +7,5 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World.DataStructure
 {
-    public delegate void RefIDResign(NetPointer NewID);
+    public delegate void RefIDResign(ulong NewID);
 }

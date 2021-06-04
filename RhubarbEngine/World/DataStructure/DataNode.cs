@@ -34,13 +34,14 @@ namespace RhubarbEngine.World.DataStructure
                     {
                         RhubarbIO.Serialize<T>(writer, Value);
                     }
+                    byte[] retunval = ms.ToArray();
                     return ms.ToArray();
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
-                throw;
+                Console.WriteLine("Failed to serialize. Reason: " + e.Message + " Type: " + Value.GetType().FullName);
+                throw new Exception("Failed to serialize. Reason: " + e.Message + " Type: " + Value.GetType().FullName);
             }
         }
 

@@ -34,7 +34,15 @@ namespace RhubarbEngine.World.DataStructure
                             byte[] keyBytes = packer(keys[i]);
                             writer.Write(keyBytes.Count());
                             writer.Write(keyBytes);
-                            byte[] value = values[i].getByteArray();
+                            byte[] value;
+                            try
+                            {
+                                value = values[i].getByteArray();
+                            }
+                            catch (Exception e)
+                            {
+                                throw new Exception("Key: " + keys[i] + " Type: " + values[i].GetType().FullName + " Error: " + e.Message);   
+                            }
                             writer.Write(Array.IndexOf(DatatNodeTools.dataNode, ((object)values[i]).GetType()));
                             writer.Write(value.Count());
                             writer.Write(value);
@@ -45,12 +53,12 @@ namespace RhubarbEngine.World.DataStructure
             }
             catch (Exception e)
             {
-                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                Console.WriteLine("Failed to serialize. Group Reason: " + e.Message);
                 return new byte[]{ };
             }
         }
         //31 max hardpack values
-        public static string[] HardPack = new String[] { "","Value", "referenceID", "targetRefID", "list", "enabled", "updateOrder" , "remderlayer", "parent", "_children", "name", "rotation", "scale", "position", "Type", "_components" };
+        public static string[] HardPack = new String[] { "","Value", "referenceID", "targetRefID", "list", "enabled", "updateOrder" , "remderlayer", "parent", "_children", "name", "rotation", "scale", "position", "Type", "_components", "Persistent", "persistence" };
 
         public string unPacker(byte[] inputeval)
         {

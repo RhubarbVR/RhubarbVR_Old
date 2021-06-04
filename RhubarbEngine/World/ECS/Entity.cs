@@ -30,6 +30,8 @@ namespace RhubarbEngine.World.ECS
 
         public Sync<bool> enabled;
 
+        public Sync<bool> persistence;
+
         public SyncObjList<Entity> _children;
 
         public SyncAbstractObjList<Component> _components;
@@ -49,6 +51,10 @@ namespace RhubarbEngine.World.ECS
             }
         }
 
+        public void onPersistenceChange(IChangeable newValue)
+        {
+            base.Persistent = persistence.value;
+        }
         public override void inturnalSyncObjs(bool newRefIds)
         {
             world.addWorldEntity(this);
@@ -113,6 +119,8 @@ namespace RhubarbEngine.World.ECS
             rotation = new Sync<Quaternionf>(this, newRefIds);
             name = new Sync<string>(this, newRefIds);
             enabled = new Sync<bool>(this, newRefIds);
+            persistence = new Sync<bool>(this, newRefIds);
+            persistence.value = true;
             _children = new SyncObjList<Entity>(this, newRefIds);
             _components = new SyncAbstractObjList<Component>(this, newRefIds);
             enabled.value = true;
@@ -123,6 +131,7 @@ namespace RhubarbEngine.World.ECS
             rotation.Changed += onTransChange;
             scale.Changed += onTransChange;
             enabled.Changed += onEnableChange;
+            persistence.Changed += onPersistenceChange;
         }
         public void onTransChange(IChangeable newValue)
         {

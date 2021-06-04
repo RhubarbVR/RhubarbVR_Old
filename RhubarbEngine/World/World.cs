@@ -23,8 +23,8 @@ namespace RhubarbEngine.World
         }
         public Matrix4x4 playerTrans => (userRoot != null)? userRoot.entity.globalTrans() : Matrix4x4.CreateScale(1f);
 
+        [NoSaveAttribute]
         public UserRoot userRoot;
-
 
         public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
         {
@@ -72,6 +72,7 @@ namespace RhubarbEngine.World
         public byte user = 0;
 
         private Sync<int> _maxUsers;
+
         public int maxUsers
         {
             get
@@ -107,6 +108,7 @@ namespace RhubarbEngine.World
         public DateTime lastFocusChange { get; private set; }
 
         public WorldManager worldManager;
+
         public FocusLevel Focus
         {
             get
@@ -212,10 +214,11 @@ namespace RhubarbEngine.World
             {
                 posoffset = 12;
             }
-            Name = new Sync<string>(this, this);
-            _maxUsers = new Sync<int>(this, this);
-            RootEntity = new Entity(this);
-            deSerialize(node);
+            Name = new Sync<string>(this, this, !networkload);
+            _maxUsers = new Sync<int>(this, this, !networkload);
+            RootEntity = new Entity(this, !networkload);
+            RootEntity.name.value = "Root";
+            deSerialize(node, !networkload  , new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
         }
 
         public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false)
@@ -244,7 +247,7 @@ namespace RhubarbEngine.World
             DataNodeGroup obj = new DataNodeGroup();
             foreach (var field in fields)
             {
-                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))
+                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0))
                 {
                     if (((IWorldObject)field.GetValue(this)) != null)
                     {
@@ -255,12 +258,12 @@ namespace RhubarbEngine.World
             return obj;
         }
 
-        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<NetPointer, NetPointer> newRefID = default(Dictionary<NetPointer, NetPointer>), Dictionary<NetPointer, RefIDResign> latterResign = default(Dictionary<NetPointer, RefIDResign>))
+        public void deSerialize(DataNodeGroup data, bool NewRefIDs = true, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
             FieldInfo[] fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
             {
-                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))
+                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType)&& (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0))
                 {
                     if (((IWorldObject)field.GetValue(this)) != null)
                     {

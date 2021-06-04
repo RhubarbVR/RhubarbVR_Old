@@ -29,6 +29,11 @@ namespace RhubarbEngine.Components.Users
 
         }
 
+        public override void onLoaded()
+        {
+            entity.persistence.value = false;
+        }
+
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
             float deltaSeconds = (float)world.worldManager.engine.platformInfo.deltaSeconds;

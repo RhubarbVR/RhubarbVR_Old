@@ -10,12 +10,16 @@ namespace RhubarbEngine.World.ECS
     {
         public Sync<int> updateOrder;
 
+        [NoSaveAttribute]
         private Entity _entity;
 
-        public Entity entity{ get { return _entity; } }
+        [NoSaveAttribute]
+        public Entity entity { get { return _entity; } }
+
         public override void inturnalSyncObjs(bool newRefIds)
         {
             updateOrder = new Sync<int>(this, newRefIds);
+            _entity = (Entity)(parent.Parent);
             LoadToWorld();
         }
         public virtual void LoadToWorld()

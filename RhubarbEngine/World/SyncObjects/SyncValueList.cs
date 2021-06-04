@@ -51,7 +51,7 @@ namespace RhubarbEngine.World
             obj.setValue("list", list);
             return obj;
         }
-        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<NetPointer, NetPointer> newRefID = default(Dictionary<NetPointer, NetPointer>), Dictionary<NetPointer, RefIDResign> latterResign = default(Dictionary<NetPointer, RefIDResign>))
+        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
             if (data == null)
             {
@@ -60,8 +60,14 @@ namespace RhubarbEngine.World
             }
             if (NewRefIDs)
             {
-                newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value, referenceID);
-                latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value](referenceID);
+                newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID(), referenceID.getID());
+                if (latterResign.ContainsKey(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()))
+                {
+                    foreach (RefIDResign func in latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()])
+                    {
+                        func(referenceID.getID());
+                    }
+                }
             }
             else
             {

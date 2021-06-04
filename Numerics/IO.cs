@@ -85,7 +85,7 @@ public static class RhubarbIO
                     writer.Write((char)obj);
                     return;
                 case Type _ when ty == typeof(string):
-                    writer.Write((string)obj);
+                    writer.Write(((string)obj == null)? "" : (string)obj);
                     return;
                 case Type _ when ty == typeof(float):
                     writer.Write((float)obj);

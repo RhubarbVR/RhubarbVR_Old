@@ -24,7 +24,7 @@ namespace RhubarbEngine.World
         bool IsRemoved { get; }
         DataNodeGroup serialize();
 
-        void deSerialize(DataNodeGroup data,bool NewRefIDs = false, Dictionary<NetPointer, NetPointer> newRefID = default(Dictionary<NetPointer, NetPointer>), Dictionary<NetPointer, RefIDResign> latterResign = default(Dictionary<NetPointer, RefIDResign>));
+        void deSerialize(DataNodeGroup data,bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>));
 
     }
 }

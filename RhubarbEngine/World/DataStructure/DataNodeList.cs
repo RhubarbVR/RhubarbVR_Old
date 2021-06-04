@@ -36,7 +36,7 @@ namespace RhubarbEngine.World.DataStructure
             }
             catch (Exception e)
             {
-                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                Console.WriteLine("Failed to serialize list. Reason: " + e.Message );
                 throw;
             }
         }

@@ -54,7 +54,7 @@ namespace RhubarbEngine.World.ECS
             return obj;
         }
 
-        public virtual void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<NetPointer, NetPointer> newRefID = default(Dictionary<NetPointer, NetPointer>), Dictionary<NetPointer, RefIDResign> latterResign = default(Dictionary<NetPointer, RefIDResign>))
+        public virtual void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, RefIDResign> latterResign = default(Dictionary<ulong, RefIDResign>))
         {
             if (data == null)
             {
@@ -63,8 +63,8 @@ namespace RhubarbEngine.World.ECS
             }
             if (NewRefIDs)
             {
-                newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value, referenceID);
-                latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value](referenceID);
+                newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID(), referenceID.getID());
+                latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()](referenceID.getID());
             }
             else
             {

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
+using RhubarbEngine.World.ECS;
 
 namespace RhubarbEngine.World
 {
@@ -18,16 +19,18 @@ namespace RhubarbEngine.World
         }
 
         public event Action<IChangeable> Changed;
+
+        [NoSaveAttribute]
         public World world { get; protected set; }
 
-        private IWorldObject parent;
+        [NoSaveAttribute]
+        public IWorldObject parent;
 
         public NetPointer referenceID { get; protected set; }
 
         public UnitLogs logger => world.worldManager.engine.logger;
 
         public Engine engine => world.worldManager.engine;
-
 
         public bool Persistent = true;
 
@@ -134,15 +137,24 @@ namespace RhubarbEngine.World
         {
 
         }
+
+        private bool isValidTypeToSave(Type eye)
+        {
+            return typeof(IWorldObject).IsAssignableFrom(eye) && (eye != typeof(Entity));
+        }
         public virtual DataNodeGroup serialize() {
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             DataNodeGroup obj = new DataNodeGroup();
+            DataNode<bool> Persistentnode = new DataNode<bool>(Persistent);
+            obj.setValue("Persistent", Persistentnode);
             if (Persistent)
             {
                 foreach (var field in fields)
                 {
-                    if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))
+                    if (isValidTypeToSave(field.FieldType) && (field.GetCustomAttributes(typeof(NoSaveAttribute),false).Length <= 0))
                     {
+                        //This is for debug purposes 
+                        //Console.WriteLine(field.FieldType.FullName + "Name: " + field.Name);
                         obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize());
                     }
                 }
@@ -151,18 +163,33 @@ namespace RhubarbEngine.World
             }
             return obj;
         }
-
-        public virtual void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<NetPointer, NetPointer> newRefID = default(Dictionary<NetPointer, NetPointer>), Dictionary<NetPointer, RefIDResign> latterResign = default(Dictionary<NetPointer, RefIDResign>))
+        
+        public virtual void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
-            if(data == null)
+
+            if (!((DataNode<bool>)data.getValue("Persistent")).Value)
             {
-                world.worldManager.engine.logger.Log("Node did not exsets When loading Node");
+                return;
+            }
+            if (data == null)
+            {
+                world.worldManager.engine.logger.Log("Node did not exsets When loading Node: " + this.GetType().FullName);
                 return;
             }
             if (NewRefIDs)
             {
-                newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value, referenceID);
-                latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value](referenceID);
+                if (newRefID == null)
+                {
+                    Console.WriteLine("Problem With " + this.GetType().FullName);
+                }
+                newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID(), referenceID.getID());
+                if(latterResign.ContainsKey(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()))
+                {
+                    foreach(RefIDResign func in latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()])
+                    {
+                        func(referenceID.getID());
+                    }
+                }
             }
             else
             {
@@ -173,11 +200,11 @@ namespace RhubarbEngine.World
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
             {
-                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))
+                if (isValidTypeToSave(field.FieldType) && (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0))
                 {
                     if (((IWorldObject)field.GetValue(this)) == null)
                     {
-                        throw new Exception("Sync not initialized on " + this.GetType().FullName + " Firld: " + field.Name);
+                        throw new Exception("Sync not initialized on " + this.GetType().FullName + " Field: " + field.Name);
                     }
                     ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), NewRefIDs, newRefID, latterResign);
                 }
