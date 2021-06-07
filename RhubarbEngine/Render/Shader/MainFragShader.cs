@@ -8,6 +8,14 @@ namespace RhubarbEngine.Render.Shader
 {
     public class MainFragShader : ShaderPart
     {
-
+        public virtual string TopCode
+        {
+            get
+            {
+                return @"
+#version 450
+";
+            }
+        }
     }
 }

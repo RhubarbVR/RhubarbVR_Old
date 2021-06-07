@@ -8,12 +8,19 @@ namespace RhubarbEngine.Render.Shader
 {
     public abstract class ShaderPart
     {
-        public static string TopCode = @"
-#version 450";
+        public virtual string TopCode
+        {
+            get
+            {
+                return @"
+#version 450
+";
+            } 
+        }
 
-        public Dictionary<string, Uniform> uniforms = new Dictionary<string, Uniform>();
+        public string InjectedCode = "";
 
-        public virtual string UserCode { get { return @"
+        private string userCode = @"
 layout(set = 0, binding = 1) uniform texture2D Input;
 layout(set = 0, binding = 2) uniform sampler InputSampler;
 
@@ -30,20 +37,21 @@ void main()
 
     fsout_Color0 = texture(sampler2D(Input, InputSampler), uv);
 }
-"; } }
-        public string getUniformString()
+";
+        public virtual string UserCode
         {
-            string val = "";
-            foreach (Uniform item in uniforms.Values)
+            get
             {
-                val += item.getUniformString();
+                return userCode;
             }
-            return val;
+            set
+            {
+                userCode = value;
+            }
         }
-
         public virtual string getCode()
         {
-            return TopCode + "\n" + getUniformString() + "\n" + UserCode;
+            return TopCode + "\n"+ InjectedCode + "\n" + UserCode;
         }
     }
 }

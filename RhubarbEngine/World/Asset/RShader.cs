@@ -50,17 +50,24 @@ namespace RhubarbEngine.World.Asset
             }
         }
 
+        public void BuildCode()
+        {
 
+        }
 
         public void LoadShader(GraphicsDevice gd, UnitLogs log)
         {
             try
             {
                 Dispose();
+
+                BuildCode();
+
                 string mainFragShader_Code = mainFragCode.getCode();
                 string shadowFragShader_Code = shadowFragCode.getCode();
                 string mainVertShader_Code = mainVertCode.getCode();
                 string shadowVertShader_Code = shadowVertCode.getCode();
+
                 log.Log("ShaderCode \n" + mainFragShader_Code + "\n" + shadowFragShader_Code + "\n" + mainVertShader_Code + "\n" + shadowVertShader_Code);
 
                 Shader[] mainshaders = gd.ResourceFactory.CreateFromSpirv(

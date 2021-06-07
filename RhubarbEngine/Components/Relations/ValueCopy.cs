@@ -19,6 +19,7 @@ namespace RhubarbEngine.Components.Relations
         public SyncRef<ValueSource<T>> source;
 
         public Sync<bool> writeBack;
+
         public override void buildSyncObjs(bool newRefIds)
         {
             driver = new Driver<T>(this, newRefIds);
