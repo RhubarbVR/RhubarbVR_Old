@@ -42,7 +42,7 @@ namespace RhubarbEngine.Render.Shader
         Val_mat2x4,
         Val_mat3x4,
         Val_mat4x4,
-        Val_rgbColor,
+        Val_Color,
         Val_Texture1D,
         Val_Texture2D,
         Val_Texture3D,

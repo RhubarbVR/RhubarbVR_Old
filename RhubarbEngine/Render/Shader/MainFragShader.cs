@@ -6,16 +6,9 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Render.Shader
 {
-    public class MainFragShader : ShaderPart
+    public class MainFragShader : FragShader
     {
-        public virtual string TopCode
-        {
-            get
-            {
-                return @"
-#version 450
-";
-            }
-        }
+
     }
 }
+

@@ -38,7 +38,7 @@ namespace RhubarbEngine.World.Asset
 
         public bool shaderLoaded;
 
-        public List<(string type, string name)> Fields = new List<(string type, string name)>();
+        public List<ShaderUniform> Fields = new List<ShaderUniform>();
 
         public List<IDisposable> disposable = new List<IDisposable>();
         public void Dispose()
@@ -49,12 +49,52 @@ namespace RhubarbEngine.World.Asset
                 dep.Dispose();
             }
         }
-
         public void BuildCode()
         {
-
+            int loc = 0;
+            string mvert = "";
+            string mfrag = "";
+            string svert = "";
+            string sfrag = "";
+            foreach (ShaderUniform field in Fields)
+            {
+                switch (field.shaderType)
+                {
+                    case ShaderType.MainVert:
+                        mvert += field.getCode(loc);
+                        break;
+                    case ShaderType.MainFrag:
+                        mfrag += field.getCode(loc);
+                        break;
+                    case ShaderType.ShadowVert:
+                        svert += field.getCode(loc);
+                        break;
+                    case ShaderType.ShadowFrag:
+                        sfrag += field.getCode(loc);
+                        break;
+                    default:
+                        break;
+                }
+                loc++;
+            }
+            mainVertCode.InjectedCode = mvert;
+            mainFragCode.InjectedCode = mfrag;
+            shadowVertCode.InjectedCode = svert;
+            shadowFragCode.InjectedCode = sfrag;
         }
 
+        public ShaderUniform addUniform(string name, ShaderValueType vType, ShaderType stype)
+        {
+            ShaderUniform e = new ShaderUniform(name, vType, stype);
+            Fields.Add(e);
+            return e;
+        }
+
+        public void removeUniform(string name, ShaderValueType vType, ShaderType stype)
+        {
+            ShaderUniform e = new ShaderUniform(name, vType, stype);
+            Fields.Remove(e);
+        }
         public void LoadShader(GraphicsDevice gd, UnitLogs log)
         {
             try
