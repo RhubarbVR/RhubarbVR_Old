@@ -32,8 +32,23 @@ namespace RhubarbEngine.World
         {
             return _synclist.Count;
         }
-        public T Add(T val,bool Refid = true)
+        public T Add(T val, bool Refid = true)
         {
+            val.initialize(this.world, this, Refid);
+            _synclist.Add(val);
+            return _synclist[_synclist.Count - 1];
+        }
+        public T Add<L>( bool Refid = true) where L:Worker
+        {
+            L val = (L)Activator.CreateInstance(typeof(L));
+            val.initialize(this.world, this, Refid);
+            _synclist.Add(val as T);
+            return _synclist[_synclist.Count - 1];
+        }
+
+        public T Add(Type type,bool Refid = true) 
+        {
+            T val = (T)Activator.CreateInstance(type);
             val.initialize(this.world, this, Refid);
             _synclist.Add(val);
             return _synclist[_synclist.Count - 1];

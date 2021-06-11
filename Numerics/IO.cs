@@ -196,6 +196,9 @@ public static class RhubarbIO
                     writer.Write(((NetPointer)obj).getID());
                     return;
 
+                case Type _ when ty.IsEnum:
+                    writer.Write((int)obj);
+                    return;
 
                 default:
                     throw new Exception("Unknown type to Serialize " + ty.FullName);
@@ -347,7 +350,8 @@ public static class RhubarbIO
                 case Type _ when ty == typeof(NetPointer):
                     return  new NetPointer(reader.ReadUInt64());
 
-
+                case Type _ when ty.IsEnum:
+                    return (T)((object)reader.ReadUInt64());
                 default:
                     throw new Exception("Unknown type to DeSerialize " + ty.FullName);
                     return null;
