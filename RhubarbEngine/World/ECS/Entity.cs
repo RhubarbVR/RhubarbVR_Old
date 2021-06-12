@@ -12,7 +12,7 @@ using System.Numerics;
 
 namespace RhubarbEngine.World.ECS
 {
-    public class Entity: Worker
+    public class Entity : Worker
     {
         public Sync<Vector3f> position;
 
@@ -152,7 +152,7 @@ namespace RhubarbEngine.World.ECS
             {
                 parentMatrix = parent.target.globalTrans();
             }
-            Matrix4x4 localMatrix = Matrix4x4.CreateScale(scale.value.x, scale.value.y, scale.value.z) * Matrix4x4.CreateFromQuaternion(new Quaternion(rotation.value.x, rotation.value.y, rotation.value.z, rotation.value.w))* Matrix4x4.CreateTranslation(position.value.x, position.value.y, position.value.z) ;
+            Matrix4x4 localMatrix = Matrix4x4.CreateScale(scale.value.x, scale.value.y, scale.value.z) * Matrix4x4.CreateFromQuaternion(new Quaternion(rotation.value.x, rotation.value.y, rotation.value.z, rotation.value.w)) * Matrix4x4.CreateTranslation(position.value.x, position.value.y, position.value.z);
             cashedGlobalTrans = localMatrix * parentMatrix;
             cashedLocalMatrix = localMatrix;
             foreach (Entity entity in _children)

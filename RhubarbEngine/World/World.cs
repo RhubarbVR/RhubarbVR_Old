@@ -218,7 +218,12 @@ namespace RhubarbEngine.World
             _maxUsers = new Sync<int>(this, this, !networkload);
             RootEntity = new Entity(this, !networkload);
             RootEntity.name.value = "Root";
-            deSerialize(node, !networkload  , new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+            List<Action> loadded = new List<Action>();
+            deSerialize(node, loadded, !networkload, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+            foreach (Action item in loadded)
+            {
+                item?.Invoke();
+            }
         }
 
         public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false)
@@ -258,7 +263,7 @@ namespace RhubarbEngine.World
             return obj;
         }
 
-        public void deSerialize(DataNodeGroup data, bool NewRefIDs = true, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+        public void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = true, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
             FieldInfo[] fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
@@ -267,7 +272,7 @@ namespace RhubarbEngine.World
                 {
                     if (((IWorldObject)field.GetValue(this)) != null)
                     {
-                        ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), NewRefIDs, newRefID, latterResign);
+                        ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), onload,NewRefIDs, newRefID, latterResign);
                     }
                 }
             }

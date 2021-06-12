@@ -91,7 +91,7 @@ namespace RhubarbEngine.Managers
                 BoxMesh bmesh = e.attachComponent<BoxMesh>();
                 RMaterial mit = e.attachComponent<RMaterial>();
                 MeshRender meshRender = e.attachComponent<MeshRender>();
-                mit.Shaders.Add().target = shader;
+                mit.Shader.target = shader;
                 meshRender.Materials.Add().target = mit;
                 meshRender.Mesh.target = bmesh;
             }

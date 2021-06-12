@@ -36,11 +36,11 @@ namespace RhubarbEngine
 
         public EngineInitializer engineInitializer;
 
-
         public void initialize(string[] _args, bool _verbose = false, bool _Rendering = true)
         {
             verbose = _verbose;
             logger = new UnitLogs(this);
+            Logger.init(this);
             engineInitializer = new EngineInitializer(this);
             logger.Log("Loading Arguments:", true);
             engineInitializer.loadArguments(_args);

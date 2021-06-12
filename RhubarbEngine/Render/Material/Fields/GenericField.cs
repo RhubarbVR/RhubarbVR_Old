@@ -15,6 +15,16 @@ namespace RhubarbEngine.Render.Material.Fields
         public override void buildSyncObjs(bool newRefIds)
         {
             field = new Sync<T>(this, newRefIds);
+            field.Changed += valueUpdate;
+        }
+        public override void setValue(Object val)
+        {
+            field.value = (T)val;
+        }
+
+        private void valueUpdate(IChangeable e)
+        {
+            updateBuffer(engine.renderManager.gd);
         }
 
         unsafe public override void updateBuffer(GraphicsDevice gb)

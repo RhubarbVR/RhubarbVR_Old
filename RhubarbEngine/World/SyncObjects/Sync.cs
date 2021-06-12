@@ -79,12 +79,20 @@ namespace RhubarbEngine.World
             DataNodeGroup obj = new DataNodeGroup();
             DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
             obj.setValue("referenceID", Refid);
-            DataNode<T> Value = new DataNode<T>(_value);
+            IDataNode Value;
+            if (typeof(T).IsEnum)
+            {
+               Value = new DataNode<int>((int)(object)_value);
+            }
+            else
+            {
+               Value = new DataNode<T>(_value);
+            }
             obj.setValue("Value", Value);
             return obj;
         }
 
-        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+        public void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
             if (data == null)
             {
@@ -107,7 +115,14 @@ namespace RhubarbEngine.World
                 referenceID = ((DataNode<NetPointer>)data.getValue("referenceID")).Value;
                 world.addWorldObj(this);
             }
-            _value = ((DataNode<T>)data.getValue("Value")).Value;
+            if (typeof(T).IsEnum)
+            {
+                _value = (T)(object)((DataNode<int>)data.getValue("Value")).Value;
+            }
+            else
+            {
+                _value = ((DataNode<T>)data.getValue("Value")).Value;
+            }
         }
     }
 }

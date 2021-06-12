@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
+using System.Collections;
 
 namespace RhubarbEngine.World
 {
@@ -20,13 +21,16 @@ namespace RhubarbEngine.World
             }
         }
 
-        public IEnumerator<AssetRef<T>> GetEnumerator()
+        public int Length { get { return _syncreflist.Count; } }
+
+        public IEnumerator<T> GetEnumerator()
         {
             for (int i = 0; i < _syncreflist.Count; i++)
             {
-                yield return this[i];
+                yield return this[i].Asset;
             }
         }
+
 
         private void onLoad(T val)
         {
@@ -68,7 +72,7 @@ namespace RhubarbEngine.World
             return obj;
         }
 
-        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+        public void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
             if (data == null)
             {
@@ -93,8 +97,10 @@ namespace RhubarbEngine.World
             }
             foreach (DataNodeGroup val in ((DataNodeList)data.getValue("list")))
             {
-                Add(NewRefIDs).deSerialize(val, NewRefIDs, newRefID, latterResign);
+                Add(NewRefIDs).deSerialize(val, onload, NewRefIDs, newRefID, latterResign);
             }
         }
+
+
     }
 }

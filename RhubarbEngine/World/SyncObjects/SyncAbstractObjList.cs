@@ -83,7 +83,7 @@ namespace RhubarbEngine.World
             obj.setValue("list", list);
             return obj;
         }
-        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+        public void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
             if (data == null)
             {
@@ -116,13 +116,13 @@ namespace RhubarbEngine.World
                     {
                         world.worldManager.engine.logger.Log("Component still not found" + ((DataNode<string>)val.getValue("Type")).Value);
                         T obj = (T)Activator.CreateInstance(typeof(MissingComponent));
-                        Add(obj, NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), NewRefIDs, newRefID, latterResign);
+                        Add(obj, NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), onload, NewRefIDs, newRefID, latterResign);
                     }
                     else
                     {
                         if ((ty).IsAssignableFrom(typeof(T))) { 
                             T obj = (T)Activator.CreateInstance(ty);
-                            Add(obj, NewRefIDs).deSerialize(((DataNodeGroup)((DataNodeGroup)val.getValue("Value")).getValue("Data")), NewRefIDs, newRefID, latterResign);
+                            Add(obj, NewRefIDs).deSerialize(((DataNodeGroup)((DataNodeGroup)val.getValue("Value")).getValue("Data")), onload, NewRefIDs, newRefID, latterResign);
                         }
                         else
                         {
@@ -138,13 +138,13 @@ namespace RhubarbEngine.World
                         if (typeof(T) == typeof(Component))
                         {
                             T obj = (T)Activator.CreateInstance(typeof(MissingComponent));
-                            Add(obj, NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), NewRefIDs, newRefID, latterResign);
+                            Add(obj, NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), onload, NewRefIDs, newRefID, latterResign);
                         }
                     }
                     else
                     {
                         T obj = (T)Activator.CreateInstance(ty);
-                        Add(obj, NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), NewRefIDs, newRefID, latterResign);
+                        Add(obj, NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), onload,NewRefIDs, newRefID, latterResign);
                     }
                 }
             }

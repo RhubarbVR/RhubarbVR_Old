@@ -64,7 +64,7 @@ namespace RhubarbEngine.World
             obj.setValue("list", list);
             return obj;
         }
-        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+        public void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
             if (data == null)
             {
@@ -89,7 +89,7 @@ namespace RhubarbEngine.World
             }
             foreach (DataNodeGroup val in ((DataNodeList)data.getValue("list")))
             {
-                Add(NewRefIDs).deSerialize(val, NewRefIDs, newRefID, latterResign);
+                Add(NewRefIDs).deSerialize(val, onload,NewRefIDs, newRefID, latterResign);
             }
         }
     }

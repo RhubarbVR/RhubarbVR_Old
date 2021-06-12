@@ -41,7 +41,13 @@ namespace RhubarbEngine.World.Asset
 
         public void createMeshesBuffers(GraphicsDevice _gd)
         {
+            Logger.Log("Loading Mesh");
             List<MeshPiece> _meshPieces = new List<MeshPiece>();
+            foreach (IDisposable dep in disposables)
+            {
+                dep.Dispose();
+            }
+            disposables.Clear();
             foreach (IMesh mesh in meshes)
             {
                 IList<Vector3d> Vertices = new List<Vector3d>();
@@ -59,11 +65,7 @@ namespace RhubarbEngine.World.Asset
 
                 _meshPieces.Add(new MeshPiece(positions, texCoords, indices));
             }
-            foreach (IDisposable dep in disposables)
-            {
-                dep.Dispose();
-            }
-            disposables.Clear();
+            Logger.Log($"Mesh has {_meshPieces.Count}");
             meshPieces = _meshPieces;
         }
 

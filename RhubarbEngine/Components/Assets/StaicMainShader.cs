@@ -33,6 +33,7 @@ namespace RhubarbEngine.Components.Assets
         {
             logger.Log("Loadded Shader");
             RShader shader = new RShader();
+            //shader.addUniform("Texture", Render.Shader.ShaderValueType.Val_texture2D, Render.Shader.ShaderType.MainFrag);
             shader.LoadShader(engine.renderManager.gd, logger);
             load(shader);
         }

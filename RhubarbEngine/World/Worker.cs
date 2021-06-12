@@ -7,6 +7,7 @@ using System.Reflection;
 using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
 using RhubarbEngine.World.ECS;
+using RhubarbEngine.Components.Rendering;
 
 namespace RhubarbEngine.World
 {
@@ -163,7 +164,7 @@ namespace RhubarbEngine.World
             return obj;
         }
         
-        public virtual void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+        public virtual void deSerialize( DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
 
             if (data == null)
@@ -201,10 +202,17 @@ namespace RhubarbEngine.World
                     {
                         throw new Exception("Sync not initialized on " + this.GetType().FullName + " Field: " + field.Name);
                     }
-                    ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), NewRefIDs, newRefID, latterResign);
+                    ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), onload, NewRefIDs, newRefID, latterResign);
                 }
             }
-            onLoaded();
+            if (typeof(MeshRender).IsAssignableFrom(this.GetType()))
+            {
+                onload.Add(onLoaded);
+            }
+            else
+            {
+                onload.Insert(0, onLoaded);
+            }
         }
 
     }

@@ -15,6 +15,10 @@ namespace RhubarbEngine.World
         {
             get
             {
+                if(base.target == null)
+                {
+                    return default(T);
+                }
                 return base.target.value;
             }
         }

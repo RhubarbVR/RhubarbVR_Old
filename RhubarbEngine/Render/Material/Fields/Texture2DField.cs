@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RhubarbEngine.World;
 using RhubarbEngine.World.Asset;
 using Veldrid;
+using RhubarbDataTypes;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
@@ -17,7 +18,10 @@ namespace RhubarbEngine.Render.Material.Fields
             field = new AssetRef<RTexture2D>(this, newRefIds);
             field.loadChange += assetChange;
         }
-
+        public override void setValue(Object val)
+        {
+            field.value = (NetPointer)val;
+        }
         public void assetChange(RTexture2D newAsset)
         {
             resource = null;

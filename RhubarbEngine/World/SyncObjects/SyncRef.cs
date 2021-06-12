@@ -46,7 +46,7 @@ namespace RhubarbEngine.World
             }
             set
             {
-                target = (T)world.getWorldObj(value);
+                _target = (T)world.getWorldObj(value);
                 onChangeInternal(this);
             }
         }
@@ -74,10 +74,10 @@ namespace RhubarbEngine.World
         }
 
         public void RefIDResign(ulong NewID) {
-            targetRefID = new NetPointer(NewID);
+            value = new NetPointer(NewID);
         }
 
-        public void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+        public void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
             if (data == null)
             {

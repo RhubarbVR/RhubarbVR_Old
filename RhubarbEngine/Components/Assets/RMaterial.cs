@@ -30,7 +30,7 @@ namespace RhubarbEngine.Components.Assets
     [Category(new string[] { "Assets" })]
     public class RMaterial : AssetProvider<RMaterial>,IAsset
     {
-        public SyncAssetRefList<RShader> Shaders;
+        public AssetRef<RShader> Shader;
 
         public List<ResourceLayoutElementDescription> resorses;
 
@@ -38,7 +38,45 @@ namespace RhubarbEngine.Components.Assets
 
         public override void onLoaded()
         {
+            Logger.Log("Loaded Material");
+            load(this);
+        }
 
+        public BindableResource[] getBindableResources()
+        {
+            List<BindableResource> BindableResources = new List<BindableResource>();
+
+            foreach(MaterialField field in Fields)
+            {
+                if(field.resource == null)
+                {
+                    throw new Exception("resource is null");
+                }
+                else
+                {
+                    BindableResources.Add(field.resource);
+                }
+            }
+
+            return BindableResources.ToArray();
+        }
+
+        public void setValueAtField<T>(string fieldName,ShaderType shaderType,T value)
+        {
+            foreach (MaterialField item in Fields)
+            {
+                if (item.fieldName.value == fieldName && item.shaderType.value == shaderType)
+                {
+                    if (typeof(IWorldObject).IsAssignableFrom(typeof(T)))
+                    {
+                        item.setValue(((IWorldObject)value).ReferenceID);
+                    }
+                    else {
+                        item.setValue(value);
+                    }
+                    return;
+                }
+            }
         }
 
         public void createField(string fieldName,ShaderType shader,ShaderValueType type)
@@ -115,14 +153,14 @@ namespace RhubarbEngine.Components.Assets
                     break;
                 case ShaderValueType.Val_mat4x4:
                     break;
-                case ShaderValueType.Val_Color:
+                case ShaderValueType.Val_color:
                     break;
-                case ShaderValueType.Val_Texture1D:
+                case ShaderValueType.Val_texture1D:
                     break;
-                case ShaderValueType.Val_Texture2D:
+                case ShaderValueType.Val_texture2D:
                     vatype = typeof(Texture2DField);
                     break;
-                case ShaderValueType.Val_Texture3D:
+                case ShaderValueType.Val_texture3D:
                     break;
                 default:
                     break;
@@ -136,6 +174,7 @@ namespace RhubarbEngine.Components.Assets
 
         public void LoadChange(RShader shader)
         {
+            logger.Log("Starting Shader Uniform list");
             foreach (ShaderUniform item in shader.Fields)
             {
                 bool val = false;
@@ -159,13 +198,14 @@ namespace RhubarbEngine.Components.Assets
                     createField(item.fieldName, item.shaderType, item.valueType);
                 }
             }
+            load(this);
         }
 
         public override void buildSyncObjs(bool newRefIds)
         {
-            Shaders = new SyncAssetRefList<RShader>(this, newRefIds);
+            Shader = new AssetRef<RShader>(this, newRefIds);
             Fields = new SyncAbstractObjList<MaterialField>(this, newRefIds);
-            Shaders.loadChange += LoadChange;
+            Shader.loadChange += LoadChange;
         }
         public RMaterial(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
         {

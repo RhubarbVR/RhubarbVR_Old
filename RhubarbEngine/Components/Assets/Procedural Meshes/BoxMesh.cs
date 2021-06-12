@@ -47,8 +47,9 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         private void updateMesh()
         {
             MeshGenerator newmesh = boxgen.Generate();
-            load(new RMesh(newmesh.MakeSimpleMesh()));
-            base.value.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
+            RMesh kite = new RMesh(newmesh.MakeSimpleMesh());
+            kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
+            load(kite);
         }
         public override void onLoaded()
         {

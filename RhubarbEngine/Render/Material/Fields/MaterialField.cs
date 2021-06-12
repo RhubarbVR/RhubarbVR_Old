@@ -20,6 +20,12 @@ namespace RhubarbEngine.Render.Material.Fields
         public BindableResource resource;
 
         public bool isNull;
+
+        public virtual void setValue(Object val)
+        {
+
+        }
+
         public override void inturnalSyncObjs(bool newRefIds)
         {
             valueType = new Sync<ShaderValueType>(this, newRefIds);
