@@ -113,15 +113,11 @@ namespace RhubarbEngine.Components.Assets
                     break;
                 case ShaderValueType.Val_double:
                     break;
-                case ShaderValueType.Val_bvec1:
-                    break;
                 case ShaderValueType.Val_bvec2:
                     break;
                 case ShaderValueType.Val_bvec3:
                     break;
                 case ShaderValueType.Val_bvec4:
-                    break;
-                case ShaderValueType.Val_ivec1:
                     break;
                 case ShaderValueType.Val_ivec2:
                     break;
@@ -129,23 +125,17 @@ namespace RhubarbEngine.Components.Assets
                     break;
                 case ShaderValueType.Val_ivec4:
                     break;
-                case ShaderValueType.Val_uvec1:
-                    break;
                 case ShaderValueType.Val_uvec2:
                     break;
                 case ShaderValueType.Val_uvec3:
                     break;
                 case ShaderValueType.Val_uvec4:
                     break;
-                case ShaderValueType.Val_vec1:
-                    break;
                 case ShaderValueType.Val_vec2:
                     break;
                 case ShaderValueType.Val_vec3:
                     break;
                 case ShaderValueType.Val_vec4:
-                    break;
-                case ShaderValueType.Val_dvec1:
                     break;
                 case ShaderValueType.Val_dvec2:
                     break;

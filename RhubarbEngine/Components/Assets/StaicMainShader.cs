@@ -48,7 +48,7 @@ void main()
     vec2 uv = fsin_UV;
     uv.y = 1 - uv.y;
 
-    fsout_Color0 = vec4(0.87,Float,0.84,0.75);
+    fsout_Color0 = vec4(0,Float,0,1);
 }
 "; ;
             shader.LoadShader(engine.renderManager.gd, logger);

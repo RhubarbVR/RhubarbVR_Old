@@ -25,6 +25,7 @@ namespace RhubarbEngine.Render.Material.Fields
         {
             base.onLoaded();
             createDeviceResource(engine.renderManager.gd.ResourceFactory);
+            updateBuffer(engine.renderManager.gd);
         }
 
         public virtual void setValue(Object val)
