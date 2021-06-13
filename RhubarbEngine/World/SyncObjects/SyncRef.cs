@@ -8,7 +8,7 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-    public class SyncRef<T> : Worker, IWorldObject where T : class,IWorldObject
+    public class SyncRef<T> : Worker, DriveMember<NetPointer> ,IWorldObject where T : class,IWorldObject
     {
         private NetPointer targetRefID;
 
@@ -46,10 +46,20 @@ namespace RhubarbEngine.World
             }
             set
             {
-                _target = (T)world.getWorldObj(value);
+                try
+                {
+                    targetRefID = value;
+                    _target = (T)world.getWorldObj(value);
+                }
+                catch
+                {
+                    _target = null;
+                }
                 onChangeInternal(this);
             }
         }
+
+
         public SyncRef(World _world, IWorldObject _parent) : base(_world, _parent)
         {
 
@@ -77,14 +87,14 @@ namespace RhubarbEngine.World
             value = new NetPointer(NewID);
         }
 
-        public void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+        public override void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
             if (data == null)
             {
                 world.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
                 return;
             }
-            targetRefID = ((DataNode<NetPointer>)data.getValue("targetRefID")).Value;
+            value = ((DataNode<NetPointer>)data.getValue("targetRefID")).Value;
             if (NewRefIDs)
             {
                 newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID(), referenceID.getID());
@@ -97,7 +107,7 @@ namespace RhubarbEngine.World
                 }
                 if (newRefID.ContainsKey(targetRefID.getID()))
                 {
-                    targetRefID = new NetPointer(newRefID[targetRefID.getID()]);
+                    value = new NetPointer(newRefID[targetRefID.getID()]);
                 }
                 else
                 {
@@ -115,5 +125,45 @@ namespace RhubarbEngine.World
                 world.addWorldObj(this);
             }
         }
+
+        public IDriver drivenFromobj;
+        public NetPointer drivenFrom { get { return drivenFromobj.ReferenceID; } }
+
+        public bool isDriven { get; private set; }
+
+        private List<Driveable> driven = new List<Driveable>();
+
+        public override void Removed()
+        {
+            foreach (Driveable dev in driven)
+            {
+                dev.killDrive();
+            }
+        }
+
+        public void killDrive()
+        {
+            drivenFromobj.RemoveDriveLocation();
+            isDriven = false;
+        }
+
+        public void drive(IDriver value)
+        {
+            if (!isDriven)
+            {
+                forceDrive(value);
+            }
+        }
+        public void forceDrive(IDriver value)
+        {
+            if (isDriven)
+            {
+                killDrive();
+            }
+            value.SetDriveLocation(this);
+            drivenFromobj = value;
+            isDriven = true;
+        }
+
     }
 }

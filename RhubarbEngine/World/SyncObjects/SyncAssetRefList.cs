@@ -45,7 +45,7 @@ namespace RhubarbEngine.World
             AssetRef<T> a = new AssetRef<T>(this, RefID);
             a.loadChange += onLoad;
             _syncreflist.Add(a);
-            return _syncreflist[_syncreflist.Count - 1];
+            return a;
         }
 
         public void Clear()
@@ -76,7 +76,7 @@ namespace RhubarbEngine.World
         {
             if (data == null)
             {
-                world.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
+                world.worldManager.engine.logger.Log("Node did not exsets When loading SyncAssetRefList");
                 return;
             }
             if (NewRefIDs)
