@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Veldrid;
+using RhubarbEngine.Render.Shader.Vals;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
@@ -12,11 +14,16 @@ namespace RhubarbEngine.Render.Material.Fields
 
         public override void createDeviceResource(ResourceFactory fact)
         {
-            if(resource != null)
+            if (resource != null)
             {
                 return;
             }
-            resource = fact.CreateBuffer(new BufferDescription(4, BufferUsage.Dynamic));
+            resource = fact.CreateBuffer(new BufferDescription(32, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+        }
+        unsafe public override void updateBuffer(GraphicsDevice gb)
+        {
+            Logger.Log("Float update");
+            gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_float(field.value));
         }
     }
 }

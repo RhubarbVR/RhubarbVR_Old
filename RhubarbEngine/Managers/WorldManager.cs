@@ -30,6 +30,7 @@ namespace RhubarbEngine.Managers
 
         public World.World focusedWorld;
 
+        public bool dontSaveLocal = false;
         public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
         {
             foreach(World.World world in worlds)
@@ -81,7 +82,16 @@ namespace RhubarbEngine.Managers
             engine.logger.Log("Starting Local World");
             if(File.Exists(engine.dataPath + "/LocalWorld.RWorld"))
             {
-                localWorld = loadWorldFromBytes(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
+                try
+                {
+                    localWorld = loadWorldFromBytes(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
+                }
+                catch(Exception e)
+                {
+                    dontSaveLocal = true;
+                    Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
+                    localWorld = new World.World(this, "TempLoaclWorld", 16);
+                }
             }
             else
             {
@@ -94,6 +104,7 @@ namespace RhubarbEngine.Managers
                 mit.Shader.target = shader;
                 meshRender.Materials.Add().target = mit;
                 meshRender.Mesh.target = bmesh;
+                mit.setValueAtField<float>("Float", Render.Shader.ShaderType.MainFrag, 0);
             }
             localWorld.Focus = World.World.FocusLevel.Focused;
             worlds.Add(localWorld);
@@ -110,7 +121,10 @@ namespace RhubarbEngine.Managers
         }
         public void CleanUp()
         {
-            File.WriteAllBytes(engine.dataPath + "/LocalWorld.RWorld", worldToBytes(localWorld));
+            if (engine.engineInitializer == null && !dontSaveLocal)
+            {
+                File.WriteAllBytes(engine.dataPath + "/LocalWorld.RWorld", worldToBytes(localWorld));
+            }
         }
     }
 }

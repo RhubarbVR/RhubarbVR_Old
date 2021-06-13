@@ -110,18 +110,27 @@ namespace RhubarbEngine.Components.Rendering
                         _shadowpipeline.Add(mainPipeline);
 
 
-                        ResourceSetDescription mainResourceSetDescription = new ResourceSetDescription(mit.Shader.Asset.mainresourceLayout, _wvpBuffer);
+                        ResourceSetDescription mainResourceSetDescription = new ResourceSetDescription();
+                        mainResourceSetDescription.Layout = mit.Shader.Asset.mainresourceLayout;
+                        List<BindableResource> mainBoundResources = new List<BindableResource>();
+                        mainBoundResources.Add(_wvpBuffer);
+                        mit.getBindableResources(mainBoundResources, false);
 
+                        mainResourceSetDescription.BoundResources = mainBoundResources.ToArray();
                         ResourceSet mainRS = factory.CreateResourceSet(mainResourceSetDescription);
                         addDisposable(mainRS);
 
                         _mainRS.Add(mainRS);
 
-                        ResourceSetDescription shadowResourceSetDescription = new ResourceSetDescription(mit.Shader.Asset.shadowresourceLayout, _wvpBuffer);
+                        ResourceSetDescription shadowResourceSetDescription = new ResourceSetDescription();
+                        shadowResourceSetDescription.Layout = mit.Shader.Asset.shadowresourceLayout;
+                        List<BindableResource> shadowBoundResources = new List<BindableResource>();
+                        shadowBoundResources.Add(_wvpBuffer);
+                        mit.getBindableResources(shadowBoundResources, true);
 
+                        shadowResourceSetDescription.BoundResources = shadowBoundResources.ToArray();
                         ResourceSet shadowRS = factory.CreateResourceSet(shadowResourceSetDescription);
                         addDisposable(shadowRS);
-
                         _shadowRS.Add(shadowRS);
 
                     }

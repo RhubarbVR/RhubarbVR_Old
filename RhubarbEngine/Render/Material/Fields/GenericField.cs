@@ -39,7 +39,7 @@ namespace RhubarbEngine.Render.Material.Fields
             {
                 return;
             }
-            resource = fact.CreateBuffer(new BufferDescription((uint)sizeof(T), BufferUsage.Dynamic));
+            resource = fact.CreateBuffer(new BufferDescription((uint)sizeof(T), BufferUsage.UniformBuffer | BufferUsage.Dynamic));
         }
     }
 }

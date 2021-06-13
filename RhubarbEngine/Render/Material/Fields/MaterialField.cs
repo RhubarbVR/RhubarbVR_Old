@@ -21,6 +21,12 @@ namespace RhubarbEngine.Render.Material.Fields
 
         public bool isNull;
 
+        public override void onLoaded()
+        {
+            base.onLoaded();
+            createDeviceResource(engine.renderManager.gd.ResourceFactory);
+        }
+
         public virtual void setValue(Object val)
         {
 

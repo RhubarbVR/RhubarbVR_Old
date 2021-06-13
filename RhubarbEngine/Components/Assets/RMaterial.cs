@@ -42,23 +42,41 @@ namespace RhubarbEngine.Components.Assets
             load(this);
         }
 
-        public BindableResource[] getBindableResources()
+        public void getBindableResources(List<BindableResource> BindableResources,bool shadow=false)
         {
-            List<BindableResource> BindableResources = new List<BindableResource>();
-
             foreach(MaterialField field in Fields)
             {
-                if(field.resource == null)
+                if (shadow)
                 {
-                    throw new Exception("resource is null");
+                    if ((int)field.shaderType.value > 2)
+                    {
+                        if (field.resource == null)
+                        {
+                            throw new Exception($"resource is null shadow {shadow}");
+                        }
+                        else
+                        {
+                            BindableResources.Add(field.resource);
+                        }
+                    }
                 }
                 else
                 {
-                    BindableResources.Add(field.resource);
+                    if ((int)field.shaderType.value <= 2)
+                    {
+                        if (field.resource == null)
+                        {
+                            throw new Exception($"resource is null shadow {shadow}");
+                        }
+                        else
+                        {
+                            BindableResources.Add(field.resource);
+                        }
+                    }
                 }
+
             }
 
-            return BindableResources.ToArray();
         }
 
         public void setValueAtField<T>(string fieldName,ShaderType shaderType,T value)

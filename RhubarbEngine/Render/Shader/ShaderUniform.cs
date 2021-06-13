@@ -21,11 +21,11 @@ namespace RhubarbEngine.Render.Shader
             switch (valueType)
             {
                 case ShaderValueType.Val_color:
-                    code = $"layout(set = 1, binding = {location}) uniform vec4 {fieldName};\n";
+                    code = $"layout(set = 0, binding = {location}) uniform vec4 {fieldName};\n";
                     break;
                 default:
                     string type = valueType.ToString().Replace("Val_", "");
-                    code = $"layout(set = 1, binding = {location}) uniform {type} {fieldName};\n";
+                    code = $"layout(set = 0, binding = {location}) uniform {valueType} {{ {type} {fieldName}; }}; \n";
                     break;
             }
             return code;
@@ -35,13 +35,9 @@ namespace RhubarbEngine.Render.Shader
         {
             ResourceKind resourceKind;
             ShaderStages shaderStage;
-            if ((int)valueType <= 5)
+            if ((int)valueType <= 35)
             {
                 resourceKind = ResourceKind.UniformBuffer;
-            }
-            else if ((int)valueType <= 35)
-            {
-                resourceKind = ResourceKind.StructuredBufferReadOnly;
             }
             else if ((int)valueType <= 38)
             {
