@@ -10,6 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BEPUik" Version="1.5.1" />
+    <PackageReference Include="BepuPhysics" Version="2.3.0" />
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
     <PackageReference Include="LiteNetLib" Version="0.9.5" />
     <PackageReference Include="Veldrid" Version="4.8.0" />
