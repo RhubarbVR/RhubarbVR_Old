@@ -104,7 +104,7 @@ namespace RhubarbEngine.Managers
                 mit.Shader.target = shader;
                 meshRender.Materials.Add().target = mit;
                 meshRender.Mesh.target = bmesh;
-                mit.setValueAtField<float>("Float", Render.Shader.ShaderType.MainFrag, 0.7f);
+                mit.setValueAtField<Colorf>("thecolor", Render.Shader.ShaderType.MainFrag,Colorf.Blue);
             }
             localWorld.Focus = World.World.FocusLevel.Focused;
             worlds.Add(localWorld);

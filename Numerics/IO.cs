@@ -129,6 +129,12 @@ public static class RhubarbIO
                 case Type _ when ty == typeof(Vector3f):
                     gSerialization.Store((Vector3f)obj, writer);
                     return;
+                case Type _ when ty == typeof(Vector4f):
+                    gSerialization.Store((Vector4f)obj, writer);
+                    return;
+                case Type _ when ty == typeof(Colorf):
+                    gSerialization.Store((Colorf)obj, writer);
+                    return;
                 case Type _ when ty == typeof(Vector3d):
                     gSerialization.Store((Vector3d)obj, writer);
                     return;
@@ -265,6 +271,14 @@ public static class RhubarbIO
                     Vector3f Vector3f_val = new Vector3f();
                     gSerialization.Restore(ref Vector3f_val, reader);
                     return Vector3f_val;
+                case Type _ when ty == typeof(Vector4f):
+                    Vector4f Vector4f_val = new Vector4f();
+                    gSerialization.Restore(ref Vector4f_val, reader);
+                    return Vector4f_val;
+                case Type _ when ty == typeof(Colorf):
+                    Colorf Colorf_val = new Colorf();
+                    gSerialization.Restore(ref Colorf_val, reader);
+                    return Colorf_val;
                 case Type _ when ty == typeof(Vector3d):
                     Vector3d Vector3d_val = new Vector3d();
                     gSerialization.Restore(ref Vector3d_val, reader);

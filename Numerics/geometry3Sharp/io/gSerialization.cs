@@ -20,6 +20,38 @@ namespace g3
             v.y = reader.ReadSingle();
         }
 
+        public static void Store(Colorf v, BinaryWriter writer)
+        {
+            writer.Write(v.r);
+            writer.Write(v.g);
+            writer.Write(v.b);
+            writer.Write(v.a);
+        }
+
+        public static void Restore(ref Colorf v, BinaryReader reader)
+        {
+            v.r = reader.ReadSingle();
+            v.g = reader.ReadSingle();
+            v.b = reader.ReadSingle();
+            v.a = reader.ReadSingle();
+        }
+
+        public static void Restore(ref Vector4f v, BinaryReader reader)
+        {
+            v.x = reader.ReadSingle();
+            v.y = reader.ReadSingle();
+            v.z = reader.ReadSingle();
+            v.w = reader.ReadSingle();
+        }
+
+        public static void Store(Vector4f v, BinaryWriter writer)
+        {
+            writer.Write(v.x);
+            writer.Write(v.y);
+            writer.Write(v.z);
+            writer.Write(v.w);
+        }
+
         public static void Store(Vector2d v, BinaryWriter writer)
         {
             writer.Write(v.x);

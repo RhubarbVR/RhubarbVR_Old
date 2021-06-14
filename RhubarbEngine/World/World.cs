@@ -25,7 +25,7 @@ namespace RhubarbEngine.World
     public class World : IWorldObject
     {
 
-        public Sync<Vector3> Gravity;
+        public Sync<Vector3f> Gravity;
 
         public Sync<float> LinearDamping;
 
@@ -38,7 +38,7 @@ namespace RhubarbEngine.World
             /// <summary>
             /// Gravity to apply to dynamic bodies in the simulation.
             /// </summary>
-            public Vector3 Gravity => _world.Gravity.value;
+            public Vector3 Gravity => _world.Gravity.value.ToSystemNumrics();
             /// <summary>
             /// Fraction of dynamic body linear velocity to remove per unit of time. Values range from 0 to 1. 0 is fully undamped, while values very close to 1 will remove most velocity.
             /// </summary>
@@ -353,8 +353,8 @@ namespace RhubarbEngine.World
                 posoffset = 12;
             }
             Name = new Sync<string>(this, this, !networkload);
-            Gravity = new Sync<Vector3>(this, this, !networkload);
-            Gravity.value = new Vector3(0, -10, 0);
+            Gravity = new Sync<Vector3f>(this, this, !networkload);
+            Gravity.value = new Vector3f(0, -10, 0);
             LinearDamping = new Sync<float>(this, this, !networkload);
             AngularDamping = new Sync<float>(this, this, !networkload);
             LinearDamping.value = .03f;
@@ -375,8 +375,8 @@ namespace RhubarbEngine.World
             Random random = new Random();
             posoffset = (byte)random.Next();
             Name = new Sync<string>(this, this);
-            Gravity = new Sync<Vector3>(this, this);
-            Gravity.value = new Vector3(0, -10, 0);
+            Gravity = new Sync<Vector3f>(this, this);
+            Gravity.value = new Vector3f(0, -10, 0);
             LinearDamping = new Sync<float>(this, this);
             AngularDamping = new Sync<float>(this, this);
             LinearDamping.value = .03f;

@@ -203,4 +203,15 @@ namespace RhubarbEngine.Render.Shader.Vals
             value = _value;
         }
     }
+
+
+
+    public struct Val_color
+    {
+        Colorf value;
+        public Val_color(Colorf _value)
+        {
+            value = _value;
+        }
+    }
 }

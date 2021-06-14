@@ -48,6 +48,9 @@ namespace RhubarbEngine.World.DataStructure
                 typeof(DataNode<Vector2f>),
                 typeof(DataNode<Vector2d>),
                 typeof(DataNode<Vector3f>),
+                typeof(DataNode<Vector4f>),
+                typeof(DataNode<Colorf>),
+
                 typeof(DataNode<Vector3d>),
                 typeof(DataNode<Quaternionf>),
                 typeof(DataNode<Frame3f>),

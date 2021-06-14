@@ -124,30 +124,43 @@ namespace RhubarbEngine.Components.Assets
                     vatype = typeof(Bvec3Field);
                     break;
                 case ShaderValueType.Val_bvec4:
+                    vatype = typeof(Bvec4Field);
                     break;
                 case ShaderValueType.Val_ivec2:
+                    vatype = typeof(Ivec2Field);
                     break;
                 case ShaderValueType.Val_ivec3:
+                    vatype = typeof(Ivec3Field);
                     break;
                 case ShaderValueType.Val_ivec4:
+                    vatype = typeof(Ivec4Field);
                     break;
                 case ShaderValueType.Val_uvec2:
+                    vatype = typeof(Uvec2Field);
                     break;
                 case ShaderValueType.Val_uvec3:
+                    vatype = typeof(Uvec3Field);
                     break;
                 case ShaderValueType.Val_uvec4:
+                    vatype = typeof(Uvec4Field);
                     break;
                 case ShaderValueType.Val_vec2:
+                    vatype = typeof(Vec2Field);
                     break;
                 case ShaderValueType.Val_vec3:
+                    vatype = typeof(Vec3Field);
                     break;
                 case ShaderValueType.Val_vec4:
+                    vatype = typeof(Vec4Field);
                     break;
                 case ShaderValueType.Val_dvec2:
+                    vatype = typeof(Dvec2Field);
                     break;
                 case ShaderValueType.Val_dvec3:
+                    vatype = typeof(Dvec3Field);
                     break;
                 case ShaderValueType.Val_dvec4:
+                    vatype = typeof(Dvec4Field);
                     break;
                 case ShaderValueType.Val_mat2x2:
                     break;
@@ -168,6 +181,7 @@ namespace RhubarbEngine.Components.Assets
                 case ShaderValueType.Val_mat4x4:
                     break;
                 case ShaderValueType.Val_color:
+                    vatype = typeof(ColorField);
                     break;
                 case ShaderValueType.Val_texture1D:
                     break;
