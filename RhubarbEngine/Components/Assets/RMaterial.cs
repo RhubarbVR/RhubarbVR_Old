@@ -103,19 +103,25 @@ namespace RhubarbEngine.Components.Assets
             switch (type)
             {
                 case ShaderValueType.Val_bool:
+                    vatype = typeof(BoolField);
                     break;
                 case ShaderValueType.Val_int:
+                    vatype = typeof(IntField);
                     break;
                 case ShaderValueType.Val_uint:
+                    vatype = typeof(UintField);
                     break;
                 case ShaderValueType.Val_float:
                     vatype = typeof(FloatField);
                     break;
                 case ShaderValueType.Val_double:
+                    vatype = typeof(DoubleField);
                     break;
                 case ShaderValueType.Val_bvec2:
+                    vatype = typeof(Bvec2Field);
                     break;
                 case ShaderValueType.Val_bvec3:
+                    vatype = typeof(Bvec3Field);
                     break;
                 case ShaderValueType.Val_bvec4:
                     break;

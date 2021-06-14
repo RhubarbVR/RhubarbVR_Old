@@ -25,20 +25,28 @@ namespace RhubarbEngine.World
     public class World : IWorldObject
     {
 
+        public Sync<Vector3> Gravity;
+
+        public Sync<float> LinearDamping;
+
+        public Sync<float> AngularDamping;
+
         public struct DemoPoseIntegratorCallbacks : IPoseIntegratorCallbacks
         {
+            private World _world;
+
             /// <summary>
             /// Gravity to apply to dynamic bodies in the simulation.
             /// </summary>
-            public Vector3 Gravity;
+            public Vector3 Gravity => _world.Gravity.value;
             /// <summary>
             /// Fraction of dynamic body linear velocity to remove per unit of time. Values range from 0 to 1. 0 is fully undamped, while values very close to 1 will remove most velocity.
             /// </summary>
-            public float LinearDamping;
+            public float LinearDamping => _world.LinearDamping.value;
             /// <summary>
             /// Fraction of dynamic body angular velocity to remove per unit of time. Values range from 0 to 1. 0 is fully undamped, while values very close to 1 will remove most velocity.
             /// </summary>
-            public float AngularDamping;
+            public float AngularDamping => _world.AngularDamping.value;
 
             Vector3 gravityDt;
             float linearDampingDt;
@@ -58,11 +66,9 @@ namespace RhubarbEngine.World
             /// <param name="gravity">Gravity to apply to dynamic bodies in the simulation.</param>
             /// <param name="linearDamping">Fraction of dynamic body linear velocity to remove per unit of time. Values range from 0 to 1. 0 is fully undamped, while values very close to 1 will remove most velocity.</param>
             /// <param name="angularDamping">Fraction of dynamic body angular velocity to remove per unit of time. Values range from 0 to 1. 0 is fully undamped, while values very close to 1 will remove most velocity.</param>
-            public DemoPoseIntegratorCallbacks(Vector3 gravity, float linearDamping = .03f, float angularDamping = .03f) : this()
+            public DemoPoseIntegratorCallbacks(World world) : this()
             {
-                Gravity = gravity;
-                LinearDamping = linearDamping;
-                AngularDamping = angularDamping;
+                _world = world;
             }
 
             public void PrepareForIntegration(float dt)
@@ -99,6 +105,12 @@ namespace RhubarbEngine.World
 
         public unsafe struct NoCollisionCallbacks : INarrowPhaseCallbacks
         {
+            private World _world;
+
+            public NoCollisionCallbacks(World world)
+            {
+                _world = world;
+            }
             public void Initialize(Simulation simulation)
             {
             }
@@ -327,9 +339,10 @@ namespace RhubarbEngine.World
             BufferPool = new BufferPool();
             var targetThreadCount = Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1);
             ThreadDispatcher = new SimpleThreadDispatcher(targetThreadCount);
-            Simulation = Simulation.Create(BufferPool, new NoCollisionCallbacks(), new DemoPoseIntegratorCallbacks(new Vector3(0, -10, 0)), new PositionFirstTimestepper());
+            Simulation = Simulation.Create(BufferPool, new NoCollisionCallbacks(this), new DemoPoseIntegratorCallbacks(this), new PositionFirstTimestepper());
 
         }
+
 
         public World(WorldManager _worldManager, DataNodeGroup node, bool networkload = false):this(_worldManager)
         {
@@ -340,6 +353,12 @@ namespace RhubarbEngine.World
                 posoffset = 12;
             }
             Name = new Sync<string>(this, this, !networkload);
+            Gravity = new Sync<Vector3>(this, this, !networkload);
+            Gravity.value = new Vector3(0, -10, 0);
+            LinearDamping = new Sync<float>(this, this, !networkload);
+            AngularDamping = new Sync<float>(this, this, !networkload);
+            LinearDamping.value = .03f;
+            AngularDamping.value = .03f;
             _maxUsers = new Sync<int>(this, this, !networkload);
             RootEntity = new Entity(this, !networkload);
             RootEntity.name.value = "Root";
@@ -356,6 +375,12 @@ namespace RhubarbEngine.World
             Random random = new Random();
             posoffset = (byte)random.Next();
             Name = new Sync<string>(this, this);
+            Gravity = new Sync<Vector3>(this, this);
+            Gravity.value = new Vector3(0, -10, 0);
+            LinearDamping = new Sync<float>(this, this);
+            AngularDamping = new Sync<float>(this, this);
+            LinearDamping.value = .03f;
+            AngularDamping.value = .03f;
             _maxUsers = new Sync<int>(this, this);
             RootEntity = new Entity(this);
             RootEntity.name.value = "Root";

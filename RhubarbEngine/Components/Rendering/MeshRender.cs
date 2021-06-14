@@ -169,15 +169,14 @@ namespace RhubarbEngine.Components.Rendering
         {
             if (!loaded)
             {
-                Console.WriteLine($"NotLoaded meshes{_meshPieces.Length}  mainrs{_mainRS.Count}   _shadowRS{_shadowRS.Count}   mainrs{_shadowpipeline.Count}   _shadowRS{_mainPipeline.Count}");
                 return;
             }
             cl.UpdateBuffer(_wvpBuffer, 0, ubo);
             int Length = Math.Max(_meshPieces.Length, Materials.Length);
             for (int i = 0; i < Length; i++)
             {
-                int a = 0;
-                int b = 0;
+                int a = i %_meshPieces.Length;
+                int b = i % Materials.Length;
                 MeshPiece piece = _meshPieces[a];
                 cl.SetPipeline((shadow) ? _shadowpipeline[b] : _mainPipeline[b]);
                 cl.SetVertexBuffer(0, piece.Positions);

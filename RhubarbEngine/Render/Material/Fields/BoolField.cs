@@ -9,7 +9,7 @@ using RhubarbEngine.Render.Shader.Vals;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
-    public class FloatField: GenericField<float>
+    public class BoolField : GenericField<bool>
     {
 
         public override void createDeviceResource(ResourceFactory fact)
@@ -18,11 +18,11 @@ namespace RhubarbEngine.Render.Material.Fields
             {
                 return;
             }
-            resource = fact.CreateBuffer(new BufferDescription(32, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            resource = fact.CreateBuffer(new BufferDescription(16, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
         }
         unsafe public override void updateBuffer(GraphicsDevice gb)
         {
-            gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_float(field.value));
+            gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_bool(field.value));
         }
     }
 }

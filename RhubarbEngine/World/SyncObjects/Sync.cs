@@ -74,7 +74,7 @@ namespace RhubarbEngine.World
 
         }
 
-        public DataNodeGroup serialize()
+        public override DataNodeGroup serialize()
         {
             DataNodeGroup obj = new DataNodeGroup();
             DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
@@ -92,11 +92,11 @@ namespace RhubarbEngine.World
             return obj;
         }
 
-        public void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+        public override void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
             if (data == null)
             {
-                world.worldManager.engine.logger.Log("Node did not exsets When loading Sync Value");
+                world.worldManager.engine.logger.Log($"Node did not exsets When loading Sync Value { this.GetType().FullName}");
                 return;
             }
             if (NewRefIDs)

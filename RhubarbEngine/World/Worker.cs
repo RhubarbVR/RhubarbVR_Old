@@ -8,6 +8,7 @@ using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
 using RhubarbEngine.World.ECS;
 using RhubarbEngine.Components.Rendering;
+using BepuPhysics;
 
 namespace RhubarbEngine.World
 {
@@ -30,6 +31,8 @@ namespace RhubarbEngine.World
         public NetPointer referenceID { get; protected set; }
 
         public UnitLogs logger => world.worldManager.engine.logger;
+
+        public Simulation Simulation => world.Simulation;
 
         public Engine engine => world.worldManager.engine;
 

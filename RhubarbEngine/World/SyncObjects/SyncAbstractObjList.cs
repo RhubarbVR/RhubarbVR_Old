@@ -58,14 +58,17 @@ namespace RhubarbEngine.World
         {
             _synclist.Clear();
         }
+
         public SyncAbstractObjList(World _world, IWorldObject _parent) : base(_world, _parent)
         {
 
         }
+
         public SyncAbstractObjList(IWorldObject _parent,bool refid=true) : base(_parent.World, _parent, refid)
         {
 
         }
+
         public DataNodeGroup serialize()
         {
             DataNodeGroup obj = new DataNodeGroup();
