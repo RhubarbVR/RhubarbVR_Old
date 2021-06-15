@@ -17,7 +17,8 @@ namespace g3
 
         public Colorf(float greylevel, float a = 1) { r = g = b = greylevel; this.a = a; }
         public Colorf(float r, float g, float b, float a = 1) { this.r = r; this.g = g; this.b = b; this.a = a; }
-        public Colorf(int r, int g, int b, int a = 255) {
+        public Colorf(int r, int g, int b, int a = 255)
+        {
             this.r = MathUtil.Clamp((float)r, 0.0f, 255.0f) / 255.0f;
             this.g = MathUtil.Clamp((float)g, 0.0f, 255.0f) / 255.0f;
             this.b = MathUtil.Clamp((float)b, 0.0f, 255.0f) / 255.0f;
@@ -28,7 +29,8 @@ namespace g3
         public Colorf(Colorf copy, float newAlpha) { r = copy.r; g = copy.g; b = copy.b; a = newAlpha; }
 
 
-        public Colorf Clone(float fAlphaMultiply = 1.0f) {
+        public Colorf Clone(float fAlphaMultiply = 1.0f)
+        {
             return new Colorf(r, g, b, a * fAlphaMultiply);
         }
 
@@ -42,14 +44,16 @@ namespace g3
         public float SqrDistance(Colorf v2)
         {
             float a = (r - v2.r), b = (g - v2.g), c = (b - v2.b), d = (a - v2.a);
-            return a * a + b * b + c * c + d*d;
+            return a * a + b * b + c * c + d * d;
         }
 
 
-        public Vector3f ToRGB() {
+        public Vector3f ToRGB()
+        {
             return new Vector3f(r, g, b);
         }
-        public Colorb ToBytes() {
+        public Colorb ToBytes()
+        {
             return new Colorb(r, g, b, a);
         }
 
@@ -61,7 +65,8 @@ namespace g3
         {
             r = fR; g = fG; b = fB; a = fA;
         }
-        public Colorf SetAlpha(float a) {
+        public Colorf SetAlpha(float a)
+        {
             this.a = a;
             return this;
         }
@@ -104,7 +109,7 @@ namespace g3
 
         public static Colorf operator -(Colorf v0, Colorf v1)
         {
-            return new Colorf(v0.r - v1.r, v0.g - v1.g, v0.b - v1.b, v0.a-v1.a);
+            return new Colorf(v0.r - v1.r, v0.g - v1.g, v0.b - v1.b, v0.a - v1.a);
         }
         public static Colorf operator -(Colorf v0, float f)
         {
@@ -126,7 +131,7 @@ namespace g3
         }
         public override int GetHashCode()
         {
-            return (r+g+b+a).GetHashCode();
+            return (r + g + b + a).GetHashCode();
         }
         public int CompareTo(Colorf other)
         {
@@ -146,7 +151,8 @@ namespace g3
         }
 
 
-        public static Colorf Lerp(Colorf a, Colorf b, float t) {
+        public static Colorf Lerp(Colorf a, Colorf b, float t)
+        {
             float s = 1 - t;
             return new Colorf(s * a.r + t * b.r, s * a.g + t * b.g, s * a.b + t * b.b, s * a.a + t * b.a);
         }
@@ -207,9 +213,9 @@ namespace g3
         static public readonly Colorf Gold = new Colorf(235, 115, 63, 255);
         static public readonly Colorf DarkYellow = new Colorf(235, 200, 95, 255);
 
-        static public readonly Colorf SiennaBrown = new Colorf(160, 82,  45, 255);
-        static public readonly Colorf SaddleBrown = new Colorf(139,  69,  19, 255);
-        static public readonly Colorf Goldenrod = new Colorf(218, 165,  32, 255);
+        static public readonly Colorf SiennaBrown = new Colorf(160, 82, 45, 255);
+        static public readonly Colorf SaddleBrown = new Colorf(139, 69, 19, 255);
+        static public readonly Colorf Goldenrod = new Colorf(218, 165, 32, 255);
         static public readonly Colorf Wheat = new Colorf(245, 222, 179, 255);
 
 
@@ -221,7 +227,7 @@ namespace g3
         static public readonly Colorf DarkGrey = new Colorf(169, 169, 169, 255);
         static public readonly Colorf SlateGrey = new Colorf(112, 128, 144, 255);
         static public readonly Colorf DimGrey = new Colorf(105, 105, 105, 255);
-        static public readonly Colorf DarkSlateGrey = new Colorf(47,  79,  79, 255);
+        static public readonly Colorf DarkSlateGrey = new Colorf(47, 79, 79, 255);
 
 
 
@@ -243,22 +249,18 @@ namespace g3
         }
 
 
+        public static implicit operator Colorf(ColorHSV c)
+        {
+            return c.ConvertToRGB();
+        }
 
-#if G3_USING_UNITY
-        public static implicit operator Colorf(UnityEngine.Color c)
+
+        public static implicit operator ColorHSV(Colorf color)
         {
-            return new Colorf(c.r, c.g, c.b, c.a);
+            ColorHSV outval = new ColorHSV(0,0,0,color.a);
+            outval.ConvertFromRGB(color);
+            return outval;
         }
-        public static implicit operator Color(Colorf c)
-        {
-            return new Color(c.r, c.g, c.b, c.a);
-        }
-        public static implicit operator Color32(Colorf c)
-        {
-            Colorb cb = c.ToBytes();
-            return new Color32(cb.r, cb.g, cb.b, cb.a);
-        }
-#endif
 
     }
 }

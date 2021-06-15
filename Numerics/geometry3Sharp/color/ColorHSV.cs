@@ -17,7 +17,11 @@ namespace g3
             ConvertFromRGB(rgb);
         }
 
-
+        public ColorHSV updateHue(float val)
+        {
+            float newh = (h + val) % 360f;
+            return new ColorHSV(newh, s, v, a);
+        }
 
         public Colorf RGBA {
             get {

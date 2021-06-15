@@ -15,6 +15,7 @@ using RhubarbEngine.World.Asset;
 using RhubarbEngine.Components.Assets;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using RhubarbEngine.Components.Rendering;
+using RhubarbEngine.Components.Color;
 
 namespace RhubarbEngine.Managers
 {
@@ -101,10 +102,15 @@ namespace RhubarbEngine.Managers
                 BoxMesh bmesh = e.attachComponent<BoxMesh>();
                 RMaterial mit = e.attachComponent<RMaterial>();
                 MeshRender meshRender = e.attachComponent<MeshRender>();
+                RGBRainbowDriver rgbainbowDriver = e.attachComponent<RGBRainbowDriver>();
+
                 mit.Shader.target = shader;
                 meshRender.Materials.Add().target = mit;
                 meshRender.Mesh.target = bmesh;
-                mit.setValueAtField<Colorf>("thecolor", Render.Shader.ShaderType.MainFrag,Colorf.Blue);
+                mit.setValueAtField("rambow", Render.Shader.ShaderType.MainFrag, Colorf.Blue);
+                Render.Material.Fields.ColorField field = mit.getField<Render.Material.Fields.ColorField>("rambow", Render.Shader.ShaderType.MainFrag);
+                rgbainbowDriver.driver.setDriveTarget(field.field);
+                rgbainbowDriver.speed.value = 50f;
             }
             localWorld.Focus = World.World.FocusLevel.Focused;
             worlds.Add(localWorld);

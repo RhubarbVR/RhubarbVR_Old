@@ -79,7 +79,7 @@ namespace RhubarbEngine.Components.Assets
 
         }
 
-        public void setValueAtField<T>(string fieldName,ShaderType shaderType,T value)
+        public void setValueAtField<T>(string fieldName, ShaderType shaderType, T value)
         {
             foreach (MaterialField item in Fields)
             {
@@ -89,12 +89,24 @@ namespace RhubarbEngine.Components.Assets
                     {
                         item.setValue(((IWorldObject)value).ReferenceID);
                     }
-                    else {
+                    else
+                    {
                         item.setValue(value);
                     }
                     return;
                 }
             }
+        }
+        public T getField<T>(string fieldName, ShaderType shaderType) where T: MaterialField
+        {
+            foreach (MaterialField item in Fields)
+            {
+                if (item.fieldName.value == fieldName && item.shaderType.value == shaderType)
+                {
+                    return (T)item;
+                }
+            }
+            return null;
         }
 
         public void createField(string fieldName,ShaderType shader,ShaderValueType type)
