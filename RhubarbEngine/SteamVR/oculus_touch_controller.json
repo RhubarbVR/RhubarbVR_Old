@@ -1,0 +1,530 @@
+{
+   "bindings" : {
+      "/actions/default" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : [
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/generic/in/userpresent"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/head/proximity"
+            }
+         ]
+      },
+      "/actions/general" : {
+         "haptics" : [
+            {
+               "output" : "/actions/general/out/haptic",
+               "path" : "/user/hand/left/output/haptic"
+            },
+            {
+               "output" : "/actions/general/out/haptic",
+               "path" : "/user/hand/right/output/haptic"
+            }
+         ],
+         "poses" : [
+            {
+               "output" : "/actions/general/in/pose",
+               "path" : "/user/hand/left/pose/handgrip"
+            },
+            {
+               "output" : "/actions/general/in/pose",
+               "path" : "/user/hand/right/pose/handgrip"
+            }
+         ],
+         "skeleton" : [
+            {
+               "output" : "/actions/general/in/right_hand",
+               "path" : "/user/hand/left/input/skeleton/right"
+            },
+            {
+               "output" : "/actions/general/in/right_hand",
+               "path" : "/user/hand/right/input/skeleton/right"
+            }
+         ],
+         "sources" : [
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/menu_pressed"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/application_menu"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/menu_pressed"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/application_menu"
+            },
+            {
+               "inputs" : {},
+               "mode" : "none",
+               "path" : "/user/hand/left/input/skeleton/left"
+            },
+            {
+               "inputs" : {},
+               "mode" : "none",
+               "path" : "/user/hand/right/input/skeleton/left"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/system"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/system"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/system"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/system"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/grab_pressed"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/grip"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/grab_pressed"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/grip"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/menu_pressed"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/b"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/menu_pressed"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/b"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/secondary_pressed"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/a"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/secondary_pressed"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/a"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/primary_pressed"
+                  },
+                  "pull" : {
+                     "output" : "/actions/general/in/trigger_aix"
+                  },
+                  "touch" : {
+                     "output" : "/actions/general/in/trigger_touching"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/primary_pressed"
+                  },
+                  "pull" : {
+                     "output" : "/actions/general/in/trigger_aix"
+                  },
+                  "touch" : {
+                     "output" : "/actions/general/in/trigger_touching"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/right/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/general/in/axis"
+                  },
+                  "touch" : {
+                     "output" : "/actions/general/in/axis_touching"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/left/input/joystick"
+            },
+            {
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/general/in/axis"
+                  },
+                  "touch" : {
+                     "output" : "/actions/general/in/axis_touching"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/right/input/joystick"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/menu_pressed"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/x"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/menu_pressed"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/x"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/secondary_pressed"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/y"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/general/in/secondary_pressed"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/y"
+            }
+         ]
+      },
+      "/actions/htcvive" : {
+         "sources" : [
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/htcvive/in/app"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/application_menu"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/htcvive/in/app"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/application_menu"
+            }
+         ]
+      },
+      "/actions/knuckles" : {
+         "sources" : [
+            {
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/knuckles/in/touchpad_aixs"
+                  },
+                  "touch" : {
+                     "output" : "/actions/knuckles/in/trigger_touched"
+                  }
+               },
+               "mode" : "trackpad",
+               "path" : "/user/hand/left/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/knuckles/in/touchpad_aixs"
+                  },
+                  "touch" : {
+                     "output" : "/actions/knuckles/in/trigger_touched"
+                  }
+               },
+               "mode" : "trackpad",
+               "path" : "/user/hand/right/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/knuckles/in/joystick_clicked"
+                  },
+                  "position" : {
+                     "output" : "/actions/knuckles/in/joystick_axis"
+                  },
+                  "touch" : {
+                     "output" : "/actions/knuckles/in/joystick_touched"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/left/input/thumbstick"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/knuckles/in/joystick_clicked"
+                  },
+                  "position" : {
+                     "output" : "/actions/knuckles/in/joystick_axis"
+                  },
+                  "touch" : {
+                     "output" : "/actions/knuckles/in/joystick_touched"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/right/input/thumbstick"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/knuckles/in/b_pressed"
+                  },
+                  "touch" : {
+                     "output" : "/actions/knuckles/in/b-touch"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/b"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/knuckles/in/a_touch"
+                  },
+                  "touch" : {
+                     "output" : "/actions/knuckles/in/b-touch"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/a"
+            }
+         ]
+      },
+      "/actions/main" : {
+         "sources" : [
+            {
+               "inputs" : {},
+               "mode" : "button",
+               "path" : "/user/hand/left/input/grip"
+            }
+         ]
+      },
+      "/actions/oculustouch" : {
+         "haptics" : [
+            {
+               "output" : "/actions/oculustouch/out/haptic",
+               "path" : "/user/hand/left/output/haptic"
+            },
+            {
+               "output" : "/actions/oculustouch/out/haptic",
+               "path" : "/user/hand/right/output/haptic"
+            }
+         ],
+         "skeleton" : [
+            {
+               "output" : "/actions/oculustouch/in/right_hand",
+               "path" : "/user/hand/left/input/skeleton/right"
+            },
+            {
+               "output" : "/actions/oculustouch/in/right_hand",
+               "path" : "/user/hand/right/input/skeleton/right"
+            }
+         ],
+         "sources" : [
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/oculustouch/in/trigger_touch"
+                  },
+                  "pull" : {
+                     "output" : "/actions/oculustouch/in/trigger"
+                  },
+                  "touch" : {
+                     "output" : "/actions/oculustouch/in/trigger_touch"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/oculustouch/in/trigger_touch"
+                  },
+                  "pull" : {
+                     "output" : "/actions/oculustouch/in/trigger"
+                  },
+                  "touch" : {
+                     "output" : "/actions/oculustouch/in/trigger_touch"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/right/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/oculustouch/in/joystick_click"
+                  },
+                  "position" : {
+                     "output" : "/actions/oculustouch/in/joystick_aixs"
+                  },
+                  "touch" : {
+                     "output" : "/actions/oculustouch/in/joystick_touch"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/left/input/joystick"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/oculustouch/in/joystick_click"
+                  },
+                  "position" : {
+                     "output" : "/actions/oculustouch/in/joystick_aixs"
+                  },
+                  "touch" : {
+                     "output" : "/actions/oculustouch/in/joystick_touch"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/right/input/joystick"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/oculustouch/in/grip_click"
+                  },
+                  "pull" : {
+                     "output" : "/actions/oculustouch/in/grip_aix"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/left/input/grip"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/oculustouch/in/grip_click"
+                  },
+                  "pull" : {
+                     "output" : "/actions/oculustouch/in/grip_aix"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/right/input/grip"
+            },
+            {
+               "inputs" : {},
+               "mode" : "none",
+               "path" : "/user/hand/left/input/skeleton/left"
+            },
+            {
+               "inputs" : {},
+               "mode" : "none",
+               "path" : "/user/hand/right/input/skeleton/left"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/oculustouch/in/xa_pressed"
+                  },
+                  "touch" : {
+                     "output" : "/actions/oculustouch/in/xa_touched"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/x"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/oculustouch/in/xa_pressed"
+                  },
+                  "touch" : {
+                     "output" : "/actions/oculustouch/in/xa_touched"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/x"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/oculustouch/in/yb_pressed"
+                  },
+                  "touch" : {
+                     "output" : "/actions/oculustouch/in/yb_touched"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/y"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/oculustouch/in/yb_pressed"
+                  },
+                  "touch" : {
+                     "output" : "/actions/oculustouch/in/yb_touched"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/y"
+            }
+         ]
+      }
+   },
+   "category" : "steamvr_input",
+   "controller_type" : "oculus_touch",
+   "description" : "",
+   "name" : "Rhubarb VR Oculus Touch",
+   "options" : {},
+   "simulated_actions" : []
+}

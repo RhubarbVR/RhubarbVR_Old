@@ -1,0 +1,324 @@
+{
+  "bindings": {
+    "/actions/default": {
+      "chords": [],
+      "haptics": [],
+      "poses": [],
+      "skeleton": [],
+      "sources": [
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/generic/in/userpresent"
+            }
+          },
+          "mode": "button",
+          "path": "/user/head/proximity"
+        }
+      ]
+    },
+    "/actions/general": {
+      "haptics": [
+        {
+          "output": "/actions/general/out/haptic",
+          "path": "/user/hand/left/output/haptic"
+        },
+        {
+          "output": "/actions/general/out/haptic",
+          "path": "/user/hand/right/output/haptic"
+        }
+      ],
+      "poses": [
+        {
+          "output": "/actions/general/in/pose",
+          "path": "/user/hand/left/pose/handgrip"
+        },
+        {
+          "output": "/actions/general/in/pose",
+          "path": "/user/hand/right/pose/handgrip"
+        }
+      ],
+      "skeleton": [
+        {
+          "output": "/actions/general/in/right_hand",
+          "path": "/user/hand/left/input/skeleton/right"
+        },
+        {
+          "output": "/actions/general/in/right_hand",
+          "path": "/user/hand/right/input/skeleton/right"
+        }
+      ],
+      "sources": [
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/general/in/grab_pressed"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/left/input/grip"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/general/in/grab_pressed"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/right/input/grip"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/general/in/menu_pressed"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/left/input/application_menu"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/general/in/menu_pressed"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/right/input/application_menu"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/general/in/primary_pressed"
+            },
+            "pull": {
+              "output": "/actions/general/in/trigger_aix"
+            }
+          },
+          "mode": "trigger",
+          "path": "/user/hand/left/input/trigger"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/general/in/primary_pressed"
+            },
+            "pull": {
+              "output": "/actions/general/in/trigger_aix"
+            }
+          },
+          "mode": "trigger",
+          "path": "/user/hand/right/input/trigger"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/general/in/secondary_pressed"
+            },
+            "position": {
+              "output": "/actions/general/in/axis"
+            },
+            "touch": {
+              "output": "/actions/general/in/axis_touching"
+            }
+          },
+          "mode": "trackpad",
+          "path": "/user/hand/left/input/trackpad"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/general/in/secondary_pressed"
+            },
+            "position": {
+              "output": "/actions/general/in/axis"
+            },
+            "touch": {
+              "output": "/actions/general/in/axis_touching"
+            }
+          },
+          "mode": "trackpad",
+          "path": "/user/hand/right/input/trackpad"
+        },
+        {
+          "inputs": {},
+          "mode": "none",
+          "path": "/user/hand/left/input/skeleton/left"
+        },
+        {
+          "inputs": {},
+          "mode": "none",
+          "path": "/user/hand/right/input/skeleton/left"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/general/in/system_pressed"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/left/input/system"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/general/in/system"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/right/input/system"
+        }
+      ]
+    },
+    "/actions/htcvive": {
+      "sources": [
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/htcvive/in/grip"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/left/input/grip"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/htcvive/in/grip"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/right/input/grip"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/htcvive/in/app"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/left/input/application_menu"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/htcvive/in/app"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/right/input/application_menu"
+        },
+        {
+          "inputs": {},
+          "mode": "none",
+          "path": "/user/hand/left/input/skeleton/left"
+        },
+        {
+          "inputs": {},
+          "mode": "none",
+          "path": "/user/hand/right/input/skeleton/left"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/htcvive/in/trigger_click"
+            },
+            "pull": {
+              "output": "/actions/htcvive/in/trigger"
+            }
+          },
+          "mode": "trigger",
+          "path": "/user/hand/left/input/trigger"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/htcvive/in/trigger_click"
+            },
+            "pull": {
+              "output": "/actions/htcvive/in/trigger"
+            }
+          },
+          "mode": "trigger",
+          "path": "/user/hand/right/input/trigger"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/htcvive/in/trigger_hair"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/left/input/trigger"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/htcvive/in/trigger_hair"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/right/input/trigger"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/htcvive/in/touchpad_click"
+            },
+            "position": {
+              "output": "/actions/htcvive/in/touchpad_aixs"
+            },
+            "touch": {
+              "output": "/actions/htcvive/in/touchpad_touch"
+            }
+          },
+          "mode": "trackpad",
+          "path": "/user/hand/left/input/trackpad"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/htcvive/in/touchpad_click"
+            },
+            "position": {
+              "output": "/actions/htcvive/in/touchpad_aixs"
+            },
+            "touch": {
+              "output": "/actions/htcvive/in/touchpad_touch"
+            }
+          },
+          "mode": "trackpad",
+          "path": "/user/hand/right/input/trackpad"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/htcvive/in/system"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/left/input/system"
+        },
+        {
+          "inputs": {},
+          "mode": "button",
+          "path": "/user/hand/right/input/system"
+        }
+      ]
+    },
+    "/actions/main": {
+      "sources": [
+        {
+          "inputs": {},
+          "mode": "button",
+          "path": "/user/hand/left/input/grip"
+        }
+      ]
+    }
+  },
+  "category": "steamvr_input",
+  "controller_type": "vive_controller",
+  "description": "",
+  "name": "Rhubarb VR Vive Controller",
+  "options": {},
+  "simulated_actions": []
+}
