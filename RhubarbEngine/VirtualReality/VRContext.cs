@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RhubarbEngine.VirtualReality.Oculus;
 using RhubarbEngine.VirtualReality.OpenVR;
 using Veldrid;
+using RhubarbEngine.Input.Controllers;
 
 namespace RhubarbEngine.VirtualReality
 {
@@ -18,6 +19,10 @@ namespace RhubarbEngine.VirtualReality
         public abstract string DeviceName { get; }
 
         public bool Disposed;
+
+        public IController leftController;
+
+        public IController RightController;
 
         public abstract Framebuffer LeftEyeFramebuffer { get; }
         public abstract Framebuffer RightEyeFramebuffer { get; }

@@ -1,8 +1,9 @@
 {
   "profiles": {
     "RhubarbVR": {
-      "commandName": "Project",
-      "commandLineArgs": "-verbose -o Screen"
+      "commandName": "Executable",
+      "executablePath": "C:\\Projects\\RhubarbVR\\RhubarbVR\\RhubarbVR\\bin\\Debug\\net5.0\\RhubarbVR.exe",
+      "commandLineArgs": "-verbose "
     }
   }
 }

@@ -26,6 +26,17 @@ namespace RhubarbEngine.VirtualReality.OpenVR
         private Matrix4x4 _headToEyeLeft;
         private Matrix4x4 _headToEyeRight;
         private TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[1];
+
+        public VRActiveActionSet_t generalActionSet;
+
+        public VRActiveActionSet_t viveActionSet;
+
+        public VRActiveActionSet_t cosmosActionSet;
+
+        public VRActiveActionSet_t knucklesActionSet;
+
+        public VRActiveActionSet_t oculustouchActionSet;
+
         public override string DeviceName => _deviceName;
         public override Framebuffer LeftEyeFramebuffer => _leftEyeFB;
 
@@ -37,19 +48,40 @@ namespace RhubarbEngine.VirtualReality.OpenVR
         {
             _options = options;
             EVRInitError initError = EVRInitError.None;
-            _vrSystem = OVR.Init(ref initError, EVRApplicationType.VRApplication_Scene, OVR.k_pch_SteamVR_NeverKillProcesses_Bool+"true");
+            _vrSystem = OVR.Init(ref initError, EVRApplicationType.VRApplication_Scene, OVR.k_pch_SteamVR_NeverKillProcesses_Bool + "true");
             if (initError != EVRInitError.None)
             {
                 throw new VeldridException($"Failed to initialize OpenVR: {OVR.GetStringForHmdError(initError)}");
             }
-
             _compositor = OVR.Compositor;
             if (_compositor == null)
             {
                 throw new VeldridException("Failed to access the OpenVR Compositor.");
             }
-
             _mirrorTexture = new OpenVRMirrorTexture(this);
+            EVRInputError error = OVR.Input.SetActionManifestPath(AppDomain.CurrentDomain.BaseDirectory + @"\\SteamVR\\steamvr_manifest.json");
+            if (error != EVRInputError.None)
+            {
+                Logger.Log($"Action manifest error {error.ToString()}");
+            }
+            SetUPActionSet("/actions/General", ref generalActionSet);
+            SetUPActionSet("/actions/HTCVive", ref viveActionSet);
+            SetUPActionSet("/actions/Cosmos", ref cosmosActionSet);
+            SetUPActionSet("/actions/Knuckles", ref knucklesActionSet);
+            SetUPActionSet("/actions/OculusTouch", ref oculustouchActionSet);
+        }
+
+        private void SetUPActionSet(string path ,ref VRActiveActionSet_t val)
+        {
+            ulong m_mainSetHandler = 0;
+            EVRInputError error = OVR.Input.GetActionSetHandle("/actions/General/", ref m_mainSetHandler);
+            if (error != EVRInputError.None)
+            {
+                Logger.Log($"Action Set Handle  {path}  error {error.ToString()}");
+            }
+            val.ulActionSet = m_mainSetHandler;
+            val.ulRestrictedToDevice = OVR.k_ulInvalidInputValueHandle;
+            val.nPriority = 0;
         }
 
         internal static bool IsSupported()
@@ -103,6 +135,20 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             _projRight = ToSysMatrix(_vrSystem.GetProjectionMatrix(EVREye.Eye_Right, 0.1f, 1000f));
         }
 
+        public VRControllerState_t controlerOne;
+
+        public VRControllerState_t controlerTwo;
+
+        public unsafe void updateInput()
+        {
+            EVRInputError error = OVR.Input.UpdateActionState(
+                  new[]{ generalActionSet, viveActionSet, cosmosActionSet , oculustouchActionSet , knucklesActionSet },  5);
+            if (error != EVRInputError.None)
+            {
+                Logger.Log($"Input error {error.ToString()}");
+            }
+        }
+
         public override (string[] instance, string[] device) GetRequiredVulkanExtensions()
         {
             StringBuilder sb = new StringBuilder(1024);
@@ -125,6 +171,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             TrackedDevicePose_t hmdPose = _devicePoses[OVR.k_unTrackedDeviceIndex_Hmd];
             Matrix4x4 deviceToAbsolute = ToSysMatrix(hmdPose.mDeviceToAbsoluteTracking);
             Matrix4x4.Invert(deviceToAbsolute, out Matrix4x4 absoluteToDevice);
+            
 
             Matrix4x4 viewLeft = absoluteToDevice * _headToEyeLeft;
             Matrix4x4 viewRight = absoluteToDevice * _headToEyeRight;

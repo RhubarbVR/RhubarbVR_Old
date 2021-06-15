@@ -34,6 +34,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="SteamVR\knuckles_controller.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SteamVR\oculus_touch_controller.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SteamVR\steamvr_manifest.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SteamVR\vive_controller.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="VirtualReality\native\win-x64\openvr_api.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <PackagePath>./</PackagePath>
@@ -42,7 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="SteamVRBindings\" />
+    <Folder Include="SteamVR\" />
   </ItemGroup>
 
 </Project>

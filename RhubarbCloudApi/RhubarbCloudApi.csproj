@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DataTypes\" />
+    <Compile Remove="DataTypes\**" />
+    <EmbeddedResource Remove="DataTypes\**" />
+    <None Remove="DataTypes\**" />
   </ItemGroup>
 
   <ItemGroup>
