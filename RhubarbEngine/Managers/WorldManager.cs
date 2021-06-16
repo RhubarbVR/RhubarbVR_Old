@@ -96,7 +96,7 @@ namespace RhubarbEngine.Managers
             }
             else
             {
-                localWorld = new World.World(this, "LoaclWorld", 16);
+                localWorld = new World.World(this, "LocalWorld", 16);
                 Entity e = localWorld.RootEntity.addChild();
                 StaicMainShader shader = e.attachComponent<StaicMainShader>();
                 BoxMesh bmesh = e.attachComponent<BoxMesh>();
