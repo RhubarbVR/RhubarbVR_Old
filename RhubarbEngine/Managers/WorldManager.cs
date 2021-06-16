@@ -91,12 +91,12 @@ namespace RhubarbEngine.Managers
                 {
                     dontSaveLocal = true;
                     Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
-                    localWorld = new World.World(this, "TempLocalWorld", 16);
+                    localWorld = new World.World(this, "TempLoaclWorld", 16);
                 }
             }
             else
             {
-                localWorld = new World.World(this, "LocalWorld", 16);
+                localWorld = new World.World(this, "LoaclWorld", 16);
                 Entity e = localWorld.RootEntity.addChild();
                 StaicMainShader shader = e.attachComponent<StaicMainShader>();
                 BoxMesh bmesh = e.attachComponent<BoxMesh>();
