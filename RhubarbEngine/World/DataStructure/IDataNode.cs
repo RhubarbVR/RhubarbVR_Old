@@ -74,6 +74,7 @@ namespace RhubarbEngine.World.DataStructure
                 typeof(DataNode<DVector<int>>),
                 typeof(DataNode<DVector<short>>),
                 //DVector Types
+                typeof(DataNode<DVector<DateTime>>),
 
         };
     }

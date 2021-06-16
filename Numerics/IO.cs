@@ -202,6 +202,9 @@ public static class RhubarbIO
                     writer.Write(((NetPointer)obj).getID());
                     return;
 
+                case Type _ when ty == typeof(DateTime):
+                    writer.Write(((DateTime)obj).Ticks);
+                    return;
                 case Type _ when ty.IsEnum:
                     writer.Write((int)obj);
                     return;
@@ -360,7 +363,8 @@ public static class RhubarbIO
                     return DVector_short_val;
                 //DVector Types
 
-
+                case Type _ when ty == typeof(DateTime):
+                    return new DateTime(reader.ReadInt64());
                 case Type _ when ty == typeof(NetPointer):
                     return  new NetPointer(reader.ReadUInt64());
 
