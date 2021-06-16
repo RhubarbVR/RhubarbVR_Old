@@ -11,16 +11,23 @@ using RhubarbEngine.World;
 using g3;
 using System.Numerics;
 
-namespace RhubarbEngine.Components.Transform
+namespace RhubarbEngine.Components.Users
 {
     [Category(new string[] { "Users" })]
     public class LocalUserFPS : Component
     {
-        public Sync<float> fps;
+        public Driver<float> fps;
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
+        {            
+            if (fps.Linked) {
+                fps.Drivevalue = world.worldManager.engine.platformInfo.FrameRate;
+            }
+        }
+
+        public override void buildSyncObjs(bool newRefIds)
         {
-            fps = world.worldManager.engine.platformInfo.FrameRate;
+            fps = new Driver<float>(this, newRefIds);
         }
 
         public LocalUserFPS(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)

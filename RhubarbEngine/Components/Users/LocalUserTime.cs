@@ -11,17 +11,24 @@ using RhubarbEngine.World;
 using g3;
 using System.Numerics;
 
-namespace RhubarbEngine.Components.Transform
+namespace RhubarbEngine.Components.Users
 {
     [Category(new string[] { "Users" })]
     public class LocalUserTime : Component
     {
-        public Sync<DateTime> currentTime;
+        public Driver<DateTime> currentTime;
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
-            currentTime = world.worldManager.engine.platformInfo.Frame;
-            // currentTime = DateTime.UtcNow;
+            if (currentTime.Linked)
+            {
+                currentTime.Drivevalue = DateTime.UtcNow;
+            }
+        }
+
+        public override void buildSyncObjs(bool newRefIds)
+        {
+            currentTime = new Driver<DateTime>(this, newRefIds);
         }
 
         public LocalUserTime(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
