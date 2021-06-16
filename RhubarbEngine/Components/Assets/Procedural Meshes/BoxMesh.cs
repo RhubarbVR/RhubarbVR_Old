@@ -7,7 +7,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 {
 
     [Category(new string[] { "Assets/Procedural Meshes" })]
-    public class BoxMesh : AssetProvider<RMesh>
+    public class BoxMesh : ProceduralMesh
     {
         private TrivialBox3Generator boxgen = new TrivialBox3Generator();
 
