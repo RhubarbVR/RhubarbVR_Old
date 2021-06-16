@@ -26,28 +26,32 @@ namespace RhubarbEngine.Managers
             switch (side)
             {
                 case Creality.Left:
-                    return leftController.ControllerName;
+                    return (leftController != null) ? leftController.ControllerName : "null";
                     break;
                 case Creality.Right:
-                    return RightController.ControllerName;
+                    return (RightController != null) ? RightController.ControllerName : "null";
                     break;
                 default:
-                    return $"R{RightController.ControllerName}  L{leftController.ControllerName}";
+                    string r = (RightController != null) ? RightController.ControllerName : "null";
+                    string l = (leftController != null) ? leftController.ControllerName : "null";
+                    return $"R{r}  L{l}";
                     break;
             }
+
         }
         public bool PrimaryPress(Creality side = Creality.None)
         {
             switch (side)
             {
                 case Creality.Left:
-                    return leftController.PrimaryPress;
+
+                    return (leftController != null) ? leftController.PrimaryPress : false;
                     break;
                 case Creality.Right:
-                    return RightController.PrimaryPress;
+                    return (RightController != null) ? RightController.PrimaryPress : false;
                     break;
                 default:
-                    return RightController.PrimaryPress || leftController.PrimaryPress;
+                    return (RightController != null) ? RightController.PrimaryPress : false || (leftController != null) ? leftController.PrimaryPress : false;
                     break;
             }
         }
@@ -57,13 +61,14 @@ namespace RhubarbEngine.Managers
             switch (side)
             {
                 case Creality.Left:
-                    return leftController.TriggerTouching;
+
+                    return (leftController != null) ? leftController.TriggerTouching : false;
                     break;
                 case Creality.Right:
-                    return RightController.TriggerTouching;
+                    return (RightController != null) ? RightController.TriggerTouching : false;
                     break;
                 default:
-                    return RightController.TriggerTouching || leftController.TriggerTouching;
+                    return (RightController != null) ? RightController.TriggerTouching : false || (leftController != null) ? leftController.TriggerTouching : false;
                     break;
             }
         }
@@ -73,13 +78,14 @@ namespace RhubarbEngine.Managers
             switch (side)
             {
                 case Creality.Left:
-                    return leftController.AxisTouching;
+
+                    return (leftController != null) ? leftController.AxisTouching : false;
                     break;
                 case Creality.Right:
-                    return RightController.AxisTouching;
+                    return (RightController != null) ? RightController.AxisTouching : false;
                     break;
                 default:
-                    return RightController.AxisTouching || leftController.AxisTouching;
+                    return (RightController != null) ? RightController.AxisTouching : false || (leftController != null) ? leftController.AxisTouching : false;
                     break;
             }
         }
@@ -89,13 +95,14 @@ namespace RhubarbEngine.Managers
             switch (side)
             {
                 case Creality.Left:
-                    return leftController.SystemPress;
+
+                    return (leftController != null) ? leftController.SystemPress : false;
                     break;
                 case Creality.Right:
-                    return RightController.SystemPress;
+                    return (RightController != null) ? RightController.SystemPress : false;
                     break;
                 default:
-                    return RightController.SystemPress || leftController.SystemPress;
+                    return (RightController != null) ? RightController.SystemPress : false || (leftController != null) ? leftController.SystemPress : false;
                     break;
             }
         }
@@ -105,13 +112,14 @@ namespace RhubarbEngine.Managers
             switch (side)
             {
                 case Creality.Left:
-                    return leftController.MenuPress;
+
+                    return (leftController != null) ? leftController.MenuPress : false;
                     break;
                 case Creality.Right:
-                    return RightController.MenuPress;
+                    return (RightController != null) ? RightController.MenuPress : false;
                     break;
                 default:
-                    return RightController.MenuPress || leftController.MenuPress;
+                    return (RightController != null) ? RightController.MenuPress : false || (leftController != null) ? leftController.MenuPress : false;
                     break;
             }
         }
@@ -121,13 +129,14 @@ namespace RhubarbEngine.Managers
             switch (side)
             {
                 case Creality.Left:
-                    return leftController.GrabPress;
+
+                    return (leftController != null) ? leftController.GrabPress : false;
                     break;
                 case Creality.Right:
-                    return RightController.GrabPress;
+                    return (RightController != null) ? RightController.GrabPress : false;
                     break;
                 default:
-                    return RightController.GrabPress || leftController.GrabPress;
+                    return (RightController != null) ? RightController.GrabPress : false || (leftController != null) ? leftController.GrabPress : false;
                     break;
             }
         }
@@ -137,29 +146,14 @@ namespace RhubarbEngine.Managers
             switch (side)
             {
                 case Creality.Left:
-                    return leftController.SecondaryPress;
+                    
+                    return (leftController != null)? leftController.SecondaryPress : false;
                     break;
                 case Creality.Right:
-                    return RightController.SecondaryPress;
+                    return (RightController != null) ? RightController.SecondaryPress : false;
                     break;
                 default:
-                    return RightController.SecondaryPress || leftController.SecondaryPress;
-                    break;
-            }
-        }
-
-        public bool TriggerPress(Creality side = Creality.None)
-        {
-            switch (side)
-            {
-                case Creality.Left:
-                    return leftController.TriggerPress;
-                    break;
-                case Creality.Right:
-                    return RightController.TriggerPress;
-                    break;
-                default:
-                    return RightController.TriggerPress || leftController.TriggerPress;
+                    return (RightController != null) ? RightController.SecondaryPress : false || (leftController != null) ? leftController.SecondaryPress : false;
                     break;
             }
         }
@@ -169,13 +163,13 @@ namespace RhubarbEngine.Managers
             switch (side)
             {
                 case Creality.Left:
-                    return leftController.Axis;
+                    return (leftController != null) ? leftController.Axis : Vector2f.Zero;
                     break;
                 case Creality.Right:
-                    return RightController.Axis;
+                    return (RightController != null) ? RightController.Axis : Vector2f.Zero;
                     break;
                 default:
-                    return (RightController.Axis + leftController.Axis) / 2;
+                    return (((RightController != null) ? RightController.Axis : Vector2f.Zero ) +( (leftController != null) ? leftController.Axis : Vector2f.Zero)) / 2;
                     break;
             }
         }
@@ -185,13 +179,13 @@ namespace RhubarbEngine.Managers
             switch (side)
             {
                 case Creality.Left:
-                    return leftController.TriggerAix;
+                    return (leftController != null) ? leftController.TriggerAix : 0f;
                     break;
                 case Creality.Right:
-                    return RightController.TriggerAix;
+                    return (RightController != null) ? RightController.TriggerAix : 0f;
                     break;
                 default:
-                    return (RightController.TriggerAix + leftController.TriggerAix) / 2;
+                    return (((RightController != null) ? RightController.TriggerAix : 0f) + ((leftController != null) ? leftController.TriggerAix : 0f)) / 2;
                     break;
             }
         }

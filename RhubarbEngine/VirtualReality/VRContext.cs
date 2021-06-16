@@ -20,9 +20,9 @@ namespace RhubarbEngine.VirtualReality
 
         public bool Disposed;
 
-        public IController leftController;
+        public abstract IController leftController { get; }
 
-        public IController RightController;
+        public abstract IController RightController { get; }
 
         public abstract Framebuffer LeftEyeFramebuffer { get; }
         public abstract Framebuffer RightEyeFramebuffer { get; }

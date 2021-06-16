@@ -43,6 +43,13 @@ namespace RhubarbEngine.Components.Users
                ? 2.5f
                  : 1f;
             Vector3 motionDir = Vector3.Zero;
+            var vraix = engine.inputManager.Axis();
+            motionDir += (new Vector3(vraix.x, 0, vraix.y) * 50f);
+            if (engine.inputManager.PrimaryPress())
+            {
+                logger.Log("HI there");
+            }
+
             Quaternion lookRotation = default;
             if (world.worldManager.engine.inputManager.mainWindows.GetKey(Key.A))
             {

@@ -295,7 +295,7 @@
                      "output" : "/actions/knuckles/in/b_pressed"
                   },
                   "touch" : {
-                     "output" : "/actions/knuckles/in/b-touch"
+                     "output" : "/actions/knuckles/in/b_touch"
                   }
                },
                "mode" : "button",
@@ -307,7 +307,7 @@
                      "output" : "/actions/knuckles/in/b_pressed"
                   },
                   "touch" : {
-                     "output" : "/actions/knuckles/in/b-touch"
+                     "output" : "/actions/knuckles/in/b_touch"
                   }
                },
                "mode" : "button",
@@ -319,7 +319,7 @@
                      "output" : "/actions/knuckles/in/a_touch"
                   },
                   "touch" : {
-                     "output" : "/actions/knuckles/in/b-touch"
+                     "output" : "/actions/knuckles/in/b_touch"
                   }
                },
                "mode" : "button",
@@ -331,7 +331,7 @@
                      "output" : "/actions/knuckles/in/a_touch"
                   },
                   "touch" : {
-                     "output" : "/actions/knuckles/in/b-touch"
+                     "output" : "/actions/knuckles/in/b_touch"
                   }
                },
                "mode" : "button",

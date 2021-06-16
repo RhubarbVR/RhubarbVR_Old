@@ -18,7 +18,6 @@ namespace RhubarbEngine.Input.Controllers
         bool MenuPress { get; }
         bool GrabPress { get; }
         bool SecondaryPress { get; }
-        bool TriggerPress { get; }
         Vector2f Axis { get; }
         float TriggerAix { get; }
         Matrix4x4 Posistion { get; }

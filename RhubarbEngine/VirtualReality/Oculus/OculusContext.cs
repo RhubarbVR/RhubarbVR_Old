@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Numerics;
 using Veldrid;
 using static RhubarbEngine.VirtualReality.Oculus.LibOvrNative;
+using RhubarbEngine.Input.Controllers;
 
 namespace RhubarbEngine.VirtualReality.Oculus
 {
@@ -71,6 +72,10 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
         internal GraphicsDevice GraphicsDevice => _gd;
         internal ovrSession Session => _session;
+
+        public override IController leftController => throw new NotImplementedException();
+
+        public override IController RightController => throw new NotImplementedException();
 
         public OculusContext(VRContextOptions options)
         {

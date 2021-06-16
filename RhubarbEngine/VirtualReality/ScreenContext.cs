@@ -7,6 +7,7 @@ using System.Numerics;
 using Valve.VR;
 using Veldrid;
 using Veldrid.Vk;
+using RhubarbEngine.Input.Controllers;
 
 namespace RhubarbEngine.VirtualReality
 {
@@ -31,6 +32,10 @@ namespace RhubarbEngine.VirtualReality
         public override Framebuffer RightEyeFramebuffer => _rightEyeFB;
 
         internal GraphicsDevice GraphicsDevice => _gd;
+
+        public override IController leftController => throw new NotImplementedException();
+
+        public override IController RightController => throw new NotImplementedException();
 
         private Engine _eng;
 

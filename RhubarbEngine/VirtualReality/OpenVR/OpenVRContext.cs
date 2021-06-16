@@ -8,6 +8,9 @@ using Valve.VR;
 using Veldrid;
 using Veldrid.Vk;
 using OVR = Valve.VR.OpenVR;
+using RhubarbEngine.VirtualReality.OpenVR.Controllers;
+using System.Runtime.InteropServices;
+using RhubarbEngine.Input.Controllers;
 
 namespace RhubarbEngine.VirtualReality.OpenVR
 {
@@ -28,13 +31,9 @@ namespace RhubarbEngine.VirtualReality.OpenVR
         private TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[1];
 
         public VRActiveActionSet_t generalActionSet;
-
         public VRActiveActionSet_t viveActionSet;
-
         public VRActiveActionSet_t cosmosActionSet;
-
         public VRActiveActionSet_t knucklesActionSet;
-
         public VRActiveActionSet_t oculustouchActionSet;
 
         public override string DeviceName => _deviceName;
@@ -44,10 +43,15 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
         internal GraphicsDevice GraphicsDevice => _gd;
 
+        public override IController leftController => (controllerOne != null) ?(controllerOne.Creality == Input.Creality.Left)? controllerOne: controllerTwo:null;
+
+        public override IController RightController => (controllerOne != null) ? (controllerOne.Creality == Input.Creality.Right) ? controllerOne : controllerTwo : null;
+
         public OpenVRContext(VRContextOptions options)
         {
             _options = options;
             EVRInitError initError = EVRInitError.None;
+
             _vrSystem = OVR.Init(ref initError, EVRApplicationType.VRApplication_Scene, OVR.k_pch_SteamVR_NeverKillProcesses_Bool + "true");
             if (initError != EVRInitError.None)
             {
@@ -58,20 +62,107 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             {
                 throw new VeldridException("Failed to access the OpenVR Compositor.");
             }
+
+            Logger.Log("Loading app.vrmanifest");
+            EVRApplicationError apperro = EVRApplicationError.None;
+            apperro = OVR.Applications.AddApplicationManifest(AppDomain.CurrentDomain.BaseDirectory + @"\\app.vrmanifest", false);
+            if (apperro != EVRApplicationError.None) Logger.Log($"Failed to load Application Manifest: {Enum.GetName(typeof(EVRApplicationError), apperro)}", true);
+            else Logger.Log("Application manifest loaded successfully.");
+
             _mirrorTexture = new OpenVRMirrorTexture(this);
             EVRInputError error = OVR.Input.SetActionManifestPath(AppDomain.CurrentDomain.BaseDirectory + @"\\SteamVR\\steamvr_manifest.json");
             if (error != EVRInputError.None)
             {
                 Logger.Log($"Action manifest error {error.ToString()}");
             }
-            SetUPActionSet("/actions/General", ref generalActionSet);
-            SetUPActionSet("/actions/HTCVive", ref viveActionSet);
-            SetUPActionSet("/actions/Cosmos", ref cosmosActionSet);
-            SetUPActionSet("/actions/Knuckles", ref knucklesActionSet);
-            SetUPActionSet("/actions/OculusTouch", ref oculustouchActionSet);
+
+            if (error != EVRInputError.None)
+            {
+                Logger.Log($"Action Get Action Handl error {error.ToString()}");
+            }
+            UpdateControllers();
         }
 
-        private void SetUPActionSet(string path ,ref VRActiveActionSet_t val)
+        public SteamVRController controllerOne;
+
+        public SteamVRController controllerTwo;
+        ulong leftHandle = 0;
+        ulong rightHandle = 0;
+
+        private SteamVRController setupSteamVRController(string divisenamen,uint devicetackindex)
+        {
+            ETrackedControllerRole role = OVR.System.GetControllerRoleForTrackedDeviceIndex(devicetackindex);
+            switch (role)
+            {
+                case ETrackedControllerRole.Invalid:
+                    break;
+                case ETrackedControllerRole.LeftHand:
+                    return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Left,rightHandle);
+                    break;
+                case ETrackedControllerRole.RightHand:
+                    return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Right,leftHandle);
+                    break;
+                case ETrackedControllerRole.OptOut:
+                    break;
+                case ETrackedControllerRole.Max:
+                    break;
+                default:
+                    break;
+            }
+            return null;
+        }
+
+        public void UpdateControllers()
+        {
+            controllerOne = null;
+            controllerTwo = null;
+            OVR.Input.GetInputSourceHandle("/user/hand/left", ref leftHandle);
+            OVR.Input.GetInputSourceHandle("/user/hand/right", ref rightHandle);
+            generalActionSet = SetUPActionSet("/actions/General");
+            viveActionSet = SetUPActionSet("/actions/HTCVive");
+            cosmosActionSet = SetUPActionSet("/actions/Cosmos");
+            knucklesActionSet = SetUPActionSet("/actions/Knuckles");
+            oculustouchActionSet = SetUPActionSet("/actions/OculusTouch");
+            Logger.Log($"Left: {leftHandle} Right: {rightHandle}");
+            for (uint i = 0; i < OVR.k_unMaxTrackedDeviceCount; i++)
+            {
+                ETrackedDeviceClass device = OVR.System.GetTrackedDeviceClass(i);
+                if (device == ETrackedDeviceClass.Controller)
+                {
+                    ETrackedPropertyError error = ETrackedPropertyError.TrackedProp_Success;
+                    StringBuilder value = new StringBuilder(64);
+                    OVR.System.GetStringTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_RenderModelName_String, value, 64, ref error);
+                    if (controllerOne == null)
+                    {
+                        controllerOne = setupSteamVRController(value.ToString(),i);
+                    }
+                    else if (controllerTwo == null)
+                    {
+
+                        controllerTwo = setupSteamVRController(value.ToString(), i);
+                    }
+                    else
+                    {
+                        goto SetupTracker;
+                    }
+                }
+                else if (device == ETrackedDeviceClass.GenericTracker)
+                {
+                    goto SetupTracker;
+                }
+                else
+                {
+                    goto Done;
+                }
+            SetupTracker:
+
+            Done:
+                ;
+            }
+
+        }
+
+        private VRActiveActionSet_t SetUPActionSet(string path)
         {
             ulong m_mainSetHandler = 0;
             EVRInputError error = OVR.Input.GetActionSetHandle("/actions/General/", ref m_mainSetHandler);
@@ -79,9 +170,11 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             {
                 Logger.Log($"Action Set Handle  {path}  error {error.ToString()}");
             }
+            VRActiveActionSet_t val = new VRActiveActionSet_t();
             val.ulActionSet = m_mainSetHandler;
             val.ulRestrictedToDevice = OVR.k_ulInvalidInputValueHandle;
             val.nPriority = 0;
+            return val;
         }
 
         internal static bool IsSupported()
@@ -135,18 +228,16 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             _projRight = ToSysMatrix(_vrSystem.GetProjectionMatrix(EVREye.Eye_Right, 0.1f, 1000f));
         }
 
-        public VRControllerState_t controlerOne;
-
-        public VRControllerState_t controlerTwo;
-
         public unsafe void updateInput()
         {
-            EVRInputError error = OVR.Input.UpdateActionState(
-                  new[]{ generalActionSet, viveActionSet, cosmosActionSet , oculustouchActionSet , knucklesActionSet },  5);
+            EVRInputError error = OVR.Input.UpdateActionState(new[] { generalActionSet, viveActionSet, cosmosActionSet, oculustouchActionSet, knucklesActionSet }, (uint)Marshal.SizeOf(typeof(VRActiveActionSet_t)));
+
             if (error != EVRInputError.None)
             {
                 Logger.Log($"Input error {error.ToString()}");
             }
+            controllerOne?.update();
+            controllerTwo?.update();
         }
 
         public override (string[] instance, string[] device) GetRequiredVulkanExtensions()
@@ -166,8 +257,8 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             {
                 return default(HmdPoseState);
             }
+            updateInput();
             EVRCompositorError compositorError = _compositor.WaitGetPoses(_devicePoses, Array.Empty<TrackedDevicePose_t>());
-
             TrackedDevicePose_t hmdPose = _devicePoses[OVR.k_unTrackedDeviceIndex_Hmd];
             Matrix4x4 deviceToAbsolute = ToSysMatrix(hmdPose.mDeviceToAbsoluteTracking);
             Matrix4x4.Invert(deviceToAbsolute, out Matrix4x4 absoluteToDevice);
@@ -203,11 +294,15 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             VREvent_t _vrevent = new VREvent_t();
             if (PollNextEvent(ref _vrevent))
             {
-                if(_vrevent.eventType == 700)
+                if (_vrevent.eventType == 700)
                 {
                     _vrSystem.AcknowledgeQuit_Exiting();
                     Dispose();
                     return;
+                }
+                if(_vrevent.eventType == 102)
+                {
+                    UpdateControllers();
                 }
             }
             if (_gd.GetOpenGLInfo(out BackendInfoOpenGL glInfo))

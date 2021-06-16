@@ -230,7 +230,7 @@
 			"requirement": "optional"
 		},
 		{
-			"name": "/actions/Knuckles/in/B-Touch",
+			"name": "/actions/Knuckles/in/B_Touch",
 			"type": "boolean",
 			"requirement": "optional"
 		},
@@ -425,7 +425,7 @@
 	],
 	"default_bindings": [
 		{
-			"controller_type": "vive",
+			"controller_type": "vive_controller",
 			"binding_url": "vive_controller.json"
 		},
 		{
