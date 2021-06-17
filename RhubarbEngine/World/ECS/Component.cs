@@ -26,6 +26,10 @@ namespace RhubarbEngine.World.ECS
         {
 
         }
+        public virtual void OnAttach()
+        {
+
+        }
 
         public virtual void CommonUpdate(DateTime startTime, DateTime Frame)
         {

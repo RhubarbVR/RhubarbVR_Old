@@ -101,7 +101,7 @@ namespace RhubarbEngine.Managers
                 // Attach random stuff here
                 Entity e = localWorld.RootEntity.addChild();
                 StaicMainShader shader = e.attachComponent<StaicMainShader>();
-                DiscMesh bmesh = e.attachComponent<DiscMesh>();
+                GenCylMesh bmesh = e.attachComponent<GenCylMesh>();
                 RMaterial mit = e.attachComponent<RMaterial>();
                 MeshRender meshRender = e.attachComponent<MeshRender>();
                 RGBRainbowDriver rgbainbowDriver = e.attachComponent<RGBRainbowDriver>();

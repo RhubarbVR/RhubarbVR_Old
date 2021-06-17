@@ -31,10 +31,18 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         public Sync<bool> ClosedLoop;
         public Sync<int> startCapCenterIndex;
         public Sync<int> endCapCenterIndex;
+        public override void OnAttach()
+        {
+            Vertices.Add(true).value = Vector3f.Zero;
+            Vertices.Add(true).value = Vector3f.One;
+            Vertices.Add(true).value = new Vector3f(10,10,10);
 
+            logger.Log("Loaded");
+        }
         public override void buildSyncObjs(bool newRefIds)
         {
             Polygon = new Sync<Polygon2d>(this, newRefIds);
+            Polygon.value = Polygon2d.MakeCircle(1f, 1);
             Vertices = new SyncValueList<Vector3d>(this, newRefIds);
 
             CapCenter = new Sync<Vector2d>(this, newRefIds);
@@ -64,13 +72,6 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
         public override void onChanged()
         {
-            genCylGen.Polygon = Polygon.value;
-            List<Vector3d> temp = new List<Vector3d>();
-            foreach (Vector3d item in Vertices)
-            {
-                temp.Add(item);
-            }
-            genCylGen.Vertices = temp;
             genCylGen.CapCenter = CapCenter.value;
             genCylGen.Frame = Frame.value;
             genCylGen.Capped = Capped.value;
@@ -84,6 +85,23 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
         private void updateMesh()
         {
+            genCylGen.Polygon = Polygon.value;
+            List<Vector3d> temp = new List<Vector3d>();
+            if(Vertices.Count <= 1)
+            {
+                temp.Add((Vertices.Count == 0) ? Vector3d .Zero: Vertices[0].value);
+                temp.Add((Vertices.Count == 0) ? Vector3d.Zero : Vertices[0].value);
+                logger.Log("e");
+            }
+            else
+            {
+                logger.Log("o");
+                foreach (Vector3d item in Vertices)
+                {
+                    temp.Add(item);
+                }
+            }
+            genCylGen.Vertices = temp;
             MeshGenerator newmesh = genCylGen.Generate();
             RMesh kite = new RMesh(newmesh.MakeSimpleMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

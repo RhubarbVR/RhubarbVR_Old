@@ -12,6 +12,8 @@ namespace RhubarbEngine.World
     {
         private List<Sync<T>> _synclist = new List<Sync<T>>();
 
+        public int Count => _synclist.Count;
+
         public IEnumerator<T> GetEnumerator()
         {
             for (int i = 0; i < _synclist.Count; i++)
@@ -19,8 +21,14 @@ namespace RhubarbEngine.World
                 yield return this[i].value;
             }
         }
-
-        Sync<T> this[int i]
+        public IEnumerator<Sync<T>> GetSyncEnumerator()
+        {
+            for (int i = 0; i < _synclist.Count; i++)
+            {
+                yield return this[i];
+            }
+        }
+        public Sync<T> this[int i]
         {
             get
             {
@@ -30,8 +38,15 @@ namespace RhubarbEngine.World
 
         public Sync<T> Add(bool Refid = true)
         {
-            _synclist.Add(new Sync<T>(this.world, this, Refid));
-            return _synclist[_synclist.Count - 1];
+            var val = new Sync<T>(this.world, this, Refid);
+            _synclist.Add(val);
+            val.Changed += Val_Changed;
+            return val;
+        }
+
+        private void Val_Changed(IChangeable obj)
+        {
+            onChangeInternal(obj);
         }
 
         public void Clear()
