@@ -11,7 +11,7 @@ namespace RhubarbEngine
     public static class Logger
     {
         private static Engine engine;
-
+        public static Engine Engine { get { return engine; } }
         public static void init(Engine _engine)
         {
             engine = _engine;

@@ -80,7 +80,6 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             {
                 Logger.Log($"Action Get Action Handl error {error.ToString()}");
             }
-            UpdateControllers();
         }
 
         public SteamVRController controllerOne;
@@ -118,11 +117,6 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             controllerTwo = null;
             OVR.Input.GetInputSourceHandle("/user/hand/left", ref leftHandle);
             OVR.Input.GetInputSourceHandle("/user/hand/right", ref rightHandle);
-            generalActionSet = SetUPActionSet("/actions/General");
-            viveActionSet = SetUPActionSet("/actions/HTCVive");
-            cosmosActionSet = SetUPActionSet("/actions/Cosmos");
-            knucklesActionSet = SetUPActionSet("/actions/Knuckles");
-            oculustouchActionSet = SetUPActionSet("/actions/OculusTouch");
             Logger.Log($"Left: {leftHandle} Right: {rightHandle}");
             for (uint i = 0; i < OVR.k_unMaxTrackedDeviceCount; i++)
             {
@@ -164,17 +158,19 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
         private VRActiveActionSet_t SetUPActionSet(string path)
         {
-            ulong m_mainSetHandler = 0;
-            EVRInputError error = OVR.Input.GetActionSetHandle("/actions/General/", ref m_mainSetHandler);
+            ulong handle = 0;
+            EVRInputError error = OVR.Input.GetActionSetHandle("/actions/General/", ref handle);
             if (error != EVRInputError.None)
             {
                 Logger.Log($"Action Set Handle  {path}  error {error.ToString()}");
             }
-            VRActiveActionSet_t val = new VRActiveActionSet_t();
-            val.ulActionSet = m_mainSetHandler;
-            val.ulRestrictedToDevice = OVR.k_ulInvalidInputValueHandle;
-            val.nPriority = 0;
-            return val;
+            var actionSet = new VRActiveActionSet_t
+            {
+                ulActionSet = handle,
+                ulRestrictedToDevice = OVR.k_ulInvalidActionSetHandle,
+                nPriority = 0
+            };
+            return actionSet;
         }
 
         internal static bool IsSupported()
@@ -226,7 +222,17 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
             _projLeft = ToSysMatrix(_vrSystem.GetProjectionMatrix(EVREye.Eye_Left, 0.1f, 1000f));
             _projRight = ToSysMatrix(_vrSystem.GetProjectionMatrix(EVREye.Eye_Right, 0.1f, 1000f));
+
+
+            generalActionSet = SetUPActionSet("/actions/General");
+            viveActionSet = SetUPActionSet("/actions/HTCVive");
+            cosmosActionSet = SetUPActionSet("/actions/Cosmos");
+            knucklesActionSet = SetUPActionSet("/actions/Knuckles");
+            oculustouchActionSet = SetUPActionSet("/actions/OculusTouch");
+
         }
+
+
 
         public unsafe void updateInput()
         {
@@ -257,7 +263,6 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             {
                 return default(HmdPoseState);
             }
-            updateInput();
             EVRCompositorError compositorError = _compositor.WaitGetPoses(_devicePoses, Array.Empty<TrackedDevicePose_t>());
             TrackedDevicePose_t hmdPose = _devicePoses[OVR.k_unTrackedDeviceIndex_Hmd];
             Matrix4x4 deviceToAbsolute = ToSysMatrix(hmdPose.mDeviceToAbsoluteTracking);
@@ -300,7 +305,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
                     Dispose();
                     return;
                 }
-                if(_vrevent.eventType == 102)
+                if (_vrevent.eventType == 102)
                 {
                     UpdateControllers();
                 }
@@ -309,6 +314,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             {
                 glInfo.FlushAndFinish();
             }
+            updateInput();
             SubmitTexture(_compositor, LeftEyeFramebuffer.ColorTargets[0].Target, EVREye.Eye_Left);
             SubmitTexture(_compositor, RightEyeFramebuffer.ColorTargets[0].Target, EVREye.Eye_Right);
         }
