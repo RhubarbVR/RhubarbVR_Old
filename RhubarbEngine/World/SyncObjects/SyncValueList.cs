@@ -12,6 +12,14 @@ namespace RhubarbEngine.World
     {
         private List<Sync<T>> _synclist = new List<Sync<T>>();
 
+        public IEnumerator<T> GetEnumerator()
+        {
+            for (int i = 0; i < _synclist.Count; i++)
+            {
+                yield return this[i].value;
+            }
+        }
+
         Sync<T> this[int i]
         {
             get
@@ -34,7 +42,7 @@ namespace RhubarbEngine.World
         {
 
         }
-        public SyncValueList(IWorldObject _parent) : base(_parent.World, _parent)
+        public SyncValueList(IWorldObject _parent, bool newRefID) : base(_parent.World, _parent, newRefID)
         {
 
         }
