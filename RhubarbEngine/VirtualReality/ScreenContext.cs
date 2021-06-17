@@ -33,9 +33,11 @@ namespace RhubarbEngine.VirtualReality
 
         internal GraphicsDevice GraphicsDevice => _gd;
 
-        public override IController leftController => throw new NotImplementedException();
+        //throw new NotImplementedException()
+        public override IController leftController => null;
 
-        public override IController RightController => throw new NotImplementedException();
+        //throw new NotImplementedException()
+        public override IController RightController => null;
 
         private Engine _eng;
 
