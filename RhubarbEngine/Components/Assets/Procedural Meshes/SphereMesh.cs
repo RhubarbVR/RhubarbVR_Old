@@ -20,7 +20,9 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         public override void buildSyncObjs(bool newRefIds)
         {
             Radius = new Sync<double>(this, newRefIds);
+            Radius.value = 1f;
             EdgeVertices = new Sync<int>(this, newRefIds);
+            EdgeVertices.value = 8;
 
             NoSharedVertices = new Sync<bool>(this, newRefIds);
         }
