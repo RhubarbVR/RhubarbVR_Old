@@ -67,18 +67,38 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
         public uint deviceindex;
 
         public ulong handle;
+        private static Matrix4x4 ToSysMatrix(HmdMatrix34_t hmdMat)
+        {
+            return new Matrix4x4(
+                hmdMat.m0, hmdMat.m4, hmdMat.m8, 0f,
+                hmdMat.m1, hmdMat.m5, hmdMat.m9, 0f,
+                hmdMat.m2, hmdMat.m6, hmdMat.m10, 0f,
+                hmdMat.m3, hmdMat.m7, hmdMat.m11, 1f);
+        }
+
+
+        public static Quaternion QuaternionFromMatrix(HmdMatrix34_t m)
+        {
+            var w = Math.Sqrt(1 + m.m0 + m.m5 + m.m10) / 2.0;
+            return new Quaternion
+            {
+                W = (float)w, // Scalar
+                X = (float)((m.m9 - m.m6) / (4 * w)),
+                Y = (float)((m.m2 - m.m8) / (4 * w)),
+                Z = (float)((m.m4 - m.m1) / (4 * w))
+            };
+        }
+
 
         public static Matrix4x4 posHelp(HmdMatrix34_t pos)
         {
-            Quaternion q = new Quaternion();
-            q.W = (float)Math.Sqrt(Math.Max(0, 1 + pos.m0 + pos.m5 + pos.m10)) / 2;
-            q.X = (float)Math.Sqrt(Math.Max(0, 1 + pos.m0 - pos.m5 - pos.m10)) / 2;
-            q.Y = (float)Math.Sqrt(Math.Max(0, 1 - pos.m0 + pos.m5 - pos.m10)) / 2;
-            q.Z = (float)Math.Sqrt(Math.Max(0, 1 - pos.m0 - pos.m5 + pos.m10)) / 2;
-            q.X = (float)Math.CopySign(q.X, pos.m9 - pos.m6);
-            q.Y = (float)Math.CopySign(q.Y, pos.m2 - pos.m8);
-            q.Z = (float)Math.CopySign(q.Z, pos.m3 - pos.m4);
-            return Matrix4x4.CreateScale(1) * Matrix4x4.CreateFromQuaternion(q) * Matrix4x4.CreateTranslation(new Vector3(pos.m3, pos.m7, pos.m11));
+            return Matrix4x4.CreateScale(1) * Matrix4x4.CreateFromQuaternion(QuaternionFromMatrix(pos)) * Matrix4x4.CreateTranslation(new Vector3(pos.m3, pos.m7, pos.m11));
+        }
+        public static string MatToString(HmdMatrix34_t mat)
+        {
+            return $"[{mat.m0}, {mat.m1}, {mat.m2}, {mat.m3},\n" +
+                   $"{mat.m4}, {mat.m5}, {mat.m6}, {mat.m7},\n" +
+                   $"{mat.m8}, {mat.m9}, {mat.m10}, {mat.m11}]";
         }
 
 
@@ -143,7 +163,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
             {
                 Logger.Log(error.ToString());
             }
-            var errorf = OVR.Input.GetAnalogActionData(GeneralmAxisHandle, ref GeneralmTriggerAixData, Analogsize, handle);
+            var errorf = OVR.Input.GetAnalogActionData(GeneralmAxisHandle, ref GeneralmAxisData, Analogsize, handle);
             if (errorf != 0)
             {
                 Logger.Log(error.ToString());
@@ -153,14 +173,10 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
             {
                 Logger.Log(error.ToString());
             }
-            var errorh = OVR.Input.GetPoseActionData(GeneralmPosistionHandle, ETrackingUniverseOrigin.TrackingUniverseRawAndUncalibrated, 0f, ref GeneralmPosistionData, Possize, handle);
+            var errorh = OVR.Input.GetPoseActionData(GeneralmPosistionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0f, ref GeneralmPosistionData, Possize, handle);
             if (errorh != 0)
             {
                 Logger.Log(error.ToString());
-            }
-            if (PrimaryPressData.bState)
-            {
-                Logger.Log("Yes");
             }
         }
 

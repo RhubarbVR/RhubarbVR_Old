@@ -9,6 +9,7 @@ using RhubarbDataTypes;
 using RhubarbEngine.World.ECS;
 using RhubarbEngine.Components.Rendering;
 using BepuPhysics;
+using RhubarbEngine.Managers;
 
 namespace RhubarbEngine.World
 {
@@ -35,6 +36,10 @@ namespace RhubarbEngine.World
         public Simulation Simulation => world.Simulation;
 
         public Engine engine => world.worldManager.engine;
+
+        public InputManager input => engine.inputManager;
+
+        public double DeltaSeconds => world.worldManager.engine.platformInfo.deltaSeconds;
 
         public bool Persistent = true;
 

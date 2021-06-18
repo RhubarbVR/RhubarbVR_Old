@@ -8,6 +8,7 @@ using Veldrid;
 using RhubarbEngine.VirtualReality;
 using RhubarbEngine.Input.Controllers;
 using g3;
+using System.Numerics;
 
 namespace RhubarbEngine.Managers
 {
@@ -170,6 +171,22 @@ namespace RhubarbEngine.Managers
                     break;
                 default:
                     return (((RightController != null) ? RightController.Axis : Vector2f.Zero ) +( (leftController != null) ? leftController.Axis : Vector2f.Zero)) / 2;
+                    break;
+            }
+        }
+
+        public Matrix4x4 GetPos(Creality side = Creality.None)
+        {
+            switch (side)
+            {
+                case Creality.Left:
+                    return (leftController != null) ? leftController.Posistion : Matrix4x4.CreateScale(1f);
+                    break;
+                case Creality.Right:
+                    return (RightController != null) ? RightController.Posistion : Matrix4x4.CreateScale(1f);
+                    break;
+                default:
+                    return Matrix4x4.CreateScale(1f);
                     break;
             }
         }

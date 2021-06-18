@@ -47,6 +47,32 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
         public override IController RightController => (controllerOne != null) ? (controllerOne.Creality == Input.Creality.Right) ? controllerOne : controllerTwo : null;
 
+        public override Matrix4x4 Headpos => headPos;
+
+        public Matrix4x4 invertRot(Matrix4x4 val)
+        {
+            Matrix4x4.Decompose(val, out Vector3 scale, out Quaternion rot, out Vector3 trans);
+
+            return Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(Quaternion.Inverse(rot)) * Matrix4x4.CreateTranslation(trans);
+        }
+        public static Quaternion QuaternionFromMatrix(HmdMatrix34_t m)
+        {
+            var w = Math.Sqrt(1 + m.m0 + m.m5 + m.m10) / 2.0;
+            return new Quaternion
+            {
+                W = (float)w, // Scalar
+                X = (float)((m.m9 - m.m6) / (4 * w)),
+                Y = (float)((m.m2 - m.m8) / (4 * w)),
+                Z = (float)((m.m4 - m.m1) / (4 * w))
+            };
+        }
+
+
+        public static Matrix4x4 posHelp(HmdMatrix34_t pos)
+        {
+            return Matrix4x4.CreateScale(1) * Matrix4x4.CreateFromQuaternion(QuaternionFromMatrix(pos)) * Matrix4x4.CreateTranslation(new Vector3(pos.m3, pos.m7, pos.m11));
+        }
+
         public OpenVRContext(VRContextOptions options)
         {
             _options = options;
@@ -101,10 +127,10 @@ namespace RhubarbEngine.VirtualReality.OpenVR
                 case ETrackedControllerRole.Invalid:
                     break;
                 case ETrackedControllerRole.LeftHand:
-                    return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Left, rightHandle);
+                    return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Left, leftHandle);
                     break;
                 case ETrackedControllerRole.RightHand:
-                    return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Right,leftHandle);
+                    return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Right, rightHandle);
                     break;
                 case ETrackedControllerRole.OptOut:
                     break;
@@ -258,7 +284,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             string[] device = sb.ToString().Split(' ');
             return (instance, device);
         }
-
+        Matrix4x4 headPos;
         public override HmdPoseState WaitForPoses()
         {
             if (Disposed)
@@ -267,12 +293,10 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             }
             EVRCompositorError compositorError = _compositor.WaitGetPoses(_devicePoses, Array.Empty<TrackedDevicePose_t>());
             TrackedDevicePose_t hmdPose = _devicePoses[OVR.k_unTrackedDeviceIndex_Hmd];
-            Matrix4x4 deviceToAbsolute = ToSysMatrix(hmdPose.mDeviceToAbsoluteTracking);
-            Matrix4x4.Invert(deviceToAbsolute, out Matrix4x4 absoluteToDevice);
-            
+            headPos = posHelp(hmdPose.mDeviceToAbsoluteTracking);
 
-            Matrix4x4 viewLeft = absoluteToDevice * _headToEyeLeft;
-            Matrix4x4 viewRight = absoluteToDevice * _headToEyeRight;
+            Matrix4x4 viewLeft = _headToEyeLeft;
+            Matrix4x4 viewRight = _headToEyeRight;
 
             Matrix4x4.Invert(viewLeft, out Matrix4x4 invViewLeft);
             Matrix4x4.Decompose(invViewLeft, out _, out Quaternion leftRotation, out Vector3 leftPosition);

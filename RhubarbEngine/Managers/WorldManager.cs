@@ -98,10 +98,9 @@ namespace RhubarbEngine.Managers
             {
                 localWorld = new World.World(this, "LocalWorld", 16);
 
-                // Attach random stuff here
-                Entity e = localWorld.RootEntity.addChild();
+                Entity e = localWorld.RootEntity.addChild("Gay");
                 StaicMainShader shader = e.attachComponent<StaicMainShader>();
-                GenCylMesh bmesh = e.attachComponent<GenCylMesh>();
+                ArrowMesh bmesh = e.attachComponent<ArrowMesh>();
                 RMaterial mit = e.attachComponent<RMaterial>();
                 MeshRender meshRender = e.attachComponent<MeshRender>();
                 RGBRainbowDriver rgbainbowDriver = e.attachComponent<RGBRainbowDriver>();
@@ -113,11 +112,36 @@ namespace RhubarbEngine.Managers
                 Render.Material.Fields.ColorField field = mit.getField<Render.Material.Fields.ColorField>("rambow", Render.Shader.ShaderType.MainFrag);
                 rgbainbowDriver.driver.setDriveTarget(field.field);
                 rgbainbowDriver.speed.value = 50f;
+
+                e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
+                e.scale.value = new Vector3f(1f);
+                Entity ea = localWorld.RootEntity.addChild("Gayer");
+                ea.position.value = Vector3f.One;
+                AddMesh<BoxMesh>(ea);
             }
             localWorld.Focus = World.World.FocusLevel.Focused;
             worlds.Add(localWorld);
             focusedWorld = localWorld;
             return this;
+        }
+
+        public Entity AddMesh<T>(Entity ea) where T: ProceduralMesh
+        {
+            Entity e = ea.addChild();
+            StaicMainShader shader = e.attachComponent<StaicMainShader>();
+            T bmesh = e.attachComponent<T>();
+            RMaterial mit = e.attachComponent<RMaterial>();
+            MeshRender meshRender = e.attachComponent<MeshRender>();
+            RGBRainbowDriver rgbainbowDriver = e.attachComponent<RGBRainbowDriver>();
+
+            mit.Shader.target = shader;
+            meshRender.Materials.Add().target = mit;
+            meshRender.Mesh.target = bmesh;
+            mit.setValueAtField("rambow", Render.Shader.ShaderType.MainFrag, Colorf.Blue);
+            Render.Material.Fields.ColorField field = mit.getField<Render.Material.Fields.ColorField>("rambow", Render.Shader.ShaderType.MainFrag);
+            rgbainbowDriver.driver.setDriveTarget(field.field);
+            rgbainbowDriver.speed.value = 50f;
+            return e;
         }
 
         public void Update(DateTime startTime, DateTime Frame)

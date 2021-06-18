@@ -39,6 +39,8 @@ namespace RhubarbEngine.VirtualReality
         //throw new NotImplementedException()
         public override IController RightController => null;
 
+        public override Matrix4x4 Headpos => throw new NotImplementedException();
+
         private Engine _eng;
 
 

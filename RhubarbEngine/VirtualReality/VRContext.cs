@@ -7,7 +7,7 @@ using RhubarbEngine.VirtualReality.Oculus;
 using RhubarbEngine.VirtualReality.OpenVR;
 using Veldrid;
 using RhubarbEngine.Input.Controllers;
-
+using System.Numerics;
 namespace RhubarbEngine.VirtualReality
 {
     public abstract class VRContext : IDisposable
@@ -20,6 +20,7 @@ namespace RhubarbEngine.VirtualReality
 
         public bool Disposed;
 
+        public abstract Matrix4x4 Headpos { get; }
         public abstract IController leftController { get; }
 
         public abstract IController RightController { get; }

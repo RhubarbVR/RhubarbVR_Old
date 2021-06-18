@@ -19,7 +19,7 @@ using BepuPhysics.Collidables;
 using System.Runtime.CompilerServices;
 using BepuPhysics.CollisionDetection;
 using BepuUtilities;
-
+using RhubarbEngine.Components.Assets.Procedural_Meshes;
 namespace RhubarbEngine.World
 {
     public class World : IWorldObject
@@ -154,7 +154,7 @@ namespace RhubarbEngine.World
         {
 
         }
-        public Matrix4x4 playerTrans => (userRoot != null)? userRoot.entity.globalTrans() : Matrix4x4.CreateScale(1f);
+        public Matrix4x4 playerTrans => (userRoot != null)? userRoot.Viewpos : Matrix4x4.CreateScale(1f);
 
         [NoSaveAttribute]
         public UserRoot userRoot;
@@ -176,7 +176,7 @@ namespace RhubarbEngine.World
                     if ((layer & RemderLayers.privateOverlay) <= 0) return;
                     break;
             }
-            foreach(Entity ent in RootEntity._children)
+            foreach(Entity ent in Entitys)
             {
                 if (ent.enabled.value && ent.parentEnabled)
                 {
@@ -320,6 +320,24 @@ namespace RhubarbEngine.World
             {
                 Entity rootent = RootEntity.addChild();
                 userRoot = rootent.attachComponent<UserRoot>();
+                Entity head = rootent.addChild("Head");
+                head.attachComponent<Head>();
+                userRoot.Head.target = head;
+                Entity left = rootent.addChild("Left hand");
+                Entity right = rootent.addChild("Right hand");
+                userRoot.LeftHand.target = left;
+                userRoot.RightHand.target = right;
+                Hand leftcomp = left.attachComponent<Hand>();
+                leftcomp.creality.value = Input.Creality.Left;
+                Hand rightcomp = right.attachComponent<Hand>();
+                rightcomp.creality.value = Input.Creality.Right;
+                Entity obj = worldManager.AddMesh<ArrowMesh>(left);
+                Entity obj2 = worldManager.AddMesh<ArrowMesh>(right);
+                obj.scale.value = new Vector3f(0.2f);
+                obj2.scale.value = new Vector3f(0.2f);
+                obj.rotation.value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
+                obj2.rotation.value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
+
             }
             foreach (Entity obj in Entitys)
             {

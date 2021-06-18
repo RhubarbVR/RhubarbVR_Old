@@ -114,7 +114,7 @@ namespace RhubarbEngine.Managers
             cl.SetFramebuffer(fb);
             cl.ClearDepthStencil(1f);
             cl.ClearColorTarget(0, RgbaFloat.CornflowerBlue);
-            foreach(Renderable renderObj in mainQueue.Renderables)
+            foreach (Renderable renderObj in mainQueue.Renderables)
             {
                 renderObj.Render(gd, cl, new UBO(
                 proj,

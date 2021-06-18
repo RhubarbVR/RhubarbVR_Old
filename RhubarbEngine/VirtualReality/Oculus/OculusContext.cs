@@ -77,6 +77,8 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
         public override IController RightController => throw new NotImplementedException();
 
+        public override Matrix4x4 Headpos => throw new NotImplementedException();
+
         public OculusContext(VRContextOptions options)
         {
             _options = options;
