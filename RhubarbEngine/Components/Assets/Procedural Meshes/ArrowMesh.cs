@@ -16,6 +16,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         public Sync<float> HeadBaseRadius;
         public Sync<float> TipRadius;
         public Sync<float> HeadLength;
+        public Sync<bool> DoubleSided;
 
         public override void buildSyncObjs(bool newRefIds)
         {
@@ -33,6 +34,9 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
             HeadLength = new Sync<float>(this, newRefIds);
             HeadLength.value = 0.5f;
+            
+            DoubleSided = new Sync<bool>(this, newRefIds);
+            DoubleSided.value = false;
         }
         public override void onChanged()
         {
@@ -41,6 +45,8 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             _generator.HeadBaseRadius = HeadBaseRadius.value;
             _generator.TipRadius = TipRadius.value;
             _generator.HeadLength = HeadLength.value;
+            _generator.DoubleSided = DoubleSided.value;
+            
             updateMesh();
         }
 

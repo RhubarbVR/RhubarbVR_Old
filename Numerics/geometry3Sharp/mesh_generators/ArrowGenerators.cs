@@ -13,15 +13,29 @@ namespace g3
         public float HeadBaseRadius = 1.0f;
         public float TipRadius = 0.0f;
         public float HeadLength = 0.5f;
+        public bool DoubleSided = false;
 
         override public MeshGenerator Generate()
         {
-            Sections = new CircularSection[4];
-            Sections[0] = new CircularSection(StickRadius, 0.0f);
-            Sections[1] = new CircularSection(StickRadius, StickLength);
-            Sections[2] = new CircularSection(HeadBaseRadius, StickLength);
-            Sections[3] = new CircularSection(TipRadius, StickLength+HeadLength);
-
+            if (DoubleSided)
+            {
+                Sections = new CircularSection[6];
+                Sections[0] = new CircularSection(TipRadius, 0.0f);
+                Sections[1] = new CircularSection(HeadBaseRadius, HeadLength);
+                Sections[2] = new CircularSection(StickRadius, HeadLength);
+                Sections[3] = new CircularSection(StickRadius, StickLength);
+                Sections[4] = new CircularSection(HeadBaseRadius, StickLength);
+                Sections[5] = new CircularSection(TipRadius, StickLength+HeadLength);
+            }
+            else
+            {
+                Sections = new CircularSection[4];
+                Sections[0] = new CircularSection(StickRadius, 0.0f);
+                Sections[1] = new CircularSection(StickRadius, StickLength);
+                Sections[2] = new CircularSection(HeadBaseRadius, StickLength);
+                Sections[3] = new CircularSection(TipRadius, StickLength+HeadLength);
+            }
+            
             Capped = true;
             NoSharedVertices = true;
             base.Generate();
