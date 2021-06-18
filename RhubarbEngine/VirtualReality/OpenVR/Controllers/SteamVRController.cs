@@ -23,8 +23,8 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
         public Creality Creality;
         Creality IController.Creality => Creality;
 
-        internal InputDigitalActionData_t PrimaryPressData = new InputDigitalActionData_t();
-        internal ulong GeneralmPrimaryPressHandle = 0;
+        InputDigitalActionData_t PrimaryPressData = new InputDigitalActionData_t();
+        ulong GeneralmPrimaryPressHandle = 0;
         bool IController.PrimaryPress => PrimaryPressData.bState;
 
         InputDigitalActionData_t TriggerTouchingData = new InputDigitalActionData_t();
@@ -86,7 +86,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
         {
             this.openVRContext = openVRContext;
             this.ControllerName = ControllerName;
-            Logger.Log($"{ControllerName}  index: {deviceindex}");
+            Logger.Log($"{ControllerName}  index: {deviceindex} Creality:{Creality} Handle: {Handle}");
             this.deviceindex = deviceindex;
             this.Creality = Creality;
             this.handle = Handle;
@@ -158,7 +158,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
             {
                 Logger.Log(error.ToString());
             }
-            if (PrimaryPressData.bActive)
+            if (PrimaryPressData.bState)
             {
                 Logger.Log("Yes");
             }

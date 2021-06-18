@@ -80,6 +80,11 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             {
                 Logger.Log($"Action Get Action Handl error {error.ToString()}");
             }
+            generalActionSet = SetUPActionSet("/actions/General");
+            viveActionSet = SetUPActionSet("/actions/HTCVive");
+            cosmosActionSet = SetUPActionSet("/actions/Cosmos");
+            knucklesActionSet = SetUPActionSet("/actions/Knuckles");
+            oculustouchActionSet = SetUPActionSet("/actions/OculusTouch");
         }
 
         public SteamVRController controllerOne;
@@ -96,7 +101,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
                 case ETrackedControllerRole.Invalid:
                     break;
                 case ETrackedControllerRole.LeftHand:
-                    return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Left,rightHandle);
+                    return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Left, rightHandle);
                     break;
                 case ETrackedControllerRole.RightHand:
                     return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Right,leftHandle);
@@ -117,6 +122,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             controllerTwo = null;
             OVR.Input.GetInputSourceHandle("/user/hand/left", ref leftHandle);
             OVR.Input.GetInputSourceHandle("/user/hand/right", ref rightHandle);
+
             Logger.Log($"Left: {leftHandle} Right: {rightHandle}");
             for (uint i = 0; i < OVR.k_unMaxTrackedDeviceCount; i++)
             {
@@ -159,7 +165,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
         private VRActiveActionSet_t SetUPActionSet(string path)
         {
             ulong handle = 0;
-            EVRInputError error = OVR.Input.GetActionSetHandle("/actions/General/", ref handle);
+            EVRInputError error = OVR.Input.GetActionSetHandle(path, ref handle);
             if (error != EVRInputError.None)
             {
                 Logger.Log($"Action Set Handle  {path}  error {error.ToString()}");
@@ -167,7 +173,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             var actionSet = new VRActiveActionSet_t
             {
                 ulActionSet = handle,
-                ulRestrictedToDevice = OVR.k_ulInvalidActionSetHandle,
+                ulRestrictedToDevice = 0,
                 nPriority = 0
             };
             return actionSet;
@@ -224,12 +230,8 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             _projRight = ToSysMatrix(_vrSystem.GetProjectionMatrix(EVREye.Eye_Right, 0.1f, 1000f));
 
 
-            generalActionSet = SetUPActionSet("/actions/General");
-            viveActionSet = SetUPActionSet("/actions/HTCVive");
-            cosmosActionSet = SetUPActionSet("/actions/Cosmos");
-            knucklesActionSet = SetUPActionSet("/actions/Knuckles");
-            oculustouchActionSet = SetUPActionSet("/actions/OculusTouch");
 
+            UpdateControllers();
         }
 
 

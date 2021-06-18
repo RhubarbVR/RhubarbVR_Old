@@ -60,7 +60,7 @@ namespace RhubarbEngine.World
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
             {
-                if (typeof(IChangeable).IsAssignableFrom(field.FieldType))
+                if (typeof(IChangeable).IsAssignableFrom(field.FieldType)&& ((IChangeable)field.GetValue(this)) != null)
                 {
                     ((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
 
