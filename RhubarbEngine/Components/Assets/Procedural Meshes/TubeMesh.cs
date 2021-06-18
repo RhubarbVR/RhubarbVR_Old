@@ -7,9 +7,9 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 {
 
     [Category(new string[] { "Assets/Procedural Meshes" })]
-    public class CapsuleMesh : ProceduralMesh
+    public class CylinderMesh : ProceduralMesh
     {
-        private readonly CappedCylinderGenerator _generator = new CappedCylinderGenerator();
+        private readonly OpenCylinderGenerator _generator = new OpenCylinderGenerator();
 
         public Sync<float> BaseRadius;
         public Sync<float> TopRadius;
@@ -17,26 +17,32 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         public Sync<float> StartAngleDeg;
         public Sync<float> EndAngleDeg;
         public Sync<int> Slices;
-        
         public Sync<bool> NoSharedVertices;
 
         public override void buildSyncObjs(bool newRefIds)
         {
             BaseRadius = new Sync<float>(this, newRefIds);
-            BaseRadius.value = 1f;
+            BaseRadius.value = 1.0f;
+
             TopRadius = new Sync<float>(this, newRefIds);
-            TopRadius.value = 1f;
+            TopRadius.value = 1.0f;
+
             Height = new Sync<float>(this, newRefIds);
-            Height.value = 1f;
+            Height.value = 1.0f;
+
             StartAngleDeg = new Sync<float>(this, newRefIds);
             StartAngleDeg.value = 0.0f;
+
             EndAngleDeg = new Sync<float>(this, newRefIds);
-            EndAngleDeg.value = 360f;
+            EndAngleDeg.value = 360.0f;
+
             Slices = new Sync<int>(this, newRefIds);
             Slices.value = 16;
 
             NoSharedVertices = new Sync<bool>(this, newRefIds);
+            NoSharedVertices.value = false;
         }
+
         public override void onChanged()
         {
             _generator.BaseRadius = BaseRadius.value;
@@ -60,12 +66,15 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         {
             updateMesh();
         }
-        public CapsuleMesh(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
+        public CylinderMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public CapsuleMesh()
+        public CylinderMesh()
         {
         }
+
     }
+
+
 }
