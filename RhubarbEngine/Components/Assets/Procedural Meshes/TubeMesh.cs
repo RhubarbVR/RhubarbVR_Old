@@ -7,7 +7,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 {
 
     [Category(new string[] { "Assets/Procedural Meshes" })]
-    public class CylinderMesh : ProceduralMesh
+    public class TubeMesh : ProceduralMesh
     {
         private readonly OpenCylinderGenerator _generator = new OpenCylinderGenerator();
 
@@ -66,11 +66,11 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         {
             updateMesh();
         }
-        public CylinderMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public TubeMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public CylinderMesh()
+        public TubeMesh()
         {
         }
 

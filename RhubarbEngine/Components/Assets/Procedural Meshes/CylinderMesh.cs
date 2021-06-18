@@ -7,7 +7,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 {
 
     [Category(new string[] { "Assets/Procedural Meshes" })]
-    public class CapsuleMesh : ProceduralMesh
+    public class CylinderMesh : ProceduralMesh
     {
         private readonly CappedCylinderGenerator _generator = new CappedCylinderGenerator();
 
@@ -60,11 +60,11 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         {
             updateMesh();
         }
-        public CapsuleMesh(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
+        public CylinderMesh(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
         {
 
         }
-        public CapsuleMesh()
+        public CylinderMesh()
         {
         }
     }
