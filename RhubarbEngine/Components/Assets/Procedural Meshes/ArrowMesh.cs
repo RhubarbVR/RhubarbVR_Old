@@ -9,7 +9,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
     [Category(new string[] { "Assets/Procedural Meshes" })]
     public class ArrowMesh : ProceduralMesh
     {
-        private Radial3DArrowGenerator arrowGen = new Radial3DArrowGenerator();
+        private readonly Radial3DArrowGenerator _generator = new Radial3DArrowGenerator();
 
         public Sync<float> StickRadius;
         public Sync<float> StickLength;
@@ -36,17 +36,17 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         }
         public override void onChanged()
         {
-            arrowGen.StickRadius = StickRadius.value;
-            arrowGen.StickLength = StickLength.value;
-            arrowGen.HeadBaseRadius = HeadBaseRadius.value;
-            arrowGen.TipRadius = TipRadius.value;
-            arrowGen.HeadLength = HeadLength.value;
+            _generator.StickRadius = StickRadius.value;
+            _generator.StickLength = StickLength.value;
+            _generator.HeadBaseRadius = HeadBaseRadius.value;
+            _generator.TipRadius = TipRadius.value;
+            _generator.HeadLength = HeadLength.value;
             updateMesh();
         }
 
         private void updateMesh()
         {
-            MeshGenerator newmesh = arrowGen.Generate();
+            MeshGenerator newmesh = _generator.Generate();
             RMesh kite = new RMesh(newmesh.MakeSimpleMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
             load(kite);

@@ -18,7 +18,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
     [Category(new string[] { "Assets/Procedural Meshes" })]
     public class GenCylMesh : ProceduralMesh
     {
-        private TubeGenerator genCylGen = new TubeGenerator();
+        private readonly TubeGenerator _generator = new TubeGenerator();
 
         public Sync<Polygon2d> Polygon;
         public SyncValueList<Vector3d> Vertices;
@@ -72,20 +72,20 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
         public override void onChanged()
         {
-            genCylGen.CapCenter = CapCenter.value;
-            genCylGen.Frame = Frame.value;
-            genCylGen.Capped = Capped.value;
-            genCylGen.NoSharedVertices = NoSharedVertices.value;
-            genCylGen.OverrideCapCenter = OverrideCapCenter.value;
-            genCylGen.ClosedLoop = ClosedLoop.value;
-            genCylGen.startCapCenterIndex = startCapCenterIndex.value;
-            genCylGen.endCapCenterIndex = endCapCenterIndex.value;
+            _generator.CapCenter = CapCenter.value;
+            _generator.Frame = Frame.value;
+            _generator.Capped = Capped.value;
+            _generator.NoSharedVertices = NoSharedVertices.value;
+            _generator.OverrideCapCenter = OverrideCapCenter.value;
+            _generator.ClosedLoop = ClosedLoop.value;
+            _generator.startCapCenterIndex = startCapCenterIndex.value;
+            _generator.endCapCenterIndex = endCapCenterIndex.value;
             updateMesh();
         }
 
         private void updateMesh()
         {
-            genCylGen.Polygon = Polygon.value;
+            _generator.Polygon = Polygon.value;
             List<Vector3d> temp = new List<Vector3d>();
             if(Vertices.Count <= 1)
             {
@@ -101,8 +101,8 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
                     temp.Add(item);
                 }
             }
-            genCylGen.Vertices = temp;
-            MeshGenerator newmesh = genCylGen.Generate();
+            _generator.Vertices = temp;
+            MeshGenerator newmesh = _generator.Generate();
             RMesh kite = new RMesh(newmesh.MakeSimpleMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
             load(kite);

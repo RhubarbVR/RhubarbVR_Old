@@ -13,7 +13,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
     [Category(new string[] { "Assets/Procedural Meshes" })]
     public class DiscMesh : ProceduralMesh
     {
-        private TrivialDiscGenerator discGen = new TrivialDiscGenerator();
+        private readonly TrivialDiscGenerator _generator = new TrivialDiscGenerator();
 
         public Sync<float> Radius;
         public Sync<float> StartAngleDeg;
@@ -37,16 +37,16 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
         public override void onChanged()
         {
-            discGen.Radius = Radius.value;
-            discGen.StartAngleDeg = StartAngleDeg.value;
-            discGen.EndAngleDeg = EndAngleDeg.value;
-            discGen.Slices = Slices.value;
+            _generator.Radius = Radius.value;
+            _generator.StartAngleDeg = StartAngleDeg.value;
+            _generator.EndAngleDeg = EndAngleDeg.value;
+            _generator.Slices = Slices.value;
             updateMesh();
         }
 
         private void updateMesh()
         {
-            MeshGenerator newmesh = discGen.Generate();
+            MeshGenerator newmesh = _generator.Generate();
             RMesh kite = new RMesh(newmesh.MakeSimpleMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
             load(kite);
