@@ -11,39 +11,37 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
     {
         private readonly CapsuleGenerator _generator = new CapsuleGenerator();
 
-        public Sync<float> BaseRadius;
-        public Sync<float> Height;
-        public Sync<float> StartAngleDeg;
-        public Sync<float> EndAngleDeg;
-        public Sync<int> Slices;
+        public Sync<int> Longitudes;
+        public Sync<int> Latitudes;
+        public Sync<int> Rings;
+        public Sync<float> Depth;
+        public Sync<float> Radius;
+        public Sync<CapsuleGenerator.UvProfile> Profile;
         
-        public Sync<bool> NoSharedVertices;
-
         public override void buildSyncObjs(bool newRefIds)
         {
-            BaseRadius = new Sync<float>(this, newRefIds);
-            BaseRadius.value = 1f;
-            Height = new Sync<float>(this, newRefIds);
-            Height.value = 1f;
-            StartAngleDeg = new Sync<float>(this, newRefIds);
-            StartAngleDeg.value = 0.0f;
-            EndAngleDeg = new Sync<float>(this, newRefIds);
-            EndAngleDeg.value = 360f;
-            Slices = new Sync<int>(this, newRefIds);
-            Slices.value = 16;
-
-            NoSharedVertices = new Sync<bool>(this, newRefIds);
+            Longitudes = new Sync<int>(this, newRefIds);
+            Longitudes.value = 32;
+            Latitudes = new Sync<int>(this, newRefIds);
+            Latitudes.value = 16;
+            Rings = new Sync<int>(this, newRefIds);
+            Rings.value = 0;
+            Depth = new Sync<float>(this, newRefIds);
+            Depth.value = 1.0f;
+            Radius = new Sync<float>(this, newRefIds);
+            Radius.value = 0.5f;
+            Profile = new Sync<CapsuleGenerator.UvProfile>(this, newRefIds);
+            Profile.value = CapsuleGenerator.UvProfile.Aspect;
         }
         public override void onChanged()
         {
-            /*
-            _generator.BaseRadius = BaseRadius.value;
-            _generator.Height = Height.value;
-            _generator.StartAngleDeg = StartAngleDeg.value;
-            _generator.EndAngleDeg = EndAngleDeg.value;
-            _generator.Slices = Slices.value;
-            _generator.NoSharedVertices = NoSharedVertices.value;
-            */
+            _generator.Longitudes = Longitudes.value;
+            _generator.Latitudes = Latitudes.value;
+            _generator.Rings = Rings.value;
+            _generator.Depth = Depth.value;
+            _generator.Radius = Radius.value;
+            _generator.Profile = Profile.value;
+            
             updateMesh();
         }
 

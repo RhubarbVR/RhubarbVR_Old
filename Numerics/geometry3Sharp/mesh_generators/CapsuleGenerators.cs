@@ -19,8 +19,8 @@ namespace g3
         public int Longitudes = 32;
         public int Latitudes = 16;
         public int Rings = 0;
-        public double Depth = 1.0;
-        public double Radius = 0.5;
+        public float Depth = 1.0f;
+        public float Radius = 0.5f;
         public UvProfile Profile = UvProfile.Aspect;
 
         public override MeshGenerator Generate()
