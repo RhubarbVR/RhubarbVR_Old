@@ -13,7 +13,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 {
     public class PlaneMesh : ProceduralMesh
     {
-        private TrivialRectGenerator planeGen = new TrivialRectGenerator();
+        private readonly TrivialRectGenerator _generator = new TrivialRectGenerator();
 
         public Sync<float> Width;
         public Sync<float> Height;
@@ -36,17 +36,17 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         }
         public override void onChanged()
         {
-            planeGen.Width = Width.value;
-            planeGen.Height = Height.value;
-            planeGen.Normal = Normal.value;
-            planeGen.IndicesMap = IndicesMap.value;
-            planeGen.UVMode = UVMode.value;
+            _generator.Width = Width.value;
+            _generator.Height = Height.value;
+            _generator.Normal = Normal.value;
+            _generator.IndicesMap = IndicesMap.value;
+            _generator.UVMode = UVMode.value;
             updateMesh();
         }
 
         private void updateMesh()
         {
-            MeshGenerator newmesh = planeGen.Generate();
+            MeshGenerator newmesh = _generator.Generate();
             RMesh kite = new RMesh(newmesh.MakeSimpleMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
             load(kite);

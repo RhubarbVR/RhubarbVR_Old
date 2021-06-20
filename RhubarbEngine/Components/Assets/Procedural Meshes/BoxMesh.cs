@@ -9,7 +9,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
     [Category(new string[] { "Assets/Procedural Meshes" })]
     public class BoxMesh : ProceduralMesh
     {
-        private TrivialBox3Generator boxGen = new TrivialBox3Generator();
+        private readonly TrivialBox3Generator _generator = new TrivialBox3Generator();
 
         public Sync<Vector3d> Center;
         public Sync<Vector3d> AxisX;
@@ -35,18 +35,18 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         }
         public override void onChanged()
         {
-            boxGen.Box.Center = Center.value;
-            boxGen.Box.AxisX = AxisX.value;
-            boxGen.Box.AxisY = AxisY.value;
-            boxGen.Box.AxisZ = AxisZ.value;
-            boxGen.Box.Extent = Extent.value;
-            boxGen.NoSharedVertices = NoSharedVertices.value;
+            _generator.Box.Center = Center.value;
+            _generator.Box.AxisX = AxisX.value;
+            _generator.Box.AxisY = AxisY.value;
+            _generator.Box.AxisZ = AxisZ.value;
+            _generator.Box.Extent = Extent.value;
+            _generator.NoSharedVertices = NoSharedVertices.value;
             updateMesh();
         }
 
         private void updateMesh()
         {
-            MeshGenerator newmesh = boxGen.Generate();
+            MeshGenerator newmesh = _generator.Generate();
             RMesh kite = new RMesh(newmesh.MakeSimpleMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
             load(kite);

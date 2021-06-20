@@ -1,29 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using g3;
+﻿using g3;
 using RhubarbEngine.World;
 using RhubarbEngine.World.Asset;
 using RhubarbEngine.World.ECS;
 
 namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 {
-    [Category(new string[] { "Assets/Procedural Meshes" })]
-    public class DiscMesh : ProceduralMesh
-    {
-        private readonly TrivialDiscGenerator _generator = new TrivialDiscGenerator();
 
-        public Sync<float> Radius;
+    [Category(new string[] { "Assets/Procedural Meshes" })]
+    public class TubeMesh : ProceduralMesh
+    {
+        private readonly OpenCylinderGenerator _generator = new OpenCylinderGenerator();
+
+        public Sync<float> BaseRadius;
+        public Sync<float> TopRadius;
+        public Sync<float> Height;
         public Sync<float> StartAngleDeg;
         public Sync<float> EndAngleDeg;
         public Sync<int> Slices;
+        public Sync<bool> NoSharedVertices;
 
         public override void buildSyncObjs(bool newRefIds)
         {
-            Radius = new Sync<float>(this, newRefIds);
-            Radius.value = 1.0f;
+            BaseRadius = new Sync<float>(this, newRefIds);
+            BaseRadius.value = 1.0f;
+
+            TopRadius = new Sync<float>(this, newRefIds);
+            TopRadius.value = 1.0f;
+
+            Height = new Sync<float>(this, newRefIds);
+            Height.value = 1.0f;
 
             StartAngleDeg = new Sync<float>(this, newRefIds);
             StartAngleDeg.value = 0.0f;
@@ -32,15 +37,21 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             EndAngleDeg.value = 360.0f;
 
             Slices = new Sync<int>(this, newRefIds);
-            Slices.value = 32;
+            Slices.value = 16;
+
+            NoSharedVertices = new Sync<bool>(this, newRefIds);
+            NoSharedVertices.value = false;
         }
 
         public override void onChanged()
         {
-            _generator.Radius = Radius.value;
+            _generator.BaseRadius = BaseRadius.value;
+            _generator.TopRadius = TopRadius.value;
+            _generator.Height = Height.value;
             _generator.StartAngleDeg = StartAngleDeg.value;
             _generator.EndAngleDeg = EndAngleDeg.value;
             _generator.Slices = Slices.value;
+            _generator.NoSharedVertices = NoSharedVertices.value;
             updateMesh();
         }
 
@@ -55,14 +66,15 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         {
             updateMesh();
         }
-        public DiscMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public TubeMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public DiscMesh()
+        public TubeMesh()
         {
         }
+
     }
-}
 
-   
+
+}
