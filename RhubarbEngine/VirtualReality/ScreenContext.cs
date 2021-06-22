@@ -8,6 +8,7 @@ using Valve.VR;
 using Veldrid;
 using Veldrid.Vk;
 using RhubarbEngine.Input.Controllers;
+using Veldrid.Sdl2;
 
 namespace RhubarbEngine.VirtualReality
 {
@@ -39,7 +40,9 @@ namespace RhubarbEngine.VirtualReality
         //throw new NotImplementedException()
         public override IController RightController => null;
 
-        public override Matrix4x4 Headpos => throw new NotImplementedException();
+        public override Matrix4x4 Headpos => headPos;
+
+        public Matrix4x4 headPos = Matrix4x4.CreateScale(1.0f) * Matrix4x4.CreateTranslation(new Vector3(0f, 1.7f, 0f));
 
         private Engine _eng;
 
@@ -113,6 +116,46 @@ namespace RhubarbEngine.VirtualReality
             if (_gd.GetOpenGLInfo(out BackendInfoOpenGL glInfo))
             {
                 glInfo.FlushAndFinish();
+            }
+        }
+
+        private Vector2 _mousePressedPos;
+
+        private float _moveSpeed = 10.0f;
+
+        private bool _mousePressed = false;
+
+
+        public void updateInput()
+        {
+            Quaternion lookRotation = default;
+            if ((_eng.inputManager.mainWindows.GetMouseButton(MouseButton.Left) || _eng.inputManager.mainWindows.GetMouseButton(MouseButton.Right)))
+            {
+                if (!_mousePressed)
+                {
+                    _mousePressed = true;
+                    _mousePressedPos = _eng.inputManager.mainWindows.MousePosition;
+                    Sdl2Native.SDL_ShowCursor(0);
+                    Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.mainWindow.window.SdlWindowHandle, true);
+                }
+                Vector2 mouseDelta = _mousePressedPos - _eng.inputManager.mainWindows.MousePosition;
+                Veldrid.Sdl2.Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
+                float Yaw = mouseDelta.X * 0.002f;
+                float Pitch = mouseDelta.Y * 0.002f;
+                lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
+
+            }
+            else if (_mousePressed)
+            {
+                Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
+                Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.mainWindow.window.SdlWindowHandle, false);
+                Sdl2Native.SDL_ShowCursor(1);
+                _mousePressed = false;
+            }
+            if (lookRotation != default)
+            {
+                Matrix4x4 addTo = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(lookRotation);
+                headPos = headPos * addTo;
             }
         }
 

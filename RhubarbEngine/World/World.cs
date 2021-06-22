@@ -20,11 +20,102 @@ using System.Runtime.CompilerServices;
 using BepuPhysics.CollisionDetection;
 using BepuUtilities;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
+using LiteNetLib;
+using LiteNetLib.Utils;
+
 namespace RhubarbEngine.World
 {
     public class World : IWorldObject
     {
+        public EventBasedNetListener listener;
 
+        public EventBasedNetListener ClientListener;
+
+        public LiteNetLib.NetManager server;
+
+        public int port;
+
+        public List<LiteNetLib.NetManager> clients;
+
+        public void exsepetConectionReq(ConnectionRequest req)
+        {
+            int _port = req.Data.GetInt();
+            string ip = req.RemoteEndPoint.ToString();
+            foreach (var item in clients)
+            {
+                string targetip = item.FirstPeer.EndPoint.Address.ToString();
+                if (ip == targetip)
+                {
+                    req.Accept();
+                    return;
+                }
+            }
+            startClient(ip, _port);
+            req.Accept();
+        }
+
+        public void startClient(string ip,int _port)
+        {
+            LiteNetLib.NetManager client = new LiteNetLib.NetManager(listener);
+            client.Start();
+            NetDataWriter writer = new NetDataWriter();
+            writer.Put(port);
+            //put key here
+            client.Connect(ip,_port,writer);
+        }
+
+        public void initializeNetWorker()
+        {
+            listener = new EventBasedNetListener();
+            server = new LiteNetLib.NetManager(listener);
+            ClientListener = new EventBasedNetListener();
+
+            ClientListener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) =>
+            {
+                
+                dataReader.Recycle();
+            };
+
+            listener.ConnectionRequestEvent += request =>
+            {
+                Logger.Log("User Trying Connection");
+                if (server.ConnectedPeersCount < maxUsers)
+                {
+                    exsepetConectionReq(request);
+                }
+                else
+                {
+                    request.Reject();
+                }
+            };
+            listener.PeerConnectedEvent += peer =>
+            {
+                Logger.Log("We got connection");
+                NetDataWriter writer = new NetDataWriter();             
+                writer.Put("Hello client!");                               
+                peer.Send(writer, DeliveryMethod.ReliableOrdered);             
+            };
+
+        }
+        private void startServer(int _port = 9050)
+        {
+            try
+            {
+                server.Start(_port);
+                port = _port;
+            }
+            catch
+            {
+                if (_port <= 9090)
+                {
+                    startServer(_port + 1);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
         public Sync<Vector3f> Gravity;
 
         public Sync<float> LinearDamping;

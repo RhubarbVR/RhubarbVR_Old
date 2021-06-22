@@ -16,8 +16,6 @@ namespace RhubarbEngine
 
         public RenderManager renderManager;
 
-        public Managers.NetManager netManager;
-
         public PlatformInfoManager platformInfo;
 
         public GraphicsBackend backend = GraphicsBackend.Vulkan;
@@ -96,7 +94,6 @@ namespace RhubarbEngine
             renderManager.Update();
             windowManager.Update();
             worldManager.Update(startTime, Frame);
-            netManager.Update();
             platformInfo.Update();
         }
 
@@ -104,7 +101,6 @@ namespace RhubarbEngine
         {
             worldManager.CleanUp();
             logger.cleanUP();
-            netManager.cleanup();
         }
     }
 }
