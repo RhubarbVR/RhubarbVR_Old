@@ -86,29 +86,6 @@ namespace RhubarbEngine.Components.Users
                 motionDir += Vector3.UnitY;
             }
 
-            if ((world.worldManager.engine.inputManager.mainWindows.GetMouseButton(MouseButton.Left) || world.worldManager.engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right)))
-            {
-                if (!_mousePressed)
-                {
-                    _mousePressed = true;
-                    _mousePressedPos = world.worldManager.engine.inputManager.mainWindows.MousePosition;
-                    Sdl2Native.SDL_ShowCursor(0);
-                    Sdl2Native.SDL_SetWindowGrab(world.worldManager.engine.windowManager.mainWindow.window.SdlWindowHandle, true);
-                }
-                Vector2 mouseDelta = _mousePressedPos - world.worldManager.engine.inputManager.mainWindows.MousePosition;
-                Sdl2Native.SDL_WarpMouseInWindow(world.worldManager.engine.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
-                float Yaw = mouseDelta.X * 0.002f;
-                float Pitch = mouseDelta.Y * 0.002f;
-                lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
-
-            }
-            else if (_mousePressed)
-            {
-                Sdl2Native.SDL_WarpMouseInWindow(world.worldManager.engine.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
-                Sdl2Native.SDL_SetWindowGrab(world.worldManager.engine.windowManager.mainWindow.window.SdlWindowHandle, false);
-                Sdl2Native.SDL_ShowCursor(1);
-                _mousePressed = false;
-            }
             if (motionDir != Vector3.Zero|| lookRotation != default)
             {
                 motionDir = Vector3.Transform(motionDir, lookRotation);

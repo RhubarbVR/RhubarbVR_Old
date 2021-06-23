@@ -162,13 +162,13 @@ namespace RhubarbEngine.Managers
 
             
                 eyesCL.PushDebugGroup("Left Eye");
-                Matrix4x4 leftView = poses.CreateView(VREye.Left, _userTrans, - Vector3.UnitZ, Vector3.UnitY);
+                Matrix4x4 leftView = poses.CreateView(VREye.Left, _userTrans, - Vector3.UnitZ, Vector3.UnitY, engine.outputType == OutputType.Screen);
                 RenderEye(eyesCL, vrContext.LeftEyeFramebuffer, poses.LeftEyeProjection, leftView);
                 eyesCL.PopDebugGroup();
             if (engine.outputType != OutputType.Screen)
             {
                 eyesCL.PushDebugGroup("Right Eye");
-                Matrix4x4 rightView = poses.CreateView(VREye.Right, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
+                Matrix4x4 rightView = poses.CreateView(VREye.Right, _userTrans, -Vector3.UnitZ, Vector3.UnitY, engine.outputType == OutputType.Screen);
                 RenderEye(eyesCL, vrContext.RightEyeFramebuffer, poses.RightEyeProjection, rightView);
                 eyesCL.PopDebugGroup();
             }
