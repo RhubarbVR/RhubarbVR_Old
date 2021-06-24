@@ -100,7 +100,7 @@ namespace RhubarbEngine.Managers
 
                 Entity e = localWorld.RootEntity.addChild("Gay");
                 StaicMainShader shader = e.attachComponent<StaicMainShader>();
-                ArrowMesh bmesh = e.attachComponent<ArrowMesh>();
+                RevolveMesh bmesh = e.attachComponent<RevolveMesh>();
                 RMaterial mit = e.attachComponent<RMaterial>();
                 MeshRender meshRender = e.attachComponent<MeshRender>();
                 RGBRainbowDriver rgbainbowDriver = e.attachComponent<RGBRainbowDriver>();
