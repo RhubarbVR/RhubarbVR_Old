@@ -142,7 +142,11 @@ namespace RhubarbEngine.VirtualReality
                 Veldrid.Sdl2.Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
                 float Yaw = mouseDelta.X * 0.002f;
                 float Pitch = mouseDelta.Y * 0.002f;
+<<<<<<< Updated upstream
                 lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
+=======
+                lookRotation = old * Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
+>>>>>>> Stashed changes
 
             }
             else if (_mousePressed)

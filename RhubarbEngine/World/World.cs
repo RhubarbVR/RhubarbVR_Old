@@ -39,18 +39,6 @@ namespace RhubarbEngine.World
 
         public void exsepetConectionReq(ConnectionRequest req)
         {
-            int _port = req.Data.GetInt();
-            string ip = req.RemoteEndPoint.ToString();
-            foreach (var item in clients)
-            {
-                string targetip = item.FirstPeer.EndPoint.Address.ToString();
-                if (ip == targetip)
-                {
-                    req.Accept();
-                    return;
-                }
-            }
-            startClient(ip, _port);
             req.Accept();
         }
 
