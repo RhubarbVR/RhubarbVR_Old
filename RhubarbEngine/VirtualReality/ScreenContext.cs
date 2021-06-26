@@ -10,7 +10,6 @@ using Veldrid.Vk;
 using RhubarbEngine.Input.Controllers;
 using Veldrid.Sdl2;
 
-
 namespace RhubarbEngine.VirtualReality
 {
     internal class ScreenContext : VRContext
@@ -141,11 +140,9 @@ namespace RhubarbEngine.VirtualReality
                 }
                 Vector2 mouseDelta = _mousePressedPos - _eng.inputManager.mainWindows.MousePosition;
                 Veldrid.Sdl2.Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
-                Matrix4x4.Decompose(headPos, out Vector3 oldscale, out Quaternion old, out Vector3 trans);
                 float Yaw = mouseDelta.X * 0.002f;
                 float Pitch = mouseDelta.Y * 0.002f;
-                Quaternion.cr
-                lookRotation = old * Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
+                lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
 
             }
             else if (_mousePressed)
@@ -157,8 +154,8 @@ namespace RhubarbEngine.VirtualReality
             }
             if (lookRotation != default)
             {
-                Matrix4x4 addTo = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(lookRotation)* Matrix4x4.CreateTranslation(new Vector3(0f,1.7f,0f));
-                headPos =  addTo;
+                Matrix4x4 addTo = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(lookRotation);
+                headPos = headPos * addTo;
             }
         }
 
@@ -168,7 +165,6 @@ namespace RhubarbEngine.VirtualReality
             {
                 return;
             }
-            updateInput();
             _mirrorTexture.Render(cl, fb, source);
         }
 
