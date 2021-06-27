@@ -7,6 +7,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
@@ -76,6 +77,12 @@
 
   <ItemGroup>
     <Folder Include="SteamVR\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="RhuSettings">
+      <HintPath>..\..\RhuSettings\RhuSettings\bin\Release\netcoreapp3.1\RhuSettings.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
