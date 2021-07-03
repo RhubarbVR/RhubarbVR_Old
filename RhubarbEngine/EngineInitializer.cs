@@ -76,6 +76,8 @@ namespace RhubarbEngine
 
         }
 
+        public IEnumerable<string> settings = new string[] { };
+
         public void loadArguments(string[] _args)
         {
             foreach(string arg in _args)
@@ -100,6 +102,10 @@ namespace RhubarbEngine
                     if (o.outputType != null)
                     {
                         engine.outputType = o.outputType;
+                    }
+                    if (o.settings != null)
+                    {
+                        settings = o.settings;
                     }
                 });
         }

@@ -3,6 +3,9 @@ using System.IO;
 using RhubarbEngine.Managers;
 using Veldrid;
 using RhubarbEngine.VirtualReality;
+using RhubarbEngine.Settings;
+using RhuSettings;
+using System.Collections.Generic;
 
 namespace RhubarbEngine
 {
@@ -15,6 +18,8 @@ namespace RhubarbEngine
         public InputManager inputManager;
 
         public RenderManager renderManager;
+
+        public MainSettingsObject settingsObject;
 
         public PlatformInfoManager platformInfo;
 
@@ -57,6 +62,47 @@ namespace RhubarbEngine
             {
                 logger.Log("Another instance is running at data path " + dataPath, true);
                 throw new Exception("Another instance is running at data path ");
+            }
+            logger.Log("hi0");
+            List<DataList> lists = new List<DataList>();
+            if (File.Exists("settings.json"))
+            {
+                string text = File.ReadAllText("settings.json");
+                DataList liet = SettingsManager.getDataFromJson(text);
+                lists.Add(liet);
+            }
+            logger.Log("hi1");
+                foreach (string item in engineInitializer.settings)
+                {
+                    string text;
+                    if (File.Exists(item))
+                    {
+                        text = File.ReadAllText(item);
+                    }
+                    else
+                    {
+                        text = item;
+                    }
+                    try
+                    {
+                        DataList liet = SettingsManager.getDataFromJson(text);
+                        lists.Add(liet);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Log("Error loading settings ERROR:" + e.ToString(), true);
+                    }
+                }
+            logger.Log("hi3");
+            if (lists.Count == 0)
+            {
+                logger.Log("hi4");
+                settingsObject = new MainSettingsObject();
+            }
+            else
+            {
+                logger.Log("hi5");
+                settingsObject = SettingsManager.loadSettingsObject<MainSettingsObject>(lists.ToArray());
             }
             engineInitializer.initializeManagers();
         }

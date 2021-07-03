@@ -18,6 +18,9 @@ namespace RhubarbEngine
         [Option('d', "datapath", Required = false, HelpText = "Set Data Path.")]
         public string datapath { get; set; }
 
+        [Option('s', "settings", Required = false, HelpText = "Settings")]
+        public IEnumerable<string> settings { get; set; }
+
         [Option('g', "graphicsbackend", Required = false, HelpText = "Change backend to Direct3D11,Vulkan,OpenGL,Metal,OpenGLES")]
         public GraphicsBackend graphicsBackend { get; set; }
 

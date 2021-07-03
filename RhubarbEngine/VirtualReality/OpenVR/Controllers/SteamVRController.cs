@@ -110,7 +110,9 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
             this.deviceindex = deviceindex;
             this.Creality = Creality;
             this.handle = Handle;
+
             OVR.Input.GetActionHandle("/actions/General/in/Trigger_Touching", ref GeneralmTriggerTouchingHandle);
+
             OVR.Input.GetActionHandle("/actions/General/in/Axis_Touching", ref GeneralmAxisTouchingHandle);
             OVR.Input.GetActionHandle("/actions/General/in/Primary_Pressed", ref GeneralmPrimaryPressHandle);
             OVR.Input.GetActionHandle("/actions/General/in/Secondary_Pressed", ref GeneralmSecondaryPressHandle);
@@ -120,6 +122,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
             OVR.Input.GetActionHandle("/actions/General/in/Axis", ref GeneralmAxisHandle);
             OVR.Input.GetActionHandle("/actions/General/in/Trigger_Aix", ref GeneralmTriggerAixHandle);
             OVR.Input.GetActionHandle("/actions/General/in/Pose", ref GeneralmPosistionHandle);
+
         }
 
         public void update()

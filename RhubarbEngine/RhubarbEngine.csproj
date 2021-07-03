@@ -15,6 +15,7 @@
     <PackageReference Include="BepuPhysics" Version="2.3.0" />
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
     <PackageReference Include="LiteNetLib" Version="0.9.5" />
+    <PackageReference Include="RhuSettings" Version="1.0.0" />
     <PackageReference Include="Veldrid" Version="4.8.0" />
     <PackageReference Include="Veldrid.ImageSharp" Version="4.8.0" />
     <PackageReference Include="Veldrid.ImGui" Version="5.72.0" />
@@ -77,12 +78,6 @@
 
   <ItemGroup>
     <Folder Include="SteamVR\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="RhuSettings">
-      <HintPath>..\..\RhuSettings\RhuSettings\bin\Release\netcoreapp3.1\RhuSettings.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
