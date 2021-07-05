@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Numerics;
+using MessagePack;
 
 namespace g3
 {
+    [MessagePackObject]
     public struct Vector3f : IComparable<Vector3f>, IEquatable<Vector3f>
     {
+        [Key(0)]
         public float x;
+        [Key(1)]
         public float y;
+        [Key(2)]
         public float z;
 
         public Vector3f(float f) {  x = y = z = f; }
@@ -20,78 +25,100 @@ namespace g3
         public Vector3f(double x, double y, double z) { this.x = (float)x; this.y = (float)y; this.z = (float)z; }
         public Vector3f(double[] v2) {  x = (float)v2[0]; y = (float)v2[1]; z = (float)v2[2]; }
         public Vector3f(Vector3d copy) {  x = (float)copy.x; y = (float)copy.y; z = (float)copy.z; }
-
+        [IgnoreMember]
         static public readonly Vector3f Zero = new Vector3f(0.0f, 0.0f, 0.0f);
+        [IgnoreMember]
         static public readonly Vector3f One = new Vector3f(1.0f, 1.0f, 1.0f);
+        [IgnoreMember]
         static public readonly Vector3f OneNormalized = new Vector3f(1.0f, 1.0f, 1.0f).Normalized;
+        [IgnoreMember]
         static public readonly Vector3f Invalid = new Vector3f(float.MaxValue, float.MaxValue, float.MaxValue);
+        [IgnoreMember]
         static public readonly Vector3f AxisX = new Vector3f(1.0f, 0.0f, 0.0f);
+        [IgnoreMember]
         static public readonly Vector3f AxisY = new Vector3f(0.0f, 1.0f, 0.0f);
+        [IgnoreMember]
         static public readonly Vector3f AxisZ = new Vector3f(0.0f, 0.0f, 1.0f);
-		static public readonly Vector3f MaxValue = new Vector3f(float.MaxValue,float.MaxValue,float.MaxValue);
-		static public readonly Vector3f MinValue = new Vector3f(float.MinValue,float.MinValue,float.MinValue);
-
+        [IgnoreMember]
+        static public readonly Vector3f MaxValue = new Vector3f(float.MaxValue, float.MaxValue, float.MaxValue);
+        [IgnoreMember]
+        static public readonly Vector3f MinValue = new Vector3f(float.MinValue,float.MinValue,float.MinValue);
+        [IgnoreMember]
         public float this[int key]
         {
             get { return (key == 0) ? x : (key == 1) ? y : z; }
             set { if (key == 0) x = value; else if (key == 1) y = value; else z = value; }
         }
-
+        [IgnoreMember]
         public Vector2f xy {
             get { return new Vector2f(x, y); }
             set { x = value.x; y = value.y; }
         }
+        [IgnoreMember]
         public Vector2f xz {
             get { return new Vector2f(x, z); }
             set { x = value.x; z = value.y; }
         }
+        [IgnoreMember]
         public Vector2f yz {
             get { return new Vector2f(y, z); }
             set { y = value.x; z = value.y; }
         }
+        [IgnoreMember]
 
         public float LengthSquared
         {
             get { return x * x + y * y + z * z; }
         }
+        [IgnoreMember]
         public float Length
         {
             get { return (float)Math.Sqrt(LengthSquared); }
         }
-
+        [IgnoreMember]
         public float LengthL1
         {
             get { return Math.Abs(x) + Math.Abs(y) + Math.Abs(z); }
         }
-
-		public float Max {
-			get { return Math.Max(x, Math.Max(y, z)); }
-		}
-		public float Min {
-			get { return Math.Min(x, Math.Min(y, z)); }
-		}
-		public float MaxAbs {
-			get { return Math.Max(Math.Abs(x), Math.Max(Math.Abs(y), Math.Abs(z))); }
-		}
-		public float MinAbs {
+        [IgnoreMember]
+        public float Max
+        {
+            get { return Math.Max(x, Math.Max(y, z)); }
+        }
+        [IgnoreMember]
+        public float Min
+        {
+            get { return Math.Min(x, Math.Min(y, z)); }
+        }
+        [IgnoreMember]
+        public float MaxAbs
+        {
+            get { return Math.Max(Math.Abs(x), Math.Max(Math.Abs(y), Math.Abs(z))); }
+        }
+        [IgnoreMember]
+        public float MinAbs {
 			get { return Math.Min(Math.Abs(x), Math.Min(Math.Abs(y), Math.Abs(z))); }
-		}
+        }
 
 
         public float Normalize(float epsilon = MathUtil.Epsilonf)
         {
             float length = Length;
-            if (length > epsilon) {
+            if (length > epsilon)
+            {
                 float invLength = 1.0f / length;
                 x *= invLength;
                 y *= invLength;
                 z *= invLength;
-            } else {
+            }
+            else
+            {
                 length = 0;
                 x = y = z = 0;
             }
             return length;
         }
+        [IgnoreMember]
         public Vector3f Normalized {
             get {
                 float length = Length;
@@ -102,10 +129,11 @@ namespace g3
                     return Vector3f.Zero;
             }
         }
-
-		public bool IsNormalized {
+        [IgnoreMember]
+        public bool IsNormalized {
 			get { return Math.Abs( (x * x + y * y + z * z) - 1) < MathUtil.ZeroTolerancef; }
 		}
+        [IgnoreMember]
 
         public bool IsFinite
         {

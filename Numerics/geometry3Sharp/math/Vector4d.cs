@@ -1,18 +1,20 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-#if G3_USING_UNITY
-using UnityEngine;
-#endif
-
 namespace g3
 {
+    [MessagePackObject]
     public struct Vector4d : IComparable<Vector4d>, IEquatable<Vector4d>
     {
+        [Key(0)]
         public double x;
+        [Key(1)]
         public double y;
+        [Key(2)]
         public double z;
+        [Key(3)]
         public double w;
 
         public Vector4d(double f) { x = y = z = w = f; }

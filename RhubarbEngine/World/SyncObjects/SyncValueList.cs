@@ -69,7 +69,11 @@ namespace RhubarbEngine.World
             DataNodeList list = new DataNodeList();
             foreach (Sync<T> val in _synclist)
             {
-                list.Add(val.serialize());
+                DataNodeGroup tip = val.serialize();
+                if(tip != null)
+                {
+                    list.Add(tip);
+                }
             }
             obj.setValue("list", list);
             return obj;

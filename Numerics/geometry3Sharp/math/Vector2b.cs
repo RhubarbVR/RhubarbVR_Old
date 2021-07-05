@@ -2,12 +2,16 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using MessagePack;
 
 namespace g3
 {
+    [MessagePackObject]
     public struct Vector2b : IComparable<Vector2b>, IEquatable<Vector2b>
     {
+        [Key(0)]
         public bool x;
+        [Key(1)]
         public bool y;
 
         public Vector2b(bool f) { x = y = f; }

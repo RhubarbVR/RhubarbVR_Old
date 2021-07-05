@@ -2,14 +2,20 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using MessagePack;
 
 namespace g3
 {
+    [MessagePackObject]
     public struct Vector4b : IComparable<Vector4b>, IEquatable<Vector4b>
     {
+        [Key(0)]
         public bool x;
+        [Key(1)]
         public bool y;
+        [Key(2)]
         public bool z;
+        [Key(3)]
         public bool w;
 
 

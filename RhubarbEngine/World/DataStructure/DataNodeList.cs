@@ -7,6 +7,7 @@ using LiteNetLib.Utils;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.IO;
+using MessagePack;
 
 namespace RhubarbEngine.World.DataStructure
 {
@@ -18,28 +19,21 @@ namespace RhubarbEngine.World.DataStructure
         {
             try
             {
-                using (var ms = new MemoryStream())
+                List<byte[]> keyValuePairs = new List<byte[]>();
+                for (int index = 0; index < NodeGroup.Count; index++)
                 {
-                    using (BinaryWriter writer = new BinaryWriter(ms))
+                    var item = NodeGroup[index];
+                    if(item == null)
                     {
-                        writer.Write(NodeGroup.Count);
-                        for (int i = 0; i < NodeGroup.Count; i++)
-                        {
-                            if(((object)NodeGroup[i]) == null)
-                            {
-                                writer.Write(0);
-                            }
-                            else
-                            {
-                                byte[] value = NodeGroup[i].getByteArray();
-                                writer.Write(Array.IndexOf(DatatNodeTools.dataNode, ((object)NodeGroup[i]).GetType()));
-                                writer.Write(value.Count());
-                                writer.Write(value);
-                            }
-                        }
+                        Console.WriteLine(NodeGroup[0].GetType().ToString() + NodeGroup[1].GetType().ToString());
+                        Console.WriteLine("okay"+index.ToString()+" hi: "+NodeGroup.Count.ToString());
                     }
-                    return ms.ToArray();
+                    byte type = (byte)Array.IndexOf(DatatNodeTools.dataNode, item.GetType());
+                    List<byte> value = new List<byte>(item.getByteArray());
+                    value.Insert(0, type);
+                    keyValuePairs.Add(value.ToArray());
                 }
+                return MessagePackSerializer.Serialize(keyValuePairs);
             }
             catch (Exception e)
             {
@@ -74,34 +68,24 @@ namespace RhubarbEngine.World.DataStructure
         public void setByteArray(byte[] arrBytes)
         {
             NodeGroup.Clear();
-            using (var memStream = new MemoryStream())
+            try
             {
-                memStream.Write(arrBytes, 0, arrBytes.Length);
-                memStream.Seek(0, SeekOrigin.Begin);
-                using (BinaryReader reader = new BinaryReader(memStream))
+                List<byte[]> keyValuePairs = MessagePackSerializer.Deserialize<List< byte[]>>(arrBytes);
+
+                foreach (var item in keyValuePairs)
                 {
-                    int Count = reader.ReadInt32();
-                    for (int i = 0; i < Count; i++)
-                    {
-                        int typeVal = reader.ReadInt32();
-                        Type ty = DatatNodeTools.dataNode[typeVal];
-                        if (typeVal != 0)
-                        {
-                            int ValueCount = reader.ReadInt32();
-                            byte[] value = reader.ReadBytes(ValueCount);
-                            if (typeof(IDataNode).IsAssignableFrom(ty))
-                            {
-                                IDataNode valueobj = (IDataNode)Activator.CreateInstance(ty);
-                                valueobj.setByteArray(value);
-                                NodeGroup.Add(valueobj);
-                            }
-                            else
-                            {
-                                throw new Exception("Type is not valid when loading data.");
-                            }
-                        }
-                    }
+                    Type type = DatatNodeTools.dataNode[item[0]];
+                    IDataNode obj = (IDataNode)Activator.CreateInstance(type);
+                    List<byte> val = new List<byte>(item);
+                    val.RemoveAt(0);
+                    obj.setByteArray(val.ToArray());
+                    NodeGroup.Add(obj);
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed to serialize list. Reason: " + e.Message);
+                throw;
             }
         }
 

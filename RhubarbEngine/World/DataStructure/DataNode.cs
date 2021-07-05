@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.IO;
 using RhubarbDataTypes;
+using MessagePack;
 
 namespace RhubarbEngine.World.DataStructure
 {
@@ -28,15 +29,7 @@ namespace RhubarbEngine.World.DataStructure
         {
             try
             {
-                using (var ms = new MemoryStream())
-                {
-                    using (BinaryWriter writer = new BinaryWriter(ms))
-                    {
-                        RhubarbIO.Serialize<T>(writer, Value);
-                    }
-                    byte[] retunval = ms.ToArray();
-                    return ms.ToArray();
-                }
+                return MessagePackSerializer.Serialize(Value);
             }
             catch (Exception e)
             {
@@ -47,16 +40,15 @@ namespace RhubarbEngine.World.DataStructure
 
         public void setByteArray(byte[] arrBytes)
         {
-            using (var memStream = new MemoryStream())
+            try
             {
-                memStream.Write(arrBytes, 0, arrBytes.Length);
-                memStream.Seek(0, SeekOrigin.Begin);
-                using (BinaryReader reader = new BinaryReader(memStream))
-                {
-                    Value = (T)RhubarbIO.DeSerialize<T>(reader);
-                }
+                Value = MessagePackSerializer.Deserialize<T>(arrBytes);
             }
-
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed to serialize. Reason: " + e.Message + " Type: " + Value.GetType().FullName);
+                throw new Exception("Failed to serialize. Reason: " + e.Message + " Type: " + Value.GetType().FullName);
+            }
         }
 
         public void Deserialize(NetDataReader reader)

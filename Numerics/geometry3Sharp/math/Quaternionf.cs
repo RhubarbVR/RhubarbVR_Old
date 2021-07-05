@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 using System.Numerics;
 
 
@@ -7,10 +8,17 @@ using System.Numerics;
 namespace g3
 {
     // mostly ported from WildMagic5 Wm5Quaternion, from geometrictools.com
+    [MessagePackObject]
     public struct Quaternionf : IComparable<Quaternionf>, IEquatable<Quaternionf>
     {
-        // note: in Wm5 version, this is a 4-element array stored in order (w,x,y,z).
-        public float x, y, z, w;
+        [Key(0)]
+        public float x;
+        [Key(1)]
+        public float y;
+        [Key(2)]
+        public float z;
+        [Key(3)]
+        public float w;
 
         public Quaternion ToSystemNumric()
         {
@@ -37,38 +45,46 @@ namespace g3
             x = y = z = 0; w = 1;
             SetFromRotationMatrix(mat);
         }
-
+        [IgnoreMember]
         static public readonly Quaternionf Zero = new Quaternionf(0.0f, 0.0f, 0.0f, 0.0f);
+        [IgnoreMember]
         static public readonly Quaternionf Identity = new Quaternionf(0.0f, 0.0f, 0.0f, 1.0f);
-
+        [IgnoreMember]
         public float this[int key] {
             get { if (key == 0) return x; else if (key == 1) return y; else if (key == 2) return z; else return w; }
             set { if (key == 0) x = value; else if (key == 1) y = value; else if (key == 2) z = value; else w = value; }
 
         }
 
-
-        public float LengthSquared {
-            get { return x * x + y * y + z * z + w*w; }
+        [IgnoreMember]
+        public float LengthSquared
+        {
+            get { return x * x + y * y + z * z + w * w; }
         }
+        [IgnoreMember]
         public float Length {
             get { return (float)Math.Sqrt(x * x + y * y + z * z + w * w); }
         }
 
-        public float Normalize(float epsilon = 0) {
+        public float Normalize(float epsilon = 0)
+        {
             float length = Length;
-            if (length > epsilon) {
+            if (length > epsilon)
+            {
                 float invLength = 1.0f / length;
                 x *= invLength;
                 y *= invLength;
                 z *= invLength;
                 w *= invLength;
-            } else {
+            }
+            else
+            {
                 length = 0;
                 x = y = z = w = 0;
             }
             return length;
         }
+        [IgnoreMember]
         public Quaternionf Normalized {
             get { Quaternionf q = new Quaternionf(this); q.Normalize(); return q; }
         }
@@ -166,8 +182,11 @@ namespace g3
 
         // these multiply quaternion by (1,0,0), (0,1,0), (0,0,1), respectively.
         // faster than full multiply, because of all the zeros
-        public Vector3f AxisX {
-            get {
+        [IgnoreMember]
+        public Vector3f AxisX
+        {
+            get
+            {
                 float twoY = 2 * y; float twoZ = 2 * z;
                 float twoWY = twoY * w; float twoWZ = twoZ * w;
                 float twoXY = twoY * x; float twoXZ = twoZ * x;
@@ -175,14 +194,18 @@ namespace g3
                 return new Vector3f(1 - (twoYY + twoZZ), twoXY + twoWZ, twoXZ - twoWY);
             }
         }
-        public Vector3f AxisY {
-            get {
+        [IgnoreMember]
+        public Vector3f AxisY
+        {
+            get
+            {
                 float twoX = 2 * x; float twoY = 2 * y; float twoZ = 2 * z;
                 float twoWX = twoX * w; float twoWZ = twoZ * w; float twoXX = twoX * x;
                 float twoXY = twoY * x; float twoYZ = twoZ * y; float twoZZ = twoZ * z;
                 return new Vector3f(twoXY - twoWZ, 1 - (twoXX + twoZZ), twoYZ + twoWX);
             }
         }
+        [IgnoreMember]
         public Vector3f AxisZ {
             get {
                 float twoX = 2 * x; float twoY = 2 * y; float twoZ = 2 * z;

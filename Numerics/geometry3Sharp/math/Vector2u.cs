@@ -1,10 +1,14 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
 namespace g3
 {
+    [MessagePackObject]
     public struct Vector2u : IComparable<Vector2u>, IEquatable<Vector2u>
     {
+        [Key(0)]
         public uint x;
+        [Key(1)]
         public uint y;
 
         public Vector2u(uint f) { x = y = f; }

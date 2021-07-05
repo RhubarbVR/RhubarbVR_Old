@@ -2,16 +2,16 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
-
-#if G3_USING_UNITY
-using UnityEngine;
-#endif
+using MessagePack;
 
 namespace g3
 {
+    [MessagePackObject]
     public struct Vector2f : IComparable<Vector2f>, IEquatable<Vector2f>
     {
+        [Key(0)]
         public float x;
+        [Key(1)]
         public float y;
 
         public Vector2f(float f) { x = y = f; }
@@ -249,19 +249,6 @@ namespace g3
             return string.Format("{0:F8} {1:F8}", x, y);
         }
 
-
-
-
-#if G3_USING_UNITY
-        public static implicit operator Vector2f(UnityEngine.Vector2 v)
-        {
-            return new Vector2f(v.x, v.y);
-        }
-        public static implicit operator Vector2(Vector2f v)
-        {
-            return new Vector2(v.x, v.y);
-        }
-#endif
 
     }
 }

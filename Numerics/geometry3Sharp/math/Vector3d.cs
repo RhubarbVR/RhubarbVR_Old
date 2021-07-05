@@ -1,17 +1,19 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-#if G3_USING_UNITY
-using UnityEngine;
-#endif
 
 namespace g3
 {
+    [MessagePackObject]
     public struct Vector3d : IComparable<Vector3d>, IEquatable<Vector3d>
     {
+        [Key(0)]
         public double x;
+        [Key(1)]
         public double y;
+        [Key(2)]
         public double z; 
 
         public Vector3d(double f) { x = y = z = f; }
@@ -19,61 +21,73 @@ namespace g3
         public Vector3d(double[] v2) { x = v2[0]; y = v2[1]; z = v2[2]; }
         public Vector3d(Vector3d copy) { x = copy.x; y = copy.y; z = copy.z; }
         public Vector3d(Vector3f copy) { x = copy.x; y = copy.y; z = copy.z; }
-
+        [IgnoreMember]
         static public readonly Vector3d Zero = new Vector3d(0.0f, 0.0f, 0.0f);
+        [IgnoreMember]
         static public readonly Vector3d One = new Vector3d(1.0f, 1.0f, 1.0f);
+        [IgnoreMember]
         static public readonly Vector3d AxisX = new Vector3d(1.0f, 0.0f, 0.0f);
+        [IgnoreMember]
         static public readonly Vector3d AxisY = new Vector3d(0.0f, 1.0f, 0.0f);
+        [IgnoreMember]
         static public readonly Vector3d AxisZ = new Vector3d(0.0f, 0.0f, 1.0f);
-		static public readonly Vector3d MaxValue = new Vector3d(double.MaxValue,double.MaxValue,double.MaxValue);
-		static public readonly Vector3d MinValue = new Vector3d(double.MinValue,double.MinValue,double.MinValue);
-
+        [IgnoreMember]
+        static public readonly Vector3d MaxValue = new Vector3d(double.MaxValue,double.MaxValue,double.MaxValue);
+        [IgnoreMember]
+        static public readonly Vector3d MinValue = new Vector3d(double.MinValue,double.MinValue,double.MinValue);
+        [IgnoreMember]
         public double this[int key]
         {
             get { return (key == 0) ? x : (key == 1) ? y : z; }
             set { if (key == 0) x = value; else if (key == 1) y = value; else z = value; }
         }
-
+        [IgnoreMember]
         public Vector2d xy {
             get { return new Vector2d(x, y); }
             set { x = value.x; y = value.y; }
         }
+        [IgnoreMember]
         public Vector2d xz {
             get { return new Vector2d(x, z); }
             set { x = value.x; z = value.y; }
         }
+        [IgnoreMember]
         public Vector2d yz {
             get { return new Vector2d(y, z); }
             set { y = value.x; z = value.y; }
         }
-
+        [IgnoreMember]
         public double LengthSquared
         {
             get { return x * x + y * y + z * z; }
         }
+        [IgnoreMember]
         public double Length
         {
             get { return Math.Sqrt(LengthSquared); }
         }
-
+        [IgnoreMember]
         public double LengthL1
         {
             get { return Math.Abs(x) + Math.Abs(y) + Math.Abs(z); }
         }
-
-		public double Max {
+        [IgnoreMember]
+        public double Max {
 			get { return Math.Max(x, Math.Max(y, z)); }
 		}
-		public double Min {
+        [IgnoreMember]
+        public double Min {
 			get { return Math.Min(x, Math.Min(y, z)); }
 		}
-		public double MaxAbs {
+        [IgnoreMember]
+        public double MaxAbs {
 			get { return Math.Max(Math.Abs(x), Math.Max(Math.Abs(y), Math.Abs(z))); }
 		}
-		public double MinAbs {
+        [IgnoreMember]
+        public double MinAbs {
 			get { return Math.Min(Math.Abs(x), Math.Min(Math.Abs(y), Math.Abs(z))); }
 		}
-
+        [IgnoreMember]
         public Vector3d Abs {
             get { return new Vector3d(Math.Abs(x), Math.Abs(y), Math.Abs(z)); }
         }
@@ -81,17 +95,21 @@ namespace g3
         public double Normalize(double epsilon = MathUtil.Epsilon)
         {
             double length = Length;
-            if (length > epsilon) {
+            if (length > epsilon)
+            {
                 double invLength = 1.0 / length;
                 x *= invLength;
                 y *= invLength;
                 z *= invLength;
-            } else {
+            }
+            else
+            {
                 length = 0;
                 x = y = z = 0;
             }
             return length;
         }
+        [IgnoreMember]
         public Vector3d Normalized
         {
             get {
@@ -103,11 +121,11 @@ namespace g3
                     return Vector3d.Zero;
             }
         }
-
-		public bool IsNormalized {
+        [IgnoreMember]
+        public bool IsNormalized {
 			get { return Math.Abs( (x * x + y * y + z * z) - 1) < MathUtil.ZeroTolerance; }
 		}
-
+        [IgnoreMember]
         public bool IsFinite
         {
             get { double f = x + y + z; return double.IsNaN(f) == false && double.IsInfinity(f) == false; }
@@ -343,18 +361,6 @@ namespace g3
         {
             return new Vector3f((float)v.x, (float)v.y, (float)v.z);
         }
-
-
-#if G3_USING_UNITY
-        public static implicit operator Vector3d(UnityEngine.Vector3 v)
-        {
-            return new Vector3d(v.x, v.y, v.z);
-        }
-        public static explicit operator Vector3(Vector3d v)
-        {
-            return new Vector3((float)v.x, (float)v.y, (float)v.z);
-        }
-#endif
 
 
 

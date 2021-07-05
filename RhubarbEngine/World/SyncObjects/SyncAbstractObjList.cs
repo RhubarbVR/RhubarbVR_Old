@@ -77,8 +77,12 @@ namespace RhubarbEngine.World
             DataNodeList list = new DataNodeList();
             foreach (T val in _synclist)
             {
+                DataNodeGroup tip = val.serialize();
                 DataNodeGroup listobj = new DataNodeGroup();
-                listobj.setValue("Value", val.serialize());
+                if (tip != null)
+                {
+                    listobj.setValue("Value", tip);
+                }
                 //Need To add Constant Type Strings for better compression 
                 listobj.setValue("Type",new DataNode<string>(val.GetType().FullName));
                 list.Add(listobj);

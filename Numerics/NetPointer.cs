@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace RhubarbDataTypes
 {
+    [MessagePackObject]
     public struct NetPointer
     {
-        private readonly ulong id;
+        [Key(0)]
+        public ulong id;
 
         public NetPointer(ulong _id)
         {

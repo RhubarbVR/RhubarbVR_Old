@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,11 +9,16 @@ using UnityEngine;
 
 namespace g3
 {
+    [MessagePackObject]
     public struct Colorf : IComparable<Colorf>, IEquatable<Colorf>
     {
+        [Key(0)]
         public float r;
+        [Key(1)]
         public float g;
+        [Key(2)]
         public float b;
+        [Key(3)]
         public float a;
 
         public Colorf(float greylevel, float a = 1) { r = g = b = greylevel; this.a = a; }
@@ -34,7 +40,7 @@ namespace g3
             return new Colorf(r, g, b, a * fAlphaMultiply);
         }
 
-
+        [IgnoreMember]
         public float this[int key]
         {
             get { if (key == 0) return r; else if (key == 1) return g; else if (key == 2) return b; else return a; }
@@ -168,72 +174,113 @@ namespace g3
             return string.Format("{0} {1} {2} {3}", r.ToString(fmt), g.ToString(fmt), b.ToString(fmt), a.ToString(fmt));
         }
 
-
+        [IgnoreMember]
         static public readonly Colorf TransparentWhite = new Colorf(255, 255, 255, 0);
+        [IgnoreMember]
         static public readonly Colorf TransparentBlack = new Colorf(0, 0, 0, 0);
 
-
+        [IgnoreMember]
         static public readonly Colorf White = new Colorf(255, 255, 255, 255);
+        [IgnoreMember]
         static public readonly Colorf Black = new Colorf(0, 0, 0, 255);
+        [IgnoreMember]
         static public readonly Colorf Blue = new Colorf(0, 0, 255, 255);
+        [IgnoreMember]
         static public readonly Colorf Green = new Colorf(0, 255, 0, 255);
+        [IgnoreMember]
         static public readonly Colorf Red = new Colorf(255, 0, 0, 255);
+        [IgnoreMember]
         static public readonly Colorf Yellow = new Colorf(255, 255, 0, 255);
+        [IgnoreMember]
         static public readonly Colorf Cyan = new Colorf(0, 255, 255, 255);
+        [IgnoreMember]
         static public readonly Colorf Magenta = new Colorf(255, 0, 255, 255);
-
+        [IgnoreMember]
         static public readonly Colorf VideoWhite = new Colorf(235, 235, 235, 255);
+        [IgnoreMember]
         static public readonly Colorf VideoBlack = new Colorf(16, 16, 16, 255);
+        [IgnoreMember]
         static public readonly Colorf VideoBlue = new Colorf(16, 16, 235, 255);
+        [IgnoreMember]
         static public readonly Colorf VideoGreen = new Colorf(16, 235, 16, 255);
+        [IgnoreMember]
         static public readonly Colorf VideoRed = new Colorf(235, 16, 16, 255);
+        [IgnoreMember]
         static public readonly Colorf VideoYellow = new Colorf(235, 235, 16, 255);
+        [IgnoreMember]
         static public readonly Colorf VideoCyan = new Colorf(16, 235, 235, 255);
+        [IgnoreMember]
         static public readonly Colorf VideoMagenta = new Colorf(235, 16, 235, 255);
 
-
+        [IgnoreMember]
         static public readonly Colorf Purple = new Colorf(161, 16, 193, 255);
+        [IgnoreMember]
         static public readonly Colorf DarkRed = new Colorf(128, 16, 16, 255);
+        [IgnoreMember]
         static public readonly Colorf FireBrick = new Colorf(178, 34, 34, 255);
+        [IgnoreMember]
         static public readonly Colorf HotPink = new Colorf(255, 105, 180, 255);
+        [IgnoreMember]
         static public readonly Colorf LightPink = new Colorf(255, 182, 193, 255);
-
+        [IgnoreMember]
         static public readonly Colorf DarkBlue = new Colorf(16, 16, 139, 255);
+        [IgnoreMember]
         static public readonly Colorf BlueMetal = new Colorf(176, 197, 235, 255);       // I made this one up...
+        [IgnoreMember]
         static public readonly Colorf Navy = new Colorf(16, 16, 128, 255);
+        [IgnoreMember]
         static public readonly Colorf CornflowerBlue = new Colorf(100, 149, 237, 255);
+        [IgnoreMember]
         static public readonly Colorf LightSteelBlue = new Colorf(176, 196, 222, 255);
+        [IgnoreMember]
         static public readonly Colorf DarkSlateBlue = new Colorf(72, 61, 139, 255);
-
+        [IgnoreMember]
         static public readonly Colorf Teal = new Colorf(16, 128, 128, 255);
+        [IgnoreMember]
         static public readonly Colorf ForestGreen = new Colorf(16, 139, 16, 255);
+        [IgnoreMember]
         static public readonly Colorf LightGreen = new Colorf(144, 238, 144, 255);
-
+        [IgnoreMember]
         static public readonly Colorf Orange = new Colorf(230, 73, 16, 255);
+        [IgnoreMember]
         static public readonly Colorf Gold = new Colorf(235, 115, 63, 255);
+        [IgnoreMember]
         static public readonly Colorf DarkYellow = new Colorf(235, 200, 95, 255);
-
+        [IgnoreMember]
         static public readonly Colorf SiennaBrown = new Colorf(160, 82, 45, 255);
+        [IgnoreMember]
         static public readonly Colorf SaddleBrown = new Colorf(139, 69, 19, 255);
+        [IgnoreMember]
         static public readonly Colorf Goldenrod = new Colorf(218, 165, 32, 255);
+        [IgnoreMember]
         static public readonly Colorf Wheat = new Colorf(245, 222, 179, 255);
 
 
-
+        [IgnoreMember]
         static public readonly Colorf LightGrey = new Colorf(211, 211, 211, 255);
+        [IgnoreMember]
         static public readonly Colorf Silver = new Colorf(192, 192, 192, 255);
+        [IgnoreMember]
         static public readonly Colorf LightSlateGrey = new Colorf(119, 136, 153, 255);
+        [IgnoreMember]
         static public readonly Colorf Grey = new Colorf(128, 128, 128, 255);
+        [IgnoreMember]
         static public readonly Colorf DarkGrey = new Colorf(169, 169, 169, 255);
+        [IgnoreMember]
         static public readonly Colorf SlateGrey = new Colorf(112, 128, 144, 255);
+        [IgnoreMember]
         static public readonly Colorf DimGrey = new Colorf(105, 105, 105, 255);
+        [IgnoreMember]
         static public readonly Colorf DarkSlateGrey = new Colorf(47, 79, 79, 255);
 
 
 
         // default colors
+        [IgnoreMember]
         static readonly public Colorf StandardBeige = new Colorf(0.75f, 0.75f, 0.5f);
+        [IgnoreMember]
         static readonly public Colorf SelectionGold = new Colorf(1.0f, 0.6f, 0.05f);
+        [IgnoreMember]
         static readonly public Colorf PivotYellow = new Colorf(1.0f, 1.0f, 0.05f);
 
 

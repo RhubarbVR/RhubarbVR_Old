@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,11 +11,16 @@ namespace g3
     /// Unfortunately I can't see a way to do this w/o so much duplication...we could
     /// have .x/.y/.z accessors but that is much less efficient...
     /// </summary>
+    [MessagePackObject]
     public struct Vector4u : IComparable<Vector4u>, IEquatable<Vector4u>
     {
+        [Key(0)]
         public uint x;
+        [Key(1)]
         public uint y;
+        [Key(2)]
         public uint z;
+        [Key(3)]
         public uint w;
 
         public Vector4u(uint f) { x = y = z = w = f; }

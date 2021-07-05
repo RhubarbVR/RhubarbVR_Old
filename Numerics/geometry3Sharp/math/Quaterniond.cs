@@ -1,17 +1,24 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
-#if G3_USING_UNITY
-using UnityEngine;
-#endif
 
 
 namespace g3
 {
     // mostly ported from WildMagic5 Wm5Quaternion, from geometrictools.com
+    [MessagePackObject]
     public struct Quaterniond
     {
         // note: in Wm5 version, this is a 4-element array stored in order (w,x,y,z).
-        public double x, y, z, w;
+
+        [Key(0)]
+        public double x;
+        [Key(1)]
+        public double y;
+        [Key(2)]
+        public double z;
+        [Key(3)]
+        public double w;
 
         public Quaterniond(double x, double y, double z, double w) { this.x = x; this.y = y; this.z = z; this.w = w; }
         public Quaterniond(double[] v2) { x = v2[0]; y = v2[1]; z = v2[2]; w = v2[3]; }
@@ -33,8 +40,9 @@ namespace g3
             x = y = z = 0; w = 1;
             SetFromRotationMatrix(mat);
         }
-
+        [IgnoreMember]
         static public readonly Quaterniond Zero = new Quaterniond(0.0, 0.0, 0.0, 0.0);
+        [IgnoreMember]
         static public readonly Quaterniond Identity = new Quaterniond(0.0, 0.0, 0.0, 1.0);
 
         public double this[int key] {
@@ -43,10 +51,11 @@ namespace g3
 
         }
 
-
+        [IgnoreMember]
         public double LengthSquared {
             get { return x * x + y * y + z * z + w*w; }
         }
+        [IgnoreMember]
         public double Length {
             get { return (double)Math.Sqrt(x * x + y * y + z * z + w * w); }
         }
@@ -65,6 +74,7 @@ namespace g3
             }
             return length;
         }
+        [IgnoreMember]
         public Quaterniond Normalized {
             get { Quaterniond q = new Quaterniond(this); q.Normalize(); return q; }
         }
@@ -115,6 +125,7 @@ namespace g3
 
         // these multiply quaternion by (1,0,0), (0,1,0), (0,0,1), respectively.
         // faster than full multiply, because of all the zeros
+        [IgnoreMember]
         public Vector3d AxisX {
             get {
                 double twoY = 2 * y; double twoZ = 2 * z;
@@ -124,6 +135,7 @@ namespace g3
                 return new Vector3d(1 - (twoYY + twoZZ), twoXY + twoWZ, twoXZ - twoWY);
             }
         }
+        [IgnoreMember]
         public Vector3d AxisY {
             get {
                 double twoX = 2 * x; double twoY = 2 * y; double twoZ = 2 * z;
@@ -132,6 +144,7 @@ namespace g3
                 return new Vector3d(twoXY - twoWZ, 1 - (twoXX + twoZZ), twoYZ + twoWX);
             }
         }
+        [IgnoreMember]
         public Vector3d AxisZ {
             get {
                 double twoX = 2 * x; double twoY = 2 * y; double twoZ = 2 * z;

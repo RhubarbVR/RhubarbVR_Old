@@ -7,7 +7,7 @@ using LiteNetLib.Utils;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.IO;
-
+using MessagePack;
 namespace RhubarbEngine.World.DataStructure
 {
     public class DataNodeGroup : IDataNode
@@ -18,38 +18,16 @@ namespace RhubarbEngine.World.DataStructure
         {
             try
             {
-                using (var ms = new MemoryStream())
+                Dictionary<byte[], byte[]> keyValuePairs = new Dictionary<byte[], byte[]>();
+                foreach (var item in NodeGroup.Keys)
                 {
-                    using (BinaryWriter writer = new BinaryWriter(ms))
-                    {
-                        writer.Write(NodeGroup.Count);
-                        string[] keys = new string[] { };
-                        IDataNode[] values = new IDataNode[] { };
-                        Array.Resize(ref keys, NodeGroup.Count);
-                        Array.Resize(ref values, NodeGroup.Count);
-                        NodeGroup.Keys.CopyTo(keys,0);
-                        NodeGroup.Values.CopyTo(values,0);
-                        for (int i = 0; i < NodeGroup.Count; i++)
-                        {
-                            byte[] keyBytes = packer(keys[i]);
-                            writer.Write(keyBytes.Count());
-                            writer.Write(keyBytes);
-                            byte[] value;
-                            try
-                            {
-                                value = values[i].getByteArray();
-                            }
-                            catch (Exception e)
-                            {
-                                throw new Exception("Key: " + keys[i] + " Type: " + values[i].GetType().FullName + " Error: " + e.Message);   
-                            }
-                            writer.Write(Array.IndexOf(DatatNodeTools.dataNode, ((object)values[i]).GetType()));
-                            writer.Write(value.Count());
-                            writer.Write(value);
-                        }
-                    }
-                    return ms.ToArray();
+
+                    byte type = (byte)Array.IndexOf(DatatNodeTools.dataNode, NodeGroup[item].GetType());
+                    List<byte> e = new List<byte>(packer(item));
+                    e.Insert(0,type);
+                    keyValuePairs.Add(e.ToArray(), NodeGroup[item].getByteArray());
                 }
+                return MessagePackSerializer.Serialize(keyValuePairs);
             }
             catch (Exception e)
             {
@@ -118,34 +96,24 @@ namespace RhubarbEngine.World.DataStructure
         public void setByteArray(byte[] arrBytes)
         {
             NodeGroup.Clear();
-            using (var memStream = new MemoryStream())
-            {
-                memStream.Write(arrBytes, 0, arrBytes.Length);
-                memStream.Seek(0, SeekOrigin.Begin);
-                using (BinaryReader reader = new BinaryReader(memStream))
+            try {
+                Dictionary<byte[], byte[]>  data = MessagePackSerializer.Deserialize<Dictionary<byte[], byte[]>>(arrBytes);
+                foreach (var item in data.Keys)
                 {
-                    int Count = reader.ReadInt32();
-                    for (int i = 0; i < Count; i++)
-                    {
-                        string key = unPacker(reader.ReadBytes(reader.ReadInt32()));
-                        Type ty = DatatNodeTools.dataNode[reader.ReadInt32()];
-                        int ValueCount = reader.ReadInt32();
-                        byte[] value = reader.ReadBytes(ValueCount);
-                        if (typeof(IDataNode).IsAssignableFrom(ty))
-                        {
-                            IDataNode valueobj = (IDataNode)Activator.CreateInstance(ty);
-                            valueobj.setByteArray(value);
-                            NodeGroup.Add(key, valueobj);
-                        }
-                        else
-                        {
-                            throw new Exception("Type is not valid when loading data.");
-                        }
-                    }
+                    Type type = DatatNodeTools.dataNode[item[0]];
+                    IDataNode obj = (IDataNode)Activator.CreateInstance(type);
+                    obj.setByteArray(data[item]);
+                    List<byte> key = new List<byte>(item);
+                    key.RemoveAt(0);
+                    string keyval = unPacker(key.ToArray());
+                    NodeGroup.Add(keyval, obj);
                 }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed to deserialize. Group Reason: " + e.Message);
+            }
         }
-
         public void Deserialize(NetDataReader reader)
         {
             setByteArray(reader.GetBytesWithLength());
