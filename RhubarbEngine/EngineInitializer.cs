@@ -60,6 +60,10 @@ namespace RhubarbEngine
                 intphase = "Net Api Manager";
                 engine.logger.Log("Starting Net Api Manager:");
                 engine.netApiManager = new Managers.NetApiManager();
+                if(token != null)
+                {
+                    engine.netApiManager.token = token;
+                }
                 engine.netApiManager.initialize(engine);
 
                 intphase = "World Manager";
@@ -75,6 +79,8 @@ namespace RhubarbEngine
             }
 
         }
+
+        public string token;
 
         public IEnumerable<string> settings = new string[] { };
 
@@ -106,6 +112,10 @@ namespace RhubarbEngine
                     if (o.settings != null)
                     {
                         settings = o.settings;
+                    }
+                    if (o.token != null)
+                    {
+                        token = o.token;
                     }
                 });
         }

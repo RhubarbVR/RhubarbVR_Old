@@ -26,5 +26,8 @@ namespace RhubarbEngine
 
         [Option('o', "outputdevice", Required = false, HelpText = "Change output device to Auto,Screen,SteamVR,OculusVR")]
         public OutputType outputType { get; set; }
+
+        [Option('t', "token", Required = false, HelpText = "Login Token")]
+        public string token { get; set; }
     }
 }

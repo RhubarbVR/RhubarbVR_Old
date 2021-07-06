@@ -12,11 +12,12 @@ namespace RhubarbEngine.Managers
 
         public CloudInterface cloudInterface;
 
+        public string token;
         public IManager initialize(Engine _engine)
         {
             engine = _engine;
             engine.logger.Log("Starting Cloud Interface");
-            cloudInterface = new CloudInterface(_engine.dataPath);
+            cloudInterface = new CloudInterface(_engine.dataPath, token);
             return this;
         }
 

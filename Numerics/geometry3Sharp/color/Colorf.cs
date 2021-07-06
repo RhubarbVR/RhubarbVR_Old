@@ -53,7 +53,6 @@ namespace g3
             return a * a + b * b + c * c + d * d;
         }
 
-
         public Vector3f ToRGB()
         {
             return new Vector3f(r, g, b);
