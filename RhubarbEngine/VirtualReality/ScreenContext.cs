@@ -68,7 +68,10 @@ namespace RhubarbEngine.VirtualReality
         {
             _gd = gd;
             _leftEyeFB = CreateFramebuffer((uint)_eng.windowManager.mainWindow.width, (uint)_eng.windowManager.mainWindow.height);
-
+            if(_leftEyeFB == null)
+            {
+                Logger.Log("Error Loading Frame Buffer", true);
+            }
             changeProject(_eng.renderManager.fieldOfView, _eng.renderManager.aspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
         }
 
