@@ -48,7 +48,20 @@ namespace RhubarbEngine.Managers
         public IManager initialize(Engine _engine)
         {
             engine = _engine;
-            engine.logger.Log("Graphics Backend:" + engine.backend.ToString(), true);
+            GraphicsBackend backend = engine.backend;
+            if(engine.platformInfo.platform == PlatformInfo.Platform.OSX)
+            {
+                backend = GraphicsBackend.Metal;
+            }
+            if (backend == GraphicsBackend.Metal && engine.platformInfo.platform != PlatformInfo.Platform.OSX)
+            {
+                backend = GraphicsBackend.Direct3D11;
+            }
+            if (backend == GraphicsBackend.Direct3D11 && engine.platformInfo.platform != PlatformInfo.Platform.Linux|| engine.platformInfo.platform != PlatformInfo.Platform.Android)
+            {
+                backend = GraphicsBackend.Vulkan;
+            }
+            engine.logger.Log("Graphics Backend:" + backend, true);
             if (engine.outputType == OutputType.Auto) {
                 engine.outputType = OutputType.OculusVR;
                 if (!VRContext.IsOculusSupported())
@@ -63,7 +76,8 @@ namespace RhubarbEngine.Managers
             }
             engine.logger.Log("Output Device:" + engine.outputType.ToString(), true);
             vrContext = buildVRContext();
-            (gd, sc) = engine.windowManager.mainWindow.CreateScAndGD(vrContext, engine.backend);
+            (gd, sc) = engine.windowManager.mainWindow.CreateScAndGD(vrContext, backend);
+            engine.backend = backend;
             vrContext.Initialize(gd);
             windowCL = gd.ResourceFactory.CreateCommandList();
             eyesCL = gd.ResourceFactory.CreateCommandList();
