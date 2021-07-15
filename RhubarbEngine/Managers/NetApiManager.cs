@@ -24,14 +24,24 @@ namespace RhubarbEngine.Managers
 
         public string token = "";
 
+        public bool islogin = false;
+
         public PrivateUser user;
+
+        public PrivateStatus status = default;
+
+        public event Action onlogin;
+
+        public event Action onlogout;
 
         public IManager initialize(Engine _engine)
         {
             engine = _engine;
             engine.logger.Log("Starting Cloud Interface");
-            
-            string url = "https://api.rhubarbvr.net/";
+
+            //string url = "https://api.rhubarbvr.net/";
+            string url = "https://localhost:44395/";
+
             authApi = new AuthApi(url);
             adminApi = new AdminApi(url);
             statusApi = new StatusApi(url);
@@ -46,7 +56,7 @@ namespace RhubarbEngine.Managers
             catch
             {
             }
-            if (token != "")
+            if (text != "")
             {
                 token = text;
                 autologin();
@@ -65,6 +75,44 @@ namespace RhubarbEngine.Managers
         {
             token = Token;
             user = User;
+            Logger.Log("Welcome: " + user.Username, true);
+            islogin = true;
+            onlogin?.Invoke();
+            try
+            {
+                var statuss = statusApi.StatusMeGet(token);
+                status = statuss;
+            }
+            catch (Exception e)
+            {
+                status = new PrivateStatus();
+            }
+            if(status == null)
+            {
+                status = new PrivateStatus();
+            }
+            status.Versionkey = "test";
+            status.Version = "pre alpha";
+            status.Onlinelevel = 5;
+            updateStatus();
+        }
+
+        public void updateStatus()
+        {
+            if(DateTime.UtcNow - status.Laststatus >= new TimeSpan(0,2,0))
+            {
+                StatusUpdate val = new StatusUpdate();
+                val.Outputdevice = engine.outputType.ToString();
+                val.Focusedsession = engine.worldManager?.focusedWorld?.SessionID?.value;
+                val.Customstatus = "";
+                val.Onlinelevel = 5;
+                val.Versionkey = "test";
+                val.Version = "pre alpha";
+                val.Ismobile = false;
+                
+                statusApi.StatusStatusupdatePost(val, token);
+                status.Laststatus = DateTime.UtcNow;
+            }
         }
 
         public void login(string email,string password,bool rememberme)
@@ -81,6 +129,8 @@ namespace RhubarbEngine.Managers
         {
             token = "";
             user = null;
+            islogin = false;
+            onlogout?.Invoke();
             try
             {
                 File.Delete(engine.dataPath + "\\auth.token");

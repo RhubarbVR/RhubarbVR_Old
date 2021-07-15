@@ -63,7 +63,6 @@ namespace RhubarbEngine
                 logger.Log("Another instance is running at data path " + dataPath, true);
                 throw new Exception("Another instance is running at data path ");
             }
-            logger.Log("hi0");
             List<DataList> lists = new List<DataList>();
             if (File.Exists("settings.json"))
             {
@@ -71,7 +70,6 @@ namespace RhubarbEngine
                 DataList liet = SettingsManager.getDataFromJson(text);
                 lists.Add(liet);
             }
-            logger.Log("hi1");
                 foreach (string item in engineInitializer.settings)
                 {
                     string text;
@@ -93,15 +91,12 @@ namespace RhubarbEngine
                         logger.Log("Error loading settings ERROR:" + e.ToString(), true);
                     }
                 }
-            logger.Log("hi3");
             if (lists.Count == 0)
             {
-                logger.Log("hi4");
                 settingsObject = new MainSettingsObject();
             }
             else
             {
-                logger.Log("hi5");
                 settingsObject = SettingsManager.loadSettingsObject<MainSettingsObject>(lists.ToArray());
             }
             engineInitializer.initializeManagers();

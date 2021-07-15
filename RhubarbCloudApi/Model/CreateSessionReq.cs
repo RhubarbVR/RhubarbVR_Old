@@ -35,12 +35,12 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets Sessionstype
         /// </summary>
         [DataMember(Name = "sessionstype", EmitDefaultValue = false)]
-        public SessionsType? Sessionstype { get; set; }
+        public SessionsType Sessionstype { get; set; }
         /// <summary>
         /// Gets or Sets Accesslevel
         /// </summary>
         [DataMember(Name = "accesslevel", EmitDefaultValue = false)]
-        public AccessLevel? Accesslevel { get; set; }
+        public AccessLevel Accesslevel { get; set; }
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateSessionReq" /> class.
         /// </summary>
@@ -54,7 +54,7 @@ namespace Org.OpenAPITools.Model
         /// <param name="maxUsers">maxUsers.</param>
         /// <param name="mobilefriendly">mobilefriendly.</param>
         /// <param name="sessionconnection">sessionconnection.</param>
-        public CreateSessionReq(string name = default(string), string correspondingworlduuid = default(string), List<string> tags = default(List<string>), string thumbnailurl = default(string), SessionsType? sessionstype = default(SessionsType?), AccessLevel? accesslevel = default(AccessLevel?), bool? eighteenandolder = default(bool?), int? maxUsers = default(int?), bool? mobilefriendly = default(bool?), string sessionconnection = default(string))
+        public CreateSessionReq(string name = default(string), string correspondingworlduuid = default(string), List<string> tags = default(List<string>), string thumbnailurl = default(string), SessionsType sessionstype = default(SessionsType), AccessLevel accesslevel = default(AccessLevel), bool eighteenandolder = default(bool), int maxUsers = default(int), bool mobilefriendly = default(bool), string sessionconnection = default(string))
         {
             this.Name = name;
             this.Correspondingworlduuid = correspondingworlduuid;
@@ -96,19 +96,19 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets Eighteenandolder
         /// </summary>
         [DataMember(Name = "eighteenandolder", EmitDefaultValue = true)]
-        public bool? Eighteenandolder { get; set; }
+        public bool Eighteenandolder { get; set; }
 
         /// <summary>
         /// Gets or Sets MaxUsers
         /// </summary>
         [DataMember(Name = "maxUsers", EmitDefaultValue = true)]
-        public int? MaxUsers { get; set; }
+        public int MaxUsers { get; set; }
 
         /// <summary>
         /// Gets or Sets Mobilefriendly
         /// </summary>
         [DataMember(Name = "mobilefriendly", EmitDefaultValue = true)]
-        public bool? Mobilefriendly { get; set; }
+        public bool Mobilefriendly { get; set; }
 
         /// <summary>
         /// Gets or Sets Sessionconnection

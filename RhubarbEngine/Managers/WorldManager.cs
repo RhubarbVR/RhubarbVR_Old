@@ -16,6 +16,7 @@ using RhubarbEngine.Components.Assets;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using RhubarbEngine.Components.Rendering;
 using RhubarbEngine.Components.Color;
+using Org.OpenAPITools.Model;
 
 namespace RhubarbEngine.Managers
 {
@@ -41,11 +42,19 @@ namespace RhubarbEngine.Managers
                     world.addToRenderQueue(gu, layer);
                 }
             }
-        } 
+        }
 
-        public void createNewWorld()
+        public void createNewWorld(AccessLevel accessLevel, SessionsType sessionsType, string name, string worlduuid, bool isOver, int maxusers, bool mobilefriendly)
         {
-
+            World.World world = new World.World(this, sessionsType, accessLevel, name, maxusers, worlduuid, isOver, mobilefriendly);
+            string ip = LiteNetLib.NetUtils.GetLocalIp(LiteNetLib.LocalAddrType.All);
+            string conectionkey = ip + " _ " + world.port;
+            string sessionid = engine.netApiManager.sessionApi.SessionCreatesessionPost(new CreateSessionReq(name, worlduuid, new List<string>(new []{""}),"",sessionsType,accessLevel, isOver, maxusers, mobilefriendly,conectionkey), engine.netApiManager.token);
+            world.SessionID.value = sessionid;
+            worlds.Add(world);
+            focusedWorld.Focus = World.World.FocusLevel.Background;
+            world.Focus = World.World.FocusLevel.Focused;
+            focusedWorld = world;
         }
 
         public World.World loadWorldFromBytes(byte[] data)
@@ -91,38 +100,45 @@ namespace RhubarbEngine.Managers
                 {
                     dontSaveLocal = true;
                     Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
-                    localWorld = new World.World(this, "TempLoaclWorld", 16);
+                    localWorld = new World.World(this, "TempLoaclWorld", 16, false, true);
+                    BuildLocalWorld();
                 }
             }
             else
             {
-                localWorld = new World.World(this, "LocalWorld", 16);
-
-                Entity e = localWorld.RootEntity.addChild("Gay");
-                StaicMainShader shader = e.attachComponent<StaicMainShader>();
-                RevolveMesh bmesh = e.attachComponent<RevolveMesh>();
-                RMaterial mit = e.attachComponent<RMaterial>();
-                MeshRender meshRender = e.attachComponent<MeshRender>();
-                RGBRainbowDriver rgbainbowDriver = e.attachComponent<RGBRainbowDriver>();
-
-                mit.Shader.target = shader;
-                meshRender.Materials.Add().target = mit;
-                meshRender.Mesh.target = bmesh;
-                mit.setValueAtField("rambow", Render.Shader.ShaderType.MainFrag, Colorf.Blue);
-                Render.Material.Fields.ColorField field = mit.getField<Render.Material.Fields.ColorField>("rambow", Render.Shader.ShaderType.MainFrag);
-                rgbainbowDriver.driver.setDriveTarget(field.field);
-                rgbainbowDriver.speed.value = 50f;
-
-                e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
-                e.scale.value = new Vector3f(1f);
-                Entity ea = localWorld.RootEntity.addChild("Gayer");
-                ea.position.value = Vector3f.One;
-                AddMesh<BoxMesh>(ea);
+                localWorld = new World.World(this, "LocalWorld", 16,false,true);
+                BuildLocalWorld();
             }
             localWorld.Focus = World.World.FocusLevel.Focused;
             worlds.Add(localWorld);
             focusedWorld = localWorld;
+
+            createNewWorld(AccessLevel.Anyone, SessionsType.Casual, "Faolan World", "", false, 16, false);
             return this;
+        }
+
+        public void BuildLocalWorld()
+        {
+            Entity e = localWorld.RootEntity.addChild("Gay");
+            StaicMainShader shader = e.attachComponent<StaicMainShader>();
+            RevolveMesh bmesh = e.attachComponent<RevolveMesh>();
+            RMaterial mit = e.attachComponent<RMaterial>();
+            MeshRender meshRender = e.attachComponent<MeshRender>();
+            RGBRainbowDriver rgbainbowDriver = e.attachComponent<RGBRainbowDriver>();
+
+            mit.Shader.target = shader;
+            meshRender.Materials.Add().target = mit;
+            meshRender.Mesh.target = bmesh;
+            mit.setValueAtField("rambow", Render.Shader.ShaderType.MainFrag, Colorf.Blue);
+            Render.Material.Fields.ColorField field = mit.getField<Render.Material.Fields.ColorField>("rambow", Render.Shader.ShaderType.MainFrag);
+            rgbainbowDriver.driver.setDriveTarget(field.field);
+            rgbainbowDriver.speed.value = 50f;
+
+            e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
+            e.scale.value = new Vector3f(1f);
+            Entity ea = localWorld.RootEntity.addChild("Gayer");
+            ea.position.value = Vector3f.One;
+            AddMesh<BoxMesh>(ea);
         }
 
         public Entity AddMesh<T>(Entity ea) where T: ProceduralMesh

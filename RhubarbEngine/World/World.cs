@@ -22,6 +22,7 @@ using BepuUtilities;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using LiteNetLib;
 using LiteNetLib.Utils;
+using Org.OpenAPITools.Model;
 
 namespace RhubarbEngine.World
 {
@@ -92,7 +93,7 @@ namespace RhubarbEngine.World
                 server.Start(_port);
                 port = _port;
             }
-            catch
+            catch(Exception e)
             {
                 if (_port <= 9090)
                 {
@@ -109,6 +110,10 @@ namespace RhubarbEngine.World
         public Sync<float> LinearDamping;
 
         public Sync<float> AngularDamping;
+
+        [NoSaveAttribute]
+        public Sync<string> SessionID;
+
 
         public struct DemoPoseIntegratorCallbacks : IPoseIntegratorCallbacks
         {
@@ -279,6 +284,8 @@ namespace RhubarbEngine.World
 
         public ulong position = 1;
         public bool userspace { get; private set; }
+        public bool local { get; private set; }
+
         public Entity RootEntity { get; private set; }
 
         public byte user = 0;
@@ -449,6 +456,7 @@ namespace RhubarbEngine.World
             {
                 posoffset = 12;
             }
+            SessionID = new Sync<string>(this, this, !networkload);
             Name = new Sync<string>(this, this, !networkload);
             Gravity = new Sync<Vector3f>(this, this, !networkload);
             Gravity.value = new Vector3f(0, -10, 0);
@@ -466,11 +474,25 @@ namespace RhubarbEngine.World
                 item?.Invoke();
             }
         }
-
-        public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false) : this(_worldManager)
+        [NoSave]
+        public Sync<SessionsType> sessionsType;
+        [NoSave]
+        public Sync<AccessLevel> accessLevel;
+        [NoSave]
+        public Sync<string> Correspondingworlduuid;
+        [NoSave]
+        public SyncValueList<string> SessionTags;
+        [NoSave]
+        public Sync<string> Thumbnailurl;
+        [NoSave]
+        public Sync<bool> Eighteenandolder;
+        [NoSave]
+        public Sync<bool> Mobilefriendly;
+        public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false) : this(_worldManager)
         {
             Random random = new Random();
             posoffset = (byte)random.Next();
+            SessionID = new Sync<string>(this, this);
             Name = new Sync<string>(this, this);
             Gravity = new Sync<Vector3f>(this, this);
             Gravity.value = new Vector3f(0, -10, 0);
@@ -484,6 +506,30 @@ namespace RhubarbEngine.World
             Name.value = _Name;
             maxUsers = MaxUsers;
             userspace = _userspace;
+            local = _local;
+            sessionsType = new Sync<SessionsType>(this, this);
+            accessLevel = new Sync<AccessLevel>(this, this);
+            Correspondingworlduuid = new Sync<string>(this, this);
+            SessionTags = new SyncValueList<string>(this, this);
+            Thumbnailurl = new Sync<string>(this, this);
+            Eighteenandolder = new Sync<bool>(this, this);
+            Mobilefriendly = new Sync<bool>(this, this);
+            sessionsType.value = SessionsType.Casual;
+            accessLevel.value = AccessLevel.Anyone;
+            if(!userspace && !local)
+            {
+                initializeNetWorker();
+                startServer();
+            }
+        }
+
+        public World(WorldManager _worldManager,SessionsType _sessionsType,AccessLevel _accessLevel, string _Name, int MaxUsers, string worlduuid, bool isOver, bool mobilefriendly) : this( _worldManager,  _Name,  MaxUsers,  false ,  false )
+        {
+            sessionsType.value = _sessionsType;
+            accessLevel.value = _accessLevel;
+            Correspondingworlduuid.value = worlduuid;
+            Eighteenandolder.value = isOver;
+            Mobilefriendly.value = mobilefriendly;
         }
 
         public NetPointer buildRefID()

@@ -49,7 +49,6 @@ namespace RhubarbEngine
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 return false;
             }
         }
