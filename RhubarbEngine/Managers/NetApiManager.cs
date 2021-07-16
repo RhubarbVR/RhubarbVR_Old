@@ -62,7 +62,7 @@ namespace RhubarbEngine.Managers
                 autologin();
             }
 
-            return this;    
+            return this;
         }
 
         public void autologin()
@@ -71,7 +71,7 @@ namespace RhubarbEngine.Managers
             setToken(token, auth);
         }
 
-        public void setToken(string Token,PrivateUser User)
+        public void setToken(string Token, PrivateUser User)
         {
             token = Token;
             user = User;
@@ -87,7 +87,7 @@ namespace RhubarbEngine.Managers
             {
                 status = new PrivateStatus();
             }
-            if(status == null)
+            if (status == null)
             {
                 status = new PrivateStatus();
             }
@@ -99,7 +99,7 @@ namespace RhubarbEngine.Managers
 
         public void updateStatus()
         {
-            if(DateTime.UtcNow - status.Laststatus >= new TimeSpan(0,2,0))
+            if (DateTime.UtcNow - status.Laststatus >= new TimeSpan(0, 2, 0))
             {
                 StatusUpdate val = new StatusUpdate();
                 val.Outputdevice = engine.outputType.ToString();
@@ -109,16 +109,16 @@ namespace RhubarbEngine.Managers
                 val.Versionkey = "test";
                 val.Version = "pre alpha";
                 val.Ismobile = false;
-                
+
                 statusApi.StatusStatusupdatePost(val, token);
                 status.Laststatus = DateTime.UtcNow;
             }
         }
 
-        public void login(string email,string password,bool rememberme)
+        public void login(string email, string password, bool rememberme)
         {
             var auth = authApi.AuthLoginPost(new LoginReg(password, email, rememberme));
-            setToken(auth.Token,auth.User);
+            setToken(auth.Token, auth.User);
             if (rememberme)
             {
                 File.WriteAllText(engine.dataPath + "\\auth.token", token);
@@ -136,11 +136,17 @@ namespace RhubarbEngine.Managers
                 File.Delete(engine.dataPath + "\\auth.token");
             }
             catch { }
+            statusApi.StatusClearstatusGet(token);
         }
 
         public void Update()
         {
 
+        }
+
+        public void Close()
+        {
+            statusApi.StatusClearstatusGet(token);
         }
     }
 }

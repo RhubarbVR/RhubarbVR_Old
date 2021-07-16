@@ -142,6 +142,7 @@ namespace RhubarbEngine
         {
             worldManager.CleanUp();
             logger.cleanUP();
+            netApiManager.Close();
         }
     }
 }

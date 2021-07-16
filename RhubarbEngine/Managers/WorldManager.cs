@@ -44,17 +44,29 @@ namespace RhubarbEngine.Managers
             }
         }
 
-        public void createNewWorld(AccessLevel accessLevel, SessionsType sessionsType, string name, string worlduuid, bool isOver, int maxusers, bool mobilefriendly)
+        public void createNewWorld(AccessLevel accessLevel, SessionsType sessionsType, string name, string worlduuid, bool isOver, int maxusers, bool mobilefriendly,string templet = null, bool focus = true)
         {
-            World.World world = new World.World(this, sessionsType, accessLevel, name, maxusers, worlduuid, isOver, mobilefriendly);
+            Logger.Log("Creating world", true);
+            World.World world = new World.World(this, sessionsType, accessLevel, name, maxusers, worlduuid, isOver, mobilefriendly, templet);
             string ip = LiteNetLib.NetUtils.GetLocalIp(LiteNetLib.LocalAddrType.All);
             string conectionkey = ip + " _ " + world.port;
-            string sessionid = engine.netApiManager.sessionApi.SessionCreatesessionPost(new CreateSessionReq(name, worlduuid, new List<string>(new []{""}),"",sessionsType,accessLevel, isOver, maxusers, mobilefriendly,conectionkey), engine.netApiManager.token);
-            world.SessionID.value = sessionid;
-            worlds.Add(world);
-            focusedWorld.Focus = World.World.FocusLevel.Background;
-            world.Focus = World.World.FocusLevel.Focused;
-            focusedWorld = world;
+            try
+            {
+                string sessionid = engine.netApiManager.sessionApi.SessionCreatesessionPost(new CreateSessionReq(name, worlduuid, new List<string>(new[] { "" }), "", (int)sessionsType, (int)accessLevel, isOver, maxusers, mobilefriendly, conectionkey), engine.netApiManager.token);
+                world.SessionID.value = sessionid;
+                worlds.Add(world);
+                if (focus)
+                {
+                    world.Focus = World.World.FocusLevel.Focused;
+                }
+                Logger.Log("World Created sessionID: "+sessionid, true);
+
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Create World Error"+e.ToString(), true);
+            }
+
         }
 
         public World.World loadWorldFromBytes(byte[] data)
@@ -113,7 +125,7 @@ namespace RhubarbEngine.Managers
             worlds.Add(localWorld);
             focusedWorld = localWorld;
 
-            createNewWorld(AccessLevel.Anyone, SessionsType.Casual, "Faolan World", "", false, 16, false);
+            createNewWorld(AccessLevel.Anyone, SessionsType.Casual, "Faolan World", "", false, 16, false, "Basic");
             return this;
         }
 

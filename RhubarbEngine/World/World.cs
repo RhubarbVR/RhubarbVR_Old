@@ -341,6 +341,10 @@ namespace RhubarbEngine.World
                     focus = value;
                     if (value == FocusLevel.Focused)
                     {
+                        if(worldManager.focusedWorld != null)
+                        {
+                            worldManager.focusedWorld.focus = FocusLevel.Background;
+                        }
                         worldManager.focusedWorld = this;
                     }
                     lastFocusChange = DateTime.UtcNow;
@@ -523,13 +527,32 @@ namespace RhubarbEngine.World
             }
         }
 
-        public World(WorldManager _worldManager,SessionsType _sessionsType,AccessLevel _accessLevel, string _Name, int MaxUsers, string worlduuid, bool isOver, bool mobilefriendly) : this( _worldManager,  _Name,  MaxUsers,  false ,  false )
+        public World(WorldManager _worldManager,SessionsType _sessionsType,AccessLevel _accessLevel, string _Name, int MaxUsers, string worlduuid, bool isOver, bool mobilefriendly,string templet) : this( _worldManager,  _Name,  MaxUsers,  false ,  false )
         {
             sessionsType.value = _sessionsType;
             accessLevel.value = _accessLevel;
             Correspondingworlduuid.value = worlduuid;
             Eighteenandolder.value = isOver;
             Mobilefriendly.value = mobilefriendly;
+            if(templet != null)
+            {
+                string path = AppDomain.CurrentDomain.BaseDirectory + @"\WorldTemplets\";
+                try
+                {
+                    var data = System.IO.File.ReadAllBytes(path + templet + ".RWorld");
+                    DataNodeGroup node = new DataNodeGroup(data);
+                    List<Action> loadded = new List<Action>();
+                    deSerialize(node, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+                    foreach (Action item in loadded)
+                    {
+                        item?.Invoke();
+                    }
+                }
+                catch(Exception e)
+                {
+
+                }
+            }
         }
 
         public NetPointer buildRefID()

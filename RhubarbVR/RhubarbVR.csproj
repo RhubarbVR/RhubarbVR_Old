@@ -10,4 +10,10 @@
     <ProjectReference Include="..\RhubarbEngine\RhubarbEngine.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="WorldTemplets\Basic.RWorld">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

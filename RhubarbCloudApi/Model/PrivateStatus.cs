@@ -42,13 +42,11 @@ namespace Org.OpenAPITools.Model
         /// <param name="host">host.</param>
         /// <param name="outputdevice">outputdevice.</param>
         /// <param name="version">version.</param>
-        /// <param name="currentsessionhidden">currentsessionhidden.</param>
         /// <param name="currenthosting">currenthosting.</param>
-        /// <param name="currentsessionaccesslevel">currentsessionaccesslevel.</param>
         /// <param name="laststatus">laststatus.</param>
         /// <param name="ismobile">ismobile.</param>
         /// <param name="versionkey">versionkey.</param>
-        public PrivateStatus(string uuid = default(string), int onlinelevel = default(int), string customstatus = default(string), string focusedsession = default(string), List<string> sessions = default(List<string>), string host = default(string), string outputdevice = default(string), string version = default(string), bool currentsessionhidden = default(bool), string currenthosting = default(string), int currentsessionaccesslevel = default(int), DateTime laststatus = default(DateTime), bool ismobile = default(bool), string versionkey = default(string))
+        public PrivateStatus(string uuid = default(string), int onlinelevel = default(int), string customstatus = default(string), string focusedsession = default(string), List<string> sessions = default(List<string>), string host = default(string), string outputdevice = default(string), string version = default(string), string currenthosting = default(string), DateTime laststatus = default(DateTime), bool ismobile = default(bool), string versionkey = default(string))
         {
             this.Uuid = uuid;
             this.Onlinelevel = onlinelevel;
@@ -58,9 +56,7 @@ namespace Org.OpenAPITools.Model
             this.Host = host;
             this.Outputdevice = outputdevice;
             this.Version = version;
-            this.Currentsessionhidden = currentsessionhidden;
             this.Currenthosting = currenthosting;
-            this.Currentsessionaccesslevel = currentsessionaccesslevel;
             this.Laststatus = laststatus;
             this.Ismobile = ismobile;
             this.Versionkey = versionkey;
@@ -115,22 +111,10 @@ namespace Org.OpenAPITools.Model
         public string Version { get; set; }
 
         /// <summary>
-        /// Gets or Sets Currentsessionhidden
-        /// </summary>
-        [DataMember(Name = "currentsessionhidden", EmitDefaultValue = false)]
-        public bool Currentsessionhidden { get; set; }
-
-        /// <summary>
         /// Gets or Sets Currenthosting
         /// </summary>
         [DataMember(Name = "currenthosting", EmitDefaultValue = true)]
         public string Currenthosting { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Currentsessionaccesslevel
-        /// </summary>
-        [DataMember(Name = "currentsessionaccesslevel", EmitDefaultValue = false)]
-        public int Currentsessionaccesslevel { get; set; }
 
         /// <summary>
         /// Gets or Sets Laststatus
@@ -166,9 +150,7 @@ namespace Org.OpenAPITools.Model
             sb.Append("  Host: ").Append(Host).Append("\n");
             sb.Append("  Outputdevice: ").Append(Outputdevice).Append("\n");
             sb.Append("  Version: ").Append(Version).Append("\n");
-            sb.Append("  Currentsessionhidden: ").Append(Currentsessionhidden).Append("\n");
             sb.Append("  Currenthosting: ").Append(Currenthosting).Append("\n");
-            sb.Append("  Currentsessionaccesslevel: ").Append(Currentsessionaccesslevel).Append("\n");
             sb.Append("  Laststatus: ").Append(Laststatus).Append("\n");
             sb.Append("  Ismobile: ").Append(Ismobile).Append("\n");
             sb.Append("  Versionkey: ").Append(Versionkey).Append("\n");
@@ -247,17 +229,9 @@ namespace Org.OpenAPITools.Model
                     this.Version.Equals(input.Version))
                 ) && 
                 (
-                    this.Currentsessionhidden == input.Currentsessionhidden ||
-                    this.Currentsessionhidden.Equals(input.Currentsessionhidden)
-                ) && 
-                (
                     this.Currenthosting == input.Currenthosting ||
                     (this.Currenthosting != null &&
                     this.Currenthosting.Equals(input.Currenthosting))
-                ) && 
-                (
-                    this.Currentsessionaccesslevel == input.Currentsessionaccesslevel ||
-                    this.Currentsessionaccesslevel.Equals(input.Currentsessionaccesslevel)
                 ) && 
                 (
                     this.Laststatus == input.Laststatus ||
@@ -299,10 +273,8 @@ namespace Org.OpenAPITools.Model
                     hashCode = hashCode * 59 + this.Outputdevice.GetHashCode();
                 if (this.Version != null)
                     hashCode = hashCode * 59 + this.Version.GetHashCode();
-                hashCode = hashCode * 59 + this.Currentsessionhidden.GetHashCode();
                 if (this.Currenthosting != null)
                     hashCode = hashCode * 59 + this.Currenthosting.GetHashCode();
-                hashCode = hashCode * 59 + this.Currentsessionaccesslevel.GetHashCode();
                 if (this.Laststatus != null)
                     hashCode = hashCode * 59 + this.Laststatus.GetHashCode();
                 hashCode = hashCode * 59 + this.Ismobile.GetHashCode();

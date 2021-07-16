@@ -32,16 +32,6 @@ namespace Org.OpenAPITools.Model
     public partial class CreateSessionReq : IEquatable<CreateSessionReq>, IValidatableObject
     {
         /// <summary>
-        /// Gets or Sets Sessionstype
-        /// </summary>
-        [DataMember(Name = "sessionstype", EmitDefaultValue = false)]
-        public SessionsType Sessionstype { get; set; }
-        /// <summary>
-        /// Gets or Sets Accesslevel
-        /// </summary>
-        [DataMember(Name = "accesslevel", EmitDefaultValue = false)]
-        public AccessLevel Accesslevel { get; set; }
-        /// <summary>
         /// Initializes a new instance of the <see cref="CreateSessionReq" /> class.
         /// </summary>
         /// <param name="name">name.</param>
@@ -54,7 +44,7 @@ namespace Org.OpenAPITools.Model
         /// <param name="maxUsers">maxUsers.</param>
         /// <param name="mobilefriendly">mobilefriendly.</param>
         /// <param name="sessionconnection">sessionconnection.</param>
-        public CreateSessionReq(string name = default(string), string correspondingworlduuid = default(string), List<string> tags = default(List<string>), string thumbnailurl = default(string), SessionsType sessionstype = default(SessionsType), AccessLevel accesslevel = default(AccessLevel), bool eighteenandolder = default(bool), int maxUsers = default(int), bool mobilefriendly = default(bool), string sessionconnection = default(string))
+        public CreateSessionReq(string name = default(string), string correspondingworlduuid = default(string), List<string> tags = default(List<string>), string thumbnailurl = default(string), int? sessionstype = default(int?), int? accesslevel = default(int?), bool? eighteenandolder = default(bool?), int? maxUsers = default(int?), bool? mobilefriendly = default(bool?), string sessionconnection = default(string))
         {
             this.Name = name;
             this.Correspondingworlduuid = correspondingworlduuid;
@@ -93,22 +83,34 @@ namespace Org.OpenAPITools.Model
         public string Thumbnailurl { get; set; }
 
         /// <summary>
+        /// Gets or Sets Sessionstype
+        /// </summary>
+        [DataMember(Name = "sessionstype", EmitDefaultValue = true)]
+        public int? Sessionstype { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Accesslevel
+        /// </summary>
+        [DataMember(Name = "accesslevel", EmitDefaultValue = true)]
+        public int? Accesslevel { get; set; }
+
+        /// <summary>
         /// Gets or Sets Eighteenandolder
         /// </summary>
         [DataMember(Name = "eighteenandolder", EmitDefaultValue = true)]
-        public bool Eighteenandolder { get; set; }
+        public bool? Eighteenandolder { get; set; }
 
         /// <summary>
         /// Gets or Sets MaxUsers
         /// </summary>
         [DataMember(Name = "maxUsers", EmitDefaultValue = true)]
-        public int MaxUsers { get; set; }
+        public int? MaxUsers { get; set; }
 
         /// <summary>
         /// Gets or Sets Mobilefriendly
         /// </summary>
         [DataMember(Name = "mobilefriendly", EmitDefaultValue = true)]
-        public bool Mobilefriendly { get; set; }
+        public bool? Mobilefriendly { get; set; }
 
         /// <summary>
         /// Gets or Sets Sessionconnection
@@ -191,11 +193,13 @@ namespace Org.OpenAPITools.Model
                 ) && 
                 (
                     this.Sessionstype == input.Sessionstype ||
-                    this.Sessionstype.Equals(input.Sessionstype)
+                    (this.Sessionstype != null &&
+                    this.Sessionstype.Equals(input.Sessionstype))
                 ) && 
                 (
                     this.Accesslevel == input.Accesslevel ||
-                    this.Accesslevel.Equals(input.Accesslevel)
+                    (this.Accesslevel != null &&
+                    this.Accesslevel.Equals(input.Accesslevel))
                 ) && 
                 (
                     this.Eighteenandolder == input.Eighteenandolder ||
@@ -236,8 +240,10 @@ namespace Org.OpenAPITools.Model
                     hashCode = hashCode * 59 + this.Tags.GetHashCode();
                 if (this.Thumbnailurl != null)
                     hashCode = hashCode * 59 + this.Thumbnailurl.GetHashCode();
-                hashCode = hashCode * 59 + this.Sessionstype.GetHashCode();
-                hashCode = hashCode * 59 + this.Accesslevel.GetHashCode();
+                if (this.Sessionstype != null)
+                    hashCode = hashCode * 59 + this.Sessionstype.GetHashCode();
+                if (this.Accesslevel != null)
+                    hashCode = hashCode * 59 + this.Accesslevel.GetHashCode();
                 if (this.Eighteenandolder != null)
                     hashCode = hashCode * 59 + this.Eighteenandolder.GetHashCode();
                 if (this.MaxUsers != null)

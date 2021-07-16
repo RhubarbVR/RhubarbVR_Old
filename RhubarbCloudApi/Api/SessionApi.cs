@@ -30,6 +30,26 @@ namespace Org.OpenAPITools.Api
         /// 
         /// </summary>
         /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
+        /// <param name="authorization">For Authenticating the user (optional)</param>
+        /// <returns>string</returns>
+        string SessionClosesessionGet(string uuid = default(string), string authorization = default(string));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
+        /// <param name="authorization">For Authenticating the user (optional)</param>
+        /// <returns>ApiResponse of string</returns>
+        ApiResponse<string> SessionClosesessionGetWithHttpInfo(string uuid = default(string), string authorization = default(string));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="createSessionReq"> (optional)</param>
         /// <param name="authorization">For Authenticating the user (optional)</param>
         /// <returns>string</returns>
@@ -96,9 +116,10 @@ namespace Org.OpenAPITools.Api
         /// 
         /// </summary>
         /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
         /// <param name="authorization">For Authenticating the user (optional)</param>
         /// <returns>string</returns>
-        string SessionUpdatefocusStateGet(string authorization = default(string));
+        string SessionLeavesessionGet(string uuid = default(string), string authorization = default(string));
 
         /// <summary>
         /// 
@@ -107,9 +128,10 @@ namespace Org.OpenAPITools.Api
         /// 
         /// </remarks>
         /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
         /// <param name="authorization">For Authenticating the user (optional)</param>
         /// <returns>ApiResponse of string</returns>
-        ApiResponse<string> SessionUpdatefocusStateGetWithHttpInfo(string authorization = default(string));
+        ApiResponse<string> SessionLeavesessionGetWithHttpInfo(string uuid = default(string), string authorization = default(string));
         /// <summary>
         /// 
         /// </summary>
@@ -141,6 +163,31 @@ namespace Org.OpenAPITools.Api
     public interface ISessionApiAsync : IApiAccessor
     {
         #region Asynchronous Operations
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
+        /// <param name="authorization">For Authenticating the user (optional)</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of string</returns>
+        System.Threading.Tasks.Task<string> SessionClosesessionGetAsync(string uuid = default(string), string authorization = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
+        /// <param name="authorization">For Authenticating the user (optional)</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of ApiResponse (string)</returns>
+        System.Threading.Tasks.Task<ApiResponse<string>> SessionClosesessionGetWithHttpInfoAsync(string uuid = default(string), string authorization = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
         /// <summary>
         /// 
         /// </summary>
@@ -229,10 +276,11 @@ namespace Org.OpenAPITools.Api
         /// 
         /// </remarks>
         /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
         /// <param name="authorization">For Authenticating the user (optional)</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of string</returns>
-        System.Threading.Tasks.Task<string> SessionUpdatefocusStateGetAsync(string authorization = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<string> SessionLeavesessionGetAsync(string uuid = default(string), string authorization = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <summary>
         /// 
@@ -241,10 +289,11 @@ namespace Org.OpenAPITools.Api
         /// 
         /// </remarks>
         /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
         /// <param name="authorization">For Authenticating the user (optional)</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of ApiResponse (string)</returns>
-        System.Threading.Tasks.Task<ApiResponse<string>> SessionUpdatefocusStateGetWithHttpInfoAsync(string authorization = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ApiResponse<string>> SessionLeavesessionGetWithHttpInfoAsync(string uuid = default(string), string authorization = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
         /// <summary>
         /// 
         /// </summary>
@@ -390,6 +439,135 @@ namespace Org.OpenAPITools.Api
                 return _exceptionFactory;
             }
             set { _exceptionFactory = value; }
+        }
+
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
+        /// <param name="authorization">For Authenticating the user (optional)</param>
+        /// <returns>string</returns>
+        public string SessionClosesessionGet(string uuid = default(string), string authorization = default(string))
+        {
+            Org.OpenAPITools.Client.ApiResponse<string> localVarResponse = SessionClosesessionGetWithHttpInfo(uuid, authorization);
+            return localVarResponse.Data;
+        }
+
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
+        /// <param name="authorization">For Authenticating the user (optional)</param>
+        /// <returns>ApiResponse of string</returns>
+        public Org.OpenAPITools.Client.ApiResponse<string> SessionClosesessionGetWithHttpInfo(string uuid = default(string), string authorization = default(string))
+        {
+            Org.OpenAPITools.Client.RequestOptions localVarRequestOptions = new Org.OpenAPITools.Client.RequestOptions();
+
+            String[] _contentTypes = new String[] {
+            };
+
+            // to determine the Accept header
+            String[] _accepts = new String[] {
+                "text/plain",
+                "application/json",
+                "text/json"
+            };
+
+            var localVarContentType = Org.OpenAPITools.Client.ClientUtils.SelectHeaderContentType(_contentTypes);
+            if (localVarContentType != null) localVarRequestOptions.HeaderParameters.Add("Content-Type", localVarContentType);
+
+            var localVarAccept = Org.OpenAPITools.Client.ClientUtils.SelectHeaderAccept(_accepts);
+            if (localVarAccept != null) localVarRequestOptions.HeaderParameters.Add("Accept", localVarAccept);
+
+            if (uuid != null)
+            {
+                localVarRequestOptions.QueryParameters.Add(Org.OpenAPITools.Client.ClientUtils.ParameterToMultiMap("", "uuid", uuid));
+            }
+            if (authorization != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Authorization", Org.OpenAPITools.Client.ClientUtils.ParameterToString(authorization)); // header parameter
+            }
+
+
+            // make the HTTP request
+            var localVarResponse = this.Client.Get<string>("/Session/closesession", localVarRequestOptions, this.Configuration);
+
+            if (this.ExceptionFactory != null)
+            {
+                Exception _exception = this.ExceptionFactory("SessionClosesessionGet", localVarResponse);
+                if (_exception != null) throw _exception;
+            }
+
+            return localVarResponse;
+        }
+
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
+        /// <param name="authorization">For Authenticating the user (optional)</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of string</returns>
+        public async System.Threading.Tasks.Task<string> SessionClosesessionGetAsync(string uuid = default(string), string authorization = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            Org.OpenAPITools.Client.ApiResponse<string> localVarResponse = await SessionClosesessionGetWithHttpInfoAsync(uuid, authorization, cancellationToken).ConfigureAwait(false);
+            return localVarResponse.Data;
+        }
+
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
+        /// <param name="authorization">For Authenticating the user (optional)</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of ApiResponse (string)</returns>
+        public async System.Threading.Tasks.Task<Org.OpenAPITools.Client.ApiResponse<string>> SessionClosesessionGetWithHttpInfoAsync(string uuid = default(string), string authorization = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+
+            Org.OpenAPITools.Client.RequestOptions localVarRequestOptions = new Org.OpenAPITools.Client.RequestOptions();
+
+            String[] _contentTypes = new String[] {
+            };
+
+            // to determine the Accept header
+            String[] _accepts = new String[] {
+                "text/plain",
+                "application/json",
+                "text/json"
+            };
+
+
+            var localVarContentType = Org.OpenAPITools.Client.ClientUtils.SelectHeaderContentType(_contentTypes);
+            if (localVarContentType != null) localVarRequestOptions.HeaderParameters.Add("Content-Type", localVarContentType);
+
+            var localVarAccept = Org.OpenAPITools.Client.ClientUtils.SelectHeaderAccept(_accepts);
+            if (localVarAccept != null) localVarRequestOptions.HeaderParameters.Add("Accept", localVarAccept);
+
+            if (uuid != null)
+            {
+                localVarRequestOptions.QueryParameters.Add(Org.OpenAPITools.Client.ClientUtils.ParameterToMultiMap("", "uuid", uuid));
+            }
+            if (authorization != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Authorization", Org.OpenAPITools.Client.ClientUtils.ParameterToString(authorization)); // header parameter
+            }
+
+
+            // make the HTTP request
+
+            var localVarResponse = await this.AsynchronousClient.GetAsync<string>("/Session/closesession", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
+
+            if (this.ExceptionFactory != null)
+            {
+                Exception _exception = this.ExceptionFactory("SessionClosesessionGet", localVarResponse);
+                if (_exception != null) throw _exception;
+            }
+
+            return localVarResponse;
         }
 
         /// <summary>
@@ -819,11 +997,12 @@ namespace Org.OpenAPITools.Api
         ///  
         /// </summary>
         /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
         /// <param name="authorization">For Authenticating the user (optional)</param>
         /// <returns>string</returns>
-        public string SessionUpdatefocusStateGet(string authorization = default(string))
+        public string SessionLeavesessionGet(string uuid = default(string), string authorization = default(string))
         {
-            Org.OpenAPITools.Client.ApiResponse<string> localVarResponse = SessionUpdatefocusStateGetWithHttpInfo(authorization);
+            Org.OpenAPITools.Client.ApiResponse<string> localVarResponse = SessionLeavesessionGetWithHttpInfo(uuid, authorization);
             return localVarResponse.Data;
         }
 
@@ -831,9 +1010,10 @@ namespace Org.OpenAPITools.Api
         ///  
         /// </summary>
         /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
         /// <param name="authorization">For Authenticating the user (optional)</param>
         /// <returns>ApiResponse of string</returns>
-        public Org.OpenAPITools.Client.ApiResponse<string> SessionUpdatefocusStateGetWithHttpInfo(string authorization = default(string))
+        public Org.OpenAPITools.Client.ApiResponse<string> SessionLeavesessionGetWithHttpInfo(string uuid = default(string), string authorization = default(string))
         {
             Org.OpenAPITools.Client.RequestOptions localVarRequestOptions = new Org.OpenAPITools.Client.RequestOptions();
 
@@ -853,6 +1033,10 @@ namespace Org.OpenAPITools.Api
             var localVarAccept = Org.OpenAPITools.Client.ClientUtils.SelectHeaderAccept(_accepts);
             if (localVarAccept != null) localVarRequestOptions.HeaderParameters.Add("Accept", localVarAccept);
 
+            if (uuid != null)
+            {
+                localVarRequestOptions.QueryParameters.Add(Org.OpenAPITools.Client.ClientUtils.ParameterToMultiMap("", "uuid", uuid));
+            }
             if (authorization != null)
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", Org.OpenAPITools.Client.ClientUtils.ParameterToString(authorization)); // header parameter
@@ -860,11 +1044,11 @@ namespace Org.OpenAPITools.Api
 
 
             // make the HTTP request
-            var localVarResponse = this.Client.Get<string>("/Session/updatefocusState", localVarRequestOptions, this.Configuration);
+            var localVarResponse = this.Client.Get<string>("/Session/leavesession", localVarRequestOptions, this.Configuration);
 
             if (this.ExceptionFactory != null)
             {
-                Exception _exception = this.ExceptionFactory("SessionUpdatefocusStateGet", localVarResponse);
+                Exception _exception = this.ExceptionFactory("SessionLeavesessionGet", localVarResponse);
                 if (_exception != null) throw _exception;
             }
 
@@ -875,12 +1059,13 @@ namespace Org.OpenAPITools.Api
         ///  
         /// </summary>
         /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
         /// <param name="authorization">For Authenticating the user (optional)</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of string</returns>
-        public async System.Threading.Tasks.Task<string> SessionUpdatefocusStateGetAsync(string authorization = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public async System.Threading.Tasks.Task<string> SessionLeavesessionGetAsync(string uuid = default(string), string authorization = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            Org.OpenAPITools.Client.ApiResponse<string> localVarResponse = await SessionUpdatefocusStateGetWithHttpInfoAsync(authorization, cancellationToken).ConfigureAwait(false);
+            Org.OpenAPITools.Client.ApiResponse<string> localVarResponse = await SessionLeavesessionGetWithHttpInfoAsync(uuid, authorization, cancellationToken).ConfigureAwait(false);
             return localVarResponse.Data;
         }
 
@@ -888,10 +1073,11 @@ namespace Org.OpenAPITools.Api
         ///  
         /// </summary>
         /// <exception cref="Org.OpenAPITools.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="uuid"> (optional)</param>
         /// <param name="authorization">For Authenticating the user (optional)</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of ApiResponse (string)</returns>
-        public async System.Threading.Tasks.Task<Org.OpenAPITools.Client.ApiResponse<string>> SessionUpdatefocusStateGetWithHttpInfoAsync(string authorization = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public async System.Threading.Tasks.Task<Org.OpenAPITools.Client.ApiResponse<string>> SessionLeavesessionGetWithHttpInfoAsync(string uuid = default(string), string authorization = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
 
             Org.OpenAPITools.Client.RequestOptions localVarRequestOptions = new Org.OpenAPITools.Client.RequestOptions();
@@ -913,6 +1099,10 @@ namespace Org.OpenAPITools.Api
             var localVarAccept = Org.OpenAPITools.Client.ClientUtils.SelectHeaderAccept(_accepts);
             if (localVarAccept != null) localVarRequestOptions.HeaderParameters.Add("Accept", localVarAccept);
 
+            if (uuid != null)
+            {
+                localVarRequestOptions.QueryParameters.Add(Org.OpenAPITools.Client.ClientUtils.ParameterToMultiMap("", "uuid", uuid));
+            }
             if (authorization != null)
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", Org.OpenAPITools.Client.ClientUtils.ParameterToString(authorization)); // header parameter
@@ -921,11 +1111,11 @@ namespace Org.OpenAPITools.Api
 
             // make the HTTP request
 
-            var localVarResponse = await this.AsynchronousClient.GetAsync<string>("/Session/updatefocusState", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
+            var localVarResponse = await this.AsynchronousClient.GetAsync<string>("/Session/leavesession", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
 
             if (this.ExceptionFactory != null)
             {
-                Exception _exception = this.ExceptionFactory("SessionUpdatefocusStateGet", localVarResponse);
+                Exception _exception = this.ExceptionFactory("SessionLeavesessionGet", localVarResponse);
                 if (_exception != null) throw _exception;
             }
 
