@@ -47,11 +47,21 @@ namespace RhubarbEngine.World
             }
         }
 
-
-
+        public override void onLoaded()
+        {
+            base.onLoaded();
+            if(base.target == null)
+            {
+                return;
+            }
+            base.target.onLoadedCall += loadedCall;
+            if (base.target.loaded)
+            {
+                loadedCall(base.target.value);
+            }
+        }
         public AssetRef(IWorldObject _parent,bool newrefid = true) : base(_parent, newrefid)
         {
-
         }
     }
 }

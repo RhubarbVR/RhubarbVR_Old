@@ -160,15 +160,29 @@ namespace RhubarbEngine.World
                     }
                     else
                     {
+                        DataNode<ulong> val = (DataNode<ulong>)dataNodeGroup.getValue("id");
                         try
                         {
-                            DataNode<ulong> val = (DataNode<ulong>)dataNodeGroup.getValue("id");
                             var member = (ISyncMember)getWorldObj(new NetPointer(val.Value));
                             member.ReceiveData((DataNodeGroup)dataNodeGroup.getValue("data"), fromPeer);
                         }
                         catch
                         {
-
+                            if(deliveryMethod != DeliveryMethod.Unreliable)
+                            {
+                                if (unassignedValues.ContainsKey(val.Value))
+                                {
+                                    unassignedValues[val.Value].Add(((DataNodeGroup)dataNodeGroup.getValue("data"), DateTime.UtcNow, fromPeer));
+                                }
+                                else
+                                {
+                                    List<(DataNodeGroup, DateTime, NetPeer)> saveobjs = new List<(DataNodeGroup, DateTime, NetPeer)>();
+                                    saveobjs.Add(((DataNodeGroup)dataNodeGroup.getValue("data"), DateTime.UtcNow, fromPeer));
+                                    unassignedValues.Add(val.Value, saveobjs);
+                                }
+                                
+                                
+                            }
                         }
                     }
                 }
@@ -504,11 +518,30 @@ namespace RhubarbEngine.World
 
         private Dictionary<NetPointer, IWorldObject> worldObjects = new Dictionary<NetPointer, IWorldObject>();
 
+        public Dictionary<ulong,List<(DataNodeGroup,DateTime,NetPeer)>> unassignedValues = new Dictionary<ulong, List<(DataNodeGroup, DateTime, NetPeer)>>();
+
         public void addWorldObj(IWorldObject obj)
         {
             try
             {
                 worldObjects.Add(obj.ReferenceID, obj);
+                if (unassignedValues.ContainsKey(obj.ReferenceID.id))
+                {
+                    try
+                    {
+                        var member = (ISyncMember)obj;
+                        foreach (var item in unassignedValues[obj.ReferenceID.id])
+                        {
+                            member.ReceiveData((DataNodeGroup)(item.Item1).getValue("data"), (item.Item3));
+                        }
+                        unassignedValues.Remove(obj.ReferenceID.id);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+
             }
             catch
             {
@@ -732,7 +765,7 @@ namespace RhubarbEngine.World
                     var data = System.IO.File.ReadAllBytes(path + templet + ".RWorld");
                     DataNodeGroup node = new DataNodeGroup(data);
                     List<Action> loadded = new List<Action>();
-                    deSerialize(node, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+                    deSerialize(node, loadded, true, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
                     foreach (Action item in loadded)
                     {
                         item?.Invoke();

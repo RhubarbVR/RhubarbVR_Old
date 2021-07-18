@@ -44,7 +44,12 @@ namespace RhubarbEngine.Components.Rendering
         private void loadMesh(RMesh mesh)
         {
             logger.Log("loaded mesh");
-            if (Mesh.Asset == null)
+            if(Mesh.target == null)
+            {
+                logger.Log("no mesh provider");
+                return;
+            }
+            if (Mesh.target.value == null)
             {
                 logger.Log("no mesh to load");
                 logger.Log($"{Mesh.value.getID()}");
@@ -177,6 +182,13 @@ namespace RhubarbEngine.Components.Rendering
         {
             if (!loaded)
             {
+                logger.Log($"mesh: {_meshPieces.Length > 0} main rs {_mainRS.Count > 0 } shadow {_shadowRS.Count > 0}");
+                logger.Log($"Mesh {Mesh.target != null}");
+                if(Mesh.target != null)
+                {
+                    loadMesh(null);
+                    loadMaterial(null);
+                }
                 return;
             }
             cl.UpdateBuffer(_wvpBuffer, 0, ubo);

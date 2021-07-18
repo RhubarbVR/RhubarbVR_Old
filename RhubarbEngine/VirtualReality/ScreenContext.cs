@@ -42,7 +42,15 @@ namespace RhubarbEngine.VirtualReality
 
         public override Matrix4x4 Headpos => headPos;
 
-        public Matrix4x4 headPos = Matrix4x4.CreateScale(1.0f) * Matrix4x4.CreateTranslation(new Vector3(0f, 1.7f, 0f));
+        private float HorizontalAngle;
+
+        private float VerticalAngle;
+
+        public float VerticalMin = -88f;
+
+        public float VerticalMax = 88f;
+
+        public Matrix4x4 headPos => Matrix4x4.CreateScale(1.0f) * Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(HorizontalAngle, 0,0) * Quaternion.CreateFromYawPitchRoll(0, VerticalAngle, 0)) * Matrix4x4.CreateTranslation(new Vector3(0f, 1.7f, 0f));
 
         private Engine _eng;
 
@@ -124,14 +132,12 @@ namespace RhubarbEngine.VirtualReality
 
         private Vector2 _mousePressedPos;
 
-        private float _moveSpeed = 10.0f;
-
         private bool _mousePressed = false;
 
 
         public void updateInput()
         {
-            Quaternion lookRotation = default;
+            Vector2 mouseDelta = default;
             if ((_eng.inputManager.mainWindows.GetMouseButton(MouseButton.Left) || _eng.inputManager.mainWindows.GetMouseButton(MouseButton.Right)))
             {
                 if (!_mousePressed)
@@ -141,11 +147,10 @@ namespace RhubarbEngine.VirtualReality
                     Sdl2Native.SDL_ShowCursor(0);
                     Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.mainWindow.window.SdlWindowHandle, true);
                 }
-                Vector2 mouseDelta = _mousePressedPos - _eng.inputManager.mainWindows.MousePosition;
-                Veldrid.Sdl2.Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
-                float Yaw = mouseDelta.X * 0.002f;
-                float Pitch = mouseDelta.Y * 0.002f;
-                lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
+                mouseDelta = _mousePressedPos - _eng.inputManager.mainWindows.MousePosition ;
+                Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
+                
+
             }
             else if (_mousePressed)
             {
@@ -154,10 +159,10 @@ namespace RhubarbEngine.VirtualReality
                 Sdl2Native.SDL_ShowCursor(1);
                 _mousePressed = false;
             }
-            if (lookRotation != default)
+            if(mouseDelta != default)
             {
-                Matrix4x4 addTo = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(lookRotation);
-                headPos = headPos * addTo;
+                HorizontalAngle += (mouseDelta.X * 0.002f);
+                VerticalAngle = Math.Clamp(VerticalAngle + (mouseDelta.Y * 0.002f), VerticalMin/90, VerticalMax/90);
             }
         }
 
@@ -167,6 +172,7 @@ namespace RhubarbEngine.VirtualReality
             {
                 return;
             }
+            updateInput();
             _mirrorTexture.Render(cl, fb, source);
         }
 

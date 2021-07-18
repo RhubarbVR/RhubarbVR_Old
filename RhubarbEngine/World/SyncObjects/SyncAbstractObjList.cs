@@ -42,14 +42,14 @@ namespace RhubarbEngine.World
             }
             return _synclist[_synclist.Count - 1];
         }
-        public T Add<L>( bool Refid = true) where L:Worker
+        public T Add<L>( bool Refid = true) where L:T
         {
             L val = (L)Activator.CreateInstance(typeof(L));
             val.initialize(this.world, this, Refid);
-            _synclist.Add(val as T);
+            _synclist.Add(val);
             if (Refid)
             {
-                netAdd(val as T);
+                netAdd(val);
             }
             return _synclist[_synclist.Count - 1];
         }
@@ -68,9 +68,10 @@ namespace RhubarbEngine.World
 
         private void netAdd(T val)
         {
+            logger.Log("Send Ab");
             DataNodeGroup send = new DataNodeGroup();
             send.setValue("Type", new DataNode<byte>(0));
-            DataNodeGroup tip = val.serialize();
+            DataNodeGroup tip = val.serialize(true);
             DataNodeGroup listobj = new DataNodeGroup();
             if (tip != null)
             {
@@ -79,7 +80,7 @@ namespace RhubarbEngine.World
             //Need To add Constant Type Strings for better compression 
             listobj.setValue("Type", new DataNode<string>(val.GetType().FullName));
             send.setValue("Data", listobj);
-            world.addToQueue(Net.ReliabilityLevel.Reliable, listobj, referenceID.id);
+            world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
         }
 
         private void netClear()
@@ -97,30 +98,38 @@ namespace RhubarbEngine.World
 
         public void ReceiveData(DataNodeGroup data, LiteNetLib.NetPeer peer)
         {
-            if(((DataNode<byte>)data.getValue("Type")).Value == 1)
+            try
             {
-                _synclist.Clear();
-            }
-            else
-            {
-                Type ty = Type.GetType(((DataNode<string>)((DataNodeGroup)data.getValue("Data")).getValue("Type")).Value);
-                if (ty == null)
+                if (((DataNode<byte>)data.getValue("Type")).Value == 1)
                 {
-                    world.worldManager.engine.logger.Log("Type not found" + ((DataNode<string>)((DataNodeGroup)data.getValue("Data")).getValue("Type")).Value, true);
+                    _synclist.Clear();
                 }
                 else
                 {
-                    T val = (T)Activator.CreateInstance(ty);
-                    val.initialize(this.world, this, false);
-                    List<Action> actions = new List<Action>();
-                    val.deSerialize((DataNodeGroup)((DataNodeGroup)data.getValue("Data")).getValue("Value"), actions, false);
-                    _synclist.Add(val);
-                    foreach (var item in actions)
+                    Type ty = Type.GetType(((DataNode<string>)((DataNodeGroup)data.getValue("Data")).getValue("Type")).Value);
+                    if (ty == null)
                     {
-                        item?.Invoke();
+                        logger.Log("Type not found" + ((DataNode<string>)((DataNodeGroup)data.getValue("Data")).getValue("Type")).Value, true);
+                    }
+                    else
+                    {
+                        T val = (T)Activator.CreateInstance(ty);
+                        val.initialize(this.world, this, false);
+                        List<Action> actions = new List<Action>();
+                        val.deSerialize((DataNodeGroup)((DataNodeGroup)data.getValue("Data")).getValue("Value"), actions, false);
+                        _synclist.Add(val);
+                        foreach (var item in actions)
+                        {
+                            item?.Invoke();
+                        }
                     }
                 }
+            }catch(Exception e)
+            {
+                logger.Log("Error With net sync ab e:"+e.ToString());
+
             }
+
         }
 
         public SyncAbstractObjList(World _world, IWorldObject _parent) : base(_world, _parent)

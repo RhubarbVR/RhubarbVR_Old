@@ -83,6 +83,27 @@ namespace RhubarbEngine.World
             }
         }
 
+        private NetPointer _netvalue
+        {
+            get
+            {
+                return targetRefID;
+            }
+            set
+            {
+                try
+                {
+                    targetRefID = value;
+                    _target = (T)world.getWorldObj(value);
+                }
+                catch
+                {
+                    _target = null;
+                }
+                onChangeInternal(this);
+            }
+        }
+
         public SyncRef()
         {
 
@@ -111,7 +132,7 @@ namespace RhubarbEngine.World
         }
 
         public void RefIDResign(ulong NewID) {
-            value = new NetPointer(NewID);
+            _netvalue = new NetPointer(NewID);
         }
 
         public override void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
@@ -121,7 +142,7 @@ namespace RhubarbEngine.World
                 world.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
                 return;
             }
-            value = ((DataNode<NetPointer>)data.getValue("targetRefID")).Value;
+            _netvalue = ((DataNode<NetPointer>)data.getValue("targetRefID")).Value;
             if (NewRefIDs)
             {
                 newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID(), referenceID.getID());
@@ -134,7 +155,7 @@ namespace RhubarbEngine.World
                 }
                 if (newRefID.ContainsKey(targetRefID.getID()))
                 {
-                    value = new NetPointer(newRefID[targetRefID.getID()]);
+                    _netvalue = new NetPointer(newRefID[targetRefID.getID()]);
                 }
                 else
                 {

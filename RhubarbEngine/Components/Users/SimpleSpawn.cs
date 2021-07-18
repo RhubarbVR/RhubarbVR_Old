@@ -58,6 +58,8 @@ namespace RhubarbEngine.Components.Users
                 rightcomp.userroot.target = userRoot;
                 Entity obj = world.worldManager.AddMesh<ArrowMesh>(left);
                 Entity obj2 = world.worldManager.AddMesh<ArrowMesh>(right);
+                Entity obj3 = world.worldManager.AddMesh<ArrowMesh>(head);
+
                 obj.scale.value = new Vector3f(0.2f);
                 obj2.scale.value = new Vector3f(0.2f);
                 obj.rotation.value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
