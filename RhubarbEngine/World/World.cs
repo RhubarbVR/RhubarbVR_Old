@@ -778,7 +778,7 @@ namespace RhubarbEngine.World
                 {
                     if (((IWorldObject)field.GetValue(this)) != null)
                     {
-                        obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize());
+                        obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize(netSave));
                     }
                 }
             }

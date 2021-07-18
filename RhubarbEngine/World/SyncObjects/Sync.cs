@@ -94,7 +94,7 @@ namespace RhubarbEngine.World
 
         }
 
-        public override DataNodeGroup serialize()
+        public override DataNodeGroup serialize(bool netsync = false)
         {
             DataNodeGroup obj = new DataNodeGroup();
             DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);

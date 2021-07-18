@@ -166,10 +166,10 @@ namespace RhubarbEngine.World
         {
             return typeof(IWorldObject).IsAssignableFrom(eye) && (eye != typeof(Entity));
         }
-        public virtual DataNodeGroup serialize() {
+        public virtual DataNodeGroup serialize(bool netsync = false) {
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             DataNodeGroup obj = null;
-            if (Persistent)
+            if (Persistent || netsync)
             {
                 obj = new DataNodeGroup();
                 foreach (var field in fields)
@@ -178,7 +178,7 @@ namespace RhubarbEngine.World
                     {
                         //This is for debug purposes 
                         //Console.WriteLine(field.FieldType.FullName + "Name: " + field.Name);
-                        obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize());
+                        obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize(netsync));
                     }
                 }
                 DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);

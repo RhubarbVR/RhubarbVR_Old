@@ -22,7 +22,7 @@ namespace RhubarbEngine.World
         bool IsPersistent { get; }
 
         bool IsRemoved { get; }
-        DataNodeGroup serialize();
+        DataNodeGroup serialize(bool netsync = false);
 
         void deSerialize( DataNodeGroup data , List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>));
 

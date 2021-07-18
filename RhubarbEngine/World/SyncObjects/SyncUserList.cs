@@ -90,7 +90,7 @@ namespace RhubarbEngine.World
         {
 
         }
-        public DataNodeGroup serialize()
+        public DataNodeGroup serialize(bool netsync = false)
         {
             DataNodeGroup obj = new DataNodeGroup();
             DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
@@ -98,7 +98,7 @@ namespace RhubarbEngine.World
             DataNodeList list = new DataNodeList();
             foreach (User val in _synclist)
             {
-                DataNodeGroup tip = val.serialize();
+                DataNodeGroup tip = val.serialize(netsync);
                 if (tip != null)
                 {
                     list.Add(tip);
