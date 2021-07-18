@@ -213,7 +213,14 @@ namespace RhubarbEngine.World
             else
             {
                 referenceID = ((DataNode<NetPointer>)data.getValue("referenceID")).Value;
-                world.addWorldObj(this);
+                if(referenceID.id == new NetPointer(0).id)
+                {
+                    logger.Log(this.GetType().FullName + " RefID null");
+                }
+                else
+                {
+                    world.addWorldObj(this);
+                }
             }
 
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);

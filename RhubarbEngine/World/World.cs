@@ -67,6 +67,7 @@ namespace RhubarbEngine.World
         public void joinsession(PrivateSession ps,string val)
         {
             waitingForInitSync = true;
+            worldObjects.Clear();
             foreach (var item in ps.Sessionconnections)
             {
                 if (item != val)
@@ -110,7 +111,7 @@ namespace RhubarbEngine.World
             clients.Add(client);
         }
 
-        public void LoadSelf() 
+        public void LoadSelf()
         {
             user = (byte)users.Count();
             users.Add().LoadFromPrivateUser(worldManager.engine.netApiManager.user);
@@ -433,7 +434,7 @@ namespace RhubarbEngine.World
 
         public Entity RootEntity { get; private set; }
 
-        public byte user = 0;
+        public byte user = 255;
 
         private Sync<int> _maxUsers;
 
@@ -653,7 +654,7 @@ namespace RhubarbEngine.World
         public Sync<bool> Eighteenandolder;
         [NoSave]
         public Sync<bool> Mobilefriendly;
-        public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false,DataNodeGroup datanode=null) : this(_worldManager)
+        public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false,DataNodeGroup datanode=null,bool networksession=false) : this(_worldManager)
         {
             Random random = new Random();
             posoffset = (byte)random.Next();
@@ -693,7 +694,7 @@ namespace RhubarbEngine.World
             }
             else
             {
-                loadHostUser();
+              loadHostUser();
             }
             if (datanode != null)
             {
@@ -708,6 +709,7 @@ namespace RhubarbEngine.World
 
         public void loadHostUser()
         {
+            user = 0;
             waitingForInitSync = false;
             users.Add().LoadFromPrivateUser(worldManager.engine.netApiManager.user);
             userLoaded = true;

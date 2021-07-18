@@ -10,6 +10,24 @@ namespace RhubarbEngine.World
 {
     public class User: Worker,IWorldObject
     {
+        public User()
+        {
+
+        }
+        public User(World _world, IWorldObject _parent) : base(_world, _parent)
+        {
+
+        }
+        public User(IWorldObject _parent) : base(_parent.World, _parent)
+        {
+
+        }
+
+        public User(IWorldObject _parent, bool newrefid = true) : base(_parent.World, _parent, newrefid)
+        {
+
+        }
+
         public SyncRef<UserRoot> userroot;
 
         public Sync<string> username;

@@ -77,11 +77,11 @@ namespace RhubarbEngine.World
                 a.initialize(this.world, this, false);
                 List<Action> actions = new List<Action>();
                 a.deSerialize((DataNodeGroup)data.getValue("Data"), actions, false);
+                _synclist.Add(a);
                 foreach (var item in actions)
                 {
                     item?.Invoke();
                 }
-                _synclist.Add(a);
             }
         }
 

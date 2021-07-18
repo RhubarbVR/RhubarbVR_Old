@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace RhubarbDataTypes
 {
     [MessagePackObject]
-    public struct NetPointer
+    public struct NetPointer: IEquatable<NetPointer>
     {
         [Key(0)]
         public ulong id;
@@ -28,5 +28,9 @@ namespace RhubarbDataTypes
             return new NetPointer(((position << 16)&0xFFFF0000) | ((((ulong)user) & 0xFF) << 8)|(position&0xFF));
         }
 
+        public bool Equals(NetPointer other)
+        {
+            return other.id == id;
+        }
     }
 }

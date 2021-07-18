@@ -150,7 +150,7 @@ namespace RhubarbEngine.World.Asset
                 string mainVertShader_Code = mainVertCode.getCode();
                 string shadowVertShader_Code = shadowVertCode.getCode();
 
-                log.Log("Comnpileing ShaderCode MainFragSgader: \n" + mainFragShader_Code + " ShadowFragSgader: \n" + shadowFragShader_Code + " MainVertexSgader: \n" + mainVertShader_Code + " ShadowVertexSgader: \n" + shadowVertShader_Code);
+               // log.Log("Comnpileing ShaderCode MainFragSgader: \n" + mainFragShader_Code + " ShadowFragSgader: \n" + shadowFragShader_Code + " MainVertexSgader: \n" + mainVertShader_Code + " ShadowVertexSgader: \n" + shadowVertShader_Code);
 
                 Shader[] mainshaders = gd.ResourceFactory.CreateFromSpirv(
                     createShaderDescription(ShaderStages.Vertex, mainVertShader_Code),

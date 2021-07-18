@@ -21,13 +21,22 @@ namespace RhubarbEngine.World.DataStructure
                 Dictionary<byte[], byte[]> keyValuePairs = new Dictionary<byte[], byte[]>();
                 foreach (var item in NodeGroup.Keys)
                 {
-
-                    byte type = (byte)Array.IndexOf(DatatNodeTools.dataNode, NodeGroup[item].GetType());
+                    int typeint = (byte)Array.IndexOf(DatatNodeTools.dataNode, NodeGroup[item].GetType());
+                    if(typeint == -1 || typeint >= DatatNodeTools.dataNode.Count())
+                    {
+                        throw new Exception("Error not Assinded Type " + NodeGroup[item].GetType().FullName);
+                    }
+                    byte type = (byte)typeint;
                     List<byte> e = new List<byte>(packer(item));
-                    e.Insert(0,type);
+                    e.Insert(0, type);
                     keyValuePairs.Add(e.ToArray(), NodeGroup[item].getByteArray());
                 }
-                return MessagePackSerializer.Serialize(keyValuePairs);
+                List<(byte[], byte[])> ps = new List<(byte[], byte[])>();
+                foreach (var item in keyValuePairs.Keys)
+                {
+                    ps.Add((item, keyValuePairs[item]));
+                }
+                return MessagePackSerializer.Serialize(ps.ToArray());
             }
             catch (Exception e)
             {
@@ -96,17 +105,32 @@ namespace RhubarbEngine.World.DataStructure
         public void setByteArray(byte[] arrBytes)
         {
             NodeGroup.Clear();
-            try {
-                Dictionary<byte[], byte[]>  data = MessagePackSerializer.Deserialize<Dictionary<byte[], byte[]>>(arrBytes);
+            try
+            {
+                (byte[], byte[])[] temp = MessagePackSerializer.Deserialize<(byte[], byte[])[]>(arrBytes);
+                Dictionary<byte[], byte[]> data = new Dictionary<byte[], byte[]>();
+                for (int i = 0; i < temp.Count(); i++)
+                {
+                    data.Add(temp[i].Item1, temp[i].Item2);
+                }
                 foreach (var item in data.Keys)
                 {
+
                     Type type = DatatNodeTools.dataNode[item[0]];
-                    IDataNode obj = (IDataNode)Activator.CreateInstance(type);
-                    obj.setByteArray(data[item]);
-                    List<byte> key = new List<byte>(item);
-                    key.RemoveAt(0);
-                    string keyval = unPacker(key.ToArray());
-                    NodeGroup.Add(keyval, obj);
+                    try
+                    {
+                        IDataNode obj = (IDataNode)Activator.CreateInstance(type);
+                        obj.setByteArray(data[item]);
+                        List<byte> key = new List<byte>(item);
+                        key.RemoveAt(0);
+                        string keyval = unPacker(key.ToArray());
+                        NodeGroup.Add(keyval, obj);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception("Problem in my code");
+                    }
+
                 }
             }
             catch (Exception e)

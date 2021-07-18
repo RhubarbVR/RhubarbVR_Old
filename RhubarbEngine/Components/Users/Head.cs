@@ -33,7 +33,10 @@ namespace RhubarbEngine.Components.Users
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
-
+            if(userroot.target == null)
+            {
+                return;
+            }
             if (userroot.target.user.target == world.localUser)
             {
                 Matrix4x4 val = engine.renderManager.vrContext.Headpos;

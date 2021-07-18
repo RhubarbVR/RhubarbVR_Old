@@ -77,7 +77,7 @@ namespace RhubarbEngine.Managers
             try
             {
                 Logger.Log("Joining session ID: " + uuid, true);
-                World.World world = new World.World(this, "Loading", 1);
+                World.World world = new World.World(this, "Loading", 1,false,false,null,true);
                 string ip = LiteNetLib.NetUtils.GetLocalIp(LiteNetLib.LocalAddrType.IPv4);
                 string conectionkey = ip + " _ " + world.port;
                 var join = engine.netApiManager.sessionApi.SessionJoinsessionGet(uuid, conectionkey, engine.netApiManager.token);

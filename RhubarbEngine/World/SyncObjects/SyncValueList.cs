@@ -41,7 +41,10 @@ namespace RhubarbEngine.World
             var val = new Sync<T>(this.world, this, Refid);
             _synclist.Add(val);
             val.Changed += Val_Changed;
-            netAdd(val);
+            if (Refid)
+            {
+                netAdd(val);
+            }
             return val;
         }
 

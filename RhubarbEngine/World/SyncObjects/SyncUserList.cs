@@ -10,6 +10,24 @@ namespace RhubarbEngine.World
 {
     public class SyncUserList : Worker, IWorldObject, ISyncMember
     {
+        public SyncUserList()
+        {
+
+        }
+        public SyncUserList(World _world, IWorldObject _parent) : base(_world, _parent)
+        {
+
+        }
+        public SyncUserList(IWorldObject _parent) : base(_parent.World, _parent)
+        {
+
+        }
+
+        public SyncUserList(IWorldObject _parent, bool newrefid = true) : base(_parent.World, _parent, newrefid)
+        {
+
+        }
+
         private List<User> _synclist = new List<User>();
 
         public User this[int i]
@@ -36,8 +54,11 @@ namespace RhubarbEngine.World
             User a = new User();
             a.initialize(this.world, this, Refid);
             _synclist.Add(a);
-            netAdd(a);
-            return _synclist[_synclist.Count - 1];
+            if (Refid)
+            {
+                netAdd(a);
+            }
+            return a;
         }
 
         public void Clear()
@@ -50,8 +71,8 @@ namespace RhubarbEngine.World
         {
             DataNodeGroup send = new DataNodeGroup();
             send.setValue("Type", new DataNode<byte>(0));
-            DataNodeGroup tip = val.serialize();
-            send.setValue("Data", tip);
+            DataNodeGroup tip = val.serialize(true);
+            send.setValue("Value", tip);
             world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
         }
 
@@ -73,23 +94,15 @@ namespace RhubarbEngine.World
                 User a = new User();
                 a.initialize(this.world, this, false);
                 List<Action> actions = new List<Action>();
-                a.deSerialize((DataNodeGroup)data.getValue("Data"), actions, false);
+                a.deSerialize(((DataNodeGroup)data.getValue("Value")), actions, false);
+                _synclist.Add(a);
                 foreach (var item in actions)
                 {
                     item?.Invoke();
                 }
-                _synclist.Add(a);
             }
         }
 
-        public SyncUserList(World _world, IWorldObject _parent) : base(_world, _parent)
-        {
-
-        }
-        public SyncUserList(IWorldObject _parent, bool refid = true) : base(_parent.World, _parent, refid)
-        {
-
-        }
         public DataNodeGroup serialize(bool netsync = false)
         {
             DataNodeGroup obj = new DataNodeGroup();
@@ -132,6 +145,7 @@ namespace RhubarbEngine.World
             }
             foreach (DataNodeGroup val in ((DataNodeList)data.getValue("list")))
             {
+
                 Add(NewRefIDs).deSerialize(val, onload, NewRefIDs, newRefID, latterResign);
             }
         }

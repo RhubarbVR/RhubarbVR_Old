@@ -37,6 +37,8 @@ namespace RhubarbEngine.World.DataStructure
                 typeof(DataNode<sbyte>),
                 //Generic System Types
                 typeof(DataNode<NetPointer>),
+                typeof(DataNode<DateTime>),
+                typeof(DataNode<byte[]>),
 
                 //List Types
                 typeof(DataNode<List<int>>),

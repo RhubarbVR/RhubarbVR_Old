@@ -45,7 +45,10 @@ namespace RhubarbEngine.World
             AssetRef<T> a = new AssetRef<T>(this, RefID);
             a.loadChange += onLoad;
             _syncreflist.Add(a);
-            netAdd(a);
+            if (RefID)
+            {
+                netAdd(a);
+            }
             return a;
         }
 
@@ -75,7 +78,6 @@ namespace RhubarbEngine.World
             {
                 AssetRef<T> a = new AssetRef<T>(this, false);
                 a.loadChange += onLoad;
-                a.initialize(world, this, false);
                 List<Action> actions = new List<Action>();
                 a.deSerialize((DataNodeGroup)data.getValue("Data"), actions, false);
                 foreach (var item in actions)

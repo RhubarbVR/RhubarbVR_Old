@@ -78,7 +78,7 @@ namespace RhubarbEngine.World
             }
             //Need To add Constant Type Strings for better compression 
             listobj.setValue("Type", new DataNode<string>(val.GetType().FullName));
-            send.setValue("data", listobj);
+            send.setValue("Data", listobj);
             world.addToQueue(Net.ReliabilityLevel.Reliable, listobj, referenceID.id);
         }
 
@@ -103,7 +103,7 @@ namespace RhubarbEngine.World
             }
             else
             {
-                Type ty = Type.GetType(((DataNode<string>)data.getValue("Type")).Value);
+                Type ty = Type.GetType(((DataNode<string>)((DataNodeGroup)data.getValue("Data")).getValue("Type")).Value);
                 if (ty == null)
                 {
                     world.worldManager.engine.logger.Log("Type not found" + ((DataNode<string>)((DataNodeGroup)data.getValue("Data")).getValue("Type")).Value, true);
@@ -113,12 +113,12 @@ namespace RhubarbEngine.World
                     T val = (T)Activator.CreateInstance(ty);
                     val.initialize(this.world, this, false);
                     List<Action> actions = new List<Action>();
-                    val.deSerialize((DataNodeGroup)data.getValue("Data"), actions, false);
+                    val.deSerialize((DataNodeGroup)((DataNodeGroup)data.getValue("Data")).getValue("Value"), actions, false);
+                    _synclist.Add(val);
                     foreach (var item in actions)
                     {
                         item?.Invoke();
                     }
-                    _synclist.Add(val);
                 }
             }
         }

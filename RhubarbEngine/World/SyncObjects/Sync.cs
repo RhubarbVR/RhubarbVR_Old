@@ -154,10 +154,12 @@ namespace RhubarbEngine.World
             if (typeof(T).IsEnum)
             {
                 _value = (T)(object)((DataNode<int>)data.getValue("Value")).Value;
+                onChangeInternal(this);
             }
             else
             {
                 _value = ((DataNode<T>)data.getValue("Value")).Value;
+                onChangeInternal(this);
             }
         }
     }
