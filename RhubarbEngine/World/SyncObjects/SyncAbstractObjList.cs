@@ -9,7 +9,7 @@ using RhubarbEngine.World.ECS;
 
 namespace RhubarbEngine.World
 {
-    public class SyncAbstractObjList<T> : Worker, IWorldObject where T : Worker
+    public class SyncAbstractObjList<T> : Worker, IWorldObject, ISyncMember where T : Worker
     {
         private List<T> _synclist = new List<T>();
 
@@ -36,6 +36,10 @@ namespace RhubarbEngine.World
         {
             val.initialize(this.world, this, Refid);
             _synclist.Add(val);
+            if (Refid)
+            {
+                netAdd(val);
+            }
             return _synclist[_synclist.Count - 1];
         }
         public T Add<L>( bool Refid = true) where L:Worker
@@ -43,6 +47,10 @@ namespace RhubarbEngine.World
             L val = (L)Activator.CreateInstance(typeof(L));
             val.initialize(this.world, this, Refid);
             _synclist.Add(val as T);
+            if (Refid)
+            {
+                netAdd(val as T);
+            }
             return _synclist[_synclist.Count - 1];
         }
 
@@ -51,12 +59,68 @@ namespace RhubarbEngine.World
             T val = (T)Activator.CreateInstance(type);
             val.initialize(this.world, this, Refid);
             _synclist.Add(val);
+            if (Refid)
+            {
+                netAdd(val);
+            }
             return _synclist[_synclist.Count - 1];
+        }
+
+        private void netAdd(T val)
+        {
+            DataNodeGroup send = new DataNodeGroup();
+            send.setValue("Type", new DataNode<byte>(0));
+            DataNodeGroup tip = val.serialize();
+            DataNodeGroup listobj = new DataNodeGroup();
+            if (tip != null)
+            {
+                listobj.setValue("Value", tip);
+            }
+            //Need To add Constant Type Strings for better compression 
+            listobj.setValue("Type", new DataNode<string>(val.GetType().FullName));
+            send.setValue("data", listobj);
+            world.addToQueue(Net.ReliabilityLevel.Reliable, listobj, referenceID.id);
+        }
+
+        private void netClear()
+        {
+            DataNodeGroup send = new DataNodeGroup();
+            send.setValue("Type", new DataNode<byte>(1));
+            world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
         }
 
         public void Clear()
         {
             _synclist.Clear();
+            netClear();
+        }
+
+        public void ReceiveData(DataNodeGroup data, LiteNetLib.NetPeer peer)
+        {
+            if(((DataNode<byte>)data.getValue("Type")).Value == 1)
+            {
+                _synclist.Clear();
+            }
+            else
+            {
+                Type ty = Type.GetType(((DataNode<string>)data.getValue("Type")).Value);
+                if (ty == null)
+                {
+                    world.worldManager.engine.logger.Log("Type not found" + ((DataNode<string>)((DataNodeGroup)data.getValue("Data")).getValue("Type")).Value, true);
+                }
+                else
+                {
+                    T val = (T)Activator.CreateInstance(ty);
+                    val.initialize(this.world, this, false);
+                    List<Action> actions = new List<Action>();
+                    val.deSerialize((DataNodeGroup)data.getValue("Data"), actions, false);
+                    foreach (var item in actions)
+                    {
+                        item?.Invoke();
+                    }
+                    _synclist.Add(val);
+                }
+            }
         }
 
         public SyncAbstractObjList(World _world, IWorldObject _parent) : base(_world, _parent)
@@ -156,5 +220,7 @@ namespace RhubarbEngine.World
                 }
             }
         }
+
+
     }
 }

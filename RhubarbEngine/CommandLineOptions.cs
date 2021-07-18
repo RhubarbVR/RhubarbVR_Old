@@ -29,5 +29,8 @@ namespace RhubarbEngine
 
         [Option('t', "token", Required = false, HelpText = "Login Token")]
         public string token { get; set; }
+
+        [Option('j', "joinsession", Required = false, HelpText = "joinsessionID")]
+        public string sessionID { get; set; }
     }
 }

@@ -142,6 +142,12 @@ namespace RhubarbEngine.World
         {
 
         }
+
+        public virtual void onUserJoined(User user)
+        {
+
+        }
+
         public virtual void Dispose()
         {
             Removed();
@@ -168,7 +174,7 @@ namespace RhubarbEngine.World
                 obj = new DataNodeGroup();
                 foreach (var field in fields)
                 {
-                    if (isValidTypeToSave(field.FieldType) && (field.GetCustomAttributes(typeof(NoSaveAttribute),false).Length <= 0))
+                    if (isValidTypeToSave(field.FieldType) && (field.GetCustomAttributes(typeof(NoSaveAttribute),false).Length <= 0) && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))
                     {
                         //This is for debug purposes 
                         //Console.WriteLine(field.FieldType.FullName + "Name: " + field.Name);
@@ -213,7 +219,7 @@ namespace RhubarbEngine.World
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
             {
-                if (isValidTypeToSave(field.FieldType) && (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0))
+                if (isValidTypeToSave(field.FieldType) && (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))
                 {
                     if (((IWorldObject)field.GetValue(this)) == null)
                     {

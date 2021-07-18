@@ -8,17 +8,18 @@ namespace RhubarbEngine.World.ECS
 {
     public abstract class Component : Worker
     {
-        public Sync<int> updateOrder;
+        public Sync<bool> enabled;
 
-        [NoSaveAttribute]
+        [NoSync]
         private Entity _entity;
 
-        [NoSaveAttribute]
+        [NoSync]
         public Entity entity { get { return _entity; } }
 
         public override void inturnalSyncObjs(bool newRefIds)
         {
-            updateOrder = new Sync<int>(this, newRefIds);
+            enabled = new Sync<bool>(this, newRefIds);
+            enabled.value = true;
             _entity = (Entity)(parent.Parent);
             LoadToWorld();
         }

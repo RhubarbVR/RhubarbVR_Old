@@ -23,11 +23,70 @@ using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using Org.OpenAPITools.Model;
+using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
     public class World : IWorldObject
     {
+        [NoSave]
+        public SyncUserList users;
+
+        [NoSync]
+        public User localUser => getLocalUser();
+        [NoSync]
+        private User getLocalUser()
+        {
+            try
+            {
+                return users[user];
+            }
+            catch
+            {
+
+            }
+            return null;
+        }
+
+        [NoSync]
+        public User hostUser => getHostUser();
+        [NoSync]
+        private User getHostUser()
+        {
+            try
+            {
+                return users[0];
+            }
+            catch
+            {
+
+            }
+            return null;
+        }
+
+        public void joinsession(PrivateSession ps,string val)
+        {
+            waitingForInitSync = true;
+            foreach (var item in ps.Sessionconnections)
+            {
+                if (item != val)
+                {
+                    string ip = item.Split(" _ ")[0];
+                    string port = item.Split(" _ ")[1];
+                    startClient(ip, Int32.Parse(port));
+                }
+            }
+        }
+        private bool waitingForInitSync = false;
+
+        public List<NetData> NetQueue = new List<NetData>();
+
+        public void addToQueue(ReliabilityLevel _reliabilityLevel, DataNodeGroup _data, ulong _id)
+        {
+            var netdata = new NetData(_reliabilityLevel, _data, _id);
+            NetQueue.Add(netdata);
+        }
+
         public EventBasedNetListener listener;
 
         public EventBasedNetListener ClientListener;
@@ -36,7 +95,7 @@ namespace RhubarbEngine.World
 
         public int port;
 
-        public List<LiteNetLib.NetManager> clients;
+        public List<LiteNetLib.NetManager> clients = new List<LiteNetLib.NetManager>();
 
         public void exsepetConectionReq(ConnectionRequest req)
         {
@@ -47,63 +106,149 @@ namespace RhubarbEngine.World
         {
             LiteNetLib.NetManager client = new LiteNetLib.NetManager(listener);
             client.Start();
-            NetDataWriter writer = new NetDataWriter();
-            writer.Put(port);
-            //put key here
-            client.Connect(ip,_port,writer);
+            client.Connect(ip, _port, "");
+            clients.Add(client);
         }
+
+        public void LoadSelf() 
+        {
+            user = (byte)users.Count();
+            users.Add().LoadFromPrivateUser(worldManager.engine.netApiManager.user);
+            userLoaded = true;
+        }
+
+        public bool userLoaded = false;
 
         public void initializeNetWorker()
         {
             listener = new EventBasedNetListener();
             server = new LiteNetLib.NetManager(listener);
-            ClientListener = new EventBasedNetListener();
 
-            ClientListener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) =>
+            listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) =>
             {
-                
-                dataReader.Recycle();
-            };
+                byte[] vale = dataReader.GetBytesWithLength();
+                try
+                {
+                    DataNodeGroup dataNodeGroup = new DataNodeGroup(vale) ;
+                    if (waitingForInitSync)
+                    {
+                        if (((DataNode<string>)dataNodeGroup.getValue("responses")) != null)
+                        {
+                            if (((DataNode<string>)dataNodeGroup.getValue("responses")).Value == "WorldSync")
+                            {
+                                Logger.Log("Loading Start State");
+                                try
+                                {
+                                    DataNodeGroup node = ((DataNodeGroup)dataNodeGroup.getValue("data"));
+                                    List<Action> loadded = new List<Action>();
+                                    deSerialize(node, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+                                    LoadSelf();
+                                    foreach (Action item in loadded)
+                                    {
+                                        item?.Invoke();
+                                    }
+                                    waitingForInitSync = false;
+                                }
+                                catch (Exception e)
+                                {
+                                    Logger.Log("Failed To Load Start State Error" + e.ToString());
+                                }
+
+                            }
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            DataNode<ulong> val = (DataNode<ulong>)dataNodeGroup.getValue("id");
+                            var member = (ISyncMember)getWorldObj(new NetPointer(val.Value));
+                            member.ReceiveData((DataNodeGroup)dataNodeGroup.getValue("data"), fromPeer);
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                }
+                catch(Exception e)
+                {
+                    Logger.Log("Error With Net Reqwest Size: "+ vale.Length + " Error: "+ e.ToString(),true);
+                }
+                    dataReader.Recycle();
+                 
+                };
 
             listener.ConnectionRequestEvent += request =>
             {
                 Logger.Log("User Trying Connection");
-                if (server.ConnectedPeersCount < maxUsers)
-                {
-                    exsepetConectionReq(request);
-                }
-                else
-                {
-                    request.Reject();
-                }
+                exsepetConectionReq(request);
+
             };
             listener.PeerConnectedEvent += peer =>
             {
                 Logger.Log("We got connection");
-                NetDataWriter writer = new NetDataWriter();             
-                writer.Put("Hello client!");                               
-                peer.Send(writer, DeliveryMethod.ReliableOrdered);             
-            };
-
-        }
-        private void startServer(int _port = 9050)
-        {
-            try
-            {
-                server.Start(_port);
-                port = _port;
-            }
-            catch(Exception e)
-            {
-                if (_port <= 9090)
+                if (!waitingForInitSync)
                 {
-                    startServer(_port + 1);
+                    Logger.Log("Sent start state");
+                    DataNodeGroup send = new DataNodeGroup();
+                    send.setValue("responses", new DataNode<string>("WorldSync"));
+                    DataNodeGroup value = serialize(true);
+                    send.setValue("data", value);
+                    var val = new NetDataWriter(true);
+                    send.Serialize(val);
+                    peer.Send(val, DeliveryMethod.ReliableOrdered);
+                }
+            };
+        }
+
+        private void DropQ()
+        {
+            List<ulong> trains = new List<ulong>();
+            List<NetData> netData = new List<NetData>();
+            foreach (var item in NetQueue)
+            {
+                DataNodeGroup node = new DataNodeGroup();
+                node.setValue("data", item.data);
+                node.setValue("id", new DataNode<ulong>(item.id));
+                if (item.reliabilityLevel == ReliabilityLevel.LatestOnly || item.reliabilityLevel == ReliabilityLevel.Unreliable)
+                {
+                    if (!trains.Contains(item.id))
+                    {
+                        trains.Add(item.id);
+                        sendData(node, (item.reliabilityLevel == ReliabilityLevel.LatestOnly) ? DeliveryMethod.ReliableOrdered : DeliveryMethod.Unreliable);
+                    }
                 }
                 else
                 {
-                    throw;
+                    sendData(node, DeliveryMethod.ReliableOrdered);
+                }
+                netData.Add(item);
+            }
+            foreach (var item in netData)
+            {
+                NetQueue.Remove(item);
+            }
+        }
+
+        private void sendData(DataNodeGroup data,DeliveryMethod delivery)
+        {
+            if (!userspace && !local)
+            {
+                var val = new NetDataWriter(true);
+                data.Serialize(val);
+                server.SendToAll(val, delivery);
+                foreach (var item in clients)
+                {
+                    item.SendToAll(val, delivery);
                 }
             }
+        }
+
+        private void startServer()
+        {
+                server.Start();
+                port = server.LocalPort;
         }
         public Sync<Vector3f> Gravity;
 
@@ -240,8 +385,8 @@ namespace RhubarbEngine.World
         }
         public Matrix4x4 playerTrans => (userRoot != null)? userRoot.Viewpos : Matrix4x4.CreateScale(1f);
 
-        [NoSaveAttribute]
-        public UserRoot userRoot;
+        [NoSync]
+        public UserRoot userRoot => localUser?.userroot.target;
 
         public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
         {
@@ -406,33 +551,18 @@ namespace RhubarbEngine.World
         public void Update(DateTime startTime, DateTime Frame)
         {
             Simulation.Timestep(1 / 60f, ThreadDispatcher);
-            if (userRoot == null)
+            try
             {
-                Entity rootent = RootEntity.addChild();
-                userRoot = rootent.attachComponent<UserRoot>();
-                Entity head = rootent.addChild("Head");
-                head.attachComponent<Head>();
-                userRoot.Head.target = head;
-                Entity left = rootent.addChild("Left hand");
-                Entity right = rootent.addChild("Right hand");
-                userRoot.LeftHand.target = left;
-                userRoot.RightHand.target = right;
-                Hand leftcomp = left.attachComponent<Hand>();
-                leftcomp.creality.value = Input.Creality.Left;
-                Hand rightcomp = right.attachComponent<Hand>();
-                rightcomp.creality.value = Input.Creality.Right;
-                Entity obj = worldManager.AddMesh<ArrowMesh>(left);
-                Entity obj2 = worldManager.AddMesh<ArrowMesh>(right);
-                obj.scale.value = new Vector3f(0.2f);
-                obj2.scale.value = new Vector3f(0.2f);
-                obj.rotation.value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
-                obj2.rotation.value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
+                foreach (Entity obj in Entitys)
+                {
+                    obj.Update(startTime, Frame);
+                }
+            }
+            catch(Exception e)
+            {
+                Logger.Log("Failed To update Entity Error:" + e.ToString(), true);
+            }
 
-            }
-            foreach (Entity obj in Entitys)
-            {
-                obj.Update(startTime, Frame);
-            }
             foreach (IWorldObject val in worldObjects.Values)
             {
                 if (((Worker)val) != null)
@@ -440,7 +570,37 @@ namespace RhubarbEngine.World
                     ((Worker)val).onUpdate();
                 }
             }
+            netupdate();
         }
+
+
+        private void userJoined(User user)
+        {
+            foreach (IWorldObject val in worldObjects.Values)
+            {
+                if (((Worker)val) != null)
+                {
+                    ((Worker)val).onUserJoined(user);
+                }
+            }
+        }
+
+        private void netupdate()
+        {
+            if (server != null)
+            {
+                server.PollEvents();
+            }
+            foreach (var item in clients)
+            {
+                item.PollEvents();
+            }
+            if(NetQueue.Count != 0)
+            {
+                DropQ();
+            }
+        }
+
         public World(WorldManager _worldManager)
         {
             worldManager = _worldManager;
@@ -470,6 +630,7 @@ namespace RhubarbEngine.World
             AngularDamping.value = .03f;
             _maxUsers = new Sync<int>(this, this, !networkload);
             RootEntity = new Entity(this, !networkload);
+            users = new SyncUserList(this, !networkload);
             RootEntity.name.value = "Root";
             List<Action> loadded = new List<Action>();
             deSerialize(node, loadded, !networkload, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
@@ -492,10 +653,14 @@ namespace RhubarbEngine.World
         public Sync<bool> Eighteenandolder;
         [NoSave]
         public Sync<bool> Mobilefriendly;
-        public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false) : this(_worldManager)
+        public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false,DataNodeGroup datanode=null) : this(_worldManager)
         {
             Random random = new Random();
             posoffset = (byte)random.Next();
+            if(posoffset == 0)
+            {
+                posoffset = 1;
+            }
             SessionID = new Sync<string>(this, this);
             Name = new Sync<string>(this, this);
             Gravity = new Sync<Vector3f>(this, this);
@@ -518,16 +683,39 @@ namespace RhubarbEngine.World
             Thumbnailurl = new Sync<string>(this, this);
             Eighteenandolder = new Sync<bool>(this, this);
             Mobilefriendly = new Sync<bool>(this, this);
+            users = new SyncUserList(this, this);
             sessionsType.value = SessionsType.Casual;
             accessLevel.value = AccessLevel.Anyone;
-            if(!userspace && !local)
+            if (!userspace && !local)
             {
                 initializeNetWorker();
                 startServer();
             }
+            else
+            {
+                loadHostUser();
+            }
+            if (datanode != null)
+            {
+                List<Action> loadded = new List<Action>();
+                deSerialize(datanode, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+                foreach (Action item in loadded)
+                {
+                    item?.Invoke();
+                }
+            }
         }
 
-        public World(WorldManager _worldManager,SessionsType _sessionsType,AccessLevel _accessLevel, string _Name, int MaxUsers, string worlduuid, bool isOver, bool mobilefriendly,string templet) : this( _worldManager,  _Name,  MaxUsers,  false ,  false )
+        public void loadHostUser()
+        {
+            waitingForInitSync = false;
+            users.Add().LoadFromPrivateUser(worldManager.engine.netApiManager.user);
+            userLoaded = true;
+            userJoined(hostUser);
+        }
+
+
+        public World(WorldManager _worldManager,SessionsType _sessionsType,AccessLevel _accessLevel, string _Name, int MaxUsers, string worlduuid, bool isOver, bool mobilefriendly,string templet,DataNodeGroup datanode = null) : this( _worldManager,  _Name,  MaxUsers,  false ,  false )
         {
             sessionsType.value = _sessionsType;
             accessLevel.value = _accessLevel;
@@ -553,21 +741,40 @@ namespace RhubarbEngine.World
 
                 }
             }
+            else
+            {
+                if(datanode != null)
+                {
+                    List<Action> loadded = new List<Action>();
+                    deSerialize(datanode, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+                    foreach (Action item in loadded)
+                    {
+                        item?.Invoke();
+                    }
+                }
+            }
         }
 
         public NetPointer buildRefID()
         {
             position = position + posoffset;
-            return NetPointer.BuildID(position, user);
+            if(!worldObjects.ContainsKey(NetPointer.BuildID(position, user)))
+            {
+                return NetPointer.BuildID(position, user);
+            }
+            else
+            {
+                return buildRefID();
+            }
         }
 
-        public DataNodeGroup serialize()
+        public DataNodeGroup serialize(bool netSave = false)
         {
             FieldInfo[] fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             DataNodeGroup obj = new DataNodeGroup();
             foreach (var field in fields)
             {
-                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0))
+                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && !(!netSave && (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length > 0)) && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))
                 {
                     if (((IWorldObject)field.GetValue(this)) != null)
                     {
@@ -583,11 +790,17 @@ namespace RhubarbEngine.World
             FieldInfo[] fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
             {
-                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType)&& (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0))
+                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && !(NewRefIDs && (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length > 0)) && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))
                 {
                     if (((IWorldObject)field.GetValue(this)) != null)
                     {
-                        ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), onload,NewRefIDs, newRefID, latterResign);
+                        try
+                        {
+                            ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), onload, NewRefIDs, newRefID, latterResign);
+                        }catch(Exception e)
+                        {
+                            Logger.Log("Error Deserializeing on world Field name: " + field.Name + " Error:" + e.ToString(), true);
+                        }
                     }
                 }
             }
@@ -597,8 +810,9 @@ namespace RhubarbEngine.World
 
         }
 
-
-
-
+        public DataNodeGroup serialize()
+        {
+            return serialize(false);
+        }
     }
 }

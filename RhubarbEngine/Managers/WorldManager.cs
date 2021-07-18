@@ -16,6 +16,8 @@ using RhubarbEngine.Components.Assets;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using RhubarbEngine.Components.Rendering;
 using RhubarbEngine.Components.Color;
+using RhubarbEngine.Components.Users;
+
 using Org.OpenAPITools.Model;
 
 namespace RhubarbEngine.Managers
@@ -48,12 +50,13 @@ namespace RhubarbEngine.Managers
         {
             Logger.Log("Creating world", true);
             World.World world = new World.World(this, sessionsType, accessLevel, name, maxusers, worlduuid, isOver, mobilefriendly, templet);
-            string ip = LiteNetLib.NetUtils.GetLocalIp(LiteNetLib.LocalAddrType.All);
+            string ip = LiteNetLib.NetUtils.GetLocalIp(LiteNetLib.LocalAddrType.IPv4);
             string conectionkey = ip + " _ " + world.port;
             try
             {
                 string sessionid = engine.netApiManager.sessionApi.SessionCreatesessionPost(new CreateSessionReq(name, worlduuid, new List<string>(new[] { "" }), "", (int)sessionsType, (int)accessLevel, isOver, maxusers, mobilefriendly, conectionkey), engine.netApiManager.token);
                 world.SessionID.value = sessionid;
+                world.loadHostUser();
                 worlds.Add(world);
                 if (focus)
                 {
@@ -68,6 +71,29 @@ namespace RhubarbEngine.Managers
             }
 
         }
+
+        public void JoinSessionFromUUID(string uuid, bool focus = true)
+        {
+            try
+            {
+                Logger.Log("Joining session ID: " + uuid, true);
+                World.World world = new World.World(this, "Loading", 1);
+                string ip = LiteNetLib.NetUtils.GetLocalIp(LiteNetLib.LocalAddrType.IPv4);
+                string conectionkey = ip + " _ " + world.port;
+                var join = engine.netApiManager.sessionApi.SessionJoinsessionGet(uuid, conectionkey, engine.netApiManager.token);
+                world.SessionID.value = join.Uuid;
+                world.joinsession(join,conectionkey);
+                worlds.Add(world);
+            if (focus)
+            {
+                world.Focus = World.World.FocusLevel.Focused;
+            }
+        }
+            catch (Exception e)
+            {
+                Logger.Log("Create World Error"+e.ToString(), true);
+            }
+}
 
         public World.World loadWorldFromBytes(byte[] data)
         {
@@ -106,9 +132,10 @@ namespace RhubarbEngine.Managers
             {
                 try
                 {
-                    localWorld = loadWorldFromBytes(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
+                    DataNodeGroup node = new DataNodeGroup(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
+                    localWorld = new World.World(this, "LocalWorld", 16, false, true,node);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     dontSaveLocal = true;
                     Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
@@ -124,14 +151,21 @@ namespace RhubarbEngine.Managers
             localWorld.Focus = World.World.FocusLevel.Focused;
             worlds.Add(localWorld);
             focusedWorld = localWorld;
-
-            createNewWorld(AccessLevel.Anyone, SessionsType.Casual, "Faolan World", "", false, 16, false, "Basic");
+            if(engine.engineInitializer.session != null)
+            {
+                JoinSessionFromUUID(engine.engineInitializer.session, true);
+            }
+            else
+            {
+                createNewWorld(AccessLevel.Anyone, SessionsType.Casual, "Faolan World", "", false, 16, false, "Basic");
+            }
             return this;
         }
 
         public void BuildLocalWorld()
         {
             Entity e = localWorld.RootEntity.addChild("Gay");
+            localWorld.RootEntity.attachComponent<SimpleSpawn>();
             StaicMainShader shader = e.attachComponent<StaicMainShader>();
             RevolveMesh bmesh = e.attachComponent<RevolveMesh>();
             RMaterial mit = e.attachComponent<RMaterial>();

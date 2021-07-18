@@ -8,7 +8,7 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-    public class Sync<T> : Worker, DriveMember<T>, IWorldObject, ISyncMember
+    public class SyncStream<T> : UserStream, DriveMember<T>, IWorldObject, ISyncMember
     {
         public IDriver drivenFromobj;
         public NetPointer drivenFrom { get { return drivenFromobj.ReferenceID; } }
@@ -19,7 +19,7 @@ namespace RhubarbEngine.World
 
         public override void Removed()
         {
-            foreach(Driveable dev in driven)
+            foreach (Driveable dev in driven)
             {
                 dev.killDrive();
             }
@@ -81,15 +81,19 @@ namespace RhubarbEngine.World
                 Value = new DataNode<T>(_value);
             }
             obj.setValue("Value", Value);
-            world.addToQueue(Net.ReliabilityLevel.LatestOnly, obj, referenceID.id);
+            world.addToQueue(Net.ReliabilityLevel.Unreliable, obj, referenceID.id);
         }
-
-        public Sync(World _world, IWorldObject _parent,bool newref = true) : base(_world, _parent, newref)
+        public SyncStream()
         {
 
         }
 
-        public Sync(IWorldObject _parent, bool newref = true) : base(_parent.World, _parent,newref)
+        public SyncStream(World _world, IWorldObject _parent, bool newref = true) : base(_world, _parent, newref)
+        {
+
+        }
+
+        public SyncStream(IWorldObject _parent, bool newref = true) : base(_parent.World, _parent, newref)
         {
 
         }
@@ -102,13 +106,14 @@ namespace RhubarbEngine.World
             IDataNode Value;
             if (typeof(T).IsEnum)
             {
-               Value = new DataNode<int>((int)(object)_value);
+                Value = new DataNode<int>((int)(object)_value);
             }
             else
             {
-               Value = new DataNode<T>(_value);
+                Value = new DataNode<T>(_value);
             }
             obj.setValue("Value", Value);
+            obj.setValue("Name", name.serialize());
             return obj;
         }
 
@@ -141,15 +146,14 @@ namespace RhubarbEngine.World
             }
             else
             {
-                try
-                {
-                    _value = ((DataNode<T>)data.getValue("Value")).Value;
-                }
-                catch { }
+                _value = ((DataNode<T>)data.getValue("Value")).Value;
             }
+            DataNodeGroup dataNode = (DataNodeGroup)data.getValue("Name");
+            name.deSerialize(dataNode, onload, NewRefIDs, newRefID, latterResign);
+
         }
 
-        public void ReceiveData(DataNodeGroup data,LiteNetLib.NetPeer peer)
+        public void ReceiveData(DataNodeGroup data, LiteNetLib.NetPeer peer)
         {
             if (typeof(T).IsEnum)
             {

@@ -8,18 +8,18 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-    public class SyncObjList<T> : Worker, IWorldObject, ISyncMember where T : Worker, new()
+    public class SyncUserList : Worker, IWorldObject, ISyncMember
     {
-        private List<T> _synclist = new List<T>();
+        private List<User> _synclist = new List<User>();
 
-        public T this[int i]
+        public User this[int i]
         {
             get
             {
                 return _synclist[i];
             }
         }
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerator<User> GetEnumerator()
         {
             for (int i = 0; i < _synclist.Count; i++)
             {
@@ -31,15 +31,12 @@ namespace RhubarbEngine.World
             return _synclist.Count;
         }
 
-        public T Add(bool Refid = true)
+        public User Add(bool Refid = true)
         {
-            T a = new T();
+            User a = new User();
             a.initialize(this.world, this, Refid);
             _synclist.Add(a);
-            if (Refid)
-            {
-                netAdd(a);
-            }
+            netAdd(a);
             return _synclist[_synclist.Count - 1];
         }
 
@@ -49,7 +46,7 @@ namespace RhubarbEngine.World
             netClear();
         }
 
-        private void netAdd(T val)
+        private void netAdd(User val)
         {
             DataNodeGroup send = new DataNodeGroup();
             send.setValue("Type", new DataNode<byte>(0));
@@ -73,7 +70,7 @@ namespace RhubarbEngine.World
             }
             else
             {
-                T a = new T();
+                User a = new User();
                 a.initialize(this.world, this, false);
                 List<Action> actions = new List<Action>();
                 a.deSerialize((DataNodeGroup)data.getValue("Data"), actions, false);
@@ -85,11 +82,11 @@ namespace RhubarbEngine.World
             }
         }
 
-        public SyncObjList(World _world, IWorldObject _parent) : base(_world, _parent)
+        public SyncUserList(World _world, IWorldObject _parent) : base(_world, _parent)
         {
 
         }
-        public SyncObjList(IWorldObject _parent,bool refid=true) : base(_parent.World, _parent, refid)
+        public SyncUserList(IWorldObject _parent, bool refid = true) : base(_parent.World, _parent, refid)
         {
 
         }
@@ -99,7 +96,7 @@ namespace RhubarbEngine.World
             DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
             obj.setValue("referenceID", Refid);
             DataNodeList list = new DataNodeList();
-            foreach (T val in _synclist)
+            foreach (User val in _synclist)
             {
                 DataNodeGroup tip = val.serialize();
                 if (tip != null)
@@ -114,7 +111,7 @@ namespace RhubarbEngine.World
         {
             if (data == null)
             {
-                world.worldManager.engine.logger.Log("Node did not exsets When loading SyncObjList");
+                world.worldManager.engine.logger.Log("Node did not exsets When loading SyncUserList");
                 return;
             }
             if (NewRefIDs)
@@ -135,7 +132,7 @@ namespace RhubarbEngine.World
             }
             foreach (DataNodeGroup val in ((DataNodeList)data.getValue("list")))
             {
-                Add(NewRefIDs).deSerialize(val, onload,NewRefIDs, newRefID, latterResign);
+                Add(NewRefIDs).deSerialize(val, onload, NewRefIDs, newRefID, latterResign);
             }
         }
     }

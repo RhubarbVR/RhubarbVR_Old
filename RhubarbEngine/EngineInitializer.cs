@@ -82,6 +82,8 @@ namespace RhubarbEngine
 
         public string token;
 
+        public string session;
+
         public IEnumerable<string> settings = new string[] { };
 
         public void loadArguments(string[] _args)
@@ -116,6 +118,10 @@ namespace RhubarbEngine
                     if (o.token != null)
                     {
                         token = o.token;
+                    }
+                    if (o.sessionID != null)
+                    {
+                        session = o.sessionID;
                     }
                 });
         }

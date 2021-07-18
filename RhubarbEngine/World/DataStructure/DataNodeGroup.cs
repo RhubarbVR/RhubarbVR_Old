@@ -111,7 +111,7 @@ namespace RhubarbEngine.World.DataStructure
             }
             catch (Exception e)
             {
-                Console.WriteLine("Failed to deserialize. Group Reason: " + e.Message);
+                Logger.Log("Failed to deserialize. Group Reason: " + e.Message);
             }
         }
         public void Deserialize(NetDataReader reader)
@@ -120,7 +120,8 @@ namespace RhubarbEngine.World.DataStructure
         }
         public void Serialize(NetDataWriter writer)
         {
-            writer.Put(getByteArray());
+            byte[] value = getByteArray();
+            writer.PutBytesWithLength(value);
         }
 
         public DataNodeGroup()

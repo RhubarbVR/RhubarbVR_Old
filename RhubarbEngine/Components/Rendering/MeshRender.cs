@@ -157,12 +157,20 @@ namespace RhubarbEngine.Components.Rendering
         }
         public override void Render(GraphicsDevice gd, CommandList cl, UBO ubo)
         {
-            internalRender(gd, cl, ubo, false);
+            try
+            {
+                internalRender(gd, cl, ubo, false);
+            }
+            catch { }
         }
 
         public override void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo)
         {
+            try 
+            { 
             internalRender(gd, cl, ubo, true);
+            }
+            catch { }
         }
 
         public void internalRender(GraphicsDevice gd, CommandList cl, UBO ubo,bool shadow = false)

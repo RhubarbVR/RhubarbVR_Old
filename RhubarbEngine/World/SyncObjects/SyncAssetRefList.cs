@@ -9,7 +9,7 @@ using System.Collections;
 
 namespace RhubarbEngine.World
 {
-    public class SyncAssetRefList<T> : Worker, IWorldObject where T : IAsset
+    public class SyncAssetRefList<T> : Worker, IWorldObject, ISyncMember where T : IAsset
     {
         private List<AssetRef<T>> _syncreflist = new List<AssetRef<T>>();
 
@@ -45,12 +45,51 @@ namespace RhubarbEngine.World
             AssetRef<T> a = new AssetRef<T>(this, RefID);
             a.loadChange += onLoad;
             _syncreflist.Add(a);
+            netAdd(a);
             return a;
+        }
+
+        private void netAdd(AssetRef<T> val)
+        {
+            DataNodeGroup send = new DataNodeGroup();
+            send.setValue("Type", new DataNode<byte>(0));
+            DataNodeGroup tip = val.serialize();
+            send.setValue("Data", tip);
+            world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+        }
+
+        private void netClear()
+        {
+            DataNodeGroup send = new DataNodeGroup();
+            send.setValue("Type", new DataNode<byte>(1));
+            world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+        }
+
+        public void ReceiveData(DataNodeGroup data, LiteNetLib.NetPeer peer)
+        {
+            if (((DataNode<byte>)data.getValue("Type")).Value == 1)
+            {
+                _syncreflist.Clear();
+            }
+            else
+            {
+                AssetRef<T> a = new AssetRef<T>(this, false);
+                a.loadChange += onLoad;
+                a.initialize(world, this, false);
+                List<Action> actions = new List<Action>();
+                a.deSerialize((DataNodeGroup)data.getValue("Data"), actions, false);
+                foreach (var item in actions)
+                {
+                    item?.Invoke();
+                }
+                _syncreflist.Add(a);
+            }
         }
 
         public void Clear()
         {
             _syncreflist.Clear();
+            netClear();
         }
 
         public SyncAssetRefList(IWorldObject _parent,bool newref = true) : base(_parent.World, _parent, newref)

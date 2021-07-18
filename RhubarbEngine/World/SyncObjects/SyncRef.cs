@@ -8,7 +8,7 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-    public class SyncRef<T> : Worker, DriveMember<NetPointer> ,IWorldObject where T : class,IWorldObject
+    public class SyncRef<T> : Worker, DriveMember<NetPointer> ,IWorldObject, ISyncMember where T : class,IWorldObject
     {
         private NetPointer targetRefID;
 
@@ -33,11 +33,34 @@ namespace RhubarbEngine.World
                     return;
                 }
                 targetRefID = value.ReferenceID;
-
+                UpdateNetValue();
                 onChangeInternal(this);
             }
         }
 
+        private void UpdateNetValue()
+        {
+            if (!isDriven)
+            {
+                DataNodeGroup send = new DataNodeGroup();
+                send.setValue("Value", new DataNode<NetPointer>(targetRefID));
+                world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+            }
+        }
+        public void ReceiveData(DataNodeGroup data, LiteNetLib.NetPeer peer)
+        {
+            NetPointer thing = ((DataNode<NetPointer>)data.getValue("Value")).Value;
+            try
+            {
+                targetRefID = thing;
+                _target = (T)world.getWorldObj(thing);
+            }
+            catch
+            {
+                _target = null;
+            }
+            onChangeInternal(this);
+        }
         public NetPointer value
         {
             get
@@ -50,6 +73,7 @@ namespace RhubarbEngine.World
                 {
                     targetRefID = value;
                     _target = (T)world.getWorldObj(value);
+                    UpdateNetValue();
                 }
                 catch
                 {
@@ -59,7 +83,10 @@ namespace RhubarbEngine.World
             }
         }
 
+        public SyncRef()
+        {
 
+        }
         public SyncRef(World _world, IWorldObject _parent) : base(_world, _parent)
         {
 
@@ -164,6 +191,7 @@ namespace RhubarbEngine.World
             drivenFromobj = value;
             isDriven = true;
         }
+
 
     }
 }

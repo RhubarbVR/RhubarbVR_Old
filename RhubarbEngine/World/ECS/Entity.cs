@@ -206,7 +206,10 @@ namespace RhubarbEngine.World.ECS
         {
             foreach (Component comp in _components)
             {
-                comp.CommonUpdate( startTime, Frame);
+                if (comp.enabled.value)
+                {
+                    comp.CommonUpdate(startTime, Frame);
+                }
             }
         }
 

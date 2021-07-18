@@ -8,7 +8,7 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-    public class SyncValueList<T>: Worker, IWorldObject
+    public class SyncValueList<T>: Worker, IWorldObject, ISyncMember
     {
         private List<Sync<T>> _synclist = new List<Sync<T>>();
 
@@ -41,8 +41,48 @@ namespace RhubarbEngine.World
             var val = new Sync<T>(this.world, this, Refid);
             _synclist.Add(val);
             val.Changed += Val_Changed;
+            netAdd(val);
             return val;
         }
+
+
+        private void netAdd(Sync<T> val)
+        {
+            DataNodeGroup send = new DataNodeGroup();
+            send.setValue("Type", new DataNode<byte>(0));
+            DataNodeGroup tip = val.serialize();
+            send.setValue("Data", tip);
+            world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+        }
+
+        private void netClear()
+        {
+            DataNodeGroup send = new DataNodeGroup();
+            send.setValue("Type", new DataNode<byte>(1));
+            world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+        }
+
+
+        public void ReceiveData(DataNodeGroup data, LiteNetLib.NetPeer peer)
+        {
+            if (((DataNode<byte>)data.getValue("Type")).Value == 1)
+            {
+                _synclist.Clear();
+            }
+            else
+            {
+                Sync<T> a = new Sync<T>(this,false);
+                List<Action> actions = new List<Action>();
+                a.Changed += Val_Changed;
+                a.deSerialize((DataNodeGroup)data.getValue("Value"), actions, false);
+                foreach (var item in actions)
+                {
+                    item?.Invoke();
+                }
+                _synclist.Add(a);
+            }
+        }
+
 
         private void Val_Changed(IChangeable obj)
         {
@@ -52,6 +92,7 @@ namespace RhubarbEngine.World
         public void Clear()
         {
             _synclist.Clear();
+            netClear();
         }
         public SyncValueList(World _world, IWorldObject _parent) : base(_world, _parent)
         {
