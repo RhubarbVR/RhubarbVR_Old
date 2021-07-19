@@ -32,7 +32,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             Extent = new Sync<Vector3d>(this, newRefIds);
             Extent.value = Vector3d.One * 2;
             NoSharedVertices = new Sync<bool>(this, newRefIds);
-            NoSharedVertices.value = true;
+            NoSharedVertices.value = false;
         }
         public override void onChanged()
         {

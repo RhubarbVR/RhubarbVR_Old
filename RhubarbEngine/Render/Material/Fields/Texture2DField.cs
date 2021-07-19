@@ -30,6 +30,16 @@ namespace RhubarbEngine.Render.Material.Fields
             loadTextureView();
         }
 
+        private void SetResource(BindableResource res)
+        {
+            if(resource != res)
+            {
+                resource = res;
+                logger.Log("Trains");
+                rMaterial.ReloadBindableResources();
+            }
+        }
+
         unsafe public override void updateBuffer(GraphicsDevice gb)
         {
             if (resource != null)
@@ -48,22 +58,22 @@ namespace RhubarbEngine.Render.Material.Fields
                 {
                     if (field.Asset.view != null)
                     {
-                        logger.Log("Loaded Texture");
-                        resource = field.Asset.view;
+                        logger.Log("Trains Loaded Texture");
+                        SetResource(field.Asset.view);
                     }
                     else
                     {
-                        resource = engine.renderManager.nulview;
+                        SetResource(engine.renderManager.nulview);
                     }
                 }
                 else
                 {
-                    resource = engine.renderManager.nulview;
+                    SetResource(engine.renderManager.nulview);
                 }
             }
             else
             {
-                resource = engine.renderManager.nulview;
+                SetResource(engine.renderManager.nulview);
             }
 
         }

@@ -47,6 +47,16 @@ namespace RhubarbEngine.World
             }
         }
 
+        public override void Bind()
+        {
+            base.Bind();
+            target.onLoadedCall += loadedCall;
+            if (target.loaded)
+            {
+                loadedCall(target.value);
+            }
+        }
+
         public override NetPointer value
         {
             get

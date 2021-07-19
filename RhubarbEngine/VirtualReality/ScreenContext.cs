@@ -46,9 +46,9 @@ namespace RhubarbEngine.VirtualReality
 
         private float VerticalAngle;
 
-        public float VerticalMin = -88f;
+        public float VerticalMin = -90f;
 
-        public float VerticalMax = 88f;
+        public float VerticalMax = 90f;
 
         public Matrix4x4 headPos => Matrix4x4.CreateScale(1.0f) * Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(HorizontalAngle, 0,0) * Quaternion.CreateFromYawPitchRoll(0, VerticalAngle, 0)) * Matrix4x4.CreateTranslation(new Vector3(0f, 1.7f, 0f));
 

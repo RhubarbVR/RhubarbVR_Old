@@ -7,6 +7,8 @@ using RhubarbEngine.World.ECS;
 using RhubarbEngine.World;
 using RhubarbEngine.Render.Shader;
 using Veldrid;
+using RhubarbEngine.Components.Assets;
+
 namespace RhubarbEngine.Render.Material.Fields
 {
     public abstract class MaterialField:Worker
@@ -18,6 +20,9 @@ namespace RhubarbEngine.Render.Material.Fields
         public Sync<string> fieldName;
 
         public BindableResource resource;
+
+        [NoSync]
+        public RMaterial rMaterial => (RMaterial)parent.Parent;
 
         public override void onLoaded()
         {

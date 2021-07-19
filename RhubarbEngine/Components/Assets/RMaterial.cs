@@ -32,9 +32,16 @@ namespace RhubarbEngine.Components.Assets
     {
         public AssetRef<RShader> Shader;
 
+        public event Action<RMaterial> BindableResourcesReload;
+
         public List<ResourceLayoutElementDescription> resorses;
 
         public SyncAbstractObjList<MaterialField> Fields;
+
+        public void ReloadBindableResources()
+        {
+            BindableResourcesReload?.Invoke(this);
+        }
 
         public override void onLoaded()
         {

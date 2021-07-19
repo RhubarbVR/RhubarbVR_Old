@@ -68,7 +68,6 @@ namespace RhubarbEngine.World
 
         private void netAdd(T val)
         {
-            logger.Log("Send Ab");
             DataNodeGroup send = new DataNodeGroup();
             send.setValue("Type", new DataNode<byte>(0));
             DataNodeGroup tip = val.serialize(true);

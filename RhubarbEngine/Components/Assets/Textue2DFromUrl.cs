@@ -43,7 +43,7 @@ namespace RhubarbEngine.Components.Assets
         public override void buildSyncObjs(bool newRefIds)
         {
             Url = new Sync<string>(this, newRefIds);
-            Url.value = "https://cataas.com/cat/says/Base%20Url";
+            Url.value = "https://cataas.com/cat/says/Base%20Url%20For%20RhubarbVR";
             Url.Changed += UrlChanged;
         }
         private void UrlChanged(IChangeable val)

@@ -176,10 +176,10 @@ namespace RhubarbEngine.Managers
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;
 
-            mit.setValueAtField("Texture", Render.Shader.ShaderType.MainFrag, textue2DFromUrl);
+            //mit.setValueAtField("Texture", Render.Shader.ShaderType.MainFrag, textue2DFromUrl);
             
-            //Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-            //field.field.target = textue2DFromUrl;
+            Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+            field.field.target = textue2DFromUrl;
             //  rgbainbowDriver.driver.setDriveTarget(field.field);
             // rgbainbowDriver.speed.value = 50f;
 
@@ -197,15 +197,15 @@ namespace RhubarbEngine.Managers
             T bmesh = e.attachComponent<T>();
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
-            RGBRainbowDriver rgbainbowDriver = e.attachComponent<RGBRainbowDriver>();
+            //Textue2DFromUrl textue2DFromUrl = e.attachComponent<Textue2DFromUrl>();
 
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;
-            mit.setValueAtField("rambow", Render.Shader.ShaderType.MainFrag, Colorf.Blue);
-            Render.Material.Fields.ColorField field = mit.getField<Render.Material.Fields.ColorField>("rambow", Render.Shader.ShaderType.MainFrag);
-           // rgbainbowDriver.driver.setDriveTarget(field.field);
-           // rgbainbowDriver.speed.value = 50f;
+            //Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+            //field.field.target = textue2DFromUrl;
+            // rgbainbowDriver.driver.setDriveTarget(field.field);
+            // rgbainbowDriver.speed.value = 50f;
             return e;
         }
 

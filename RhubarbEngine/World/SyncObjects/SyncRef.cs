@@ -83,6 +83,11 @@ namespace RhubarbEngine.World
             }
         }
 
+        public virtual void Bind()
+        {
+
+        }
+
         private NetPointer _netvalue
         {
             get
@@ -95,6 +100,7 @@ namespace RhubarbEngine.World
                 {
                     targetRefID = value;
                     _target = (T)world.getWorldObj(value);
+                    Bind();
                 }
                 catch
                 {

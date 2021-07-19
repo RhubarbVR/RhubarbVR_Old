@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
 using System.Collections;
+using RhubarbEngine.World.Asset;
 
 namespace RhubarbEngine.World
 {
@@ -29,6 +30,20 @@ namespace RhubarbEngine.World
             {
                 yield return this[i].Asset;
             }
+        }
+
+        public int indexOf(AssetProvider<T> val)
+        {
+            int returnint = -1;
+            for (int i = 0; i < _syncreflist.Count; i++)
+            {
+                if (this[i].target == val)
+                {
+                    returnint = i;
+                    return returnint;
+                }
+            }
+            return returnint;
         }
 
 
