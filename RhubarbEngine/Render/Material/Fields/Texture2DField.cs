@@ -7,6 +7,8 @@ using RhubarbEngine.World;
 using RhubarbEngine.World.Asset;
 using Veldrid;
 using RhubarbDataTypes;
+using Veldrid.ImageSharp;
+using System.IO;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
@@ -24,33 +26,56 @@ namespace RhubarbEngine.Render.Material.Fields
         }
         public void assetChange(RTexture2D newAsset)
         {
-            resource = null;
-            isNull = false;
+            logger.Log("Texture asset change");
+            loadTextureView();
         }
 
         unsafe public override void updateBuffer(GraphicsDevice gb)
-        {
-
-        }
-
-        public unsafe override void createDeviceResource(ResourceFactory fact)
         {
             if (resource != null)
             {
                 return;
             }
-            if (field.Asset.view == null)
+            loadTextureView();
+        }
+
+        public void loadTextureView()
+        {
+            logger.Log("LoadTextureView");
+            if(field.target != null)
             {
-                field.Asset.createResource(fact);
-                if(field.Asset.view != null)
+                if(field.Asset != null)
                 {
-                    resource = field.Asset.view;
+                    if (field.Asset.view != null)
+                    {
+                        logger.Log("Loaded Texture");
+                        resource = field.Asset.view;
+                    }
+                    else
+                    {
+                        resource = engine.renderManager.nulview;
+                    }
                 }
                 else
                 {
-                    isNull = true;
+                    resource = engine.renderManager.nulview;
                 }
             }
+            else
+            {
+                resource = engine.renderManager.nulview;
+            }
+
+        }
+
+        public unsafe override void createDeviceResource(ResourceFactory fact)
+        {
+
+            if (resource != null)
+            {
+                return;
+            }
+            loadTextureView();
         }
     }
 }

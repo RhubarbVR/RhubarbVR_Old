@@ -11,9 +11,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="StaticAssets\nulltexture.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="WorldTemplets\Basic.RWorld">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="StaticAssets\" />
   </ItemGroup>
 
 </Project>

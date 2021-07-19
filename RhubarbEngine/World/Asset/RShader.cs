@@ -57,7 +57,7 @@ namespace RhubarbEngine.World.Asset
         }
         public void BuildCode()
         {
-            int loc = 1;
+            int loc = 2;
             string mvert = "";
             string mfrag = "";
             string svert = "";
@@ -106,6 +106,10 @@ namespace RhubarbEngine.World.Asset
             mainElements.Add(uboelement);
             shadowElements.Add(uboelement);
 
+            ResourceLayoutElementDescription Sampler = new ResourceLayoutElementDescription("Sampler", ResourceKind.Sampler, ShaderStages.Fragment);
+            mainElements.Add(Sampler);
+            shadowElements.Add(Sampler);
+
             foreach (ShaderUniform field in Fields)
             {
                 if ((int)field.shaderType <= 2)
@@ -117,6 +121,7 @@ namespace RhubarbEngine.World.Asset
                     shadowElements.Add(field.getResourceLayoutElementDescription());
                 }
             }
+
             main.Elements = mainElements.ToArray();
             mainresourceLayout = factory.CreateResourceLayout(main);
             disposable.Add(mainresourceLayout);
@@ -150,7 +155,7 @@ namespace RhubarbEngine.World.Asset
                 string mainVertShader_Code = mainVertCode.getCode();
                 string shadowVertShader_Code = shadowVertCode.getCode();
 
-               // log.Log("Comnpileing ShaderCode MainFragSgader: \n" + mainFragShader_Code + " ShadowFragSgader: \n" + shadowFragShader_Code + " MainVertexSgader: \n" + mainVertShader_Code + " ShadowVertexSgader: \n" + shadowVertShader_Code);
+                log.Log("Comnpileing ShaderCode MainFragSgader: \n" + mainFragShader_Code + " ShadowFragSgader: \n" + shadowFragShader_Code + " MainVertexSgader: \n" + mainVertShader_Code + " ShadowVertexSgader: \n" + shadowVertShader_Code);
 
                 Shader[] mainshaders = gd.ResourceFactory.CreateFromSpirv(
                     createShaderDescription(ShaderStages.Vertex, mainVertShader_Code),

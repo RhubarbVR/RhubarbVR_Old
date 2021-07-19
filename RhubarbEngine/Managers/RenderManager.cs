@@ -13,6 +13,7 @@ using RhubarbEngine.Render;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System.IO;
+using Veldrid.ImageSharp;
 
 namespace RhubarbEngine.Managers
 {
@@ -43,6 +44,8 @@ namespace RhubarbEngine.Managers
         public CommandList windowCL;
 
         public Skybox skybox;
+
+        public TextureView nulview;
 
         public MirrorTextureEyeSource eyeSource = MirrorTextureEyeSource.BothEyes;
         public IManager initialize(Engine _engine)
@@ -82,6 +85,8 @@ namespace RhubarbEngine.Managers
             windowCL = gd.ResourceFactory.CreateCommandList();
             eyesCL = gd.ResourceFactory.CreateCommandList();
             mainQueue = new RenderQueue();
+            var _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "nulltexture.jpg"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+            nulview = engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture);
             skybox = new Skybox(
     Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_ft.png")),
     Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_bk.png")),

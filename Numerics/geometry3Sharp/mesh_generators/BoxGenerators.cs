@@ -20,10 +20,11 @@ namespace g3
             triangles = new IndexArray3i(2 * 6);
 
             if ( NoSharedVertices == false ) {
+                Vector2f[] square_uv = new Vector2f[4] { Vector2f.Zero, new Vector2f(1, 0), new Vector2f(1, 1), new Vector2f(0, 1) };
                 for (int i = 0; i < 8; ++i) {
                     vertices[i] = Box.Corner(i);
                     normals[i] = (Vector3f) (vertices[i] - Box.Center[i]).Normalized;
-                    uv[i] = Vector2f.Zero;      // what to do for UVs in this case ?!?
+                    uv[i] = square_uv[i % 4];      // what to do for UVs in this case ?!?
                 }
                 int ti = 0;
                 for ( int fi = 0; fi < 6; ++fi ) {

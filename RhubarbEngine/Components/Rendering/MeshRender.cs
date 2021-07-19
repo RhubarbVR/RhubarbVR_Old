@@ -119,6 +119,7 @@ namespace RhubarbEngine.Components.Rendering
                         mainResourceSetDescription.Layout = mit.Shader.Asset.mainresourceLayout;
                         List<BindableResource> mainBoundResources = new List<BindableResource>();
                         mainBoundResources.Add(_wvpBuffer);
+                        mainBoundResources.Add(_gd.Aniso4xSampler);
                         mit.getBindableResources(mainBoundResources, false);
 
                         mainResourceSetDescription.BoundResources = mainBoundResources.ToArray();
@@ -131,6 +132,7 @@ namespace RhubarbEngine.Components.Rendering
                         shadowResourceSetDescription.Layout = mit.Shader.Asset.shadowresourceLayout;
                         List<BindableResource> shadowBoundResources = new List<BindableResource>();
                         shadowBoundResources.Add(_wvpBuffer);
+                        shadowBoundResources.Add(_gd.Aniso4xSampler);
                         mit.getBindableResources(shadowBoundResources, true);
 
                         shadowResourceSetDescription.BoundResources = shadowBoundResources.ToArray();

@@ -54,7 +54,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         {
             logger.Log("Update Mesh");
             MeshGenerator newmesh = _generator.Generate();
-            RMesh kite = new RMesh(newmesh.MakeSimpleMesh());
+            RMesh kite = new RMesh(newmesh.MakeDMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
             load(kite);
         }

@@ -44,33 +44,40 @@ namespace RhubarbEngine.Components.Assets
 
         public void getBindableResources(List<BindableResource> BindableResources,bool shadow=false)
         {
-            foreach(MaterialField field in Fields)
+            foreach(var field in Shader.Asset.Fields)
             {
+                var mitfield = getField<MaterialField>(field.fieldName, field.shaderType);
+                if(mitfield == null)
+                {
+                    createField(field.fieldName, field.shaderType, field.valueType);
+                    mitfield = getField<MaterialField>(field.fieldName, field.shaderType);
+                }
                 if (shadow)
                 {
-                    if ((int)field.shaderType.value > 2)
+                    if ((int)mitfield.shaderType.value > 2)
                     {
-                        if (field.resource == null)
+                        if (mitfield.resource == null)
                         {
+                            
                             throw new Exception($"resource is null shadow {shadow}");
                         }
                         else
                         {
-                            BindableResources.Add(field.resource);
+                            BindableResources.Add(mitfield.resource);
                         }
                     }
                 }
                 else
                 {
-                    if ((int)field.shaderType.value <= 2)
+                    if ((int)mitfield.shaderType.value <= 2)
                     {
-                        if (field.resource == null)
+                        if (mitfield.resource == null)
                         {
-                            throw new Exception($"resource is null shadow {shadow}");
+                            throw new Exception($"resource is null nonshadow {shadow}");
                         }
                         else
                         {
-                            BindableResources.Add(field.resource);
+                            BindableResources.Add(mitfield.resource);
                         }
                     }
                 }

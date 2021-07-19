@@ -20,6 +20,9 @@ namespace RhubarbEngine.Render.Shader
             string code = "";
             switch (valueType)
             {
+                case ShaderValueType.Val_texture2D:
+                    code = $"layout(set = 0, binding = {location}) uniform texture2D {fieldName}; \n";
+                    break;
                 case ShaderValueType.Val_color:
                     code = $"layout(set = 0, binding = {location}) uniform {valueType} {{ vec4 {fieldName}; }}; \n";
                     break;

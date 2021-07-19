@@ -157,7 +157,7 @@ namespace RhubarbEngine.Managers
             }
             else
             {
-                createNewWorld(AccessLevel.Anyone, SessionsType.Casual, "Faolan World", "", false, 16, false, "Basic");
+             //   createNewWorld(AccessLevel.Anyone, SessionsType.Casual, "Faolan World", "", false, 16, false, "Basic");
             }
             return this;
         }
@@ -170,15 +170,18 @@ namespace RhubarbEngine.Managers
             RevolveMesh bmesh = e.attachComponent<RevolveMesh>();
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
-            RGBRainbowDriver rgbainbowDriver = e.attachComponent<RGBRainbowDriver>();
+            Textue2DFromUrl textue2DFromUrl = e.attachComponent<Textue2DFromUrl>();
 
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;
-            mit.setValueAtField("rambow", Render.Shader.ShaderType.MainFrag, Colorf.Blue);
-            Render.Material.Fields.ColorField field = mit.getField<Render.Material.Fields.ColorField>("rambow", Render.Shader.ShaderType.MainFrag);
-            rgbainbowDriver.driver.setDriveTarget(field.field);
-            rgbainbowDriver.speed.value = 50f;
+
+            mit.setValueAtField("Texture", Render.Shader.ShaderType.MainFrag, textue2DFromUrl);
+            
+            //Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+            //field.field.target = textue2DFromUrl;
+            //  rgbainbowDriver.driver.setDriveTarget(field.field);
+            // rgbainbowDriver.speed.value = 50f;
 
             e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
             e.scale.value = new Vector3f(1f);
@@ -201,8 +204,8 @@ namespace RhubarbEngine.Managers
             meshRender.Mesh.target = bmesh;
             mit.setValueAtField("rambow", Render.Shader.ShaderType.MainFrag, Colorf.Blue);
             Render.Material.Fields.ColorField field = mit.getField<Render.Material.Fields.ColorField>("rambow", Render.Shader.ShaderType.MainFrag);
-            rgbainbowDriver.driver.setDriveTarget(field.field);
-            rgbainbowDriver.speed.value = 50f;
+           // rgbainbowDriver.driver.setDriveTarget(field.field);
+           // rgbainbowDriver.speed.value = 50f;
             return e;
         }
 

@@ -129,7 +129,7 @@ namespace RhubarbEngine.Components.Users
                     var userpos = temp.FindUserStream<SyncStream<Vector3f>>("UserPos");
                     var userrot = temp.FindUserStream<SyncStream<Quaternionf>>("UserRot");
                     var userscale = temp.FindUserStream<SyncStream<Vector3f>>("UserScale");
-
+                    logger.Log("PlayerUpdate");
                     try
                     {
                         Matrix4x4 value = Matrix4x4.CreateScale(userscale.value.ToSystemNumrics()) * Matrix4x4.CreateFromQuaternion(userrot.value.ToSystemNumric()) * Matrix4x4.CreateTranslation(userpos.value.ToSystemNumrics());

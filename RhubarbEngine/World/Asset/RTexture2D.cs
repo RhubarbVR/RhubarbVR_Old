@@ -24,18 +24,8 @@ namespace RhubarbEngine.World.Asset
 
         public TextureView view;
 
-        private Texture texture;
-
-        public virtual void createResource(ResourceFactory fact)
+        public void Dispose()
         {
-            if(texture == null)
-            {
-                return;
-            }
-            view = fact.CreateTextureView(texture);
-        }
-
-        public void Dispose() {
             foreach (IDisposable dep in disposables)
             {
                 dep.Dispose();
@@ -47,9 +37,9 @@ namespace RhubarbEngine.World.Asset
             disposables.Add(val);
         }
 
-        public RTexture2D(Texture e)
+        public RTexture2D(TextureView _view)
         {
-            texture = e;
+            view = _view;
         }
     }
 }

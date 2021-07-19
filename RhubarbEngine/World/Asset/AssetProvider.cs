@@ -23,9 +23,10 @@ namespace RhubarbEngine.World.Asset
 
         public void load(A data)
         {
+            logger.Log("Asset Loaded");
             _value = data;
-            onLoadedCall?.Invoke(data);
             loaded = (data != null);
+            onLoadedCall?.Invoke(data);
         }
 
         public bool loaded = false;

@@ -14,7 +14,7 @@ namespace RhubarbEngine.World
 
         private T _target;
 
-        public T target
+        public virtual T target
         {
             get
             {
@@ -61,7 +61,7 @@ namespace RhubarbEngine.World
             }
             onChangeInternal(this);
         }
-        public NetPointer value
+        public virtual NetPointer value
         {
             get
             {

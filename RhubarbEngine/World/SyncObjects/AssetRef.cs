@@ -30,7 +30,7 @@ namespace RhubarbEngine.World
             loadChange?.Invoke(newAsset);
         }
 
-        public AssetProvider<T> target
+        public override AssetProvider<T> target
         {
             get
             {
@@ -47,6 +47,22 @@ namespace RhubarbEngine.World
             }
         }
 
+        public override NetPointer value
+        {
+            get
+            {
+                return base.value;
+            }
+            set
+            {
+                base.value = value;
+                base.target.onLoadedCall += loadedCall;
+                if (base.target.loaded)
+                {
+                    loadedCall(base.target.value);
+                }
+            }
+        }
         public override void onLoaded()
         {
             base.onLoaded();

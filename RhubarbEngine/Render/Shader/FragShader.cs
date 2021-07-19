@@ -14,6 +14,7 @@ namespace RhubarbEngine.Render.Shader
             {
                 return @"
 #version 450
+layout(set = 0, binding = 1) uniform sampler Sampler;
 ";
             }
         }

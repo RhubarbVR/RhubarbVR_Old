@@ -54,8 +54,9 @@ namespace RhubarbEngine.World.Asset
                 IList<Vector2f> UV = new List<Vector2f>();
                 for (int i = 0; i < mesh.VertexCount; i++)
                 {
-                    Vertices.Add(mesh.GetVertex(i));
-                    UV.Add(mesh.GetVertexUV(i));
+                    var e = mesh.GetVertexAll(i);
+                    Vertices.Add(e.v);
+                    UV.Add(e.uv);
                 }
                 DeviceBuffer positions = CreateDeviceBuffer(_gd, Vertices.Select(v3 => new Vector3((float)v3.x, (float)v3.y, (float)v3.z)).ToArray(), BufferUsage.VertexBuffer);
                 DeviceBuffer texCoords = CreateDeviceBuffer(_gd,

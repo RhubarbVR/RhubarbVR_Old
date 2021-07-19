@@ -2,7 +2,7 @@
   "profiles": {
     "RhubarbVR": {
       "commandName": "Project",
-      "commandLineArgs": "-o Screen -verbose -j 37b7f99f-02b0-4fff-a471-abcffa09ef32"
+      "commandLineArgs": "-o Screen -verbose"
     },
     "WSL 2": {
       "commandName": "WSL2",

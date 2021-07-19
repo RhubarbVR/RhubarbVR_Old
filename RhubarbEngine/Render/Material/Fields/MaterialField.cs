@@ -19,8 +19,6 @@ namespace RhubarbEngine.Render.Material.Fields
 
         public BindableResource resource;
 
-        public bool isNull;
-
         public override void onLoaded()
         {
             base.onLoaded();
