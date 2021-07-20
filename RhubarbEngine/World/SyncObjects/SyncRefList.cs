@@ -11,7 +11,7 @@ namespace RhubarbEngine.World
     public class SyncRefList<T> : SyncObjList<SyncRef<T>>, IWorldObject where T : class, IWorldObject
     {
 
-        public SyncRefList(World _world, IWorldObject _parent) : base(_world, _parent)
+        public SyncRefList(IWorldObject _parent,bool newRef = true) : base( _parent, newRef)
         {
 
         }

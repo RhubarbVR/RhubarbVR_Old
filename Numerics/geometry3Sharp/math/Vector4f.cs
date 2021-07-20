@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Numerics;
 
 namespace g3
 {
@@ -17,6 +17,11 @@ namespace g3
         public float z;
         [Key(3)]
         public float w;
+
+        public Vector4 ToSystem()
+        {
+            return new Vector4(x, y, z, w);
+        }
 
         public Vector4f(float f) { x = y = z = w = f; }
         public Vector4f(float x, float y, float z, float w) { this.x = x; this.y = y; this.z = z; this.w = w; }

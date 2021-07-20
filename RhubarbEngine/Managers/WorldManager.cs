@@ -17,6 +17,7 @@ using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using RhubarbEngine.Components.Rendering;
 using RhubarbEngine.Components.Color;
 using RhubarbEngine.Components.Users;
+using RhubarbEngine.Components.ImGUI;
 
 using Org.OpenAPITools.Model;
 
@@ -167,11 +168,13 @@ namespace RhubarbEngine.Managers
             Entity e = localWorld.RootEntity.addChild("Gay");
             localWorld.RootEntity.attachComponent<SimpleSpawn>();
             StaicMainShader shader = e.attachComponent<StaicMainShader>();
-            RevolveMesh bmesh = e.attachComponent<RevolveMesh>();
+            BoxMesh bmesh = e.attachComponent<BoxMesh>();
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
-            Textue2DFromUrl textue2DFromUrl = e.attachComponent<Textue2DFromUrl>();
-
+            ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
+            ImGUIText imGUIText = e.attachComponent<ImGUIText>();
+            imGUIText.text.value = "Trains";
+            imGUICanvas.element.target = imGUIText;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;
@@ -179,15 +182,13 @@ namespace RhubarbEngine.Managers
             //mit.setValueAtField("Texture", Render.Shader.ShaderType.MainFrag, textue2DFromUrl);
             
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-            field.field.target = textue2DFromUrl;
+            field.field.target = imGUICanvas;
             //  rgbainbowDriver.driver.setDriveTarget(field.field);
             // rgbainbowDriver.speed.value = 50f;
 
-            e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
-            e.scale.value = new Vector3f(1f);
-            Entity ea = localWorld.RootEntity.addChild("Gayer");
-            ea.position.value = Vector3f.One;
-            AddMesh<BoxMesh>(ea);
+            //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
+            //e.scale.value = new Vector3f(1f);
+
         }
 
         public Entity AddMesh<T>(Entity ea) where T: ProceduralMesh

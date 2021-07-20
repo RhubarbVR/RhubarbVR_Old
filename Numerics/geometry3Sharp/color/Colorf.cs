@@ -21,6 +21,8 @@ namespace g3
         [Key(3)]
         public float a;
 
+
+
         public Colorf(float greylevel, float a = 1) { r = g = b = greylevel; this.a = a; }
         public Colorf(float r, float g, float b, float a = 1) { this.r = r; this.g = g; this.b = b; this.a = a; }
         public Colorf(int r, int g, int b, int a = 255)
@@ -52,7 +54,10 @@ namespace g3
             float a = (r - v2.r), b = (g - v2.g), c = (b - v2.b), d = (a - v2.a);
             return a * a + b * b + c * c + d * d;
         }
-
+        public Vector4f ToRGBA()
+        {
+            return new Vector4f(r, g, b,a);
+        }
         public Vector3f ToRGB()
         {
             return new Vector3f(r, g, b);
