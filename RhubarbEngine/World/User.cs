@@ -136,23 +136,28 @@ namespace RhubarbEngine.World
         }
         public void LoadFromPrivateUser(PrivateUser user)
         {
-            username.value = user.Username;
-            normalizedusername.value = user.Normalizedusername;
-            profileUrl.value = user.ProfileUrl;
-            favoriteColor.value = user.FavoriteColor;
-            verified.value = user.Verified;
-            identifier.value = user.Identifier;
-            uuid.value = user.Uuid;
-            creationDate.value = user.CreationDate;
-            banDate.value = user.BanDate;
-            tempbanDate.value = user.TempbanDate;
-            isAdmin.value = user.IsAdmin;
-            isAssistant.value = user.IsAssistant;
-            isLightMode.value = user.IsLightMode;
-            tags.Clear();
-            foreach (var item in user.Tags)
+            if (user == default || user == null) username.value = "anonymous";
+            else
             {
-                tags.Add().value = item;
+                username.value = user.Username;
+                normalizedusername.value = user.Normalizedusername;
+                profileUrl.value = user.ProfileUrl;
+                favoriteColor.value = user.FavoriteColor;
+                verified.value = user.Verified;
+                identifier.value = user.Identifier;
+                uuid.value = user.Uuid;
+                creationDate.value = user.CreationDate;
+                banDate.value = user.BanDate;
+                tempbanDate.value = user.TempbanDate;
+                isAdmin.value = user.IsAdmin;
+                isAssistant.value = user.IsAssistant;
+                isLightMode.value = user.IsLightMode;
+
+                tags.Clear();
+                foreach (var item in user.Tags)
+                {
+                    tags.Add().value = item;
+                }
             }
         }
     }
