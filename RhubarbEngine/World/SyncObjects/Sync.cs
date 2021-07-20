@@ -68,6 +68,8 @@ namespace RhubarbEngine.World
             }
         }
 
+        public T noneNullValue => (value == null) ? default : value;
+
         private void UpdateValue()
         {
             DataNodeGroup obj = new DataNodeGroup();

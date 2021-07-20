@@ -78,6 +78,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\ImGUI\Begin\" />
     <Folder Include="SteamVR\" />
   </ItemGroup>
 

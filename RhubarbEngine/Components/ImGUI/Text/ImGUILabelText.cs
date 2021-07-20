@@ -40,7 +40,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         public override void ImguiRender()
         {
-            ImGui.LabelText(label.value == null ? "" : label.value , text.value == null ? "" : text.value);
+            ImGui.LabelText(label.noneNullValue, text.noneNullValue);
         }
     }
 }

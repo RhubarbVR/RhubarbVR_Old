@@ -41,7 +41,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         public override void ImguiRender()
         {
-            if(ImGui.BeginMenu(label.value, Uienabled.value))
+            if(ImGui.BeginMenu(label.noneNullValue, Uienabled.value))
             {
                 foreach (var item in children)
                 {

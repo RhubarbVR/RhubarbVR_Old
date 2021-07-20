@@ -45,7 +45,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         public override void ImguiRender()
         {
-            if(ImGui.BeginCombo(label.value, preview.value, comboflag.value))
+            if(ImGui.BeginCombo(label.noneNullValue, preview.noneNullValue, comboflag.value))
             {
                 foreach (var item in children)
                 {
