@@ -17,31 +17,33 @@ namespace RhubarbEngine.Components.ImGUI
     
 
     [Category("ImGUI/Begin/Popup")]
-    public class ImGUIBeginPopup : UIWidgetList
+    public class ImGUIBeginPopupModal : UIWidgetList
     {
-
-        public Sync<string> id;
-
+        public Sync<string> name;
+        public Sync<bool> open;
         public Sync<ImGuiWindowFlags> windowflag;
 
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
-            id = new Sync<string>(this, newRefIds);
+            name = new Sync<string>(this, newRefIds);
             windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
+            windowflag.value = ImGuiWindowFlags.None;
         }
 
-        public ImGUIBeginPopup(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public ImGUIBeginPopupModal(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public ImGUIBeginPopup()
+        public ImGUIBeginPopupModal()
         {
         }
 
         public override void ImguiRender()
         {
-            if(ImGui.BeginPopup(id.noneNullValue,windowflag.value))
+            bool lopen = open.value;
+
+            if (ImGui.BeginPopupModal(name.noneNullValue,ref lopen, windowflag.value))
             {
                 foreach (var item in children)
                 {
@@ -49,9 +51,11 @@ namespace RhubarbEngine.Components.ImGUI
                 }
                 ImGui.EndPopup();
             }
-            
-
+            if (lopen != open.value)
+            {
+                open.value = lopen;
             }
+        }
         }
     }
 

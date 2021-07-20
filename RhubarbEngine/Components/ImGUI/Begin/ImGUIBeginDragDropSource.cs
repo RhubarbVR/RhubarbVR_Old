@@ -16,38 +16,33 @@ namespace RhubarbEngine.Components.ImGUI
 {
     
 
-    [Category("ImGUI/Begin/Popup")]
-    public class ImGUIBeginPopup : UIWidgetList
+    [Category("ImGUI/Begin")]
+    public class ImGUIBeginDragDropSource : UIWidgetList
     {
-
-        public Sync<string> id;
-
-        public Sync<ImGuiWindowFlags> windowflag;
 
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
-            id = new Sync<string>(this, newRefIds);
-            windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
+
         }
 
-        public ImGUIBeginPopup(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public ImGUIBeginDragDropSource(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public ImGUIBeginPopup()
+        public ImGUIBeginDragDropSource()
         {
         }
 
         public override void ImguiRender()
         {
-            if(ImGui.BeginPopup(id.noneNullValue,windowflag.value))
+            if (ImGui.BeginDragDropSource())
             {
                 foreach (var item in children)
                 {
                     item.target?.ImguiRender();
                 }
-                ImGui.EndPopup();
+                ImGui.EndDragDropSource();
             }
             
 

@@ -16,42 +16,36 @@ namespace RhubarbEngine.Components.ImGUI
 {
     
 
-    [Category("ImGUI/Begin/Popup")]
-    public class ImGUIBeginPopup : UIWidgetList
+    [Category("ImGUI/Interaction/Button")]
+    public class ImGUIArrowButton : UIWidget
     {
 
+        public Sync<ImGuiDir> imGuiDir;
         public Sync<string> id;
-
-        public Sync<ImGuiWindowFlags> windowflag;
-
+        public SyncDelegate action;
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
+            imGuiDir = new Sync<ImGuiDir>(this, newRefIds);
+            imGuiDir.value = ImGuiDir.None;
             id = new Sync<string>(this, newRefIds);
-            windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
+            action = new SyncDelegate(this, newRefIds);
         }
 
-        public ImGUIBeginPopup(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public ImGUIArrowButton(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public ImGUIBeginPopup()
+        public ImGUIArrowButton()
         {
         }
 
         public override void ImguiRender()
         {
-            if(ImGui.BeginPopup(id.noneNullValue,windowflag.value))
+            if (ImGui.ArrowButton(id.noneNullValue, imGuiDir.value))
             {
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender();
-                }
-                ImGui.EndPopup();
-            }
-            
-
+                action.Target?.Invoke();
             }
         }
     }
-
+}

@@ -16,36 +16,35 @@ namespace RhubarbEngine.Components.ImGUI
 {
     
 
-    [Category("ImGUI/Begin/Popup")]
-    public class ImGUIBeginPopupContextItem : UIWidgetList
+    [Category("ImGUI/Interaction/Button")]
+    public class ImGUIButton : UIWidget
     {
 
-
+        public Sync<Vector2f> size;
+        public Sync<string> label;
+        public SyncDelegate action;
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
-
+            size = new Sync<Vector2f>(this, newRefIds);
+            label = new Sync<string>(this, newRefIds);
+            action = new SyncDelegate(this, newRefIds);
         }
 
-        public ImGUIBeginPopupContextItem(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public ImGUIButton(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public ImGUIBeginPopupContextItem()
+        public ImGUIButton()
         {
         }
 
         public override void ImguiRender()
         {
-            if(ImGui.BeginPopupContextItem())
+            if(ImGui.Button(label.noneNullValue, new Vector2(size.value.x, size.value.y)))
             {
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender();
-                }
-                ImGui.EndPopup();
-            }
+                action.Target?.Invoke();
             }
         }
     }
-
+}

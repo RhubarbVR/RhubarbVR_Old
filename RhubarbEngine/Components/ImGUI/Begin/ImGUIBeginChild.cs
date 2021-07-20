@@ -45,7 +45,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         public override void ImguiRender()
         {
-            if(ImGui.BeginChild(id.noneNullValue, new Vector2(size.value.x, size.value.y), border.value, windowflag.value))
+            if (ImGui.BeginChild(id.noneNullValue, new Vector2(size.value.x, size.value.y), border.value, windowflag.value))
             {
                 foreach (var item in children)
                 {

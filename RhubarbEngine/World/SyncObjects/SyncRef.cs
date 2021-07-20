@@ -30,12 +30,20 @@ namespace RhubarbEngine.World
                 if (value == null)
                 {
                     targetRefID = default(NetPointer);
-                    return;
                 }
-                targetRefID = value.ReferenceID;
+                else
+                {
+                    targetRefID = value.ReferenceID;
+                }
                 UpdateNetValue();
+                Change();
                 onChangeInternal(this);
             }
+        }
+
+        public virtual void Change()
+        {
+
         }
 
         private void UpdateNetValue()
@@ -44,12 +52,25 @@ namespace RhubarbEngine.World
             {
                 DataNodeGroup send = new DataNodeGroup();
                 send.setValue("Value", new DataNode<NetPointer>(targetRefID));
+                UpdateNetIngect(send);
                 world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
             }
         }
+
+        public virtual void UpdateNetIngect(DataNodeGroup data)
+        {
+
+        }
+
+        public virtual void ReceiveDataIngect(DataNodeGroup data)
+        {
+
+        }
+
         public void ReceiveData(DataNodeGroup data, LiteNetLib.NetPeer peer)
         {
             NetPointer thing = ((DataNode<NetPointer>)data.getValue("Value")).Value;
+            ReceiveDataIngect(data);
             try
             {
                 targetRefID = thing;
@@ -134,6 +155,7 @@ namespace RhubarbEngine.World
             obj.setValue("referenceID", Refid);
             DataNode<NetPointer> Value = new DataNode<NetPointer>(targetRefID);
             obj.setValue("targetRefID", Value);
+            UpdateNetIngect(obj);
             return obj;
         }
 
@@ -149,6 +171,7 @@ namespace RhubarbEngine.World
                 return;
             }
             _netvalue = ((DataNode<NetPointer>)data.getValue("targetRefID")).Value;
+            ReceiveDataIngect(data);
             if (NewRefIDs)
             {
                 newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID(), referenceID.getID());
