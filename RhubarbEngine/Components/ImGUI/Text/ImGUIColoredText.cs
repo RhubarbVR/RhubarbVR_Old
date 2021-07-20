@@ -41,8 +41,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         public override void ImguiRender()
         {
-            if (text.value == null) return;
-            ImGui.TextColored(color.value.ToRGBA().ToSystem(),text.value);
+            ImGui.TextColored(color.value.ToRGBA().ToSystem(), text.value == null ? "" : text.value);
         }
     }
 }

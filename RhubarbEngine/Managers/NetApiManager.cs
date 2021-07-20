@@ -26,7 +26,7 @@ namespace RhubarbEngine.Managers
 
         public bool islogin = false;
 
-        public PrivateUser user;
+        public PrivateUser user = default;
 
         public PrivateStatus status = default;
 

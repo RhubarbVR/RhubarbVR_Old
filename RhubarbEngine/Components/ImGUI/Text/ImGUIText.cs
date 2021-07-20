@@ -51,29 +51,29 @@ namespace RhubarbEngine.Components.ImGUI
 
         public override void ImguiRender()
         {
-            if (text.value == null) return;
+            string value = text.value == null ? "" : text.value;
             switch (textType.value)
             {
                 case TextType.Normal:
-                    ImGui.Text(text.value);
+                    ImGui.Text(value);
                     break;
                 case TextType.Disabled:
-                    ImGui.TextDisabled(text.value);
+                    ImGui.TextDisabled(value);
                     break;
                 case TextType.Bullet:
-                    ImGui.BulletText(text.value);
+                    ImGui.BulletText(value);
                     break;
                 case TextType.Wrapped:
-                    ImGui.TextWrapped(text.value);
+                    ImGui.TextWrapped(value);
                     break;
                 case TextType.LogText:
-                    ImGui.LogText(text.value);
+                    ImGui.LogText(value);
                     break;
                 case TextType.CalcTextSize:
-                    ImGui.CalcTextSize(text.value);
+                    ImGui.CalcTextSize(value);
                     break;
                 default:
-                    ImGui.TextUnformatted(text.value);
+                    ImGui.TextUnformatted(value);
                     break;
             }
         }
