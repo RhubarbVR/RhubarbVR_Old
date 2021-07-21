@@ -68,7 +68,7 @@ namespace RhubarbEngine.World
             }
         }
 
-        public T noneNullValue => (value == null) ? default : value;
+        public T noneNullValue => value??default;
 
         private void UpdateValue()
         {

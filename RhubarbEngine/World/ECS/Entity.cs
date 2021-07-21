@@ -101,6 +101,8 @@ namespace RhubarbEngine.World.ECS
             cashedGlobalTrans = newtrans;
         }
 
+        public Action<Matrix4x4> GlobalTransformChange;
+
         public void setLocalTrans(Matrix4x4 newtrans)
         {
             Matrix4x4.Decompose(newtrans, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
@@ -155,6 +157,7 @@ namespace RhubarbEngine.World.ECS
             Matrix4x4 localMatrix = Matrix4x4.CreateScale(scale.value.x, scale.value.y, scale.value.z) * Matrix4x4.CreateFromQuaternion(new Quaternion(rotation.value.x, rotation.value.y, rotation.value.z, rotation.value.w)) * Matrix4x4.CreateTranslation(position.value.x, position.value.y, position.value.z);
             cashedGlobalTrans = localMatrix * parentMatrix;
             cashedLocalMatrix = localMatrix;
+            GlobalTransformChange?.Invoke(cashedGlobalTrans);
             foreach (Entity entity in _children)
             {
                 entity.updateGlobalTrans();
