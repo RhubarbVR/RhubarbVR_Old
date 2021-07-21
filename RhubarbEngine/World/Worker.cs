@@ -88,8 +88,14 @@ namespace RhubarbEngine.World
                 {
                     if (typeof(IChangeable).IsAssignableFrom(field.FieldType))
                     {
-                         ((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
+                    try
+                    {
+                        ((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
+                    }
+                    catch
+                    {
 
+                    }
                    }
                 }     
             if (newRefID)

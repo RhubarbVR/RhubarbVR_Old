@@ -469,8 +469,9 @@ namespace RhubarbEngine.World
         public void Update(DateTime startTime, DateTime Frame)
         {
             physicsWorld.UpdateAabbs();
-            physicsWorld.UpdateVehicles(30f);
-            
+            physicsWorld.UpdateVehicles(worldManager.engine.platformInfo.deltaSeconds);
+            physicsWorld.StepSimulation(worldManager.engine.platformInfo.deltaSeconds);
+            physicsWorld.ComputeOverlappingPairs();
             try
             {
                 foreach (Entity obj in Entitys)

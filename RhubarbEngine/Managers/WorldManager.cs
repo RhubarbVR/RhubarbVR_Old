@@ -21,6 +21,7 @@ using RhubarbEngine.Components.ImGUI;
 using RhubarbEngine.Components.Physics.Colliders;
 
 using Org.OpenAPITools.Model;
+using BulletSharp;
 
 namespace RhubarbEngine.Managers
 {
@@ -171,7 +172,7 @@ namespace RhubarbEngine.Managers
             StaicMainShader shader = e.attachComponent<StaicMainShader>();
             BoxMesh bmesh = e.attachComponent<BoxMesh>();
             BoxCollider bmeshcol = e.attachComponent<BoxCollider>();
-            
+
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
             ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();

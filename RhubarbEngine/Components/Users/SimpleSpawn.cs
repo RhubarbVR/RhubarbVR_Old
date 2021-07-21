@@ -12,6 +12,7 @@ using g3;
 using System.Numerics;
 using RhubarbEngine.Input;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
+using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.Components.Users
 {
@@ -45,6 +46,7 @@ namespace RhubarbEngine.Components.Users
                 world.localUser.userroot.target = userRoot;
                 Entity head = rootent.addChild("Head");
                 head.attachComponent<Head>().userroot.target = userRoot;
+                head.attachComponent<InteractionLaser>();
                 userRoot.Head.target = head;
                 Entity left = rootent.addChild("Left hand");
                 Entity right = rootent.addChild("Right hand");

@@ -8,7 +8,6 @@ using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
 using RhubarbEngine.World.ECS;
 using RhubarbEngine.World;
-using g3;
 using System.Numerics;
 using BulletSharp;
 using BulletSharp.Math;
@@ -50,6 +49,8 @@ namespace RhubarbEngine.Components.Physics.Colliders
             base.inturnalSyncObjs(newRefIds);
             group = new Sync<RCollisionFilterGroups>(this, newRefIds);
             mask = new Sync<RCollisionFilterGroups>(this, newRefIds);
+            mask.value = RCollisionFilterGroups.StaticFilter;
+            group.value = RCollisionFilterGroups.StaticFilter;
             mass = new Sync<float>(this, newRefIds);
             group.Changed += updateListner;
             mask.Changed += updateListner;
@@ -58,9 +59,11 @@ namespace RhubarbEngine.Components.Physics.Colliders
         public void startShape(CollisionShape shape)
         {
             LocalCreateRigidBody(mass.value, CastMet(entity.globalTrans()), shape);
+            
         }
         public virtual void BuildShape()
         {
+
         }
         public override void onLoaded()
         {
@@ -113,11 +116,14 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         public static Matrix CastMet(Matrix4x4 matrix4X4)
         {
-            return new Matrix(
+            var t = new Matrix(
                 (double)matrix4X4.M11, (double)matrix4X4.M12, (double)matrix4X4.M13, (double)matrix4X4.M14,
                 (double)matrix4X4.M21, (double)matrix4X4.M22, (double)matrix4X4.M23, (double)matrix4X4.M24,
                 (double)matrix4X4.M31, (double)matrix4X4.M32, (double)matrix4X4.M33, (double)matrix4X4.M34,
                 (double)matrix4X4.M41, (double)matrix4X4.M42, (double)matrix4X4.M43, (double)matrix4X4.M44);
+            t.Decompose(out BulletSharp.Math.Vector3 scale, out BulletSharp.Math.Quaternion rot, out BulletSharp.Math.Vector3 trans);
+            Logger.Log(trans.ToString() +" T: "+ rot.ToString()+ "R:"+scale.ToString()+"S:");
+            return t;
         }
 
         public Collider(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
