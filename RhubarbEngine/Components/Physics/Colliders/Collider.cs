@@ -58,8 +58,12 @@ namespace RhubarbEngine.Components.Physics.Colliders
         }
         public void startShape(CollisionShape shape)
         {
-            LocalCreateRigidBody(mass.value, CastMet(entity.globalTrans()), shape);
-            
+            collisionObject = LocalCreateRigidBody(mass.value, CastMet(entity.globalTrans()), shape);
+            world.physicsWorld.AddRigidBody(collisionObject);
+        }
+        public void removeShape()
+        {
+            world.physicsWorld.RemoveRigidBody(collisionObject);
         }
         public virtual void BuildShape()
         {
