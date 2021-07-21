@@ -11,6 +11,7 @@ using RhubarbEngine.World;
 using g3;
 using System.Numerics;
 using ImGuiNET;
+using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
@@ -40,9 +41,9 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender()
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
-            if (ImGui.ArrowButton(id.noneNullValue, imGuiDir.value))
+            if (ImGui.ArrowButton(id.value ?? "", imGuiDir.value))
             {
                 action.Target?.Invoke();
             }

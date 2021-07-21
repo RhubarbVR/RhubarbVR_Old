@@ -16,7 +16,8 @@ namespace RhubarbEngine.Input
         private HashSet<MouseButton> _newMouseButtonsThisFrame = new HashSet<MouseButton>();
 
         public  Vector2 MousePosition;
-        public  Vector2 MouseDelta;
+        public Vector2 MouseDelta;
+
         public InputSnapshot FrameSnapshot { get; private set; }
 
         public bool GetKey(Key key)

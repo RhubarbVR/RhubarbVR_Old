@@ -11,6 +11,7 @@ using RhubarbEngine.World;
 using g3;
 using System.Numerics;
 using ImGuiNET;
+using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
@@ -43,9 +44,9 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender()
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
-            if (ImGui.ColorButton(id.noneNullValue, color.value.ToRGBA().ToSystem(), imGuiColorEditFlags.value))
+            if (ImGui.ColorButton(id.value ?? "", color.value.ToRGBA().ToSystem(), imGuiColorEditFlags.value))
             {
                 action.Target?.Invoke();
             }

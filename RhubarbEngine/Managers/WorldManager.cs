@@ -165,19 +165,23 @@ namespace RhubarbEngine.Managers
             return this;
         }
 
+
         public void BuildLocalWorld()
         {
             Entity e = localWorld.RootEntity.addChild("Gay");
             localWorld.RootEntity.attachComponent<SimpleSpawn>();
             StaicMainShader shader = e.attachComponent<StaicMainShader>();
-            BoxMesh bmesh = e.attachComponent<BoxMesh>();
-            BoxCollider bmeshcol = e.attachComponent<BoxCollider>();
+            PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
+            InputPlane bmeshcol = e.attachComponent<InputPlane>();
+            //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
 
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
             ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
-            ImGUIText imGUIText = e.attachComponent<ImGUIText>();
-            imGUIText.text.value = "Trains";
+            ImGUIImageButton imGUIText = e.attachComponent<ImGUIImageButton>();
+            Textue2DFromUrl urr = e.attachComponent<Textue2DFromUrl>();
+            imGUICanvas.imputPlane.target = bmeshcol;
+            imGUIText.texture.target = urr;
             imGUICanvas.element.target = imGUIText;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;

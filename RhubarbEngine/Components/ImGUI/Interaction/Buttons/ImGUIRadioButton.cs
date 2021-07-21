@@ -15,38 +15,34 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
-
-    [Category("ImGUI/Begin")]
-    public class ImGUIBeginGroup : UIWidgetList
+    [Category("ImGUI/Interaction/Button")]
+    public class ImGUIRadioButton : UIWidget
     {
+        public Sync<string> id;
+        public Sync<bool> active;
 
-
-
+        public SyncDelegate action;
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
-
+            id = new Sync<string>(this, newRefIds);
+            active = new Sync<bool>(this, newRefIds);
+            action = new SyncDelegate(this, newRefIds);
         }
 
-        public ImGUIBeginGroup(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public ImGUIRadioButton(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
-
         }
-        public ImGUIBeginGroup()
+        public ImGUIRadioButton()
         {
         }
 
         public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
-            ImGui.BeginGroup();
-            
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer);
-                }
-                ImGui.EndGroup();
+            if (ImGui.RadioButton(id.value ?? "", active.value))
+            {
+                action.Target?.Invoke();
             }
         }
     }
-
+}

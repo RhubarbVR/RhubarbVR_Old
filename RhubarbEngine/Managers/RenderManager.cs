@@ -22,10 +22,9 @@ namespace RhubarbEngine.Managers
         public float fieldOfView = 1f;
         public float aspectRatio => engine.windowManager.mainWindow.aspectRatio;
 
-        public float nearPlaneDistance = 1f;
+        public float nearPlaneDistance = 0.01f;
 
         public float farPlaneDistance = 1000f;
-
 
         private Engine engine;
 

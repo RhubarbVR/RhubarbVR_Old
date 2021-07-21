@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine.World;
+using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
     public interface IUIElement: IWorldObject
     {
-        void ImguiRender();
+        void ImguiRender(ImGuiRenderer imGuiRenderer);
     }
 }

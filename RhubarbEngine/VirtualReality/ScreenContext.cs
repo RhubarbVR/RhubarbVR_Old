@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RhubarbEngine.Input.Controllers;
+using System;
 using System.Numerics;
 using Valve.VR;
 using Veldrid;
-using Veldrid.Vk;
-using RhubarbEngine.Input.Controllers;
 using Veldrid.Sdl2;
 
 namespace RhubarbEngine.VirtualReality

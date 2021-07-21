@@ -18,6 +18,13 @@ namespace RhubarbEngine.Managers
 
         public InputTracker mainWindows = new InputTracker();
 
+        public event Action removeFocus;
+
+        public void RemoveFocus()
+        {
+            removeFocus?.Invoke();
+        }
+
         public IController leftController => engine.renderManager.vrContext.leftController;
 
         public IController RightController => engine.renderManager.vrContext.RightController;

@@ -11,6 +11,7 @@ using RhubarbEngine.World;
 using g3;
 using System.Numerics;
 using ImGuiNET;
+using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
@@ -27,7 +28,6 @@ namespace RhubarbEngine.Components.ImGUI
             Bullet,
             Wrapped,
             LogText,
-            CalcTextSize,
         }
 
         public Sync<string> text;
@@ -49,30 +49,27 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender()
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
             switch (textType.value)
             {
                 case TextType.Normal:
-                    ImGui.Text(text.noneNullValue);
+                    ImGui.Text(text.value ?? "");
                     break;
                 case TextType.Disabled:
-                    ImGui.TextDisabled(text.noneNullValue);
+                    ImGui.TextDisabled(text.value ?? "");
                     break;
                 case TextType.Bullet:
-                    ImGui.BulletText(text.noneNullValue);
+                    ImGui.BulletText(text.value ?? "");
                     break;
                 case TextType.Wrapped:
-                    ImGui.TextWrapped(text.noneNullValue);
+                    ImGui.TextWrapped(text.value ?? "");
                     break;
                 case TextType.LogText:
-                    ImGui.LogText(text.noneNullValue);
-                    break;
-                case TextType.CalcTextSize:
-                    ImGui.CalcTextSize(text.noneNullValue);
+                    ImGui.LogText(text.value ?? "");
                     break;
                 default:
-                    ImGui.TextUnformatted(text.noneNullValue);
+                    ImGui.TextUnformatted(text.value ?? "");
                     break;
             }
         }

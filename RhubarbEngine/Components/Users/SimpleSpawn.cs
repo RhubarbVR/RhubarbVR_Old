@@ -46,10 +46,11 @@ namespace RhubarbEngine.Components.Users
                 world.localUser.userroot.target = userRoot;
                 Entity head = rootent.addChild("Head");
                 head.attachComponent<Head>().userroot.target = userRoot;
-                head.attachComponent<InteractionLaser>();
+                //head.attachComponent<InteractionLaser>();
                 userRoot.Head.target = head;
                 Entity left = rootent.addChild("Left hand");
                 Entity right = rootent.addChild("Right hand");
+
                 userRoot.LeftHand.target = left;
                 userRoot.RightHand.target = right;
                 Hand leftcomp = left.attachComponent<Hand>();
@@ -58,10 +59,20 @@ namespace RhubarbEngine.Components.Users
                 Hand rightcomp = right.attachComponent<Hand>();
                 rightcomp.creality.value = Input.Creality.Right;
                 rightcomp.userroot.target = userRoot;
+
+                var ileft = left.attachComponent<InteractionLaser>();
+                var iright = right.attachComponent<InteractionLaser>();
+                ileft.source.value = InteractionSource.LeftLaser;
+                iright.source.value = InteractionSource.RightLaser;
+
+
                 Entity obj = world.worldManager.AddMesh<ArrowMesh>(left);
                 Entity obj2 = world.worldManager.AddMesh<ArrowMesh>(right);
                 Entity obj3 = world.worldManager.AddMesh<ArrowMesh>(head);
+                
 
+
+                obj3.position.value = new Vector3f(0f, 0f, 0.5f);
                 obj.scale.value = new Vector3f(0.2f);
                 obj2.scale.value = new Vector3f(0.2f);
                 obj.rotation.value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
