@@ -14,6 +14,7 @@ using ImGuiNET;
 using RhubarbEngine.World.Asset;
 using Veldrid;
 using RhubarbEngine.Components.Rendering;
+using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.Components.ImGUI
 {
@@ -25,6 +26,8 @@ namespace RhubarbEngine.Components.ImGUI
         public Sync<RenderFrequency> renderFrequency;
 
         public SyncRef<IUIElement> element;
+
+        public SyncRef<IinputPlane> imputPlane;
 
         private ImGuiRenderer igr;
 
@@ -41,9 +44,10 @@ namespace RhubarbEngine.Components.ImGUI
             base.buildSyncObjs(newRefIds);
             scale = new Sync<Vector2u>(this, newRefIds);
             renderFrequency = new Sync<RenderFrequency>(this, newRefIds);
-            scale.value = new Vector2u(600, 400);
+            scale.value = new Vector2u(600, 600);
             scale.Changed += onScaleChange;
             element = new SyncRef<IUIElement>(this, newRefIds);
+            imputPlane = new SyncRef<IinputPlane>(this, newRefIds);
         }
 
         private void onScaleChange(IChangeable val)
@@ -121,7 +125,7 @@ namespace RhubarbEngine.Components.ImGUI
         {
             if(element.target != null)
             {
-                element.target.ImguiRender();
+                element.target.ImguiRender(igr);
             }
         }
 
@@ -129,11 +133,11 @@ namespace RhubarbEngine.Components.ImGUI
         {
             try
             {
-                igr.Update((float)engine.platformInfo.deltaSeconds, new FakeInputSnapshot());
+                igr.Update((float)engine.platformInfo.deltaSeconds, (InputSnapshot)imputPlane.target??(InputSnapshot)new FakeInputSnapshot());
                 ImGuiUpdate();
                 UIcommandList.Begin();
                 UIcommandList.SetFramebuffer(framebuffer);
-                UIcommandList.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0f, 1f));
+                UIcommandList.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0f, 0f));
                 igr.Render(engine.renderManager.gd, UIcommandList);
                 UIcommandList.End();
                 engine.renderManager.gd.SubmitCommands(UIcommandList);

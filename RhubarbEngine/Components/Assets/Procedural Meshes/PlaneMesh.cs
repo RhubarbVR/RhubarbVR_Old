@@ -28,7 +28,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             Height = new Sync<float>(this, newRefIds);
             Height.value = 1.0f;
             Normal = new Sync<Vector3f>(this, newRefIds);
-            Normal.value = Vector3f.AxisY;
+            Normal.value = Vector3f.AxisZ;
             IndicesMap = new Sync<Index2i>(this, newRefIds);
             IndicesMap.value = new Index2i(1, 3);
             UVMode = new Sync<TrivialRectGenerator.UVModes>(this, newRefIds);

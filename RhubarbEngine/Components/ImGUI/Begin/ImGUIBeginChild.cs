@@ -11,6 +11,7 @@ using RhubarbEngine.World;
 using g3;
 using System.Numerics;
 using ImGuiNET;
+using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
@@ -43,13 +44,13 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender()
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
-            if (ImGui.BeginChild(id.noneNullValue, new Vector2(size.value.x, size.value.y), border.value, windowflag.value))
+            if (ImGui.BeginChild(id.value ?? "", new Vector2(size.value.x, size.value.y), border.value, windowflag.value))
             {
                 foreach (var item in children)
                 {
-                    item.target?.ImguiRender();
+                    item.target?.ImguiRender(imGuiRenderer);
                 }
                 ImGui.EndChild();
             }

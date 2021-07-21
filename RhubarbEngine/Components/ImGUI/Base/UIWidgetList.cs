@@ -10,6 +10,7 @@ using RhubarbEngine.World.ECS;
 using RhubarbEngine.World;
 using g3;
 using System.Numerics;
+using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
@@ -28,7 +29,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         }
 
-        public virtual void ImguiRender()
+        public virtual void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
 
         }

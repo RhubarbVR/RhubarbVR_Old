@@ -75,19 +75,44 @@ namespace RhubarbEngine.World
         public override void UpdateNetIngect(DataNodeGroup data)
         {
             data.setValue("Method", new DataNode<string>(_method));
-            data.setValue("Type", new DataNode<string>(_type.Name));
+            if (_type != null)
+            {
+                data.setValue("Type", new DataNode<string>(_type.Name));
+            }
+            else
+            {
+                data.setValue("Type", new DataNode<string>(""));
+            }
         }
 
         public override void ReceiveDataIngect(DataNodeGroup data)
         {
             _method = ((DataNode<string>)data.getValue("Method")).Value;
-            _type = Type.GetType(((DataNode<string>)data.getValue("Type")).Value);
+            string hello = ((DataNode<string>)data.getValue("Type")).Value;
+            if (hello == "")
+            {
+                _type = null;
+            }
+            else
+            {
+                _type = Type.GetType(hello);
+            }
             BuildDelegate();
         }
 
         public void BuildDelegate()
         {
-            _DelegateTarget = (T)(object)Delegate.CreateDelegate(typeof(T), _type, _method);
+            if (_type == null || _method == "" || _method == null) return;
+            try
+            {
+                _DelegateTarget = (T)(object)Delegate.CreateDelegate(typeof(T), _type, _method);
+            }
+            catch
+            {
+                _type = null;
+                _method = "";
+                base.target = null;
+            }
         }
 
         public SyncDelegate()

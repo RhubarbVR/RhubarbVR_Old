@@ -49,8 +49,8 @@ namespace RhubarbEngine.Components.Physics.Colliders
             base.inturnalSyncObjs(newRefIds);
             group = new Sync<RCollisionFilterGroups>(this, newRefIds);
             mask = new Sync<RCollisionFilterGroups>(this, newRefIds);
-            mask.value = RCollisionFilterGroups.StaticFilter;
-            group.value = RCollisionFilterGroups.StaticFilter;
+            mask.value = RCollisionFilterGroups.AllFilter;
+            group.value = RCollisionFilterGroups.AllFilter;
             mass = new Sync<float>(this, newRefIds);
             group.Changed += updateListner;
             mask.Changed += updateListner;
@@ -58,12 +58,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
         }
         public void startShape(CollisionShape shape)
         {
-            collisionObject = LocalCreateRigidBody(mass.value, CastMet(entity.globalTrans()), shape);
-            world.physicsWorld.AddRigidBody(collisionObject);
-        }
-        public void removeShape()
-        {
-            world.physicsWorld.RemoveRigidBody(collisionObject);
+            buildCollissionObject(LocalCreateRigidBody(mass.value, CastMet(entity.globalTrans()), shape));
         }
         public virtual void BuildShape()
         {
@@ -107,8 +102,13 @@ namespace RhubarbEngine.Components.Physics.Colliders
             if (collisionObject != null)
             {
                 world.physicsWorld.RemoveCollisionObject(collisionObject);
+                collisionObject = null;
             }
-            world.physicsWorld.AddCollisionObject(newCol, (int)group.value, (int)mask.value);
+            if(newCol != null)
+            {
+                newCol.UserObject = this;
+                world.physicsWorld.AddCollisionObject(newCol, (int)group.value, (int)mask.value);
+            }
             collisionObject = newCol;
         }
 
@@ -126,7 +126,6 @@ namespace RhubarbEngine.Components.Physics.Colliders
                 (double)matrix4X4.M31, (double)matrix4X4.M32, (double)matrix4X4.M33, (double)matrix4X4.M34,
                 (double)matrix4X4.M41, (double)matrix4X4.M42, (double)matrix4X4.M43, (double)matrix4X4.M44);
             t.Decompose(out BulletSharp.Math.Vector3 scale, out BulletSharp.Math.Quaternion rot, out BulletSharp.Math.Vector3 trans);
-            Logger.Log(trans.ToString() +" T: "+ rot.ToString()+ "R:"+scale.ToString()+"S:");
             return t;
         }
 

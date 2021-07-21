@@ -11,6 +11,7 @@ using RhubarbEngine.World;
 using g3;
 using System.Numerics;
 using ImGuiNET;
+using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
@@ -38,9 +39,9 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender()
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
-            ImGui.LabelText(label.noneNullValue, text.noneNullValue);
+            ImGui.LabelText(label.value ?? "", text.value ?? "");
         }
     }
 }

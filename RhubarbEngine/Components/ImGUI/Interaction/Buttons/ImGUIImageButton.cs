@@ -23,17 +23,70 @@ namespace RhubarbEngine.Components.ImGUI
     {
         
         public AssetRef<RTexture2D> texture;
-        public Sync<Vector2> size;
+        public Sync<Vector2f> size;
 
         public SyncDelegate action;
+        private TextureView view;
+
+        public override void onLoaded()
+        {
+            base.onLoaded();
+            loadTextureView();
+        }
+
+        private void test()
+        {
+            logger.Log("This is a test of test in test");
+        }
+
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
-            
-            texture = new AssetRef<RTexture2D>(this, newRefIds);
-            size = new Sync<Vector2>(this, newRefIds);
 
+            texture = new AssetRef<RTexture2D>(this, newRefIds);
+            texture.loadChange += assetChange;
+            size = new Sync<Vector2f>(this, newRefIds);
+            size.value = new Vector2f(100,100);
             action = new SyncDelegate(this, newRefIds);
+            action.Target = test;
+        }
+        public void assetChange(RTexture2D newAsset)
+        {
+            loadTextureView();
+        }
+
+        public void loadTextureView()
+        {
+            if (texture.target != null)
+            {
+                if (texture.Asset != null)
+                {
+                    if (texture.Asset.view != null)
+                    {
+                        SetResource(texture.Asset.view);
+                    }
+                    else
+                    {
+                        SetResource(engine.renderManager.nulview);
+                    }
+                }
+                else
+                {
+                    SetResource(engine.renderManager.nulview);
+                }
+            }
+            else
+            {
+                SetResource(engine.renderManager.nulview);
+            }
+
+        }
+        private void SetResource(TextureView res)
+        {
+            if (view != res)
+            {
+                view = res;
+            }
         }
 
         public ImGUIImageButton(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -43,10 +96,13 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender()
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
-            //if (ImGui.ImageButton(/*parent ImGUICanvas?.igr.GetOrCreateImGuiBinding(ResourceFactory factory, texture.Asset.view)*/, size.value) )
+            var draw_list = ImGui.GetWindowDrawList();
+            draw_list.AddCircleFilled(ImGui.GetMousePos() + new Vector2(50), 30f, 0xFFFFFFFF);
+            if (ImGui.ImageButton(imGuiRenderer.GetOrCreateImGuiBinding(engine.renderManager.gd.ResourceFactory, view), new Vector2(size.value.x, size.value.y)) )
             {
+                logger.Log("This is a test of test in test of trains");
                 action.Target?.Invoke();
             }
         }
