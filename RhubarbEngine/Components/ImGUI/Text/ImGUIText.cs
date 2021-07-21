@@ -27,7 +27,6 @@ namespace RhubarbEngine.Components.ImGUI
             Bullet,
             Wrapped,
             LogText,
-            CalcTextSize,
         }
 
         public Sync<string> text;
@@ -67,9 +66,6 @@ namespace RhubarbEngine.Components.ImGUI
                     break;
                 case TextType.LogText:
                     ImGui.LogText(text.noneNullValue);
-                    break;
-                case TextType.CalcTextSize:
-                    ImGui.CalcTextSize(text.noneNullValue);
                     break;
                 default:
                     ImGui.TextUnformatted(text.noneNullValue);
