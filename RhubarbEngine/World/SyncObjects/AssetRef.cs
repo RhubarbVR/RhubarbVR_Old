@@ -50,8 +50,8 @@ namespace RhubarbEngine.World
         public override void Bind()
         {
             base.Bind();
-            target.onLoadedCall += loadedCall;
-            if (target.loaded)
+            base.target.onLoadedCall += loadedCall;
+            if (base.target.loaded)
             {
                 loadedCall(target.value);
             }
@@ -76,7 +76,7 @@ namespace RhubarbEngine.World
         public override void onLoaded()
         {
             base.onLoaded();
-            if(base.target == null)
+            if (base.target == null)
             {
                 return;
             }

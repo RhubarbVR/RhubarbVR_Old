@@ -67,6 +67,7 @@ namespace RhubarbEngine.Components.Users
         {
             if(world.localUser == user.target)
             {
+                if (input.isKeyboardinuse) return;
                 float deltaSeconds = (float)world.worldManager.engine.platformInfo.deltaSeconds;
                 float sprintFactor = world.worldManager.engine.inputManager.mainWindows.GetKey(Key.ControlLeft) || engine.inputManager.PrimaryPress()
                    ? 0.1f

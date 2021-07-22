@@ -22,6 +22,7 @@ using RhubarbEngine.Components.Physics.Colliders;
 
 using Org.OpenAPITools.Model;
 using BulletSharp;
+using System.Numerics;
 
 namespace RhubarbEngine.Managers
 {
@@ -168,20 +169,21 @@ namespace RhubarbEngine.Managers
 
         public void BuildLocalWorld()
         {
-            Entity e = localWorld.RootEntity.addChild("Gay");
             localWorld.RootEntity.attachComponent<SimpleSpawn>();
+            Entity e = localWorld.RootEntity.addChild("Gay");
+            AddMesh<ArrowMesh>(e).position.value = new Vector3f(10f,10f,10f);
+
             StaicMainShader shader = e.attachComponent<StaicMainShader>();
             PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
             InputPlane bmeshcol = e.attachComponent<InputPlane>();
             //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
-
+            e.rotation.value = Quaternionf.CreateFromEuler(0f,-90f, 0f);
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
             ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
-            ImGUIImageButton imGUIText = e.attachComponent<ImGUIImageButton>();
+            ImGUIInputText imGUIText = e.attachComponent<ImGUIInputText>();
             Textue2DFromUrl urr = e.attachComponent<Textue2DFromUrl>();
             imGUICanvas.imputPlane.target = bmeshcol;
-            imGUIText.texture.target = urr;
             imGUICanvas.element.target = imGUIText;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
@@ -217,6 +219,7 @@ namespace RhubarbEngine.Managers
             // rgbainbowDriver.speed.value = 50f;
             return e;
         }
+
 
         public void Update(DateTime startTime, DateTime Frame)
         {

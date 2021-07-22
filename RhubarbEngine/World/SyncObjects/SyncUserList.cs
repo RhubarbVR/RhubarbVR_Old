@@ -29,7 +29,8 @@ namespace RhubarbEngine.World
         }
 
         private List<User> _synclist = new List<User>();
-
+        [NoSave]
+        [NoSync]
         public User this[int i]
         {
             get
@@ -48,7 +49,8 @@ namespace RhubarbEngine.World
         {
             return _synclist.Count;
         }
-
+        [NoSave]
+        [NoSync]
         public User Add(bool Refid = true)
         {
             User a = new User();
@@ -103,7 +105,7 @@ namespace RhubarbEngine.World
             }
         }
 
-        public DataNodeGroup serialize(bool netsync = false)
+        public override DataNodeGroup serialize(bool netsync = false)
         {
             DataNodeGroup obj = new DataNodeGroup();
             DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
@@ -120,7 +122,7 @@ namespace RhubarbEngine.World
             obj.setValue("list", list);
             return obj;
         }
-        public void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+        public override void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
             if (data == null)
             {

@@ -19,7 +19,7 @@ using RhubarbEngine.Components.Interaction;
 namespace RhubarbEngine.Components.ImGUI
 {
     [Category(new string[] { "ImGUI" })]
-    public class ImGUICanvas: AssetProvider<RTexture2D> , IRenderObject
+    public class ImGUICanvas: AssetProvider<RTexture2D> , IRenderObject, KeyboardStealer
     {
         public Sync<Vector2u> scale;
 
@@ -86,10 +86,11 @@ namespace RhubarbEngine.Components.ImGUI
             return factory.CreateFramebuffer(new FramebufferDescription(depthTarget, colorTarget));
         }
 
-        private void loadUI()
+        private  void loadUI()
         {
             try
-            {
+            { 
+                logger.Log("Loading ui");
                 framebuffer = CreateFramebuffer(scale.value.x, scale.value.y);
                 igr = new ImGuiRenderer(engine.renderManager.gd, framebuffer.OutputDescription, (int)scale.value.x, (int)scale.value.y, ColorSpaceHandling.Linear);
                 UIloaded = true;
@@ -125,7 +126,22 @@ namespace RhubarbEngine.Components.ImGUI
         {
             if(element.target != null)
             {
+                ImGui.SetWindowPos(Vector2.Zero);
+                ImGui.SetWindowSize(new Vector2(scale.value.x, scale.value.y));
+                ImGui.SetNextWindowCollapsed(false);
                 element.target.ImguiRender(igr);
+                if (ImGui.IsAnyItemActive())
+                {
+                    input.keyboard = this;
+                }
+                else
+                {
+                    if (input.keyboard == this)
+                    {
+                        input.keyboard = null;
+                    }
+                }
+
             }
         }
 

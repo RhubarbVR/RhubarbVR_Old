@@ -40,6 +40,7 @@ namespace RhubarbEngine.Components.Assets
 
         public void ReloadBindableResources()
         {
+            Logger.Log("Reload");
             BindableResourcesReload?.Invoke(this);
         }
 

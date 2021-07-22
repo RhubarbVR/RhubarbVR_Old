@@ -141,11 +141,7 @@ namespace RhubarbEngine.World
             }
             else
             {
-                try
-                {
                     _value = ((DataNode<T>)data.getValue("Value")).Value;
-                }
-                catch { }
             }
         }
 

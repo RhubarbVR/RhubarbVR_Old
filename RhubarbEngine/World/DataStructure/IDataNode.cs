@@ -40,6 +40,7 @@ namespace RhubarbEngine.World.DataStructure
                 typeof(DataNode<DateTime>),
                 typeof(DataNode<byte[]>),
 
+
                 //List Types
                 typeof(DataNode<List<int>>),
                 typeof(DataNode<List<float>>),
@@ -53,10 +54,14 @@ namespace RhubarbEngine.World.DataStructure
                 typeof(DataNode<Vector4f>),
                 typeof(DataNode<Colorf>),
 
+
+             
                 typeof(DataNode<Vector3d>),
                 typeof(DataNode<Quaternionf>),
                 typeof(DataNode<Frame3f>),
                 typeof(DataNode<AxisAlignedBox2d>),
+                typeof(DataNode<Vector2u>),
+                typeof(DataNode<Index2i>),
                 typeof(DataNode<DCurve3>),
                 typeof(DataNode<PolyLine2d>),
                 typeof(DataNode<Polygon2d>),

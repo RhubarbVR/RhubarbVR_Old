@@ -46,7 +46,7 @@ namespace RhubarbEngine.Components.Users
                 world.localUser.userroot.target = userRoot;
                 Entity head = rootent.addChild("Head");
                 head.attachComponent<Head>().userroot.target = userRoot;
-                //head.attachComponent<InteractionLaser>();
+                head.attachComponent<InteractionLaser>();
                 userRoot.Head.target = head;
                 Entity left = rootent.addChild("Left hand");
                 Entity right = rootent.addChild("Right hand");

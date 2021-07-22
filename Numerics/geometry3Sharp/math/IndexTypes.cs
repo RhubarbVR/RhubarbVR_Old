@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
 namespace g3
 {
@@ -162,38 +163,44 @@ namespace g3
 
 
 
-
+    [MessagePackObject]
     public struct Index2i : IComparable<Index2i>, IEquatable<Index2i>
     {
+        [Key(0)]
         public int a;
+        [Key(1)]
         public int b;
 
         public Index2i(int z) { a = b = z; }
         public Index2i(int ii, int jj) { a = ii; b = jj; }
         public Index2i(int[] i2) { a = i2[0]; b = i2[1]; }
         public Index2i(Index2i copy) { a = copy.a; b = copy.b; }
-
+        [IgnoreMember]
         static public readonly Index2i Zero = new Index2i(0, 0);
+        [IgnoreMember]
         static public readonly Index2i One = new Index2i(1, 1);
+        [IgnoreMember]
         static public readonly Index2i Max = new Index2i(int.MaxValue, int.MaxValue);
+        [IgnoreMember]
         static public readonly Index2i Min = new Index2i(int.MinValue, int.MinValue);
 
-
+        [IgnoreMember]
         public int this[int key]
         {
             get { return (key == 0) ? a : b; }
             set { if (key == 0) a = value; else b = value; }
         }
-
+        [IgnoreMember]
         public int[] array {
             get { return new int[] { a, b }; }
         }
 
-
+        [IgnoreMember]
         public int LengthSquared
         {
             get { return a * a + b * b; }
         }
+        [IgnoreMember]
         public int Length
         {
             get { return (int)Math.Sqrt(LengthSquared); }

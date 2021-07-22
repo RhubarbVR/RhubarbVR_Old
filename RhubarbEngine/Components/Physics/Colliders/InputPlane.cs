@@ -39,10 +39,11 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         public Vector2 MousePosition => mousePosition;
 
+
         public void Click(InteractionSource sourc)
         {
-            val = sourc;
             Setfocused();
+            val = sourc;
         }
 
         public void updatePos(Vector2 pos, InteractionSource sourc)
@@ -193,7 +194,9 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         public void Setfocused()
         {
-            if (_focused) return;
+            if (_focused) {
+                return;
+            }
             _focused = true;
             if (!FocusedOverride.value)
             {

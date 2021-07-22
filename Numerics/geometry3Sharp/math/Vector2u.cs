@@ -14,18 +14,21 @@ namespace g3
         public Vector2u(uint f) { x = y = f; }
         public Vector2u(uint x, uint y) { this.x = x; this.y = y; }
         public Vector2u(uint[] v2) { x = v2[0]; y = v2[1]; }
-
+        [IgnoreMember]
         static public readonly Vector2u Zero = new Vector2u(0, 0);
+        [IgnoreMember]
         static public readonly Vector2u One = new Vector2u(1, 1);
+        [IgnoreMember]
         static public readonly Vector2u AxisX = new Vector2u(1, 0);
+        [IgnoreMember]
         static public readonly Vector2u AxisY = new Vector2u(0, 1);
-
+        [IgnoreMember]
         public uint this[uint key]
         {
             get { return (key == 0) ? x : y; }
             set { if (key == 0) x = value; else y = value; }
         }
-
+        [IgnoreMember]
         public uint[] array
         {
             get { return new uint[] { x, y }; }
@@ -33,7 +36,7 @@ namespace g3
 
         public void Add(uint s) { x += s; y += s; }
 
-
+        [IgnoreMember]
         public uint LengthSquared { get { return x * x + y * y; } }
 
 

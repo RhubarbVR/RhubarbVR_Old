@@ -28,8 +28,10 @@ namespace RhubarbEngine.World
         public SyncUserList users;
 
         [NoSync]
+        [NoSave]
         public User localUser => getLocalUser();
         [NoSync]
+        [NoSave]
         private User getLocalUser()
         {
             try
@@ -44,8 +46,10 @@ namespace RhubarbEngine.World
         }
 
         [NoSync]
+        [NoSave]
         public User hostUser => getHostUser();
         [NoSync]
+        [NoSave]
         private User getHostUser()
         {
             try
@@ -277,6 +281,7 @@ namespace RhubarbEngine.World
         public Matrix4x4 playerTrans => (userRoot != null)? userRoot.Viewpos : Matrix4x4.CreateScale(1f);
 
         [NoSync]
+        [NoSave]
         public UserRoot userRoot => localUser?.userroot.target;
 
         public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
@@ -442,7 +447,8 @@ namespace RhubarbEngine.World
         {
             Entitys.Remove(obj);
         }
-
+        [NoSync]
+        [NoSave]
         public IWorldObject getWorldObj(NetPointer refid)
         {
             return worldObjects[refid];
@@ -456,7 +462,8 @@ namespace RhubarbEngine.World
         NetPointer IWorldObject.ReferenceID => NetPointer.BuildID(1, 0);
 
         World IWorldObject.World => this;
-
+        [NoSync]
+        [NoSave]
         IWorldObject IWorldObject.Parent => null;
 
         bool IWorldObject.IsLocalObject => false;

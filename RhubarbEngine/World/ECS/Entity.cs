@@ -154,7 +154,7 @@ namespace RhubarbEngine.World.ECS
             {
                 parentMatrix = parent.target.globalTrans();
             }
-            Matrix4x4 localMatrix = Matrix4x4.CreateScale(scale.value.x, scale.value.y, scale.value.z) * Matrix4x4.CreateFromQuaternion(new Quaternion(rotation.value.x, rotation.value.y, rotation.value.z, rotation.value.w)) * Matrix4x4.CreateTranslation(position.value.x, position.value.y, position.value.z);
+            Matrix4x4 localMatrix = Matrix4x4.CreateScale(scale.value.x, scale.value.y, scale.value.z) * Matrix4x4.CreateFromQuaternion(rotation.value.ToSystemNumric()) * Matrix4x4.CreateTranslation(position.value.x, position.value.y, position.value.z);
             cashedGlobalTrans = localMatrix * parentMatrix;
             cashedLocalMatrix = localMatrix;
             GlobalTransformChange?.Invoke(cashedGlobalTrans);
@@ -163,6 +163,8 @@ namespace RhubarbEngine.World.ECS
                 entity.updateGlobalTrans();
             }
         }
+        [NoSync]
+        [NoSave]
         public Entity addChild(string name = "Entity")
         {
             Entity val = _children.Add(true);
@@ -170,7 +172,8 @@ namespace RhubarbEngine.World.ECS
             val.name.value = name;
             return val;
         }
-
+        [NoSync]
+        [NoSave]
         public T attachComponent<T>() where T: Component
         {
             T newcomp = (T)Activator.CreateInstance(typeof(T));
@@ -180,6 +183,7 @@ namespace RhubarbEngine.World.ECS
         }
         public override void onLoaded()
         {
+            updateGlobalTrans();
         }
 
         public void addToRenderQueue(RenderQueue gu, Vector3 playpos, RemderLayers layer)
