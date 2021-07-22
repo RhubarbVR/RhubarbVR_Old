@@ -12,7 +12,7 @@ using System.IO;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
-    public class Texture2DField: MaterialField
+    public class Texture2DField : MaterialField
     {
         public AssetRef<RTexture2D> field;
         public override void buildSyncObjs(bool newRefIds)
@@ -20,6 +20,17 @@ namespace RhubarbEngine.Render.Material.Fields
             field = new AssetRef<RTexture2D>(this, newRefIds);
             field.loadChange += assetChange;
         }
+
+        public override void onUpdate()
+        {
+            base.onUpdate();
+            if (input.mainWindows.GetKey(Key.F3))
+            {
+                loadTextureView(true);
+            }
+
+        }
+
         public override void setValue(Object val)
         {
             field.value = (NetPointer)val;
@@ -29,15 +40,15 @@ namespace RhubarbEngine.Render.Material.Fields
             loadTextureView();
         }
 
-        private void SetResource(BindableResource res)
+        private void SetResource(BindableResource res, bool forceR = false)
         {
-            if(resource != res)
+            if ((resource != res) || forceR)
             {
                 resource = res;
                 rMaterial.ReloadBindableResources();
             }
         }
-        public void loadTextureView()
+        public void loadTextureView(bool forceR = false)
         {
             if(field.target != null)
             {
@@ -45,20 +56,24 @@ namespace RhubarbEngine.Render.Material.Fields
                 {
                     if (field.Asset.view != null)
                     {
-                        SetResource(field.Asset.view);
+                        logger.Log("View Is There");
+                        SetResource(field.Asset.view, forceR);
                     }
                     else
                     {
+                        logger.Log("Asset Is There");
                         SetResource(engine.renderManager.nulview);
                     }
                 }
                 else
                 {
+                    logger.Log("Target is there");
                     SetResource(engine.renderManager.nulview);
                 }
             }
             else
             {
+                logger.Log("No Target is there");
                 SetResource(engine.renderManager.nulview);
             }
 

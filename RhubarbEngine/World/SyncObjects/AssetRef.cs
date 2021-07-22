@@ -27,28 +27,14 @@ namespace RhubarbEngine.World
 
         public void loadedCall(T newAsset)
         {
+            logger.Log("TIUhiufgsehjui" + typeof(T).FullName);
             loadChange?.Invoke(newAsset);
-        }
-
-        public override AssetProvider<T> target
-        {
-            get
-            {
-                return base.target;
-            }
-            set
-            {
-                base.target = value;
-                value.onLoadedCall += loadedCall;
-                if (value.loaded)
-                {
-                    loadedCall(value.value);
-                }
-            }
         }
 
         public override void Bind()
         {
+            logger.Log("TIUhiufgsehjui" + typeof(T).FullName);
+
             base.Bind();
             base.target.onLoadedCall += loadedCall;
             if (base.target.loaded)
@@ -56,29 +42,12 @@ namespace RhubarbEngine.World
                 loadedCall(target.value);
             }
         }
-
-        public override NetPointer value
-        {
-            get
-            {
-                return base.value;
-            }
-            set
-            {
-                base.value = value;
-                base.target.onLoadedCall += loadedCall;
-                if (base.target.loaded)
-                {
-                    loadedCall(base.target.value);
-                }
-            }
-        }
         public override void onLoaded()
         {
             base.onLoaded();
             if (base.target == null)
             {
-                return;
+                logger.Log("THing is null");
             }
             base.target.onLoadedCall += loadedCall;
             if (base.target.loaded)

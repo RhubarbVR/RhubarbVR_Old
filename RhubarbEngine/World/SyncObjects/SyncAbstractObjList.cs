@@ -228,7 +228,5 @@ namespace RhubarbEngine.World
                 }
             }
         }
-
-
     }
 }

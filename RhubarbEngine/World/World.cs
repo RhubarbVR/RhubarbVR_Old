@@ -625,7 +625,7 @@ namespace RhubarbEngine.World
             if (datanode != null)
             {
                 List<Action> loadded = new List<Action>();
-                deSerialize(datanode, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+                deSerialize(datanode, loadded, true, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
                 foreach (Action item in loadded)
                 {
                     item?.Invoke();
