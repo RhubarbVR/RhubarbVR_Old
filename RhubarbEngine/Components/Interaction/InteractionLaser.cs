@@ -78,19 +78,8 @@ namespace RhubarbEngine.Components.Interaction
                         }
                         catch
                         {
-                            if (HasClicked())
-                            {
-                                input.RemoveFocus();
-                            }
                         }
 
-                    }
-                    else
-                    {
-                        if (HasClicked())
-                        {
-                            input.RemoveFocus();
-                        }
                     }
                 }
             }

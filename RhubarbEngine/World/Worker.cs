@@ -9,7 +9,7 @@ using RhubarbDataTypes;
 using RhubarbEngine.World.ECS;
 using RhubarbEngine.Components.Rendering;
 using RhubarbEngine.Managers;
-
+using RhubarbEngine.Render.Material.Fields;
 
 namespace RhubarbEngine.World
 {
@@ -24,10 +24,12 @@ namespace RhubarbEngine.World
 
 
 
-        [NoSaveAttribute]
+        [NoSync]
+        [NoSave]
         public World world { get; protected set; }
 
-        [NoSaveAttribute]
+        [NoSync]
+        [NoSave]
         public IWorldObject parent;
 
         public NetPointer referenceID { get; protected set; }
@@ -43,9 +45,11 @@ namespace RhubarbEngine.World
         public bool Persistent = true;
 
         NetPointer IWorldObject.ReferenceID => referenceID;
-
+        [NoSync]
+        [NoSave]
         World IWorldObject.World => world;
-
+        [NoSync]
+        [NoSave]
         IWorldObject IWorldObject.Parent => parent;
 
         bool IWorldObject.IsLocalObject => false;
@@ -64,7 +68,7 @@ namespace RhubarbEngine.World
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
             {
-                if (typeof(IChangeable).IsAssignableFrom(field.FieldType)&& ((IChangeable)field.GetValue(this)) != null)
+                if (typeof(IChangeable).IsAssignableFrom(field.FieldType) && ((IChangeable)field.GetValue(this)) != null)
                 {
                     ((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
 
@@ -84,20 +88,13 @@ namespace RhubarbEngine.World
             inturnalSyncObjs(newRefID);
             buildSyncObjs(newRefID);
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                foreach (var field in fields)
+            foreach (var field in fields)
+            {
+                if (typeof(IChangeable).IsAssignableFrom(field.FieldType))
                 {
-                    if (typeof(IChangeable).IsAssignableFrom(field.FieldType))
-                    {
-                    try
-                    {
-                        ((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
-                    }
-                    catch
-                    {
-
-                    }
-                   }
-                }     
+                    ((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
+                }
+            }
             if (newRefID)
             {
                 referenceID = _world.buildRefID();
@@ -133,7 +130,7 @@ namespace RhubarbEngine.World
 
         public void onChangeInternal(IChangeable newValue)
         {
-            if(Changed != null)
+            if (Changed != null)
             {
                 Changed(this);
             }
@@ -157,7 +154,7 @@ namespace RhubarbEngine.World
         {
             Removed();
             world.removeWorldObj(this);
-            foreach(IDisposable dep in _disposables)
+            foreach (IDisposable dep in _disposables)
             {
                 dep.Dispose();
             }
@@ -167,10 +164,6 @@ namespace RhubarbEngine.World
 
         }
 
-        private bool isValidTypeToSave(Type eye)
-        {
-            return typeof(IWorldObject).IsAssignableFrom(eye) && (eye != typeof(Entity));
-        }
         public virtual DataNodeGroup serialize(bool netsync = false) {
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             DataNodeGroup obj = null;
@@ -179,10 +172,13 @@ namespace RhubarbEngine.World
                 obj = new DataNodeGroup();
                 foreach (var field in fields)
                 {
-                    if (isValidTypeToSave(field.FieldType) && (field.GetCustomAttributes(typeof(NoSaveAttribute),false).Length <= 0) && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))
+                    if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || netsync && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0)))
                     {
                         //This is for debug purposes 
-                        //Console.WriteLine(field.FieldType.FullName + "Name: " + field.Name);
+                        if (!netsync)
+                        {
+                            Console.WriteLine(field.FieldType.FullName + "Name: " + field.Name);
+                        }
                         obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize(netsync));
                     }
                 }
@@ -191,8 +187,8 @@ namespace RhubarbEngine.World
             }
             return obj;
         }
-        
-        public virtual void deSerialize( DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+
+        public virtual void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
 
             if (data == null)
@@ -207,9 +203,9 @@ namespace RhubarbEngine.World
                     Console.WriteLine("Problem With " + this.GetType().FullName);
                 }
                 newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID(), referenceID.getID());
-                if(latterResign.ContainsKey(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()))
+                if (latterResign.ContainsKey(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()))
                 {
-                    foreach(RefIDResign func in latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()])
+                    foreach (RefIDResign func in latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()])
                     {
                         func(referenceID.getID());
                     }
@@ -218,7 +214,7 @@ namespace RhubarbEngine.World
             else
             {
                 referenceID = ((DataNode<NetPointer>)data.getValue("referenceID")).Value;
-                if(referenceID.id == new NetPointer(0).id)
+                if (referenceID.id == new NetPointer(0).id)
                 {
                     logger.Log(this.GetType().FullName + " RefID null");
                 }
@@ -231,7 +227,7 @@ namespace RhubarbEngine.World
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
             {
-                if (isValidTypeToSave(field.FieldType) && (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))
+                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || !NewRefIDs && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0)))
                 {
                     if (((IWorldObject)field.GetValue(this)) == null)
                     {
@@ -240,7 +236,7 @@ namespace RhubarbEngine.World
                     ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), onload, NewRefIDs, newRefID, latterResign);
                 }
             }
-            if (typeof(MeshRender).IsAssignableFrom(this.GetType()))
+            if (typeof(IRenderObject).IsAssignableFrom(this.GetType()))
             {
                 onload.Add(onLoaded);
             }

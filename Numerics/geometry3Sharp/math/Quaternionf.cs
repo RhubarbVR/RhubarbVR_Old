@@ -88,7 +88,6 @@ namespace g3
         public Quaternionf Normalized {
             get { Quaternionf q = new Quaternionf(this); q.Normalize(); return q; }
         }
-
         public float Dot(Quaternionf q2) {
             return x * q2.x + y * q2.y + z * q2.z + w * q2.w;
         }
@@ -465,6 +464,12 @@ namespace g3
             result.w = cy * cp * cr + sy * sp * sr;
 
             return result;
+        }
+
+        public static Quaternionf CreateFromEuler(float x, float y, float z)
+        {
+            
+            return CreateFromYawPitchRoll((float)(Math.PI / 180) * x, (float)(Math.PI / 180) * y, (float)(Math.PI / 180) * z);
         }
 
         public override string ToString() {

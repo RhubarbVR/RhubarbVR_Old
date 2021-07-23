@@ -23,25 +23,31 @@ namespace g3
         public Vector2f(Vector2f copy) { x = copy[0]; y = copy[1]; }
         public Vector2f(Vector2d copy) { x = (float)copy[0]; y = (float)copy[1]; }
 
-
+        [IgnoreMember]
         static public readonly Vector2f Zero = new Vector2f(0.0f, 0.0f);
+        [IgnoreMember]
         static public readonly Vector2f One = new Vector2f(1.0f, 1.0f);
+        [IgnoreMember]
         static public readonly Vector2f AxisX = new Vector2f(1.0f, 0.0f);
+        [IgnoreMember]
         static public readonly Vector2f AxisY = new Vector2f(0.0f, 1.0f);
-		static public readonly Vector2f MaxValue = new Vector2f(float.MaxValue,float.MaxValue);
-		static public readonly Vector2f MinValue = new Vector2f(float.MinValue,float.MinValue);
-
+        [IgnoreMember]
+        static public readonly Vector2f MaxValue = new Vector2f(float.MaxValue, float.MaxValue);
+        [IgnoreMember]
+        static public readonly Vector2f MinValue = new Vector2f(float.MinValue,float.MinValue);
+        [IgnoreMember]
         public float this[int key]
         {
             get { return (key == 0) ? x : y; }
             set { if (key == 0) x = value; else y = value; }
         }
 
-
+        [IgnoreMember]
         public float LengthSquared
         {
             get { return x * x + y * y; }
         }
+        [IgnoreMember]
         public float Length
         {
             get { return (float)Math.Sqrt(LengthSquared); }
@@ -50,16 +56,20 @@ namespace g3
         public float Normalize(float epsilon = MathUtil.Epsilonf)
         {
             float length = Length;
-            if (length > epsilon) {
+            if (length > epsilon)
+            {
                 float invLength = 1.0f / length;
                 x *= invLength;
                 y *= invLength;
-            } else {
+            }
+            else
+            {
                 length = 0;
                 x = y = 0;
             }
             return length;
         }
+        [IgnoreMember]
         public Vector2f Normalized
         {
             get {
@@ -71,21 +81,19 @@ namespace g3
                     return Vector2f.Zero;
             }
         }
-
-		public bool IsNormalized {
+        [IgnoreMember]
+        public bool IsNormalized {
 			get { return Math.Abs( (x * x + y * y) - 1) < MathUtil.ZeroTolerancef; }
 		}
-
+        [IgnoreMember]
         public bool IsFinite
         {
             get { float f = x + y; return float.IsNaN(f) == false && float.IsInfinity(f) == false; }
         }
-
         public void Round(int nDecimals) {
             x = (float)Math.Round(x, nDecimals);
             y = (float)Math.Round(y, nDecimals);
         }
-
         public float Dot(Vector2f v2)
         {
             return x * v2.x + y * v2.y;
@@ -96,11 +104,12 @@ namespace g3
             return x * v2.y - y * v2.x;
         }
 
-
-		public Vector2f Perp {
+        [IgnoreMember]
+        public Vector2f Perp {
 			get { return new Vector2f(y, -x); }
 		}
-		public Vector2f UnitPerp {
+        [IgnoreMember]
+        public Vector2f UnitPerp {
 			get { return new Vector2f(y, -x).Normalized; }
 		}
 		public float DotPerp(Vector2f v2) {

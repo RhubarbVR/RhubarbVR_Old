@@ -12,7 +12,7 @@ using System.IO;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
-    public class Texture2DField: MaterialField
+    public class Texture2DField : MaterialField
     {
         public AssetRef<RTexture2D> field;
         public override void buildSyncObjs(bool newRefIds)
@@ -20,59 +20,60 @@ namespace RhubarbEngine.Render.Material.Fields
             field = new AssetRef<RTexture2D>(this, newRefIds);
             field.loadChange += assetChange;
         }
+
+        public override void onUpdate()
+        {
+            base.onUpdate();
+            if (input.mainWindows.GetKey(Key.F3))
+            {
+                loadTextureView(true);
+            }
+
+        }
+
         public override void setValue(Object val)
         {
             field.value = (NetPointer)val;
         }
         public void assetChange(RTexture2D newAsset)
         {
-            logger.Log("Texture asset change");
             loadTextureView();
         }
 
-        private void SetResource(BindableResource res)
+        private void SetResource(BindableResource res, bool forceR = false)
         {
-            if(resource != res)
+            if ((resource != res) || forceR)
             {
                 resource = res;
-                logger.Log("Trains");
                 rMaterial.ReloadBindableResources();
             }
         }
-
-        unsafe public override void updateBuffer(GraphicsDevice gb)
+        public void loadTextureView(bool forceR = false)
         {
-            if (resource != null)
-            {
-                return;
-            }
-            loadTextureView();
-        }
-
-        public void loadTextureView()
-        {
-            logger.Log("LoadTextureView");
             if(field.target != null)
             {
                 if(field.Asset != null)
                 {
                     if (field.Asset.view != null)
                     {
-                        logger.Log("Trains Loaded Texture");
-                        SetResource(field.Asset.view);
+                        logger.Log("View Is There");
+                        SetResource(field.Asset.view, forceR);
                     }
                     else
                     {
+                        logger.Log("Asset Is There");
                         SetResource(engine.renderManager.nulview);
                     }
                 }
                 else
                 {
+                    logger.Log("Target is there");
                     SetResource(engine.renderManager.nulview);
                 }
             }
             else
             {
+                logger.Log("No Target is there");
                 SetResource(engine.renderManager.nulview);
             }
 
@@ -80,11 +81,6 @@ namespace RhubarbEngine.Render.Material.Fields
 
         public unsafe override void createDeviceResource(ResourceFactory fact)
         {
-
-            if (resource != null)
-            {
-                return;
-            }
             loadTextureView();
         }
     }

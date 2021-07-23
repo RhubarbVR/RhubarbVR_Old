@@ -9,12 +9,17 @@ using RhubarbEngine.VirtualReality;
 using RhubarbEngine.Input.Controllers;
 using g3;
 using System.Numerics;
+using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.Managers
 {
     public class InputManager : IManager
     {
         private Engine engine;
+
+        public KeyboardStealer keyboard;
+
+        public bool isKeyboardinuse => keyboard != null;
 
         public InputTracker mainWindows = new InputTracker();
 

@@ -19,9 +19,11 @@ using RhubarbEngine.Components.Color;
 using RhubarbEngine.Components.Users;
 using RhubarbEngine.Components.ImGUI;
 using RhubarbEngine.Components.Physics.Colliders;
+using RhubarbEngine.Components.PrivateSpace;
 
 using Org.OpenAPITools.Model;
 using BulletSharp;
+using System.Numerics;
 
 namespace RhubarbEngine.Managers
 {
@@ -126,8 +128,9 @@ namespace RhubarbEngine.Managers
 
             engine.logger.Log("Starting Private Overlay World");
             privateOverlay = new World.World(this, "Private Overlay", 1);
-            privateOverlay.Focus = World.World.FocusLevel.PrivateOverlay;
+            //privateOverlay.RootEntity.attachComponent<PersonalSpace>();
             worlds.Add(privateOverlay);
+            privateOverlay.Focus = World.World.FocusLevel.PrivateOverlay;
 
 
             engine.logger.Log("Starting Local World");
@@ -166,31 +169,41 @@ namespace RhubarbEngine.Managers
         }
 
 
-        public void BuildLocalWorld()
+        public void buildUI(Entity e)
         {
-            Entity e = localWorld.RootEntity.addChild("Gay");
-            localWorld.RootEntity.attachComponent<SimpleSpawn>();
+
             StaicMainShader shader = e.attachComponent<StaicMainShader>();
             PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
             InputPlane bmeshcol = e.attachComponent<InputPlane>();
             //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
-
+            e.rotation.value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
             ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
-            ImGUIImageButton imGUIText = e.attachComponent<ImGUIImageButton>();
+            ImGUIInputText imGUIText = e.attachComponent<ImGUIInputText>();
             Textue2DFromUrl urr = e.attachComponent<Textue2DFromUrl>();
             imGUICanvas.imputPlane.target = bmeshcol;
-            imGUIText.texture.target = urr;
             imGUICanvas.element.target = imGUIText;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;
-
-            //mit.setValueAtField("Texture", Render.Shader.ShaderType.MainFrag, textue2DFromUrl);
-            
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = imGUICanvas;
+        }
+
+        public void BuildLocalWorld()
+        {
+            localWorld.RootEntity.attachComponent<SimpleSpawn>();
+            Entity e = localWorld.RootEntity.addChild("Gay");
+            Entity edd = localWorld.RootEntity.addChild("Gay");
+            edd.position.value = new Vector3f(1, 1, 1);
+            buildUI(e);
+            buildUI(edd);
+
+
+            //mit.setValueAtField("Texture", Render.Shader.ShaderType.MainFrag, textue2DFromUrl);
+
+
             //  rgbainbowDriver.driver.setDriveTarget(field.field);
             // rgbainbowDriver.speed.value = 50f;
 
@@ -217,6 +230,7 @@ namespace RhubarbEngine.Managers
             // rgbainbowDriver.speed.value = 50f;
             return e;
         }
+
 
         public void Update(DateTime startTime, DateTime Frame)
         {

@@ -11,9 +11,11 @@ namespace RhubarbEngine.World.ECS
         public Sync<bool> enabled;
 
         [NoSync]
+        [NoSave]
         private Entity _entity;
 
         [NoSync]
+        [NoSave]
         public Entity entity { get { return _entity; } }
 
         public override void inturnalSyncObjs(bool newRefIds)

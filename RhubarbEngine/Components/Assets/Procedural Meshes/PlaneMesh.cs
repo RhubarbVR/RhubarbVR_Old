@@ -8,7 +8,6 @@ using RhubarbEngine.World;
 using RhubarbEngine.World.Asset;
 using RhubarbEngine.World.ECS;
 
-// TODO
 namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 {
     public class PlaneMesh : ProceduralMesh

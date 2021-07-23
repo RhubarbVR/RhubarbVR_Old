@@ -40,6 +40,7 @@ namespace RhubarbEngine.Components.Assets
 
         public void ReloadBindableResources()
         {
+            Logger.Log("Reload");
             BindableResourcesReload?.Invoke(this);
         }
 
@@ -56,6 +57,7 @@ namespace RhubarbEngine.Components.Assets
                 var mitfield = getField<MaterialField>(field.fieldName, field.shaderType);
                 if(mitfield == null)
                 {
+                    logger.Log(field.fieldName+"  :  " +field.shaderType.ToString() + "  :  " + field.valueType.ToString());
                     createField(field.fieldName, field.shaderType, field.valueType);
                     mitfield = getField<MaterialField>(field.fieldName, field.shaderType);
                 }
@@ -249,6 +251,7 @@ namespace RhubarbEngine.Components.Assets
                 }
                 if (!val)
                 {
+                    logger.Log(item.fieldName + "  :  " + item.shaderType.ToString() + "  :  " + item.valueType.ToString());
                     createField(item.fieldName, item.shaderType, item.valueType);
                 }
             }
