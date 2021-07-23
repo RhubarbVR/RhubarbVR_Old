@@ -10,47 +10,86 @@
   <ItemGroup>
     <EmbeddedResource Include="Assets/GLSL/imgui-vertex.glsl">
       <LogicalName>imgui-vertex.glsl</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets/GLSL/imgui-vertex-legacy.glsl">
       <LogicalName>imgui-vertex-legacy.glsl</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets/GLSL/imgui-frag.glsl">
       <LogicalName>imgui-frag.glsl</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets/GLSLES/imgui-vertex.glsles">
       <LogicalName>imgui-vertex.glsles</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets/GLSLES/imgui-vertex-legacy.glsles">
       <LogicalName>imgui-vertex-legacy.glsles</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets/GLSLES/imgui-frag.glsles">
       <LogicalName>imgui-frag.glsles</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets/HLSL/imgui-vertex.hlsl.bytes">
       <LogicalName>imgui-vertex.hlsl.bytes</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets\HLSL\imgui-vertex-legacy.hlsl.bytes">
       <LogicalName>imgui-vertex-legacy.hlsl.bytes</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets/HLSL/imgui-frag.hlsl.bytes">
       <LogicalName>imgui-frag.hlsl.bytes</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets/SPIR-V/imgui-vertex.spv">
       <LogicalName>imgui-vertex.spv</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets/SPIR-V/imgui-frag.spv">
       <LogicalName>imgui-frag.spv</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets/Metal/imgui-vertex.metallib">
       <LogicalName>imgui-vertex.metallib</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets/Metal/imgui-frag.metallib">
       <LogicalName>imgui-frag.metallib</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ImGui.NET" Version="1.78.0" />
     <PackageReference Include="Veldrid" Version="4.8.0" />
     <PackageReference Include="Veldrid.SDL2" Version="4.8.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Assets\HLSL\imgui-frag.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\HLSL\imgui-vertex-legacy.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\HLSL\imgui-vertex.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Metal\imgui-frag.metal">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Metal\imgui-vertex.metal">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\SPIR-V\generate-spirv.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\SPIR-V\imgui-frag.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\SPIR-V\imgui-vertex.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
