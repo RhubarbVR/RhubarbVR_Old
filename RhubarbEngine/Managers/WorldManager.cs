@@ -127,8 +127,8 @@ namespace RhubarbEngine.Managers
             engine = _engine;
 
             engine.logger.Log("Starting Private Overlay World");
-            privateOverlay = new World.World(this, "Private Overlay", 1);
-            //privateOverlay.RootEntity.attachComponent<PersonalSpace>();
+            privateOverlay = new World.World(this, "Private Overlay", 1,true);
+            privateOverlay.RootEntity.attachComponent<PersonalSpace>();
             worlds.Add(privateOverlay);
             privateOverlay.Focus = World.World.FocusLevel.PrivateOverlay;
 
@@ -198,7 +198,6 @@ namespace RhubarbEngine.Managers
             Entity edd = localWorld.RootEntity.addChild("Gay");
             edd.position.value = new Vector3f(1, 1, 1);
             buildUI(e);
-            buildUI(edd);
 
 
             //mit.setValueAtField("Texture", Render.Shader.ShaderType.MainFrag, textue2DFromUrl);
