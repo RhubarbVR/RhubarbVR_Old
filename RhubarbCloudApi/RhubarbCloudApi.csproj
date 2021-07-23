@@ -17,10 +17,6 @@
     <PackageReference Include="RestSharp" Version="106.11.7" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ImguiVeldrid\ImguiVeldrid.csproj" />
-  </ItemGroup>
-
 
 
 </Project>
