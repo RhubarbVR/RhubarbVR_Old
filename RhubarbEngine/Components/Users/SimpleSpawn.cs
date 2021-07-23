@@ -62,8 +62,6 @@ namespace RhubarbEngine.Components.Users
                 rightcomp.userroot.target = userRoot;
 
 
-
-
                 Entity obj = world.worldManager.AddMesh<ArrowMesh>(left);
                 Entity obj2 = world.worldManager.AddMesh<ArrowMesh>(right);
                 Entity obj3 = world.worldManager.AddMesh<ArrowMesh>(head);

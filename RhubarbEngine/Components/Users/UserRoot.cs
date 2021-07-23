@@ -65,6 +65,7 @@ namespace RhubarbEngine.Components.Users
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
+            if (world.userspace) return;
             if(world.localUser == user.target)
             {
                 if (input.isKeyboardinuse) return;
