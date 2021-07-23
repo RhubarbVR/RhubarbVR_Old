@@ -20,6 +20,7 @@ using RhubarbEngine.Components.Users;
 using RhubarbEngine.Components.ImGUI;
 using RhubarbEngine.Components.Physics.Colliders;
 using RhubarbEngine.Components.PrivateSpace;
+using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.Components.PrivateSpace
 {
@@ -38,7 +39,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
             ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
-            ImGUIButton imGUIText = e.attachComponent<ImGUIButton>();
+            ImGUIInputText imGUIText = e.attachComponent<ImGUIInputText>();
             imGUICanvas.imputPlane.target = bmeshcol;
             imGUICanvas.element.target = imGUIText;
             mit.Shader.target = shader;
@@ -47,6 +48,40 @@ namespace RhubarbEngine.Components.PrivateSpace
 
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = imGUICanvas;
+
+            Entity rootent = world.RootEntity.addChild();
+            rootent.name.value = $"PersonalSpace User";
+            rootent.persistence.value = false;
+            UserRoot userRoot = rootent.attachComponent<UserRoot>();
+            userRoot.user.target = world.localUser;
+            world.localUser.userroot.target = userRoot;
+            Entity head = rootent.addChild("Head");
+            head.attachComponent<Head>().userroot.target = userRoot;
+            head.attachComponent<InteractionLaser>();
+            userRoot.Head.target = head;
+            Entity left = rootent.addChild("Left hand");
+            Entity right = rootent.addChild("Right hand");
+
+            userRoot.LeftHand.target = left;
+            userRoot.RightHand.target = right;
+            Hand leftcomp = left.attachComponent<Hand>();
+            leftcomp.userroot.target = userRoot;
+            leftcomp.creality.value = Input.Creality.Left;
+            Hand rightcomp = right.attachComponent<Hand>();
+            rightcomp.creality.value = Input.Creality.Right;
+            rightcomp.userroot.target = userRoot;
+
+            var ileft = left.attachComponent<InteractionLaser>();
+            var iright = right.attachComponent<InteractionLaser>();
+            ileft.source.value = InteractionSource.LeftLaser;
+            iright.source.value = InteractionSource.RightLaser;
+
+            Entity obj3 = world.worldManager.AddMesh<SphereMesh>(head);
+            obj3.scale.value = new Vector3f(0.0001);
+            obj3.position.value = new Vector3f(0, 0, -engine.renderManager.nearPlaneDistance);
+
+            logger.Log("Spawned User PersonalSpace");
+
         }
 
         public PersonalSpace(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
