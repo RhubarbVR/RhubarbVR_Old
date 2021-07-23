@@ -22,8 +22,6 @@ namespace RhubarbEngine.World
         }
         public event Action<IChangeable> Changed;
 
-
-
         [NoSync]
         [NoSave]
         public World world { get; protected set; }
@@ -45,9 +43,11 @@ namespace RhubarbEngine.World
         public bool Persistent = true;
 
         NetPointer IWorldObject.ReferenceID => referenceID;
+
         [NoSync]
         [NoSave]
         World IWorldObject.World => world;
+
         [NoSync]
         [NoSave]
         IWorldObject IWorldObject.Parent => parent;
@@ -175,10 +175,10 @@ namespace RhubarbEngine.World
                     if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || netsync && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0)))
                     {
                         //This is for debug purposes 
-                        if (!netsync)
-                        {
-                            Console.WriteLine(field.FieldType.FullName + "Name: " + field.Name);
-                        }
+                        //if (!netsync)
+                        //{
+                        //    Console.WriteLine(field.FieldType.FullName + "Name: " + field.Name);
+                        //}
                         obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize(netsync));
                     }
                 }
