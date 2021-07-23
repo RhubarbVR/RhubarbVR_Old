@@ -124,11 +124,12 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void ImGuiUpdate()
         {
-            if(element.target != null)
+            ImGui.SetWindowPos(Vector2.Zero);
+            ImGui.SetWindowSize(new Vector2(scale.value.x, scale.value.y));
+            ImGui.SetNextWindowCollapsed(false);
+            ImGui.SetNextWindowViewport((uint)referenceID.id);
+            if (element.target != null)
             {
-                ImGui.SetWindowPos(Vector2.Zero);
-                ImGui.SetWindowSize(new Vector2(scale.value.x, scale.value.y));
-                ImGui.SetNextWindowCollapsed(false);
                 element.target.ImguiRender(igr);
                 if (ImGui.IsAnyItemActive())
                 {

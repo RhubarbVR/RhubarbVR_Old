@@ -14,12 +14,12 @@
     <PackageReference Include="BEPUik" Version="1.5.1" />
     <PackageReference Include="BulletSharp.x64" Version="0.12.0" />
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
+    <PackageReference Include="ImGui.NET" Version="1.78.0" />
     <PackageReference Include="LiteNetLib" Version="0.9.5" />
     <PackageReference Include="MessagePack" Version="2.2.113" />
     <PackageReference Include="RhuSettings" Version="1.0.0" />
     <PackageReference Include="Veldrid" Version="4.8.0" />
     <PackageReference Include="Veldrid.ImageSharp" Version="4.8.0" />
-    <PackageReference Include="Veldrid.ImGui" Version="5.72.0" />
     <PackageReference Include="Veldrid.SDL2" Version="4.8.0" />
     <PackageReference Include="Veldrid.SPIRV" Version="1.0.14" />
 	<PackageReference Include="Veldrid.StartupUtilities" Version="4.8.0" />
@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ImguiVeldrid\Veldrid.ImGui.csproj" />
     <ProjectReference Include="..\Numerics\Numerics.csproj" />
     <ProjectReference Include="..\RhubarbCloudApi\RhubarbCloudApi.csproj" />
   </ItemGroup>
