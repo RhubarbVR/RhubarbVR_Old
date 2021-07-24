@@ -17,47 +17,49 @@ namespace RhubarbEngine.Components.ImGUI
 {
     
     [Category("ImGUI/Interaction/Button")]
-    public class ImGUIButtonGrid : UIWidget
+    public class ImGUIButtonRow : UIWidget
     {
 
         public SyncValueList<string> labels;
-        public Sync<int> Columns;
+        public SyncValueList<float> widths;
         public SyncDelegate<Action<string>> action;
+        public Sync<float> hight;
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
             labels = new SyncValueList<string>(this, newRefIds);
             action = new SyncDelegate<Action<string>>(this, newRefIds);
-            Columns = new Sync<int>(this, newRefIds);
-            Columns.value = 5;
+            widths = new SyncValueList<float>(this, newRefIds);
+            hight = new Sync<float>(this, newRefIds);
+            hight.value = 0.06666666666666666f;
         }
 
-        public ImGUIButtonGrid(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public ImGUIButtonRow(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
             
         }
-        public ImGUIButtonGrid()
+        public ImGUIButtonRow()
         {
         }
 
         public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
-            ImGui.Columns(Columns.value, null);
-            ImGui.Separator();
             for (int i = 0; i < labels.Count; i++)
             {
                 var label = labels[i].value;
-
+                ImGui.SameLine();
                 if (label != null)
                 {
-                    if (ImGui.Button(label, new Vector2(ImGui.GetIO().DisplaySize.X / Columns.value, ImGui.GetIO().DisplaySize.Y / Columns.value)))
+                    if (ImGui.Button(label, new Vector2(ImGui.GetIO().DisplaySize.X * widths[i]?.value??0, ImGui.GetIO().DisplaySize.Y * hight.value)))
                     {
                         action.Target?.Invoke(label);
                     }
                 }
-                ImGui.NextColumn();
+                else
+                {
+                    ImGui.Dummy(new Vector2(ImGui.GetIO().DisplaySize.X * widths[i]?.value ?? 0, ImGui.GetIO().DisplaySize.Y * hight.value));
+                }
             }
-            ImGui.Columns(1);
             ImGui.Separator();
         }
     }

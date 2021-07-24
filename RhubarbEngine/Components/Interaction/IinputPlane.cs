@@ -22,6 +22,7 @@ namespace RhubarbEngine.Components.Interaction
         public InteractionSource source { get; }
 
         public bool focused { get; }
+        public bool StopMouse { get; set; }
 
         public void Setfocused();
 

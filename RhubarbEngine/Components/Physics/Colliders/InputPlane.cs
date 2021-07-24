@@ -40,14 +40,17 @@ namespace RhubarbEngine.Components.Physics.Colliders
         public Vector2 MousePosition => mousePosition;
 
 
-        public void Click(InteractionSource sourc)
+        public void Click(Vector2 pos, InteractionSource sourc)
         {
             Setfocused();
             val = sourc;
+            mousePosition = pos;
+            StopMousePos = false;
         }
 
         public void updatePos(Vector2 pos, InteractionSource sourc)
         {
+            if (StopMousePos) return;
             if (sourc != val) return;
             mousePosition = pos;
         }
@@ -68,6 +71,10 @@ namespace RhubarbEngine.Components.Physics.Colliders
         private bool _focused = false;
 
         public bool focused => _focused;
+
+        public bool StopMousePos = false;
+
+        public bool StopMouse { get { return StopMousePos; } set { StopMousePos = value; } }
 
         public override void buildSyncObjs(bool newRefIds)
         {
@@ -100,6 +107,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         public bool IsMouseDown(MouseButton button)
         {
+            if (StopMousePos) return false;
             if (!focused) return false;
             switch (source)
             {

@@ -73,7 +73,7 @@ namespace RhubarbEngine.Components.Interaction
                             inputPlane.updatePos(pos, source.value);
                             if (HasClicked())
                             {
-                                inputPlane.Click(source.value);
+                                inputPlane.Click(pos,source.value);
                             }
                         }
                         catch

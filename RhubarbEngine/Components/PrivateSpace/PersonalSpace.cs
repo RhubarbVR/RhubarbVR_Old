@@ -38,6 +38,14 @@ namespace RhubarbEngine.Components.PrivateSpace
 
         public void OpenKeyboard()
         {
+            if (engine.outputType == VirtualReality.OutputType.Screen)
+            {
+                if (Keyboard.target != null)
+                {
+                    Keyboard.target.enabled.value = false;
+                }
+                return;
+            }
             if (Keyboard.target == null)
             {
                 var keyboard = Keyboard.target = FollowUser.target.addChild("Keyboard");
@@ -45,13 +53,20 @@ namespace RhubarbEngine.Components.PrivateSpace
                 StaicMainShader shader = e.attachComponent<StaicMainShader>();
                 PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
                 InputPlane bmeshcol = e.attachComponent<InputPlane>();
+                bmeshcol.size.value = (new Vector2f(0.5,0.25)/8)*7;
+                bmesh.Height.value = bmeshcol.size.value.y*2;
+                bmesh.Width.value = bmeshcol.size.value.x*2;
+                bmeshcol.FocusedOverride.value = true;
                 //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
-                e.rotation.value = Quaternionf.CreateFromEuler(90f, -80f, -90f);
-                e.position.value = new Vector3f(0, 0.1, -0.9);
+                e.rotation.value = Quaternionf.CreateFromEuler(90f, -90f, -90f)* Quaternionf.CreateFromEuler(0f,-40f,0f);
+                e.position.value = new Vector3f(0, -0.5, -0.6);
                 RMaterial mit = e.attachComponent<RMaterial>();
                 MeshRender meshRender = e.attachComponent<MeshRender>();
                 ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
-                ImGUIButtonGrid imGUIText = e.attachComponent<ImGUIButtonGrid>();
+                Vector2f sizePix = new Vector2f(600,600) * (bmeshcol.size.value * 2);
+                imGUICanvas.scale.value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);
+                bmeshcol.pixelSize.value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);
+                ImGUIKeyboard imGUIText = e.attachComponent<ImGUIKeyboard>();
                 imGUICanvas.imputPlane.target = bmeshcol;
                 imGUICanvas.element.target = imGUIText;
                 mit.Shader.target = shader;
@@ -61,19 +76,18 @@ namespace RhubarbEngine.Components.PrivateSpace
                 imGUICanvas.noBackground.value = true;
                 Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
                 field.field.target = imGUICanvas;
-
-                imGUIText.labels.Add().value = "Trains";
-                imGUIText.labels.Add().value = "Trains";
-                imGUIText.labels.Add().value = null;
-                imGUIText.labels.Add().value = null;
-                imGUIText.labels.Add().value = "Trains";
-                imGUIText.labels.Add().value = "Trains";
-
-
             }
             else
             {
                 Keyboard.target.enabled.value = true;
+            }
+        }
+
+        public void CloseKeyboard()
+        {
+            if(Keyboard.target != null)
+            {
+                Keyboard.target.enabled.value = false;
             }
         }
 
@@ -82,27 +96,10 @@ namespace RhubarbEngine.Components.PrivateSpace
             base.onLoaded();
             var d = world.RootEntity.addChild("User Follower");
             FollowUser.target = d;
+            
             var e = d.addChild("Main Panel");
             d.attachComponent<UserInterfacePositioner>();
-            StaicMainShader shader = e.attachComponent<StaicMainShader>();
-            PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
-            InputPlane bmeshcol = e.attachComponent<InputPlane>();
-            //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
-            e.rotation.value = Quaternionf.CreateFromEuler(90f, -90f, -90f);
-            e.position.value = new Vector3f(0, 0, -1);
-            RMaterial mit = e.attachComponent<RMaterial>();
-            MeshRender meshRender = e.attachComponent<MeshRender>();
-            ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
-            ImGUIInputText imGUIText = e.attachComponent<ImGUIInputText>();
-            imGUICanvas.imputPlane.target = bmeshcol;
-            imGUICanvas.element.target = imGUIText;
-            mit.Shader.target = shader;
-            meshRender.Materials.Add().target = mit;
-            meshRender.Mesh.target = bmesh;
-            imGUICanvas.noCloseing.value = true;
-            Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-            field.field.target = imGUICanvas;
-
+            e.attachComponent<DashManager>();
             Entity rootent = world.RootEntity.addChild();
             rootent.name.value = $"PersonalSpace User";
             rootent.persistence.value = false;
@@ -131,8 +128,6 @@ namespace RhubarbEngine.Components.PrivateSpace
             iright.source.value = InteractionSource.RightLaser;
 
             logger.Log("Spawned User PersonalSpace");
-            OpenKeyboard();
-
         }
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)

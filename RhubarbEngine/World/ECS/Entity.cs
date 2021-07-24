@@ -41,7 +41,8 @@ namespace RhubarbEngine.World.ECS
         public bool parentEnabled = true;
         public void parentEnabledChange(bool _parentEnabled)
         {
-            if (_parentEnabled != enabled.value)
+            if (!enabled.value) return;
+            if (_parentEnabled != parentEnabled)
             {
                 parentEnabled = _parentEnabled;
                 foreach (Entity item in _children)
