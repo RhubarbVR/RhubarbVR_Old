@@ -198,7 +198,7 @@ namespace RhubarbEngine.Managers
             Entity edd = localWorld.RootEntity.addChild("Gay");
             edd.position.value = new Vector3f(1, 1, 1);
             buildUI(e);
-
+            buildUI(edd);
 
             //mit.setValueAtField("Texture", Render.Shader.ShaderType.MainFrag, textue2DFromUrl);
 

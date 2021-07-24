@@ -81,6 +81,15 @@ namespace RhubarbEngine.World.ECS
             return cashedGlobalTrans;
         }
 
+        public Vector3f up { get
+            {
+                var mat = globalTrans();
+                var e = new Vector3f(mat.M11 * Vector3f.AxisY.x + mat.M12 * Vector3f.AxisY.y + mat.M13 * Vector3f.AxisY.z, mat.M21 * Vector3f.AxisY.x + mat.M22 * Vector3f.AxisY.y + mat.M23 * Vector3f.AxisY.z, mat.M31 * Vector3f.AxisY.x + mat.M32 * Vector3f.AxisY.y + mat.M33 * Vector3f.AxisY.z);
+                return e;
+
+            }
+        }
+
         public Matrix4x4 localTrans()
         {
             return cashedLocalMatrix;
@@ -93,7 +102,7 @@ namespace RhubarbEngine.World.ECS
             {
                 parentMatrix = parent.target.globalTrans();
             }
-            Matrix4x4 newlocal = Matrix4x4.Subtract(newtrans, parentMatrix);
+            Matrix4x4 newlocal = parentMatrix * newtrans;
             Matrix4x4.Decompose(newlocal, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
             position.value = new Vector3f(newtranslation.X, newtranslation.Y, newtranslation.Z);
             rotation.value = new Quaternionf(newrotation.X, newrotation.Y, newrotation.Z, newrotation.W);

@@ -207,8 +207,8 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         public void Removefocused()
         {
-            _focused = false;
             input.removeFocus -= Removefocused;
+            _focused = false;
         }
 
         public InputPlane(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
