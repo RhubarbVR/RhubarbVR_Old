@@ -229,7 +229,10 @@ namespace g3
             return q.Inverse();
         }
 
-
+        public float Angle(Quaternionf e)
+        {
+            return (float)Math.Acos(Math.Min(Math.Abs(Dot(e)), 1f)) * 2f * 57.29578f;
+        }
         
         public Matrix3f ToRotationMatrix()
         {
@@ -305,32 +308,42 @@ namespace g3
             return Quaternionf.AxisAngleD(vAround, fAngle);
         }
 
-
-        public void SetToSlerp(Quaternionf p, Quaternionf q, float t)
+        public static Quaternionf Slerp(Quaternionf a, Quaternionf b, float lerp)
         {
-            float cs = p.Dot(q);
-            float angle = (float)Math.Acos(cs);
-            if (Math.Abs(angle) >= MathUtil.ZeroTolerance) {
-                float sn = (float)Math.Sin(angle);
-                float invSn = 1 / sn;
-                float tAngle = t * angle;
-                float coeff0 = (float)Math.Sin(angle - tAngle) * invSn;
-                float coeff1 = (float)Math.Sin(tAngle) * invSn;
-                x = coeff0 * p.x + coeff1 * q.x;
-                y = coeff0 * p.y + coeff1 * q.y;
-                z = coeff0 * p.z + coeff1 * q.z;
-                w = coeff0 * p.w + coeff1 * q.w;
-            } else {
-                x = p.x;
-                y = p.y;
-                z = p.z;
-                w = p.w;
+            if (lerp <= 0f)
+            {
+                return a;
             }
-        }
-        public static Quaternionf Slerp(Quaternionf p, Quaternionf q, float t) {
-            return new Quaternionf(p, q, t);
+            if (lerp >= 1f)
+            {
+                return b;
+            }
+            float num = a.w * b.w + a.x * b.x + a.y * b.y + a.z * b.z;
+            if (num < 0f)
+            {
+                b = b.Inverse();
+                num = 0f - num;
+            }
+            if (Math.Abs(num - 1f) < Math.Max(1E-06f * Math.Max(Math.Abs(num), Math.Abs(1f)), 5.605194E-45f))
+            {
+                return b;
+            }
+            float num2 = (float)Math.Acos(num);
+            float num3 = (float)Math.Sqrt(1f - num * num);
+            float num4 = (float)Math.Sin((1f - lerp) * num2) / num3;
+            float num5 = (float)Math.Sin(lerp * num2) / num3;
+            return new Quaternionf(a.x * num4 + b.x * num5, a.y * num4 + b.y * num5, a.z * num4 + b.z * num5, a.w * num4 + b.w * num5);
         }
 
+        public void SetToSlerp(Quaternionf a, Quaternionf b, float lerp)
+        {
+            var e = Slerp(a, b, lerp);
+            x = e.x;
+            y = e.y;
+            z = e.z;
+            w = e.w;
+
+        }
 
 
         public void SetFromRotationMatrix(Matrix3f rot)
@@ -466,12 +479,120 @@ namespace g3
             return result;
         }
 
+        public static Quaternionf LookRotation(Vector3f forward, Vector3f up)
+        {
+            Vector3f b = Vector3f.Zero;
+            if (forward == b)
+            {
+                return Identity;
+            }
+            Vector3f b2 = forward.Normalized;
+            Vector3f a = up.Cross(b2);
+            b = Vector3f.Zero;
+            if (a == b)
+            {
+                Quaternionf q = CreateFromEuler(-90f, 0f, 0f);
+                a = q * b2;
+            }
+            else
+            {
+                a = a.Normalized;
+            }
+            Vector3f float5 = b2.Cross(a);
+            float num = a.x + float5.y + b2.z;
+            float num3;
+            float num4;
+            float num5;
+            float num6;
+            if (num > 0f)
+            {
+                float num2 = (float)Math.Sqrt(num + 1f);
+                num3 = num2 * 0.5f;
+                num2 = 0.5f / num2;
+                num4 = (float5.z - b2.y) * num2;
+                num5 = (b2.x - a.z) * num2;
+                num6 = (a.y - float5.x) * num2;
+            }
+            else if (a.x >= float5.y && a.x >= b2.z)
+            {
+                float num7 = (float)Math.Sqrt(1f + a.x - float5.y - b2.z);
+                float num8 = 0.5f / num7;
+                num4 = 0.5f * num7;
+                num5 = (a.y + float5.x) * num8;
+                num6 = (a.z + b2.x) * num8;
+                num3 = (float5.z - b2.y) * num8;
+            }
+            else if (float5.y > b2.z)
+            {
+                float num9 = (float)Math.Sqrt(1f + float5.y - a.x - b2.z);
+                float num10 = 0.5f / num9;
+                num4 = (float5.x + a.y) * num10;
+                num5 = 0.5f * num9;
+                num6 = (b2.y + float5.z) * num10;
+                num3 = (b2.x - a.z) * num10;
+            }
+            else
+            {
+                float num11 = (float)Math.Sqrt(1f + b2.z - a.x - float5.y);
+                float num12 = 0.5f / num11;
+                num4 = (b2.x + a.z) * num12;
+                num5 = (b2.y + float5.z) * num12;
+                num6 = 0.5f * num11;
+                num3 = (a.y - float5.x) * num12;
+            }
+            return new Quaternionf(num4, num5, num6, num3);
+        }
+
         public static Quaternionf CreateFromEuler(float x, float y, float z)
         {
             
             return CreateFromYawPitchRoll((float)(Math.PI / 180) * x, (float)(Math.PI / 180) * y, (float)(Math.PI / 180) * z);
         }
+        public Vector3f getEuler()
+        {
+            float sqw = w * w;
+            float sqx = x * x;
+            float sqy = y * y;
+            float sqz = z * z;
+            float unit = sqx + sqy + sqz + sqw; // if normalised is one, otherwise is correction factor
+            float test = x * w - y * z;
+            Vector3f v = Vector3f.Zero;
 
+            if (test > 0.4995f * unit)
+            { // singularity at north pole
+                v.y = 2f * (float)Math.Atan2(y, x);
+                v.x = (float)Math.PI / 2;
+                v.z = 0;
+                return NormalizeAngles(v * (float)(Math.PI / 180));
+            }
+            if (test < -0.4995f * unit)
+            { // singularity at south pole
+                v.y = -2f * (float)Math.Atan2(y, x);
+                v.x = -(float)Math.PI / 2;
+                v.z = 0;
+                return NormalizeAngles(v * (float)(Math.PI / 180));
+            }
+            Quaternionf q = new Quaternionf(w, z, x, y);
+            v.y = (float)Math.Atan2(2f * q.x * q.w + 2f * q.y * q.z, 1 - 2f * (q.z * q.z + q.w * q.w));     // Yaw
+            v.x = (float)Math.Asin(2f * (q.x * q.z - q.w * q.y));                             // Pitch
+            v.z = (float)Math.Atan2(2f * q.x * q.y + 2f * q.z * q.w, 1 - 2f * (q.y * q.y + q.z * q.z));      // Roll
+            return NormalizeAngles(v * (float)(Math.PI / 180));
+        }
+        static Vector3f NormalizeAngles(Vector3f angles)
+        {
+            angles.x = NormalizeAngle(angles.x);
+            angles.y = NormalizeAngle(angles.y);
+            angles.z = NormalizeAngle(angles.z);
+            return angles;
+        }
+        static float NormalizeAngle(float angle)
+        {
+            while (angle > 360)
+                angle -= 360;
+            while (angle < 0)
+                angle += 360;
+            return angle;
+        }
         public override string ToString() {
             return string.Format("{0:F8} {1:F8} {2:F8} {3:F8}", x, y, z, w);
         }

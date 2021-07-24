@@ -58,6 +58,11 @@ namespace RhubarbEngine.World
 
         bool IWorldObject.IsRemoved => false;
 
+        public void Destroy()
+        {
+            Dispose();
+        }
+
         public Worker(World _world, IWorldObject _parent, bool newRefID = true)
         {
             world = _world;
@@ -85,6 +90,7 @@ namespace RhubarbEngine.World
         {
             world = _world;
             parent = _parent;
+            parent.addDisposable(this);
             inturnalSyncObjs(newRefID);
             buildSyncObjs(newRefID);
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
