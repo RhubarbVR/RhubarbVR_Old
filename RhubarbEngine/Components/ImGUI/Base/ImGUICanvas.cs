@@ -29,6 +29,13 @@ namespace RhubarbEngine.Components.ImGUI
 
         public SyncRef<IinputPlane> imputPlane;
 
+        public Sync<string> name;
+
+        public Sync<bool> noCloseing;
+
+        public Sync<bool> noBackground;
+
+
         private ImGuiRenderer igr;
 
         private CommandList UIcommandList;
@@ -48,6 +55,10 @@ namespace RhubarbEngine.Components.ImGUI
             scale.Changed += onScaleChange;
             element = new SyncRef<IUIElement>(this, newRefIds);
             imputPlane = new SyncRef<IinputPlane>(this, newRefIds);
+            name = new Sync<string>(this, newRefIds);
+            noCloseing = new Sync<bool>(this, newRefIds);
+            noBackground = new Sync<bool>(this, newRefIds);
+
         }
 
         private void onScaleChange(IChangeable val)
@@ -124,13 +135,35 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void ImGuiUpdate()
         {
-            ImGui.SetWindowPos(Vector2.Zero);
-            ImGui.SetWindowSize(new Vector2(scale.value.x, scale.value.y));
-            ImGui.SetNextWindowCollapsed(false);
-            ImGui.SetNextWindowViewport((uint)referenceID.id);
             if (element.target != null)
             {
-                element.target.ImguiRender(igr);
+                var ui = ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize;
+                if (noBackground.value)
+                {
+                    ui |= ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoTitleBar;
+                }
+                if (!noCloseing.value)
+                {
+                    bool e = false;
+                    ImGui.Begin(name.value ?? "Null", ref e, ui);
+                    ImGui.SetWindowPos(Vector2.Zero);
+                    ImGui.SetWindowSize(new Vector2(scale.value.x, scale.value.y));
+                    element.target.ImguiRender(igr);
+                    if (e)
+                    {
+                        entity.Destroy();
+                    }
+                    ImGui.End();
+
+                }
+                else
+                {
+                    ImGui.Begin(name.value ?? "Null", ui);
+                    ImGui.SetWindowPos(Vector2.Zero);
+                    ImGui.SetWindowSize(new Vector2(scale.value.x, scale.value.y));
+                    element.target.ImguiRender(igr);
+                    ImGui.End();
+                }
                 if (ImGui.IsAnyItemActive())
                 {
                     input.keyboard = this;
@@ -142,6 +175,7 @@ namespace RhubarbEngine.Components.ImGUI
                         input.keyboard = null;
                     }
                 }
+
 
             }
         }

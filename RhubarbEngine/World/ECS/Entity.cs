@@ -120,8 +120,6 @@ namespace RhubarbEngine.World.ECS
             scale.value = new Vector3f(newscale.X, newscale.Y, newscale.Z);
         }
 
-
-
         public override void buildSyncObjs(bool newRefIds)
         {
             position = new Sync<Vector3f>(this, newRefIds);
@@ -214,7 +212,8 @@ namespace RhubarbEngine.World.ECS
 
         public override void Dispose()
         {
-            world.removeWorldObj(this);
+            logger.Log("Entity Remove");
+            base.Dispose();
             world.removeWorldEntity(this);
         }
 

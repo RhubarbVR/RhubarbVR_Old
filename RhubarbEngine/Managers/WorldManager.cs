@@ -39,6 +39,8 @@ namespace RhubarbEngine.Managers
 
         public World.World focusedWorld;
 
+        public PersonalSpace personalSpace;
+
         public bool dontSaveLocal = false;
         public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
         {
@@ -128,7 +130,7 @@ namespace RhubarbEngine.Managers
 
             engine.logger.Log("Starting Private Overlay World");
             privateOverlay = new World.World(this, "Private Overlay", 1,true);
-            privateOverlay.RootEntity.attachComponent<PersonalSpace>();
+            personalSpace = privateOverlay.RootEntity.attachComponent<PersonalSpace>();
             worlds.Add(privateOverlay);
             privateOverlay.Focus = World.World.FocusLevel.PrivateOverlay;
 
