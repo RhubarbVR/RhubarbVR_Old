@@ -220,9 +220,10 @@ namespace RhubarbEngine.World.ECS
 
         public void Update(DateTime startTime, DateTime Frame)
         {
+            if (base.IsRemoved) return;
             foreach (Component comp in _components)
             {
-                if (comp.enabled.value)
+                if (comp.enabled.value&& !comp.IsRemoved)
                 {
                     comp.CommonUpdate(startTime, Frame);
                 }

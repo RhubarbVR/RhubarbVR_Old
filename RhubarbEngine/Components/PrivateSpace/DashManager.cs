@@ -26,11 +26,16 @@ namespace RhubarbEngine.Components.PrivateSpace
 {
     public class DashManager : Component
     {
+        string screen = null;
+
+        public SyncRef<Entity> root;
+        public SyncRef<ImGUICanvas> canvas;
 
 
         public override void buildSyncObjs(bool newRefIds)
         {
-
+            root = new SyncRef<Entity>(this, newRefIds);
+            canvas = new SyncRef<ImGUICanvas>(this, newRefIds);
         }
 
 
@@ -47,9 +52,8 @@ namespace RhubarbEngine.Components.PrivateSpace
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
             ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
-            ImGUIInputText imGUIText = e.attachComponent<ImGUIInputText>();
+            canvas.target = imGUICanvas;
             imGUICanvas.imputPlane.target = bmeshcol;
-            imGUICanvas.element.target = imGUIText;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;
@@ -58,10 +62,81 @@ namespace RhubarbEngine.Components.PrivateSpace
             field.field.target = imGUICanvas;
         }
 
+        public void OpenScreen(string name)
+        {
+            if (name == screen) return;
+            if(root.target != null)
+            {
+                logger.Log("Destroy");
+                root.target.Destroy();
+            }
+            switch (name)
+            {
+                case "login":
+                    root.target = entity.addChild("LoginScreen");
+                    if (canvas.target != null)
+                    {
+                        canvas.target.element.target = root.target.attachComponent<LoginScreen>();
+                    }
+                    break;
+                case "register":
+                    root.target = entity.addChild("RegisterScreen");
+                    if (canvas.target != null)
+                    {
+                        canvas.target.element.target = root.target.attachComponent<RegisterScreen>();
+                    }
+                    break;
+                case "sessions":
+                    root.target = entity.addChild("SessionsScreen");
+                    if (canvas.target != null)
+                    {
+                        var e = root.target.attachComponent<SessionsScreen>();
+                        canvas.target.element.target = e;
+                        e.dash.target = this;
+                    }
+                    break;
+                case "createworld":
+                    root.target = entity.addChild("CreateWorldScreen");
+                    if (canvas.target != null)
+                    {
+                        var e = root.target.attachComponent<CreateWorldScreen>();
+                        canvas.target.element.target = e;
+                        e.dash.target = this;
+                    }
+                    break;
+                case "main":
+                    root.target = entity.addChild("MainScreen");
+                    if (canvas.target != null)
+                    {
+                        var e = root.target.attachComponent<MainScreen>();
+                        canvas.target.element.target = e;
+                        e.dash.target = this;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            screen = name;
+        }
+
         private DateTime opened = DateTime.UtcNow;
         
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
+            if (!engine.netApiManager.islogin)
+            {
+                if(!(screen == "login" || screen == "register"))
+                {
+                    OpenScreen("login");
+                }
+            }
+            else
+            {
+                if (!(screen == "main" || screen == "createworld" || screen == "sessions"))
+                {
+                    OpenScreen("main");
+                }
+            }
             if (DateTime.UtcNow <= opened + new TimeSpan(0, 0, 2)) return;
             if (((input.mainWindows.GetKey(Veldrid.Key.ControlLeft) || input.mainWindows.GetKey(Veldrid.Key.ControlLeft)) && input.mainWindows.GetKey(Veldrid.Key.Space)) || input.mainWindows.GetKeyDown(Veldrid.Key.Escape))
             {

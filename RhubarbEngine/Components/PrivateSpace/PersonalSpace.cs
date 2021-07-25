@@ -132,7 +132,46 @@ namespace RhubarbEngine.Components.PrivateSpace
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
+            if (input.mainWindows.GetKeyDown(Veldrid.Key.R) || input.SecondaryPress(Input.Creality.None))
+            {
+                SwitchWorld();
+            }
+        }
 
+        public void SwitchWorld()
+        {
+            var mang = engine.worldManager;
+
+            var pos = mang.worlds.IndexOf(mang.focusedWorld)+1;
+            if(pos == mang.worlds.Count)
+            {
+                JoinNextIfBackground(0);
+            }
+            else
+            {
+               JoinNextIfBackground(pos);
+            }
+        }
+
+        public void JoinNextIfBackground(int i)
+        {
+            var mang = engine.worldManager;
+            if(mang.worlds[i].Focus == World.World.FocusLevel.Background)
+            {
+                mang.worlds[i].Focus = World.World.FocusLevel.Focused;
+            }
+            else
+            {
+                if(i+1 == mang.worlds.Count)
+                {
+                    JoinNextIfBackground(0);
+                }
+                else
+                {
+                    JoinNextIfBackground(i + 1);
+                }
+            }
+            
         }
 
         public PersonalSpace(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

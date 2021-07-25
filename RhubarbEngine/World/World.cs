@@ -488,7 +488,6 @@ namespace RhubarbEngine.World
             }
             catch(Exception e)
             {
-                Logger.Log("Failed To update Entity Error:" + e.ToString(), true);
             }
 
             foreach (IWorldObject val in worldObjects.Values)

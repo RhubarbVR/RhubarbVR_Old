@@ -15,7 +15,7 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
+
     [Category("ImGUI/Interaction")]
     public class ImGUIKeyboard : ImGUIBeginChild
     {
@@ -32,9 +32,9 @@ namespace RhubarbEngine.Components.ImGUI
         public SyncRef<ImGUIButtonRow> rowSix;
 
         public Sync<bool> shift;
-        
+
         public Sync<bool> ctrl;
-        
+
         public Sync<bool> alt;
 
         public Sync<bool> gui;
@@ -184,7 +184,7 @@ namespace RhubarbEngine.Components.ImGUI
             }
             else
             {
-                    input.mainWindows.FrameSnapshot.PressChar(key.ToCharArray()[0], mkey);
+                input.mainWindows.FrameSnapshot.PressChar(key.ToCharArray()[0], mkey);
             }
 
         }
@@ -222,7 +222,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         public void ReloadKeyboard()
         {
-            BuildRows(shift.value|| caps.value);
+            BuildRows(shift.value || caps.value);
         }
 
         private void BuildRows(bool shift)
@@ -235,7 +235,7 @@ namespace RhubarbEngine.Components.ImGUI
             BuildRowSix(shift);
         }
 
-        private void BuildBasicKey(IList<string> list, ImGUIButtonRow row,float width)
+        private void BuildBasicKey(IList<string> list, ImGUIButtonRow row, float width)
         {
             foreach (var item in list)
             {
@@ -246,7 +246,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void BuildRowOne(bool shift)
         {
-            if(rowOne.target == null) return;
+            if (rowOne.target == null) return;
             rowOne.target.labels.Clear();
             rowOne.target.widths.Clear();
             var row = rowOne.target;
@@ -526,7 +526,7 @@ namespace RhubarbEngine.Components.ImGUI
         }
         public ImGUIKeyboard(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
-            
+
         }
         public ImGUIKeyboard()
         {

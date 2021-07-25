@@ -44,12 +44,18 @@ namespace RhubarbEngine.Managers
         public bool dontSaveLocal = false;
         public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
         {
-            foreach(World.World world in worlds)
+            try { 
+            foreach (World.World world in worlds)
             {
                 if (world.Focus != World.World.FocusLevel.Background)
                 {
                     world.addToRenderQueue(gu, layer);
                 }
+            }
+            }
+            catch
+            {
+
             }
         }
 
@@ -235,10 +241,18 @@ namespace RhubarbEngine.Managers
 
         public void Update(DateTime startTime, DateTime Frame)
         {
-            foreach (World.World world in worlds)
+            try
             {
-                world.Update(startTime, Frame);
+                foreach (World.World world in worlds)
+                {
+                    world.Update(startTime, Frame);
+                }
             }
+            catch
+            {
+
+            }
+
         }
         public void CleanUp()
         {
