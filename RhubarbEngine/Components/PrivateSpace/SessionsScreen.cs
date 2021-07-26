@@ -26,7 +26,7 @@ namespace RhubarbEngine.Components.PrivateSpace
         {
             base.buildSyncObjs(newRefIds);
             dash = new SyncRef<DashManager>(this, newRefIds);
-
+            sessionId = new SyncRef<ImGUIInputText>(this, newRefIds);
         }
 
         public override void OnAttach()
