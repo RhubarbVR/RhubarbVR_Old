@@ -153,8 +153,12 @@ namespace RhubarbEngine.Components.PrivateSpace
             }
         }
 
-        public void JoinNextIfBackground(int i)
+        public void JoinNextIfBackground(int i, int count = 0)
         {
+            if(count >= 255)
+            {
+                return;
+            }
             var mang = engine.worldManager;
             if(mang.worlds[i].Focus == World.World.FocusLevel.Background)
             {
@@ -164,11 +168,11 @@ namespace RhubarbEngine.Components.PrivateSpace
             {
                 if(i+1 == mang.worlds.Count)
                 {
-                    JoinNextIfBackground(0);
+                    JoinNextIfBackground(0, count + 1);
                 }
                 else
                 {
-                    JoinNextIfBackground(i + 1);
+                    JoinNextIfBackground(i + 1, count+1);
                 }
             }
             
