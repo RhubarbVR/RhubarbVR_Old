@@ -56,7 +56,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             children.Add().target = l;
             l = entity.attachComponent<ImGUIInputText>();
             l.label.value = "Username";
-            password.target = l;
+            username.target = l;
             children.Add().target = l;
 
 
