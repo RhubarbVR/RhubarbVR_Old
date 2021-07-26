@@ -41,7 +41,8 @@ namespace RhubarbEngine.World.ECS
         public bool parentEnabled = true;
         public void parentEnabledChange(bool _parentEnabled)
         {
-            if (_parentEnabled != enabled.value)
+            if (!enabled.value) return;
+            if (_parentEnabled != parentEnabled)
             {
                 parentEnabled = _parentEnabled;
                 foreach (Entity item in _children)
@@ -219,9 +220,10 @@ namespace RhubarbEngine.World.ECS
 
         public void Update(DateTime startTime, DateTime Frame)
         {
+            if (base.IsRemoved) return;
             foreach (Component comp in _components)
             {
-                if (comp.enabled.value)
+                if (comp.enabled.value&& !comp.IsRemoved)
                 {
                     comp.CommonUpdate(startTime, Frame);
                 }

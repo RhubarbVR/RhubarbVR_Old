@@ -73,6 +73,7 @@ namespace RhubarbEngine.World
                 {
                     string ip = item.Split(" _ ")[0];
                     string port = item.Split(" _ ")[1];
+                    Console.WriteLine("IP"+item);
                     startClient(ip, Int32.Parse(port));
                 }
             }
@@ -488,7 +489,6 @@ namespace RhubarbEngine.World
             }
             catch(Exception e)
             {
-                Logger.Log("Failed To update Entity Error:" + e.ToString(), true);
             }
 
             foreach (IWorldObject val in worldObjects.Values)

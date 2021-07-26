@@ -21,7 +21,7 @@ namespace RhubarbEngine.World
         }
     }
 
-    public class SyncDelegate<T> : SyncRef<IWorldObject> where T : class
+    public class SyncDelegate<T> : SyncRef<IWorldObject> where T : System.Delegate
     {
         private string _method;
 

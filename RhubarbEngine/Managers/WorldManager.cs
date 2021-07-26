@@ -24,6 +24,7 @@ using RhubarbEngine.Components.PrivateSpace;
 using Org.OpenAPITools.Model;
 using BulletSharp;
 using System.Numerics;
+using System.Net;
 
 namespace RhubarbEngine.Managers
 {
@@ -44,12 +45,18 @@ namespace RhubarbEngine.Managers
         public bool dontSaveLocal = false;
         public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
         {
-            foreach(World.World world in worlds)
+            try { 
+            foreach (World.World world in worlds)
             {
                 if (world.Focus != World.World.FocusLevel.Background)
                 {
                     world.addToRenderQueue(gu, layer);
                 }
+            }
+            }
+            catch
+            {
+
             }
         }
 
@@ -57,7 +64,7 @@ namespace RhubarbEngine.Managers
         {
             Logger.Log("Creating world", true);
             World.World world = new World.World(this, sessionsType, accessLevel, name, maxusers, worlduuid, isOver, mobilefriendly, templet);
-            string ip = LiteNetLib.NetUtils.GetLocalIp(LiteNetLib.LocalAddrType.IPv4);
+            string ip = new WebClient().DownloadString("http://icanhazip.com").Replace("\\r\\n", "").Replace("\\n", "").Trim();
             string conectionkey = ip + " _ " + world.port;
             try
             {
@@ -85,7 +92,7 @@ namespace RhubarbEngine.Managers
             {
                 Logger.Log("Joining session ID: " + uuid, true);
                 World.World world = new World.World(this, "Loading", 1,false,false,null,true);
-                string ip = LiteNetLib.NetUtils.GetLocalIp(LiteNetLib.LocalAddrType.IPv4);
+                string ip = new WebClient().DownloadString("http://icanhazip.com").Replace("\\r\\n", "").Replace("\\n", "").Trim();
                 string conectionkey = ip + " _ " + world.port;
                 var join = engine.netApiManager.sessionApi.SessionJoinsessionGet(uuid, conectionkey, engine.netApiManager.token);
                 world.SessionID.value = join.Uuid;
@@ -235,10 +242,18 @@ namespace RhubarbEngine.Managers
 
         public void Update(DateTime startTime, DateTime Frame)
         {
-            foreach (World.World world in worlds)
+            try
             {
-                world.Update(startTime, Frame);
+                foreach (World.World world in worlds)
+                {
+                    world.Update(startTime, Frame);
+                }
             }
+            catch
+            {
+
+            }
+
         }
         public void CleanUp()
         {

@@ -24,5 +24,8 @@ namespace RhubarbEngine.Settings
 
         [SettingsField("Use Window Resolution")]
         public bool auto = true;
+
+        [SettingsField("Fov")]
+        public float fov = 0.9f;
     }
 }

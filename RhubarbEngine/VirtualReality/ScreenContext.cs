@@ -70,12 +70,44 @@ namespace RhubarbEngine.VirtualReality
         public override void Initialize(GraphicsDevice gd)
         {
             _gd = gd;
-            _leftEyeFB = CreateFramebuffer((uint)_eng.windowManager.mainWindow.width, (uint)_eng.windowManager.mainWindow.height);
-            if(_leftEyeFB == null)
+            if (_eng.settingsObject.RenderSettings.DesktopRenderSettings.auto)
+            {
+                _leftEyeFB = CreateFramebuffer((uint)_eng.windowManager.mainWindow.width, (uint)_eng.windowManager.mainWindow.height);
+            }
+            else
+            {
+                _leftEyeFB = CreateFramebuffer((uint)_eng.settingsObject.RenderSettings.DesktopRenderSettings.x, (uint)_eng.settingsObject.RenderSettings.DesktopRenderSettings.y);
+            }
+            _eng.windowManager.mainWindow.window.Resized += Window_Resized;
+            if (_leftEyeFB == null)
             {
                 Logger.Log("Error Loading Frame Buffer", true);
             }
             changeProject(_eng.renderManager.fieldOfView, _eng.renderManager.aspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
+        }
+
+        private void Window_Resized()
+        {
+            if (_eng.settingsObject.RenderSettings.DesktopRenderSettings.auto)
+            {
+                var oldbuf = _leftEyeFB;
+                Console.WriteLine(_eng.windowManager.mainWindow.width.ToString());
+                
+                _leftEyeFB = CreateFramebuffer((uint)_eng.windowManager.mainWindow.width, (uint)_eng.windowManager.mainWindow.height);
+                oldbuf.ColorTargets[0].Target.Dispose();
+                oldbuf.DepthTarget?.Target.Dispose();
+                oldbuf.Dispose();
+                _mirrorTexture.clearLeftSet();
+            }
+            else
+            {
+                var oldbuf = _leftEyeFB;
+                _leftEyeFB = CreateFramebuffer((uint)_eng.settingsObject.RenderSettings.DesktopRenderSettings.x, (uint)_eng.settingsObject.RenderSettings.DesktopRenderSettings.y);
+                oldbuf.ColorTargets[0].Target.Dispose();
+                oldbuf.DepthTarget?.Target.Dispose();
+                oldbuf.Dispose();
+                _mirrorTexture.clearLeftSet();
+            }
         }
 
         private Framebuffer CreateFramebuffer(uint width, uint height)
