@@ -132,6 +132,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
+            if (input.isKeyboardinuse) return;
             if (input.mainWindows.GetKeyDown(Veldrid.Key.R) || input.SecondaryPress(Input.Creality.None))
             {
                 SwitchWorld();
