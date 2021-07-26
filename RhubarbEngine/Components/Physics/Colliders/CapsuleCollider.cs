@@ -17,7 +17,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
 {
 
     [Category(new string[] { "Physics/Colliders" })]
-    public class ConeCollider : Collider
+    public class CapsuleCollider : Collider
     {
         public Sync<double> radius;
         public Sync<double> height;
@@ -48,14 +48,14 @@ namespace RhubarbEngine.Components.Physics.Colliders
         }
         public override void BuildShape()
         {
-            startShape(new ConeShape(radius.value, height.value));
+            startShape(new CapsuleShape(radius.value, height.value));
         }
 
-        public ConeCollider(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public CapsuleCollider(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public ConeCollider()
+        public CapsuleCollider()
         {
         }
     }
