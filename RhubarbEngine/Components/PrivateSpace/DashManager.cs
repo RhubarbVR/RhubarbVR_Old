@@ -76,14 +76,18 @@ namespace RhubarbEngine.Components.PrivateSpace
                     root.target = entity.addChild("LoginScreen");
                     if (canvas.target != null)
                     {
-                        canvas.target.element.target = root.target.attachComponent<LoginScreen>();
+                        var e = root.target.attachComponent<LoginScreen>();
+                        canvas.target.element.target = e;
+                        e.dash.target = this;
                     }
                     break;
                 case "register":
                     root.target = entity.addChild("RegisterScreen");
                     if (canvas.target != null)
                     {
-                        canvas.target.element.target = root.target.attachComponent<RegisterScreen>();
+                        var e = root.target.attachComponent<RegisterScreen>();
+                        canvas.target.element.target = e;
+                        e.dash.target = this;
                     }
                     break;
                 case "sessions":
