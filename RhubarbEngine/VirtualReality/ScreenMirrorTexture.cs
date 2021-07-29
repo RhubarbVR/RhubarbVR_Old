@@ -18,6 +18,12 @@ namespace RhubarbEngine.VirtualReality
         private ResourceSet _leftSet;
         private ResourceSet _rightSet;
 
+        public void clearLeftSet()
+        {
+            _leftSet?.Dispose();
+            _leftSet = null; 
+        }
+
         public ScreenMirrorTexture(ScreenContext context)
         {
             _context = context;

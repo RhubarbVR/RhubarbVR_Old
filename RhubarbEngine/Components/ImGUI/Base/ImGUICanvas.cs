@@ -35,7 +35,6 @@ namespace RhubarbEngine.Components.ImGUI
 
         public Sync<bool> noBackground;
 
-
         private ImGuiRenderer igr;
 
         private CommandList UIcommandList;
@@ -167,12 +166,20 @@ namespace RhubarbEngine.Components.ImGUI
                 if (ImGui.IsAnyItemActive())
                 {
                     input.keyboard = this;
+                    if (imputPlane.target != null)
+                    {
+                        imputPlane.target.StopMouse = true;
+                    }
                 }
                 else
                 {
                     if (input.keyboard == this)
                     {
                         input.keyboard = null;
+                    }
+                    if (imputPlane.target != null)
+                    {
+                        imputPlane.target.StopMouse = false;
                     }
                 }
 

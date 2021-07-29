@@ -39,8 +39,8 @@ namespace RhubarbEngine.Managers
             engine = _engine;
             engine.logger.Log("Starting Cloud Interface");
 
-            //string url = "https://api.rhubarbvr.net/";
-            string url = "https://localhost:44395/";
+            string url = "https://api.rhubarbvr.net/";
+            //string url = "http://localhost:44395/";
 
             authApi = new AuthApi(url);
             adminApi = new AdminApi(url);
@@ -123,6 +123,12 @@ namespace RhubarbEngine.Managers
             {
                 File.WriteAllText(engine.dataPath + "\\auth.token", token);
             }
+        }
+        public void register(string email, string password, string username,DateTime birthday)
+        {
+            var auth = authApi.AuthRegisterPost(new RegesterReg(username, password,email, birthday));
+            setToken(auth.Token, auth.User);
+            File.WriteAllText(engine.dataPath + "\\auth.token", token);
         }
 
         public void logout()

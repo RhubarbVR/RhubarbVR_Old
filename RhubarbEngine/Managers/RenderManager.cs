@@ -19,7 +19,7 @@ namespace RhubarbEngine.Managers
 {
     public class RenderManager : IManager
     {
-        public float fieldOfView = 1f;
+        public float fieldOfView => engine.settingsObject.RenderSettings.DesktopRenderSettings.fov;
         public float aspectRatio => engine.windowManager.mainWindow.aspectRatio;
 
         public float nearPlaneDistance = 0.01f;

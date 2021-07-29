@@ -81,7 +81,7 @@ namespace RhubarbEngine.World
                 Value = new DataNode<T>(_value);
             }
             obj.setValue("Value", Value);
-            world.addToQueue(Net.ReliabilityLevel.Unreliable, obj, referenceID.id);
+            world.netModule?.addToQueue(Net.ReliabilityLevel.Unreliable, obj, referenceID.id);
         }
         public SyncStream()
         {

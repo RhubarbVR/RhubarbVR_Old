@@ -17,7 +17,9 @@ namespace RhubarbEngine.Managers
     {
         private Engine engine;
 
-        public KeyboardStealer keyboard;
+        private KeyboardStealer _keyboard;
+
+        public KeyboardStealer keyboard { get { return _keyboard; } set { if (value != null) { engine.worldManager.personalSpace?.OpenKeyboard(); } else { engine.worldManager.personalSpace?.CloseKeyboard(); } _keyboard = value; } }
 
         public bool isKeyboardinuse => keyboard != null;
 

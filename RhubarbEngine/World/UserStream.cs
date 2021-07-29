@@ -1,5 +1,6 @@
 ﻿using LiteNetLib;
 using RhubarbEngine.World.DataStructure;
+using RhubarbEngine.World.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace RhubarbEngine.World
             name = new Sync<string>(this, newRefIds);
         }
 
-        public virtual void ReceiveData(DataNodeGroup data, NetPeer peer)
+        public virtual void ReceiveData(DataNodeGroup data, Peer peer)
         {
         }
         public UserStream()

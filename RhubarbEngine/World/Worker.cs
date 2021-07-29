@@ -56,7 +56,9 @@ namespace RhubarbEngine.World
 
         bool IWorldObject.IsPersistent => Persistent;
 
-        bool IWorldObject.IsRemoved => false;
+        bool _Removed = false;
+
+        public bool IsRemoved => _Removed;
 
         public void Destroy()
         {
@@ -164,6 +166,7 @@ namespace RhubarbEngine.World
             {
                 dep.Dispose();
             }
+            _Removed = true;
         }
         public virtual void CommonUpdate()
         {

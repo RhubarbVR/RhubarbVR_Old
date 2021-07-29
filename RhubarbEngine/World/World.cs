@@ -19,6 +19,7 @@ using Org.OpenAPITools.Model;
 using RhubarbEngine.World.Net;
 using BulletSharp;
 using BulletSharp.Math;
+using System.Net;
 
 namespace RhubarbEngine.World
 {
@@ -71,44 +72,11 @@ namespace RhubarbEngine.World
             {
                 if (item != val)
                 {
-                    string ip = item.Split(" _ ")[0];
-                    string port = item.Split(" _ ")[1];
-                    startClient(ip, Int32.Parse(port));
+                    //Add User
                 }
             }
         }
         private bool waitingForInitSync = false;
-
-        public List<NetData> NetQueue = new List<NetData>();
-
-        public void addToQueue(ReliabilityLevel _reliabilityLevel, DataNodeGroup _data, ulong _id)
-        {
-            var netdata = new NetData(_reliabilityLevel, _data, _id);
-            NetQueue.Add(netdata);
-        }
-
-        public EventBasedNetListener listener;
-
-        public EventBasedNetListener ClientListener;
-
-        public LiteNetLib.NetManager server;
-
-        public int port;
-
-        public List<LiteNetLib.NetManager> clients = new List<LiteNetLib.NetManager>();
-
-        public void exsepetConectionReq(ConnectionRequest req)
-        {
-            req.Accept();
-        }
-
-        public void startClient(string ip,int _port)
-        {
-            LiteNetLib.NetManager client = new LiteNetLib.NetManager(listener);
-            client.Start();
-            client.Connect(ip, _port, "");
-            clients.Add(client);
-        }
 
         public void LoadSelf()
         {
@@ -119,151 +87,88 @@ namespace RhubarbEngine.World
 
         public bool userLoaded = false;
 
-        public void initializeNetWorker()
+        public void NetworkReceiveEvent(byte[] vale,ReliabilityLevel level, Peer fromPeer)
         {
-            listener = new EventBasedNetListener();
-            server = new LiteNetLib.NetManager(listener);
-
-            listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) =>
+            try
             {
-                byte[] vale = dataReader.GetBytesWithLength();
-                try
+                DataNodeGroup dataNodeGroup = new DataNodeGroup(vale);
+                if (waitingForInitSync)
                 {
-                    DataNodeGroup dataNodeGroup = new DataNodeGroup(vale) ;
-                    if (waitingForInitSync)
+                    if (((DataNode<string>)dataNodeGroup.getValue("responses")) != null)
                     {
-                        if (((DataNode<string>)dataNodeGroup.getValue("responses")) != null)
+                        if (((DataNode<string>)dataNodeGroup.getValue("responses")).Value == "WorldSync")
                         {
-                            if (((DataNode<string>)dataNodeGroup.getValue("responses")).Value == "WorldSync")
+                            Logger.Log("Loading Start State");
+                            try
                             {
-                                Logger.Log("Loading Start State");
-                                try
+                                DataNodeGroup node = ((DataNodeGroup)dataNodeGroup.getValue("data"));
+                                List<Action> loadded = new List<Action>();
+                                deSerialize(node, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+                                LoadSelf();
+                                foreach (Action item in loadded)
                                 {
-                                    DataNodeGroup node = ((DataNodeGroup)dataNodeGroup.getValue("data"));
-                                    List<Action> loadded = new List<Action>();
-                                    deSerialize(node, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
-                                    LoadSelf();
-                                    foreach (Action item in loadded)
-                                    {
-                                        item?.Invoke();
-                                    }
-                                    waitingForInitSync = false;
+                                    item?.Invoke();
                                 }
-                                catch (Exception e)
-                                {
-                                    Logger.Log("Failed To Load Start State Error" + e.ToString());
-                                }
-
+                                waitingForInitSync = false;
                             }
-                        }
-                    }
-                    else
-                    {
-                        DataNode<ulong> val = (DataNode<ulong>)dataNodeGroup.getValue("id");
-                        try
-                        {
-                            var member = (ISyncMember)getWorldObj(new NetPointer(val.Value));
-                            member.ReceiveData((DataNodeGroup)dataNodeGroup.getValue("data"), fromPeer);
-                        }
-                        catch
-                        {
-                            if(deliveryMethod != DeliveryMethod.Unreliable)
+                            catch (Exception e)
                             {
-                                if (unassignedValues.ContainsKey(val.Value))
-                                {
-                                    unassignedValues[val.Value].Add(((DataNodeGroup)dataNodeGroup.getValue("data"), DateTime.UtcNow, fromPeer));
-                                }
-                                else
-                                {
-                                    List<(DataNodeGroup, DateTime, NetPeer)> saveobjs = new List<(DataNodeGroup, DateTime, NetPeer)>();
-                                    saveobjs.Add(((DataNodeGroup)dataNodeGroup.getValue("data"), DateTime.UtcNow, fromPeer));
-                                    unassignedValues.Add(val.Value, saveobjs);
-                                }
-                                
-                                
+                                Logger.Log("Failed To Load Start State Error" + e.ToString());
                             }
+
                         }
-                    }
-                }
-                catch(Exception e)
-                {
-                    Logger.Log("Error With Net Reqwest Size: "+ vale.Length + " Error: "+ e.ToString(),true);
-                }
-                    dataReader.Recycle();
-                 
-                };
-
-            listener.ConnectionRequestEvent += request =>
-            {
-                Logger.Log("User Trying Connection");
-                exsepetConectionReq(request);
-
-            };
-            listener.PeerConnectedEvent += peer =>
-            {
-                Logger.Log("We got connection");
-                if (!waitingForInitSync)
-                {
-                    Logger.Log("Sent start state");
-                    DataNodeGroup send = new DataNodeGroup();
-                    send.setValue("responses", new DataNode<string>("WorldSync"));
-                    DataNodeGroup value = serialize(true);
-                    send.setValue("data", value);
-                    var val = new NetDataWriter(true);
-                    send.Serialize(val);
-                    peer.Send(val, DeliveryMethod.ReliableOrdered);
-                }
-            };
-        }
-
-        private void DropQ()
-        {
-            List<ulong> trains = new List<ulong>();
-            List<NetData> netData = new List<NetData>();
-            foreach (var item in NetQueue)
-            {
-                DataNodeGroup node = new DataNodeGroup();
-                node.setValue("data", item.data);
-                node.setValue("id", new DataNode<ulong>(item.id));
-                if (item.reliabilityLevel == ReliabilityLevel.LatestOnly || item.reliabilityLevel == ReliabilityLevel.Unreliable)
-                {
-                    if (!trains.Contains(item.id))
-                    {
-                        trains.Add(item.id);
-                        sendData(node, (item.reliabilityLevel == ReliabilityLevel.LatestOnly) ? DeliveryMethod.ReliableOrdered : DeliveryMethod.Unreliable);
                     }
                 }
                 else
                 {
-                    sendData(node, DeliveryMethod.ReliableOrdered);
+                    DataNode<ulong> val = (DataNode<ulong>)dataNodeGroup.getValue("id");
+                    try
+                    {
+                        var member = (ISyncMember)getWorldObj(new NetPointer(val.Value));
+                        member.ReceiveData((DataNodeGroup)dataNodeGroup.getValue("data"), fromPeer);
+                    }
+                    catch
+                    {
+                        if (level != ReliabilityLevel.Unreliable)
+                        {
+                            if (unassignedValues.ContainsKey(val.Value))
+                            {
+                                unassignedValues[val.Value].Add(((DataNodeGroup)dataNodeGroup.getValue("data"), DateTime.UtcNow, fromPeer));
+                            }
+                            else
+                            {
+                                List<(DataNodeGroup, DateTime, Peer)> saveobjs = new List<(DataNodeGroup, DateTime, Peer)>();
+                                saveobjs.Add(((DataNodeGroup)dataNodeGroup.getValue("data"), DateTime.UtcNow, fromPeer));
+                                unassignedValues.Add(val.Value, saveobjs);
+                            }
+
+
+                        }
+                    }
                 }
-                netData.Add(item);
             }
-            foreach (var item in netData)
+            catch (Exception e)
             {
-                NetQueue.Remove(item);
+                Logger.Log("Error With Net Reqwest Size: " + vale.Length + " Error: " + e.ToString(), true);
             }
         }
 
-        private void sendData(DataNodeGroup data,DeliveryMethod delivery)
+        public void PeerConnectedEvent(Peer peer)
         {
-            if (!userspace && !local)
+            Logger.Log("We got connection");
+            if (!waitingForInitSync)
             {
+                Logger.Log("Sent start state");
+                DataNodeGroup send = new DataNodeGroup();
+                send.setValue("responses", new DataNode<string>("WorldSync"));
+                DataNodeGroup value = serialize(true);
+                send.setValue("data", value);
                 var val = new NetDataWriter(true);
-                data.Serialize(val);
-                server.SendToAll(val, delivery);
-                foreach (var item in clients)
-                {
-                    item.SendToAll(val, delivery);
-                }
+                send.Serialize(val);
+                peer.Send(val, ReliabilityLevel.Reliable);
             }
         }
 
-        private void startServer()
-        {
-                server.Start();
-                port = server.LocalPort;
-        }
         public Sync<Vector3f> Gravity;
 
         public Sync<float> LinearDamping;
@@ -407,7 +312,7 @@ namespace RhubarbEngine.World
 
         private Dictionary<NetPointer, IWorldObject> worldObjects = new Dictionary<NetPointer, IWorldObject>();
 
-        public Dictionary<ulong,List<(DataNodeGroup,DateTime,NetPeer)>> unassignedValues = new Dictionary<ulong, List<(DataNodeGroup, DateTime, NetPeer)>>();
+        public Dictionary<ulong,List<(DataNodeGroup,DateTime, Peer)>> unassignedValues = new Dictionary<ulong, List<(DataNodeGroup, DateTime, Peer)>>();
 
         public void addWorldObj(IWorldObject obj)
         {
@@ -488,7 +393,6 @@ namespace RhubarbEngine.World
             }
             catch(Exception e)
             {
-                Logger.Log("Failed To update Entity Error:" + e.ToString(), true);
             }
 
             foreach (IWorldObject val in worldObjects.Values)
@@ -498,7 +402,7 @@ namespace RhubarbEngine.World
                     ((Worker)val).onUpdate();
                 }
             }
-            netupdate();
+            netModule.netupdate();
         }
 
 
@@ -513,21 +417,7 @@ namespace RhubarbEngine.World
             }
         }
 
-        private void netupdate()
-        {
-            if (server != null)
-            {
-                server.PollEvents();
-            }
-            foreach (var item in clients)
-            {
-                item.PollEvents();
-            }
-            if(NetQueue.Count != 0)
-            {
-                DropQ();
-            }
-        }
+        public NetModule netModule { get; private set; }
 
         public World(WorldManager _worldManager)
         {
@@ -615,11 +505,11 @@ namespace RhubarbEngine.World
             accessLevel.value = AccessLevel.Anyone;
             if (!userspace && !local)
             {
-                initializeNetWorker();
-                startServer();
+                netModule = new ValvueNetModule(this);
             }
             else
             {
+                netModule = new NUllNetModule(this);
               loadHostUser();
             }
             if (datanode != null)
@@ -632,6 +522,7 @@ namespace RhubarbEngine.World
                 }
             }
         }
+
 
         public void loadHostUser()
         {
@@ -742,5 +633,6 @@ namespace RhubarbEngine.World
         {
             return serialize(false);
         }
+
     }
 }
