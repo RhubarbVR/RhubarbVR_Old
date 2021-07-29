@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
+using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
@@ -75,17 +76,17 @@ namespace RhubarbEngine.World
             send.setValue("Type", new DataNode<byte>(0));
             DataNodeGroup tip = val.serialize(true);
             send.setValue("Value", tip);
-            world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+            world.netModule?.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
         }
 
         private void netClear()
         {
             DataNodeGroup send = new DataNodeGroup();
             send.setValue("Type", new DataNode<byte>(1));
-            world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+            world.netModule?.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
         }
 
-        public void ReceiveData(DataNodeGroup data, LiteNetLib.NetPeer peer)
+        public void ReceiveData(DataNodeGroup data, Peer peer)
         {
             if (((DataNode<byte>)data.getValue("Type")).Value == 1)
             {

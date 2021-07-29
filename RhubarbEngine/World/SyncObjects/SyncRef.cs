@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
+using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
@@ -54,7 +55,7 @@ namespace RhubarbEngine.World
                 DataNodeGroup send = new DataNodeGroup();
                 send.setValue("Value", new DataNode<NetPointer>(targetRefID));
                 UpdateNetIngect(send);
-                world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+                world.netModule?.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
             }
         }
 
@@ -68,7 +69,7 @@ namespace RhubarbEngine.World
 
         }
 
-        public void ReceiveData(DataNodeGroup data, LiteNetLib.NetPeer peer)
+        public void ReceiveData(DataNodeGroup data, Peer peer)
         {
             NetPointer thing = ((DataNode<NetPointer>)data.getValue("Value")).Value;
             ReceiveDataIngect(data);
