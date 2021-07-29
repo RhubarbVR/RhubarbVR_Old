@@ -65,7 +65,7 @@ namespace RhubarbEngine.Managers
             Logger.Log("Creating world", true);
             World.World world = new World.World(this, sessionsType, accessLevel, name, maxusers, worlduuid, isOver, mobilefriendly, templet);
             string ip = new WebClient().DownloadString("http://icanhazip.com").Replace("\\r\\n", "").Replace("\\n", "").Trim();
-            string conectionkey = ip + " _ " + world.port;
+            string conectionkey = ip + " _ ";
             try
             {
                 string sessionid = engine.netApiManager.sessionApi.SessionCreatesessionPost(new CreateSessionReq(name, worlduuid, new List<string>(new[] { "" }), "", (int)sessionsType, (int)accessLevel, isOver, maxusers, mobilefriendly, conectionkey), engine.netApiManager.token);
@@ -93,7 +93,7 @@ namespace RhubarbEngine.Managers
                 Logger.Log("Joining session ID: " + uuid, true);
                 World.World world = new World.World(this, "Loading", 1,false,false,null,true);
                 string ip = new WebClient().DownloadString("http://icanhazip.com").Replace("\\r\\n", "").Replace("\\n", "").Trim();
-                string conectionkey = ip + " _ " + world.port;
+                string conectionkey = ip + " _ ";
                 var join = engine.netApiManager.sessionApi.SessionJoinsessionGet(uuid, conectionkey, engine.netApiManager.token);
                 world.SessionID.value = join.Uuid;
                 world.joinsession(join,conectionkey);

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
 using RhubarbEngine.World.ECS;
+using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
@@ -79,14 +80,14 @@ namespace RhubarbEngine.World
             //Need To add Constant Type Strings for better compression 
             listobj.setValue("Type", new DataNode<string>(val.GetType().FullName));
             send.setValue("Data", listobj);
-            world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+            world.netModule?.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
         }
 
         private void netClear()
         {
             DataNodeGroup send = new DataNodeGroup();
             send.setValue("Type", new DataNode<byte>(1));
-            world.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+            world.netModule?.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
         }
 
         public void Clear()
@@ -95,7 +96,7 @@ namespace RhubarbEngine.World
             netClear();
         }
 
-        public void ReceiveData(DataNodeGroup data, LiteNetLib.NetPeer peer)
+        public void ReceiveData(DataNodeGroup data, Peer peer)
         {
             try
             {

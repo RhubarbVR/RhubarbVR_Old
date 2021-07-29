@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
+using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
@@ -81,7 +82,7 @@ namespace RhubarbEngine.World
                 Value = new DataNode<T>(_value);
             }
             obj.setValue("Value", Value);
-            world.addToQueue(Net.ReliabilityLevel.LatestOnly, obj, referenceID.id);
+            world.netModule?.addToQueue(Net.ReliabilityLevel.LatestOnly, obj, referenceID.id);
         }
 
         public Sync(World _world, IWorldObject _parent,bool newref = true) : base(_world, _parent, newref)
@@ -145,7 +146,7 @@ namespace RhubarbEngine.World
             }
         }
 
-        public void ReceiveData(DataNodeGroup data,LiteNetLib.NetPeer peer)
+        public void ReceiveData(DataNodeGroup data,Peer peer)
         {
             if (typeof(T).IsEnum)
             {
