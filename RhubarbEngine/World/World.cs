@@ -13,8 +13,6 @@ using RhubarbEngine.Render;
 using System.Numerics;
 using RhubarbEngine.Components.Users;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
-using LiteNetLib;
-using LiteNetLib.Utils;
 using Org.OpenAPITools.Model;
 using RhubarbEngine.World.Net;
 using BulletSharp;
@@ -163,9 +161,7 @@ namespace RhubarbEngine.World
                 send.setValue("responses", new DataNode<string>("WorldSync"));
                 DataNodeGroup value = serialize(true);
                 send.setValue("data", value);
-                var val = new NetDataWriter(true);
-                send.Serialize(val);
-                peer.Send(val, ReliabilityLevel.Reliable);
+                peer.Send(send.getByteArray(), ReliabilityLevel.Reliable);
             }
         }
 
@@ -505,7 +501,7 @@ namespace RhubarbEngine.World
             accessLevel.value = AccessLevel.Anyone;
             if (!userspace && !local)
             {
-                netModule = new ValvueNetModule(this);
+                netModule = new RhuNetModule(this);
             }
             else
             {

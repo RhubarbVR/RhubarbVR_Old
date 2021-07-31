@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.World.Net
 {
-    public class ValvueNetModule : NetModule
+    public class RhuNetModule:NetModule
     {
-        public ValvueNetModule(World world) : base(world)
+        public RhuNetModule(World world) : base(world)
         {
 
         }

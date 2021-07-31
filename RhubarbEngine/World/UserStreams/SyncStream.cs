@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
+using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
@@ -153,7 +154,7 @@ namespace RhubarbEngine.World
 
         }
 
-        public void ReceiveData(DataNodeGroup data, LiteNetLib.NetPeer peer)
+        public void ReceiveData(DataNodeGroup data, Peer peer)
         {
             if (typeof(T).IsEnum)
             {

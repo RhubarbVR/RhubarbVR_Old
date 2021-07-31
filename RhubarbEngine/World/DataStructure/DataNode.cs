@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LiteNetLib.Utils;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.IO;
@@ -49,15 +48,6 @@ namespace RhubarbEngine.World.DataStructure
                 Console.WriteLine("Failed to serialize. Reason: " + e.Message + " Type: " + Value.GetType().FullName);
                 throw new Exception("Failed to serialize. Reason: " + e.Message + " Type: " + Value.GetType().FullName);
             }
-        }
-
-        public void Deserialize(NetDataReader reader)
-        {
-            setByteArray(reader.GetBytesWithLength());
-        }
-        public void Serialize(NetDataWriter writer)
-        {
-            writer.Put(getByteArray());
         }
 
     }

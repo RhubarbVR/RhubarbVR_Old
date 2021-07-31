@@ -10,7 +10,7 @@ namespace RhubarbEngine.World.Net
 
     public class NUllNetModule : NetModule
     {
-        public NUllNetModule(World world) : base(world)
+        public NUllNetModule(World world) : base(world,true)
         {
 
         }
@@ -20,15 +20,19 @@ namespace RhubarbEngine.World.Net
     {
         public World _world;
 
-        public NetModule(World world)
+        private bool _noq;
+
+        public NetModule(World world,bool noq = false)
         {
             _world = world;
+            _noq = noq;
         }
 
         public List<NetData> NetQueue = new List<NetData>();
 
         public virtual void DropQ()
         {
+            if (_noq) { NetQueue.Clear(); return; };
             List<ulong> trains = new List<ulong>();
             List<NetData> netData = new List<NetData>();
             foreach (var item in NetQueue)
@@ -72,6 +76,7 @@ namespace RhubarbEngine.World.Net
 
         public void addToQueue(ReliabilityLevel _reliabilityLevel, DataNodeGroup _data, ulong _id)
         {
+            if (_noq) return;
             var netdata = new NetData(_reliabilityLevel, _data, _id);
             NetQueue.Add(netdata);
         }

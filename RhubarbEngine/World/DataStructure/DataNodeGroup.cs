@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LiteNetLib.Utils;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.IO;
@@ -138,24 +137,12 @@ namespace RhubarbEngine.World.DataStructure
                 Logger.Log("Failed to deserialize. Group Reason: " + e.Message);
             }
         }
-        public void Deserialize(NetDataReader reader)
-        {
-            setByteArray(reader.GetBytesWithLength());
-        }
-        public void Serialize(NetDataWriter writer)
-        {
-            byte[] value = getByteArray();
-            writer.PutBytesWithLength(value);
-        }
+
 
         public DataNodeGroup()
         {
         }
 
-        public DataNodeGroup(NetDataReader reader)
-        {
-            Deserialize(reader);
-        }
 
         public DataNodeGroup(byte[] data)
         {
