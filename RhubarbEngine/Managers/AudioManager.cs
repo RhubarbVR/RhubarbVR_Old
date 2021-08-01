@@ -27,7 +27,6 @@ namespace RhubarbEngine.Managers
         //OpenAL
         private static IntPtr alAudioDevice;
         private static IntPtr alAudioContext;
-        private MemoryStream audioStream;
 
         public const int BufferFormatStereoFloat32 = 0x10011;
 
@@ -41,18 +40,14 @@ namespace RhubarbEngine.Managers
         public uint sourceId;
 
         private uint[] alBuffers;
-        private byte[] frameInputBuffer;
-
 
         public unsafe IManager initialize(Engine _engine)
         {
             engine = _engine;
-            audioStream = new MemoryStream(23);
 
             stopwatch = new Stopwatch();
 
             alBuffers = new uint[2];
-            frameInputBuffer = new byte[AudioFrameSizeInBytes];
             PrepareOpenAL();
             PrepareSteamAudio();
 
