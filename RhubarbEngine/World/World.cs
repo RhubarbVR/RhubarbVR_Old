@@ -70,7 +70,7 @@ namespace RhubarbEngine.World
             {
                 if (item != val)
                 {
-                    //Add User
+                    netModule.Connect(item);
                 }
             }
         }
@@ -85,7 +85,7 @@ namespace RhubarbEngine.World
 
         public bool userLoaded = false;
 
-        public void NetworkReceiveEvent(byte[] vale,ReliabilityLevel level, Peer fromPeer)
+        public void NetworkReceiveEvent(byte[] vale, Peer fromPeer)
         {
             try
             {
@@ -120,6 +120,7 @@ namespace RhubarbEngine.World
                 else
                 {
                     DataNode<ulong> val = (DataNode<ulong>)dataNodeGroup.getValue("id");
+                    DataNode<int> level = (DataNode<int>)dataNodeGroup.getValue("level");
                     try
                     {
                         var member = (ISyncMember)getWorldObj(new NetPointer(val.Value));
@@ -127,7 +128,7 @@ namespace RhubarbEngine.World
                     }
                     catch
                     {
-                        if (level != ReliabilityLevel.Unreliable)
+                        if ((ReliabilityLevel)level.Value != ReliabilityLevel.Unreliable)
                         {
                             if (unassignedValues.ContainsKey(val.Value))
                             {
@@ -566,6 +567,10 @@ namespace RhubarbEngine.World
                     {
                         item?.Invoke();
                     }
+                }
+                else
+                {
+                    worldManager.BuildLocalWorld(this);
                 }
             }
         }

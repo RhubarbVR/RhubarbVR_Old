@@ -8,6 +8,7 @@ namespace RhubarbEngine.World.Net
 {
     public abstract class Peer
     {
+        public string userUUID { get; }
         public virtual void Send(byte[] val, ReliabilityLevel reliableOrdered)
         {
         }

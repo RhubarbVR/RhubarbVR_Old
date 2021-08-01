@@ -14,7 +14,7 @@
     <PackageReference Include="BEPUik" Version="1.5.1" />
     <PackageReference Include="BulletSharp.x64" Version="0.12.0" />
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
-    <PackageReference Include="MessagePack" Version="2.2.113" />
+    <PackageReference Include="MessagePack" Version="2.3.75" />
     <PackageReference Include="RhuSettings" Version="1.0.0" />
     <PackageReference Include="Veldrid" Version="4.8.0" />
     <PackageReference Include="Veldrid.ImageSharp" Version="4.8.0" />
@@ -78,6 +78,15 @@
 
   <ItemGroup>
     <Folder Include="SteamVR\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="RhuNet">
+      <HintPath>..\DLLS\RhuNet.dll</HintPath>
+    </Reference>
+    <Reference Include="RhuNetShared">
+      <HintPath>..\DLLS\RhuNetShared.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
