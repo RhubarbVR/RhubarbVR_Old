@@ -11,6 +11,13 @@ namespace g3
     /// </summary>
     public class MeshEdgeMidpoints : IPointSet
     {
+        public IEnumerable<Vector3f> VertexPos()
+        {
+            for (int i = 0; i < VertexCount; i++)
+            {
+                yield return (Vector3f)GetVertex(i);
+            }
+        }
         public MeshEdgeMidpoints(DMesh3 mesh)
         {
             Mesh = mesh;
@@ -52,6 +59,13 @@ namespace g3
     /// </summary>
     public class MeshBoundaryEdgeMidpoints : IPointSet
     {
+        public IEnumerable<Vector3f> VertexPos()
+        {
+            for (int i = 0; i < VertexCount; i++)
+            {
+                yield return (Vector3f)GetVertex(i);
+            }
+        }
         public MeshBoundaryEdgeMidpoints(DMesh3 mesh)
         {
             Mesh = mesh;

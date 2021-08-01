@@ -107,7 +107,14 @@ namespace gs
 
 		// present mesh tri centroids as a PointSet
 		class TriCentroids : IPointSet {
-			public DMesh3 Mesh;
+            public IEnumerable<Vector3f> VertexPos()
+            {
+                for (int i = 0; i < VertexCount; i++)
+                {
+                    yield return (Vector3f)GetVertex(i);
+                }
+            }
+            public DMesh3 Mesh;
 
 			public int VertexCount { get { return Mesh.TriangleCount; } }
 			public int MaxVertexID { get { return Mesh.MaxTriangleID; } }

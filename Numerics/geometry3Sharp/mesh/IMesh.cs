@@ -23,6 +23,9 @@ namespace g3
         // iterators allow us to work with gaps in index space
         System.Collections.Generic.IEnumerable<int> VertexIndices();
 
+        System.Collections.Generic.IEnumerable<Vector3f> VertexPos();
+
+
         int Timestamp { get; }
     }
 

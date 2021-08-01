@@ -19,7 +19,7 @@ namespace RhubarbEngine.World.Asset
     public class RMesh : IAsset
     {
 
-        private List<IMesh> meshes = new List<IMesh>();
+        public List<IMesh> meshes { get; private set; } = new List<IMesh>();
 
         public List<MeshPiece> meshPieces;
 

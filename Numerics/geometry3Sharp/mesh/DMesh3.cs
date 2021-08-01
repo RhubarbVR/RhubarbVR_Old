@@ -2454,6 +2454,13 @@ namespace g3
             return ci;
         }
 
+        public IEnumerable<Vector3f> VertexPos()
+        {
+            for (int i = 0; i < VertexCount; i++)
+            {
+                yield return GetVertexf(i);
+            }
+        }
     }
 }
 

@@ -21,6 +21,13 @@ namespace g3
     // 
     public partial class NTMesh3 : IDeformableMesh
     {
+        public IEnumerable<Vector3f> VertexPos()
+        {
+            for (int i = 0; i < VertexCount; i++)
+            {
+                yield return GetVertexf(i);
+            }
+        }
         public const int InvalidID = -1;
         public const int NonManifoldID = -2;
 

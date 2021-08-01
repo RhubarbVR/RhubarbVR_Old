@@ -8,6 +8,13 @@ namespace g3
 {
     public class SimpleMesh : IDeformableMesh
     {
+        public IEnumerable<Vector3f> VertexPos()
+        {
+            for (int i = 0; i < VertexCount; i++)
+            {
+                yield return (Vector3f)GetVertex(i);
+            }
+        }
         public DVector<double> Vertices;
         public DVector<float> Normals;
         public DVector<float> Colors;
