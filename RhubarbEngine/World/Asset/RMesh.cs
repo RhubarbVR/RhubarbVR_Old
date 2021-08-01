@@ -41,7 +41,6 @@ namespace RhubarbEngine.World.Asset
 
         public void createMeshesBuffers(GraphicsDevice _gd)
         {
-            Logger.Log("Loading Mesh");
             List<MeshPiece> _meshPieces = new List<MeshPiece>();
             foreach (IDisposable dep in disposables)
             {
@@ -66,7 +65,6 @@ namespace RhubarbEngine.World.Asset
 
                 _meshPieces.Add(new MeshPiece(positions, texCoords, indices));
             }
-            Logger.Log($"Mesh has {_meshPieces.Count}");
             meshPieces = _meshPieces;
         }
 

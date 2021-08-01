@@ -21,12 +21,16 @@ namespace RhubarbEngine.World.Asset
                 return _value;
         } }
 
-        public void load(A data)
+        public void load(A data,bool desposeold = false)
         {
-            logger.Log("Asset Loaded");
+            var temp = _value;
             _value = data;
             loaded = (data != null);
             onLoadedCall?.Invoke(data);
+            if(temp != null && desposeold)
+            {
+                temp.Dispose();
+            }
         }
 
         public bool loaded = false;

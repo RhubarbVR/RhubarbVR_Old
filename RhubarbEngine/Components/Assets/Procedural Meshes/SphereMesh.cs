@@ -39,7 +39,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             MeshGenerator newmesh = sphereGen.Generate();
             RMesh kite = new RMesh(newmesh.MakeDMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
-            load(kite);
+            load(kite, true);
         }
         public override void onLoaded()
         {

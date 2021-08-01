@@ -108,7 +108,6 @@ namespace RhubarbEngine.Components.PrivateSpace
             world.localUser.userroot.target = userRoot;
             Entity head = rootent.addChild("Head");
             head.attachComponent<Head>().userroot.target = userRoot;
-            head.attachComponent<InteractionLaser>();
             userRoot.Head.target = head;
             Entity left = rootent.addChild("Left hand");
             Entity right = rootent.addChild("Right hand");
@@ -121,11 +120,6 @@ namespace RhubarbEngine.Components.PrivateSpace
             Hand rightcomp = right.attachComponent<Hand>();
             rightcomp.creality.value = Input.Creality.Right;
             rightcomp.userroot.target = userRoot;
-
-            var ileft = left.attachComponent<InteractionLaser>();
-            var iright = right.attachComponent<InteractionLaser>();
-            ileft.source.value = InteractionSource.LeftLaser;
-            iright.source.value = InteractionSource.RightLaser;
 
             logger.Log("Spawned User PersonalSpace");
         }

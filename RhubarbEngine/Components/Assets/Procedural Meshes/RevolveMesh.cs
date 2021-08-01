@@ -57,7 +57,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         {
             RMesh tempMesh = new RMesh(_generator.Generate().MakeDMesh());
             tempMesh.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
-            load(tempMesh);
+            load(tempMesh, true);
         }
 
         public RevolveMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

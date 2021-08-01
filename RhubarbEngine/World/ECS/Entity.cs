@@ -39,9 +39,13 @@ namespace RhubarbEngine.World.ECS
         public Sync<int> remderlayer;
 
         public bool parentEnabled = true;
+
+        public event Action enabledChanged;
+
         public void parentEnabledChange(bool _parentEnabled)
         {
             if (!enabled.value) return;
+            enabledChanged?.Invoke();
             if (_parentEnabled != parentEnabled)
             {
                 parentEnabled = _parentEnabled;
@@ -150,6 +154,7 @@ namespace RhubarbEngine.World.ECS
 
         public void onEnableChange(IChangeable newValue)
         {
+            enabledChanged?.Invoke();
             foreach (Entity item in _children)
             {
                 item.parentEnabledChange(enabled.value);

@@ -55,7 +55,28 @@ namespace RhubarbEngine.Components.Physics.Colliders
             group.Changed += updateListner;
             mask.Changed += updateListner;
             mass.Changed += updateMassListner;
+            entity.enabledChanged += Enabled_Changed;
+            
         }
+
+        private bool Added = false;
+
+        private void Enabled_Changed()
+        {
+            if (entity.enabled.value && entity.parentEnabled)
+            {
+                if (!Added) return;
+                Added = false;
+                world.physicsWorld.RemoveCollisionObject(collisionObject);
+            }
+            else
+            {
+                if (Added) return;
+                Added = true;
+                world.physicsWorld.AddCollisionObject(collisionObject, (int)group.value, (int)mask.value);
+            }
+        }
+
         public void startShape(CollisionShape shape)
         {
             buildCollissionObject(LocalCreateRigidBody(mass.value, CastMet(entity.globalTrans()), shape));
@@ -101,17 +122,25 @@ namespace RhubarbEngine.Components.Physics.Colliders
         {
             if (collisionObject != null)
             {
-                world.physicsWorld.RemoveCollisionObject(collisionObject);
+                Added = false;
+                if (entity.enabled.value && entity.parentEnabled)
+                {
+                    world.physicsWorld.RemoveCollisionObject(collisionObject);
+                }
                 collisionObject = null;
             }
             if(newCol != null)
             {
                 newCol.UserObject = this;
-                world.physicsWorld.AddCollisionObject(newCol, (int)group.value, (int)mask.value);
+                if(entity.enabled.value && entity.parentEnabled)
+                {
+                    Added = true;
+                    world.physicsWorld.AddCollisionObject(newCol, (int)group.value, (int)mask.value);
+                }
             }
             collisionObject = newCol;
         }
-
+        
         public void UpdateTrans(Matrix4x4 val)
         {
             if (collisionObject == null) return;

@@ -46,7 +46,6 @@ namespace RhubarbEngine.Components.Rendering
         private void loadMesh(RMesh mesh)
         {
             if (_wvpBuffer == null) return;
-            logger.Log("loaded mesh");
             if(Mesh.target == null)
             {
                 logger.Log("no mesh provider");
