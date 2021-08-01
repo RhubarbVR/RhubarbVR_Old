@@ -13,8 +13,6 @@ using RhubarbEngine.Render;
 using System.Numerics;
 using RhubarbEngine.Components.Users;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
-using LiteNetLib;
-using LiteNetLib.Utils;
 using Org.OpenAPITools.Model;
 using RhubarbEngine.World.Net;
 using BulletSharp;
@@ -72,7 +70,7 @@ namespace RhubarbEngine.World
             {
                 if (item != val)
                 {
-                    //Add User
+                    netModule.Connect(item);
                 }
             }
         }
@@ -87,7 +85,7 @@ namespace RhubarbEngine.World
 
         public bool userLoaded = false;
 
-        public void NetworkReceiveEvent(byte[] vale,ReliabilityLevel level, Peer fromPeer)
+        public void NetworkReceiveEvent(byte[] vale, Peer fromPeer)
         {
             try
             {
@@ -122,6 +120,7 @@ namespace RhubarbEngine.World
                 else
                 {
                     DataNode<ulong> val = (DataNode<ulong>)dataNodeGroup.getValue("id");
+                    DataNode<int> level = (DataNode<int>)dataNodeGroup.getValue("level");
                     try
                     {
                         var member = (ISyncMember)getWorldObj(new NetPointer(val.Value));
@@ -129,7 +128,7 @@ namespace RhubarbEngine.World
                     }
                     catch
                     {
-                        if (level != ReliabilityLevel.Unreliable)
+                        if ((ReliabilityLevel)level.Value != ReliabilityLevel.Unreliable)
                         {
                             if (unassignedValues.ContainsKey(val.Value))
                             {
@@ -163,9 +162,7 @@ namespace RhubarbEngine.World
                 send.setValue("responses", new DataNode<string>("WorldSync"));
                 DataNodeGroup value = serialize(true);
                 send.setValue("data", value);
-                var val = new NetDataWriter(true);
-                send.Serialize(val);
-                peer.Send(val, ReliabilityLevel.Reliable);
+                peer.Send(send.getByteArray(), ReliabilityLevel.Reliable);
             }
         }
 
@@ -505,7 +502,7 @@ namespace RhubarbEngine.World
             accessLevel.value = AccessLevel.Anyone;
             if (!userspace && !local)
             {
-                netModule = new ValvueNetModule(this);
+                netModule = new RhuNetModule(this);
             }
             else
             {
@@ -570,6 +567,10 @@ namespace RhubarbEngine.World
                     {
                         item?.Invoke();
                     }
+                }
+                else
+                {
+                    worldManager.BuildLocalWorld(this);
                 }
             }
         }

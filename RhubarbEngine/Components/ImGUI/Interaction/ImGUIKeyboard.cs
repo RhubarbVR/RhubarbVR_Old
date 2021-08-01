@@ -151,7 +151,10 @@ namespace RhubarbEngine.Components.ImGUI
                         ReloadKeyboard();
                         break;
                     case "Enter":
-                        i.PressKey(Key.Enter, mkey);
+                        input.mainWindows.FrameSnapshot.PressChar('\n', mkey);
+                        break;
+                    case "Space":
+                        input.mainWindows.FrameSnapshot.PressChar(' ', mkey);
                         break;
                     case "Caps\nLock":
                         i.PressKey(Key.F1, mkey);

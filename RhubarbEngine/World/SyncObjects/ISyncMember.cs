@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine.World.DataStructure;
-using LiteNetLib;
 using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World

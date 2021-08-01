@@ -10,7 +10,9 @@ namespace RhubarbEngine.World.Net
 
     public class NUllNetModule : NetModule
     {
-        public NUllNetModule(World world) : base(world)
+        public override string token => "NULL";
+
+        public NUllNetModule(World world) : base(world,true)
         {
 
         }
@@ -18,23 +20,38 @@ namespace RhubarbEngine.World.Net
 
     public abstract class NetModule
     {
+        public virtual void Connect(string token)
+        {
+
+        }
+
+
         public World _world;
 
-        public NetModule(World world)
+        private bool _noq;
+
+        public virtual string token { get; }
+        public virtual IReadOnlyList<Peer> peers { get; }
+
+
+        public NetModule(World world,bool noq = false)
         {
             _world = world;
+            _noq = noq;
         }
 
         public List<NetData> NetQueue = new List<NetData>();
 
         public virtual void DropQ()
         {
+            if (_noq) { NetQueue.Clear(); return; };
             List<ulong> trains = new List<ulong>();
             List<NetData> netData = new List<NetData>();
             foreach (var item in NetQueue)
             {
                 DataNodeGroup node = new DataNodeGroup();
                 node.setValue("data", item.data);
+                node.setValue("level", new DataNode<int>((int)item.reliabilityLevel));
                 node.setValue("id", new DataNode<ulong>(item.id));
                 if (item.reliabilityLevel == ReliabilityLevel.LatestOnly || item.reliabilityLevel == ReliabilityLevel.Unreliable)
                 {
@@ -67,11 +84,12 @@ namespace RhubarbEngine.World.Net
 
         public virtual void sendData(DataNodeGroup node, NetData item)
         {
-
+            
         }
 
         public void addToQueue(ReliabilityLevel _reliabilityLevel, DataNodeGroup _data, ulong _id)
         {
+            if (_noq) return;
             var netdata = new NetData(_reliabilityLevel, _data, _id);
             NetQueue.Add(netdata);
         }

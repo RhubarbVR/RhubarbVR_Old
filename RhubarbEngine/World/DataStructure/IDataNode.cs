@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LiteNetLib.Utils;
 using RhubarbDataTypes;
 using g3;
 namespace RhubarbEngine.World.DataStructure
 {
-    public interface IDataNode : INetSerializable
+    public interface IDataNode
     {
         byte[] getByteArray();
 

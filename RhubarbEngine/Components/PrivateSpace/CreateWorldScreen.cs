@@ -78,7 +78,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 
         private void CreateWorld()
         {
-           world.worldManager.createNewWorld(accessLevel.target?.value.value??AccessLevel.Anyone,sessionsType.target?.value.value??SessionsType.Casual,name.target?.text.value??"",null,false, maxUsers.target?.value.value??16, false,"Basic");
+           world.worldManager.createNewWorld(accessLevel.target?.value.value??AccessLevel.Anyone,sessionsType.target?.value.value??SessionsType.Casual,name.target?.text.value??"",null,false, maxUsers.target?.value.value??16, false,null);
         }
 
         private void Back()

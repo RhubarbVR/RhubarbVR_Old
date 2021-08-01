@@ -131,11 +131,11 @@ namespace RhubarbEngine
 
         public void Loop(DateTime startTime, DateTime Frame)
         {
+            renderManager.Update();
             inputManager.Update();
             windowManager.Update();
             worldManager.Update(startTime, Frame);
             platformInfo.Update();
-            renderManager.Update();
         }
 
         public void cleanUP()

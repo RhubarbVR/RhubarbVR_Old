@@ -27,14 +27,11 @@ namespace RhubarbEngine.World
 
         public void loadedCall(T newAsset)
         {
-            logger.Log("TIUhiufgsehjui" + typeof(T).FullName);
             loadChange?.Invoke(newAsset);
         }
 
         public override void Bind()
         {
-            logger.Log("TIUhiufgsehjui" + typeof(T).FullName);
-
             base.Bind();
             base.target.onLoadedCall += loadedCall;
             if (base.target.loaded)
@@ -45,10 +42,6 @@ namespace RhubarbEngine.World
         public override void onLoaded()
         {
             base.onLoaded();
-            if (base.target == null)
-            {
-                logger.Log("THing is null");
-            }
             base.target.onLoadedCall += loadedCall;
             if (base.target.loaded)
             {

@@ -64,8 +64,8 @@ namespace RhubarbEngine.Managers
         {
             Logger.Log("Creating world", true);
             World.World world = new World.World(this, sessionsType, accessLevel, name, maxusers, worlduuid, isOver, mobilefriendly, templet);
-            string ip = new WebClient().DownloadString("http://icanhazip.com").Replace("\\r\\n", "").Replace("\\n", "").Trim();
-            string conectionkey = ip + " _ ";
+            string conectionkey = world.netModule.token;
+            Logger.Log("Creating world ConectionKey:" + conectionkey);
             try
             {
                 string sessionid = engine.netApiManager.sessionApi.SessionCreatesessionPost(new CreateSessionReq(name, worlduuid, new List<string>(new[] { "" }), "", (int)sessionsType, (int)accessLevel, isOver, maxusers, mobilefriendly, conectionkey), engine.netApiManager.token);
@@ -92,8 +92,8 @@ namespace RhubarbEngine.Managers
             {
                 Logger.Log("Joining session ID: " + uuid, true);
                 World.World world = new World.World(this, "Loading", 1,false,false,null,true);
-                string ip = new WebClient().DownloadString("http://icanhazip.com").Replace("\\r\\n", "").Replace("\\n", "").Trim();
-                string conectionkey = ip + " _ ";
+                string conectionkey = world.netModule.token;
+                Logger.Log("Joining session ConectionKey:" + conectionkey);
                 var join = engine.netApiManager.sessionApi.SessionJoinsessionGet(uuid, conectionkey, engine.netApiManager.token);
                 world.SessionID.value = join.Uuid;
                 world.joinsession(join,conectionkey);
@@ -155,13 +155,13 @@ namespace RhubarbEngine.Managers
                     dontSaveLocal = true;
                     Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
                     localWorld = new World.World(this, "TempLoaclWorld", 16, false, true);
-                    BuildLocalWorld();
+                    BuildLocalWorld(localWorld);
                 }
             }
             else
             {
                 localWorld = new World.World(this, "LocalWorld", 16,false,true);
-                BuildLocalWorld();
+                BuildLocalWorld(localWorld);
             }
             localWorld.Focus = World.World.FocusLevel.Focused;
             worlds.Add(localWorld);
@@ -200,15 +200,15 @@ namespace RhubarbEngine.Managers
             field.field.target = imGUICanvas;
         }
 
-        public void BuildLocalWorld()
+        public void BuildLocalWorld(World.World world)
         {
-            localWorld.RootEntity.attachComponent<SimpleSpawn>();
-            Entity e = localWorld.RootEntity.addChild("Gay");
-            Entity edd = localWorld.RootEntity.addChild("Gay");
+            world.RootEntity.attachComponent<SimpleSpawn>();
+            Entity e = world.RootEntity.addChild("Gay");
+            Entity edd = world.RootEntity.addChild("Gay");
             edd.position.value = new Vector3f(1, 1, 1);
-            buildUI(e);
-            buildUI(edd);
-
+            //buildUI(e);
+            //buildUI(edd);
+            AddMesh<BoxMesh>(e);
             //mit.setValueAtField("Texture", Render.Shader.ShaderType.MainFrag, textue2DFromUrl);
 
 

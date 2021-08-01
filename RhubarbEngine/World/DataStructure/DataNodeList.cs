@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LiteNetLib.Utils;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.IO;
@@ -89,23 +88,10 @@ namespace RhubarbEngine.World.DataStructure
             }
         }
 
-        public void Deserialize(NetDataReader reader)
-        {
-            setByteArray(reader.GetBytesWithLength());
-        }
-        public void Serialize(NetDataWriter writer)
-        {
-            writer.Put(getByteArray());
-        }
-
         public DataNodeList()
         {
         }
 
-        public DataNodeList(NetDataReader reader)
-        {
-            Deserialize(reader);
-        }
 
         public DataNodeList(byte[] data)
         {
