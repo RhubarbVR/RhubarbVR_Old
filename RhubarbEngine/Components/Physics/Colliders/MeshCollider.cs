@@ -25,6 +25,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
+            mesh = new AssetRef<RMesh>(this, newRefIds);
             mesh.loadChange += Mesh_loadChange;
         }
 
