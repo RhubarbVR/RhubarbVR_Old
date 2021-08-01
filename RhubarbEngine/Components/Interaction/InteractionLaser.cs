@@ -39,7 +39,7 @@ namespace RhubarbEngine.Components.Interaction
             if (world.userspace) return;
             var (e, m) = MeshHelper.AddMesh<CylinderMesh>(entity);
             e.rotation.value = Quaternionf.CreateFromYawPitchRoll(0f, -67.5f,0f);
-            e.position.value = -Vector3f.AxisZ * 0.2f;
+            e.position.value = -Vector3f.AxisZ * 0.3f;
             meshDriver.target = m.Height;
             m.BaseRadius.value = 0.005f;
             m.TopRadius.value = 0.01f;
@@ -57,6 +57,8 @@ namespace RhubarbEngine.Components.Interaction
             meshDriver = new Driver<float>(this, newRefIds);
         }
 
+        private static float desklength = 0.1f;
+
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
             if (world.userspace) return;
@@ -73,7 +75,7 @@ namespace RhubarbEngine.Components.Interaction
                     {
                         if (meshDriver.target != null)
                         {
-                            meshDriver.Drivevalue = distances.value;
+                            meshDriver.Drivevalue = (source.value == InteractionSource.HeadLaser)? desklength : distances.value;
                         }
                     }
                 }
@@ -96,7 +98,7 @@ namespace RhubarbEngine.Components.Interaction
                 {
                     if (meshDriver.target != null)
                     {
-                        meshDriver.Drivevalue = (float)Vector3.Distance(cb.HitPointWorld, sourcse);
+                        meshDriver.Drivevalue = (source.value == InteractionSource.HeadLaser) ? desklength : (float)Vector3.Distance(cb.HitPointWorld, sourcse);
                     }
                     try
                     {
