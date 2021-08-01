@@ -67,13 +67,15 @@ namespace RhubarbEngine.Components.Physics.Colliders
             {
                 if (!Added) return;
                 Added = false;
+                if (collisionObject == null) return;
                 world.physicsWorld.RemoveCollisionObject(collisionObject);
             }
             else
             {
                 if (Added) return;
                 Added = true;
-                world.physicsWorld.AddCollisionObject(collisionObject, (int)group.value, (int)mask.value);
+                if (collisionObject == null) return;
+                  world.physicsWorld.AddCollisionObject(collisionObject, (int)group.value, (int)mask.value);
             }
         }
 
@@ -122,10 +124,10 @@ namespace RhubarbEngine.Components.Physics.Colliders
         {
             if (collisionObject != null)
             {
-                Added = false;
-                if (entity.enabled.value && entity.parentEnabled)
+                if (Added)
                 {
-                    world.physicsWorld.RemoveCollisionObject(collisionObject);
+                    Added = false;
+                  world.physicsWorld.RemoveCollisionObject(collisionObject);
                 }
                 collisionObject = null;
             }
@@ -137,6 +139,10 @@ namespace RhubarbEngine.Components.Physics.Colliders
                     Added = true;
                     world.physicsWorld.AddCollisionObject(newCol, (int)group.value, (int)mask.value);
                 }
+            }
+            else
+            {
+                Added = false;
             }
             collisionObject = newCol;
         }

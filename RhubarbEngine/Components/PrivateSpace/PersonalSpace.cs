@@ -63,6 +63,7 @@ namespace RhubarbEngine.Components.PrivateSpace
                 RMaterial mit = e.attachComponent<RMaterial>();
                 MeshRender meshRender = e.attachComponent<MeshRender>();
                 ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
+                imGUICanvas.noKeyboard.value = true;
                 Vector2f sizePix = new Vector2f(600,600) * (bmeshcol.size.value * 2);
                 imGUICanvas.scale.value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);
                 bmeshcol.pixelSize.value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);

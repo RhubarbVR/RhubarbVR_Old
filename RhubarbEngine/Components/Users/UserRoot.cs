@@ -121,6 +121,7 @@ namespace RhubarbEngine.Components.Users
 
 
                     Matrix4x4 addTo = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(lookRotation) * Matrix4x4.CreateTranslation(motionDir * _moveSpeed * sprintFactor * deltaSeconds);
+
                     var newtraans = addTo * entity.globalTrans();
                     entity.setGlobalTrans(newtraans);
 

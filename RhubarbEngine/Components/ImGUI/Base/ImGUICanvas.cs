@@ -33,6 +33,8 @@ namespace RhubarbEngine.Components.ImGUI
 
         public Sync<bool> noCloseing;
 
+        public Sync<bool> noKeyboard;
+
         public Sync<bool> noBackground;
 
         private ImGuiRenderer igr;
@@ -57,7 +59,7 @@ namespace RhubarbEngine.Components.ImGUI
             name = new Sync<string>(this, newRefIds);
             noCloseing = new Sync<bool>(this, newRefIds);
             noBackground = new Sync<bool>(this, newRefIds);
-
+            noKeyboard = new Sync<bool>(this,newRefIds);
         }
 
         private void onScaleChange(IChangeable val)
@@ -163,6 +165,7 @@ namespace RhubarbEngine.Components.ImGUI
                     element.target.ImguiRender(igr);
                     ImGui.End();
                 }
+                if (noKeyboard.value) return;
                 if (ImGui.IsAnyItemActive())
                 {
                     input.keyboard = this;

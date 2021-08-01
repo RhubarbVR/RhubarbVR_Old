@@ -30,6 +30,8 @@ namespace RhubarbEngine.Components.Interaction
 
         public SyncRef<User> user;
 
+        public SyncRef<CylinderMesh> mesh;
+
         public Driver<float> meshDriver;
 
         public override void OnAttach()
@@ -43,6 +45,7 @@ namespace RhubarbEngine.Components.Interaction
             meshDriver.target = m.Height;
             m.BaseRadius.value = 0.005f;
             m.TopRadius.value = 0.01f;
+            mesh.target = m;
         }
 
         public override void buildSyncObjs(bool newRefIds)
@@ -55,6 +58,7 @@ namespace RhubarbEngine.Components.Interaction
             distances.value = 10f;
             user = new SyncRef<User>(this, newRefIds);
             meshDriver = new Driver<float>(this, newRefIds);
+            mesh = new SyncRef<CylinderMesh>(this, newRefIds);
         }
 
         private static float desklength = 0.1f;
@@ -98,7 +102,7 @@ namespace RhubarbEngine.Components.Interaction
                 {
                     if (meshDriver.target != null)
                     {
-                        meshDriver.Drivevalue = (source.value == InteractionSource.HeadLaser) ? desklength : (float)Vector3.Distance(cb.HitPointWorld, sourcse);
+                        meshDriver.Drivevalue = (source.value == InteractionSource.HeadLaser) ? desklength : -(float)Vector3.Distance(cb.HitPointWorld, sourcse);
                     }
                     try
                     {

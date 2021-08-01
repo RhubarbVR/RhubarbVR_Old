@@ -16,6 +16,8 @@ namespace RhubarbEngine.Input
         public List<MouseEvent> mouseEvents;
 
         public IReadOnlyList<MouseEvent> MouseEvents => mouseEvents;
+        public List<char> UpkeyCharPresses = new List<char>();
+
         public List<char> keyCharPresses;
         public IReadOnlyList<char> KeyCharPresses => keyCharPresses;
 
@@ -39,15 +41,37 @@ namespace RhubarbEngine.Input
         public void CustomFram(InputSnapshot s)
         {
             keyEvents = new List<KeyEvent>(s.KeyEvents);
+            foreach (var item in UpkeyEvents)
+            {
+                keyEvents.Add(item);
+            }
+            List<KeyEvent> ew = new List<KeyEvent>();
+            foreach (var item in UpkeyEvents)
+            {
+                if (item.Down)
+                {
+                    ew.Add(new KeyEvent(item.Key,false,item.Modifiers));
+                }
+            }
+            UpkeyEvents.Clear();
+            foreach (var item in ew)
+            {
+                UpkeyEvents.Add(item);
+            }
             mouseEvents = new List<MouseEvent>(s.MouseEvents);
             keyCharPresses = new List<char>(s.KeyCharPresses);
+            foreach (var item in UpkeyCharPresses)
+            {
+                keyCharPresses.Add(item);
+            }
+            UpkeyCharPresses.Clear();
             wheelDelta = s.WheelDelta;
             mousePosition = s.MousePosition;
         }
 
         public void PressChar(char key, ModifierKeys e)
         {
-            keyCharPresses.Add(key);
+            UpkeyCharPresses.Add(key);
             Key ekey = Key.Unknown;
             switch (key)
             {
@@ -212,26 +236,29 @@ namespace RhubarbEngine.Input
                 case 'z':
                     ekey = Key.Z;
                     break;
+                case 'Y':
+                    ekey = Key.Y;
+                    e |= ModifierKeys.Shift;
+                    break;
+                case 'y':
+                    ekey = Key.Y;
+                    break;
+                case ' ':
+                    ekey = Key.Space;
+                    break;
+                case '\n':
+                    ekey = Key.Enter;
+                    break;
                 default:
                     break;
             }
-            keyEvents.Add(new KeyEvent(ekey, true, e));
-            UpkeyEvents.Add(new KeyEvent(ekey, false, e));
+            PressKey(ekey, e);
         }
         public void PressKey(Key key, ModifierKeys e)
         {
-            UpkeyEvents.Add(new KeyEvent(key, false, e));
-            keyEvents.Add(new KeyEvent(key, true, e));
+            UpkeyEvents.Add(new KeyEvent(key, true, e));
         }
-        public void Update()
-        {
-            foreach (var item in UpkeyEvents)
-            {
-                keyEvents.Remove(new KeyEvent(item.Key, !item.Down, item.Modifiers));
-                keyEvents.Add(item);
-            }
-            UpkeyEvents.Clear();
-        }
+
     }
 
 
@@ -272,7 +299,6 @@ namespace RhubarbEngine.Input
         public void UpdateFrameInput(InputSnapshot snapshot, Sdl2Window window)
         {
             FrameSnapshot.CustomFram(snapshot);
-            FrameSnapshot.Update();
             _newKeysThisFrame.Clear();
             _newMouseButtonsThisFrame.Clear();
 
