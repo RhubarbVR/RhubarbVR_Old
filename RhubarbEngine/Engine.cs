@@ -31,6 +31,8 @@ namespace RhubarbEngine
 
         public Managers.NetApiManager netApiManager;
 
+        public AudioManager audioManager;
+
         public UnitLogs logger;
 
         public string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\RhubarbVR";
@@ -131,6 +133,7 @@ namespace RhubarbEngine
 
         public void Loop(DateTime startTime, DateTime Frame)
         {
+            audioManager.Update();
             renderManager.Update();
             inputManager.Update();
             windowManager.Update();
@@ -140,6 +143,7 @@ namespace RhubarbEngine
 
         public void cleanUP()
         {
+            audioManager.unloadAll();
             worldManager.CleanUp();
             logger.cleanUP();
             netApiManager.Close();

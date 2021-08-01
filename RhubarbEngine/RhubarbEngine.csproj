@@ -33,6 +33,7 @@
     <ProjectReference Include="..\ImguiVeldrid\VeldridImGui.csproj" />
     <ProjectReference Include="..\Numerics\Numerics.csproj" />
     <ProjectReference Include="..\RhubarbCloudApi\RhubarbCloudApi.csproj" />
+    <ProjectReference Include="..\SteamAudio.NET\SteamAudio.NET.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -66,11 +66,16 @@ namespace RhubarbEngine
                 }
                 engine.netApiManager.initialize(engine);
 
+                intphase = "Audio Manager";
+                engine.logger.Log("Starting Audio Manager:");
+                engine.audioManager = new Managers.AudioManager();
+                engine.audioManager.initialize(engine);
+
                 intphase = "World Manager";
                 engine.logger.Log("Starting World Manager:");
                 engine.worldManager = new WorldManager();
                 engine.worldManager.initialize(engine);
-
+                
                 Initialised = true;
             }
             catch (Exception _e)

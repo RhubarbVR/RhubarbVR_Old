@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<OutputType>Library</OutputType>
+	<TargetFramework>netcoreapp3.1</TargetFramework>
+	<Platforms>AnyCPU</Platforms>
+	<AssemblyName>SteamAudio.NET</AssemblyName>
+	<RootNamespace>SteamAudio</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<TieredCompilation>false</TieredCompilation>
+	<ApplicationIcon />
+	<StartupObject />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <Import Project="$(SolutionDir)SolutionDefines.targets" Condition="exists('$(SolutionDir)SolutionDefines.targets')" />
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Natives\Linux64\libopenal.so.1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Natives\Linux64\libphonon.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Natives\OSX64\libopenal.dylib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Natives\OSX64\libphonon.dylib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Natives\Windows64\phonon.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Natives\Windows64\soft_oal.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

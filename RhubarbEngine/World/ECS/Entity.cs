@@ -228,7 +228,7 @@ namespace RhubarbEngine.World.ECS
             if (base.IsRemoved) return;
             foreach (Component comp in _components)
             {
-                if (comp.enabled.value&& !comp.IsRemoved)
+                if (comp.enabled.value&& !comp.IsRemoved && world.Focus != World.FocusLevel.Background)
                 {
                     comp.CommonUpdate(startTime, Frame);
                 }
