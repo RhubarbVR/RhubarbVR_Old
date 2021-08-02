@@ -20,6 +20,7 @@ using RhubarbEngine.Components.Users;
 using RhubarbEngine.Components.ImGUI;
 using RhubarbEngine.Components.Physics.Colliders;
 using RhubarbEngine.Components.PrivateSpace;
+using RhubarbEngine.Components.Audio;
 
 using Org.OpenAPITools.Model;
 using BulletSharp;
@@ -209,6 +210,10 @@ namespace RhubarbEngine.Managers
             //buildUI(e);
             //buildUI(edd);
             AddMesh<BoxMesh>(e);
+            var ouete = e.attachComponent<RawAudioSource>();
+
+            var oute = e.attachComponent<AudioOutput>();
+            oute.audioSource.target = ouete;
             //mit.setValueAtField("Texture", Render.Shader.ShaderType.MainFrag, textue2DFromUrl);
 
 
@@ -227,13 +232,13 @@ namespace RhubarbEngine.Managers
             T bmesh = e.attachComponent<T>();
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
-            //Textue2DFromUrl textue2DFromUrl = e.attachComponent<Textue2DFromUrl>();
-
+            Textue2DFromUrl textue2DFromUrl = e.attachComponent<Textue2DFromUrl>();
+            
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;
-            //Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-            //field.field.target = textue2DFromUrl;
+            Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+            field.field.target = textue2DFromUrl;
             // rgbainbowDriver.driver.setDriveTarget(field.field);
             // rgbainbowDriver.speed.value = 50f;
             return e;

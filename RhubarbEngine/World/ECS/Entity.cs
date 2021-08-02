@@ -192,6 +192,7 @@ namespace RhubarbEngine.World.ECS
             T newcomp = (T)Activator.CreateInstance(typeof(T));
             _components.Add(newcomp);
             newcomp.OnAttach();
+            newcomp.onLoaded();
             return newcomp;
         }
         public override void onLoaded()

@@ -25,17 +25,17 @@ namespace RhubarbEngine.Managers
         public const int AudioFrameSize = 1024;
         public const int AudioFrameSizeInBytes = AudioFrameSize * sizeof(float);
         //OpenAL
-        private static IntPtr alAudioDevice;
-        private static IntPtr alAudioContext;
+        private IntPtr alAudioDevice;
+        private IntPtr alAudioContext;
 
         public const int BufferFormatStereoFloat32 = 0x10011;
 
         //Steam Audio
-        private static IntPtr iplContext;
-        private static IPL.AudioFormat iplFormatMono;
-        private static IPL.AudioFormat iplFormatStereo;
-        private static IPL.AudioBuffer iplOutputBuffer;
-        private static IPL.RenderingSettings iplRenderingSettings;
+        public IntPtr iplContext;
+        private IPL.AudioFormat iplFormatMono;
+        private IPL.AudioFormat iplFormatStereo;
+        public IPL.AudioBuffer iplOutputBuffer;
+        private IPL.RenderingSettings iplRenderingSettings;
 
         public uint sourceId;
 
@@ -58,12 +58,12 @@ namespace RhubarbEngine.Managers
 
             return this;
         }
-        private static void PrepareSteamAudio()
+        private void PrepareSteamAudio()
         {
             //Steam Audio Initialization
 
             IPL.CreateContext(null, null, null, out iplContext);
-
+            
             Logger.Log("Created SteamAudio context.");
 
             iplRenderingSettings = new IPL.RenderingSettings
@@ -137,7 +137,7 @@ namespace RhubarbEngine.Managers
             CheckALErrors();
         }
 
-        private static void CheckALErrors()
+        private void CheckALErrors()
         {
             var error = AL.GetError();
 
@@ -147,7 +147,7 @@ namespace RhubarbEngine.Managers
             }
         }
 
-        private static void PrepareOpenAL()
+        private void PrepareOpenAL()
         {
             alAudioDevice = ALC.OpenDevice(null);
             alAudioContext = ALC.CreateContext(alAudioDevice, null);
@@ -171,14 +171,14 @@ namespace RhubarbEngine.Managers
 
             Logger.Log("OpenAL is ready.");
         }
-        private static void UnloadOpenAL()
+        private void UnloadOpenAL()
         {
             ALC.DestroyContext(alAudioContext);
             ALC.CloseDevice(alAudioDevice);
         }
 
 
-        private static void UnloadSteamAudio()
+        private void UnloadSteamAudio()
         {
             IPL.DestroyContext(ref iplContext);
             IPL.Cleanup();

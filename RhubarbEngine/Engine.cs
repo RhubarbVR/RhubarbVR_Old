@@ -133,11 +133,11 @@ namespace RhubarbEngine
 
         public void Loop(DateTime startTime, DateTime Frame)
         {
-            audioManager.Update();
             renderManager.Update();
             inputManager.Update();
             windowManager.Update();
             worldManager.Update(startTime, Frame);
+            audioManager.Update();
             platformInfo.Update();
         }
 
