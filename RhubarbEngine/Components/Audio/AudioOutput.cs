@@ -22,11 +22,12 @@ namespace RhubarbEngine.Components.Audio
         public SyncRef<IAudioSource> audioSource;
 
         public Sync<float> spatialBlend;
+        public IPL.AudioBuffer iplOutputBuffer;
 
         private IntPtr iplBinauralEffect;
         private  IntPtr iplBinauralRenderer;
         private  IPL.AudioBuffer iplInputBuffer;
-
+        
 
         public override void buildSyncObjs(bool newRefIds)
         {
@@ -38,9 +39,6 @@ namespace RhubarbEngine.Components.Audio
         public override void onLoaded()
         {
             base.onLoaded();
-
-            
-
 
             var iplRenderingSettings = new IPL.RenderingSettings
             {
@@ -78,7 +76,6 @@ namespace RhubarbEngine.Components.Audio
             //Binaural Effect
 
             IPL.CreateBinauralEffect(iplBinauralRenderer, iplFormatMono, iplFormatStereo, out iplBinauralEffect);
-
         }
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
@@ -92,16 +89,16 @@ namespace RhubarbEngine.Components.Audio
             if (!audioSource.target.IsActive) return;
             Console.WriteLine("Audio Update");
             Matrix4x4.Decompose(world.playerTrans, out Vector3 sc, out Quaternion ret, out Vector3 trans);
-            var position = entity.globalPos().ToSystemNumrics() - trans;
+            var position = Vector3.Transform((entity.globalPos().ToSystemNumrics() - trans), Quaternion.Inverse(ret));
             var frameInputBuffer = audioSource.target.FrameInputBuffer;
-            var e = new IPL.Vector3(position.X * 100, position.Y * 100, position.Z * 100);
+            var e = new IPL.Vector3(position.X, position.Y, position.Z );
+
             fixed (byte* ptr = frameInputBuffer)
             { 
                 iplInputBuffer.interleavedBuffer = (IntPtr)ptr;
             }
             Console.WriteLine(" X " + e.x.ToString() + " Y " + e.y.ToString() + " X " + e.z.ToString());
             IPL.ApplyBinauralEffect(iplBinauralEffect, iplBinauralRenderer, iplInputBuffer, e, IPL.HrtfInterpolation.Nearest, spatialBlend.value, engine.audioManager.iplOutputBuffer);
-            
         }
 
         public AudioOutput(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
