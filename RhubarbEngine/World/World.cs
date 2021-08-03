@@ -175,6 +175,9 @@ namespace RhubarbEngine.World
         [NoSaveAttribute]
         public Sync<string> SessionID;
 
+        public DateTime startTime { get; private set; } = DateTime.UtcNow;
+
+        public double worldTime { get { return (startTime - DateTime.UtcNow).TotalSeconds; } }
 
         public void addDisposable(IDisposable val)
         {
@@ -602,6 +605,10 @@ namespace RhubarbEngine.World
                     }
                 }
             }
+            if (netSave)
+            {
+                obj.setValue("StartTime", new DataNode<DateTime>(startTime));
+            }
             return obj;
         }
 
@@ -617,12 +624,21 @@ namespace RhubarbEngine.World
                         try
                         {
                             ((IWorldObject)field.GetValue(this)).deSerialize((DataNodeGroup)data.getValue(field.Name), onload, NewRefIDs, newRefID, latterResign);
-                        }catch(Exception e)
+                        }
+                        catch (Exception e)
                         {
                             Logger.Log("Error Deserializeing on world Field name: " + field.Name + " Error:" + e.ToString(), true);
                         }
                     }
                 }
+            }
+            if (NewRefIDs)
+            {
+                try
+                {
+                    startTime = ((DataNode<DateTime>)data.getValue("StartTime")).Value;
+                }
+                catch { }
             }
         }
         public virtual void Dispose()

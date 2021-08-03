@@ -39,7 +39,7 @@ namespace RhubarbEngine.World.DataStructure
                 typeof(DataNode<DateTime>),
                 typeof(DataNode<byte[]>),
 
-
+                
                 //List Types
                 typeof(DataNode<List<int>>),
                 typeof(DataNode<List<float>>),
@@ -73,6 +73,7 @@ namespace RhubarbEngine.World.DataStructure
                 typeof(DataNode<PlanarSolid2d>),
                 typeof(DataNode<DMesh3>),
                 //Numerics Types
+                               typeof(DataNode<Playback>),
 
                 //DVector Types
                 typeof(DataNode<DVector<double>>),

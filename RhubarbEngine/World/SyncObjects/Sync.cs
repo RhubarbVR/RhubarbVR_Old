@@ -49,9 +49,22 @@ namespace RhubarbEngine.World
             drivenFromobj = value;
             isDriven = true;
         }
+
+        public virtual T defalut()
+        {
+            return default;
+        }
+
         private T _value;
 
+        public virtual void UpdatedValue()
+        {
 
+        }
+        public virtual void LoadedFromBytes(bool networked)
+        {
+
+        }
         public T value
         {
             get
@@ -65,6 +78,7 @@ namespace RhubarbEngine.World
                 {
                     UpdateValue();
                 }
+                UpdatedValue();
                 onChangeInternal(this);
             }
         }
@@ -95,6 +109,11 @@ namespace RhubarbEngine.World
 
         }
 
+        public virtual T SaveToBytes(bool netsync)
+        {
+            return _value;
+        }
+
         public override DataNodeGroup serialize(bool netsync = false)
         {
             DataNodeGroup obj = new DataNodeGroup();
@@ -103,11 +122,11 @@ namespace RhubarbEngine.World
             IDataNode Value;
             if (typeof(T).IsEnum)
             {
-               Value = new DataNode<int>((int)(object)_value);
+               Value = new DataNode<int>((int)(object)SaveToBytes(netsync));
             }
             else
             {
-               Value = new DataNode<T>(_value);
+               Value = new DataNode<T>(SaveToBytes(netsync));
             }
             obj.setValue("Value", Value);
             return obj;
@@ -115,6 +134,7 @@ namespace RhubarbEngine.World
 
         public override void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
         {
+            _value = defalut();
             if (data == null)
             {
                 world.worldManager.engine.logger.Log($"Node did not exsets When loading Sync Value { this.GetType().FullName}");
@@ -144,6 +164,7 @@ namespace RhubarbEngine.World
             {
                     _value = ((DataNode<T>)data.getValue("Value")).Value;
             }
+            LoadedFromBytes(NewRefIDs);
         }
 
         public void ReceiveData(DataNodeGroup data,Peer peer)
