@@ -4,6 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <ApplicationIcon>RhubarbVR2.ico</ApplicationIcon>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

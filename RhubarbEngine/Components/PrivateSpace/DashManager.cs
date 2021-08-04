@@ -51,13 +51,13 @@ namespace RhubarbEngine.Components.PrivateSpace
             e.position.value = new Vector3f(0, 0, -1);
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
-            ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
-            canvas.target = imGUICanvas;
-            imGUICanvas.imputPlane.target = bmeshcol;
+            WebBrowser imGUICanvas = e.attachComponent<WebBrowser>();
+           // canvas.target = imGUICanvas;
+           // imGUICanvas.imputPlane.target = bmeshcol;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;
-            imGUICanvas.noCloseing.value = true;
+           // imGUICanvas.noCloseing.value = true;
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = imGUICanvas;
         }

@@ -26,6 +26,7 @@ using Org.OpenAPITools.Model;
 using BulletSharp;
 using System.Numerics;
 using System.Net;
+using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.Managers
 {
@@ -211,6 +212,7 @@ namespace RhubarbEngine.Managers
             //buildUI(edd);
             AddMesh<BoxMesh>(e);
             var ouete = e.attachComponent<RawAudioSource>();
+            //var thing = e.attachComponent<WebBrowser>();
 
             var oute = e.attachComponent<AudioOutput>();
             oute.audioSource.target = ouete;
