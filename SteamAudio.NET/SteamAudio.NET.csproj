@@ -3,7 +3,7 @@
   <PropertyGroup>
 	<OutputType>Library</OutputType>
 	<TargetFramework>netcoreapp3.1</TargetFramework>
-	<Platforms>AnyCPU;x64</Platforms>
+	<Platforms>AnyCPU;x64;x86</Platforms>
 	<AssemblyName>SteamAudio.NET</AssemblyName>
 	<RootNamespace>SteamAudio</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -20,11 +20,19 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>false</Optimize>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <Optimize>false</Optimize>
   </PropertyGroup>
 

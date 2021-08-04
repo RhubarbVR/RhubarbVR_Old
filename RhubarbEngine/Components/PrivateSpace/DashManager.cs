@@ -52,8 +52,12 @@ namespace RhubarbEngine.Components.PrivateSpace
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
             WebBrowser imGUICanvas = e.attachComponent<WebBrowser>();
+
+            var output = e.attachComponent<Audio.AudioOutput>();
+            output.audioSource.target = imGUICanvas;
+
            // canvas.target = imGUICanvas;
-           // imGUICanvas.imputPlane.target = bmeshcol;
+            imGUICanvas.imputPlane.target = bmeshcol;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;

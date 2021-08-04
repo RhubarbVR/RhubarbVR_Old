@@ -23,7 +23,7 @@ namespace RhubarbEngine.Managers
         public const int SamplingRate = 44100;
 
         public const int AudioFrameSize = 1024;
-        public const int AudioFrameSizeInBytes = AudioFrameSize * sizeof(float);
+        public const int AudioFrameSizeInBytes = (AudioFrameSize * sizeof(float));
         //OpenAL
         private IntPtr alAudioDevice;
         private IntPtr alAudioContext;

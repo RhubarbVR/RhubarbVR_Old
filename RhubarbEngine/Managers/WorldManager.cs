@@ -211,11 +211,11 @@ namespace RhubarbEngine.Managers
             //buildUI(e);
             //buildUI(edd);
             AddMesh<BoxMesh>(e);
-            var ouete = e.attachComponent<RawAudioSource>();
+            //var ouete = e.attachComponent<RawAudioSource>();
             //var thing = e.attachComponent<WebBrowser>();
 
-            var oute = e.attachComponent<AudioOutput>();
-            oute.audioSource.target = ouete;
+            //var oute = e.attachComponent<AudioOutput>();
+            //oute.audioSource.target = ouete;
             //mit.setValueAtField("Texture", Render.Shader.ShaderType.MainFrag, textue2DFromUrl);
 
 
