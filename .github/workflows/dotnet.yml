@@ -22,4 +22,4 @@ jobs:
     - name: Build
       run: dotnet build --no-restore /p:Platform=x64
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal  /p:Platform=x64
