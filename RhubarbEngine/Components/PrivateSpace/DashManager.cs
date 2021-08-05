@@ -51,20 +51,17 @@ namespace RhubarbEngine.Components.PrivateSpace
             e.position.value = new Vector3f(0, 0, -1);
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
-            WebBrowser imGUICanvas = e.attachComponent<WebBrowser>();
-
-            var audioe = e.attachComponent<Audio.RawAudioSource>();
-
-            var output = e.attachComponent<Audio.AudioOutput>();
-            output.audioSource.target = imGUICanvas;
+            ImGUICanvas imGUICanvas = e.attachComponent<ImGUI.ImGUICanvas>();
+            //var output = e.attachComponent<Audio.AudioOutput>();
+            //output.audioSource.target = imGUICanvas;
             //output.audioSource.target = audioe;
             imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(1080, 1080);
-           // canvas.target = imGUICanvas;
+            canvas.target = imGUICanvas;
             imGUICanvas.imputPlane.target = bmeshcol;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;
-           // imGUICanvas.noCloseing.value = true;
+            imGUICanvas.noCloseing.value = true;
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = imGUICanvas;
         }

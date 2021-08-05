@@ -6,6 +6,7 @@ using RhubarbEngine.VirtualReality;
 using RhubarbEngine.Settings;
 using RhuSettings;
 using System.Collections.Generic;
+using DiscordRPC;
 
 namespace RhubarbEngine
 {
@@ -41,8 +42,51 @@ namespace RhubarbEngine
 
         public EngineInitializer engineInitializer;
 
+        public DiscordRpcClient discordRpcClient;
+
+
         public void initialize(string[] _args, bool _verbose = false, bool _Rendering = true)
         {
+            try
+            {
+                discordRpcClient = new DiscordRpcClient("678074691738402839");
+                //Subscribe to events
+                discordRpcClient.RegisterUriScheme("740251");
+
+                discordRpcClient.OnReady += (sender, e) =>
+                {
+                    discordRpcClient.SetPresence(new RichPresence()
+                    {
+                        Details = "The Engine",
+                        State = " starting..",
+                        Assets = new Assets()
+                        {
+                            LargeImageKey = "rhubarbvr",
+                            LargeImageText = "Faolan Says HI",
+                            SmallImageKey = "rhubarbvr2"
+                        }
+                    });
+                };
+
+                discordRpcClient.OnPresenceUpdate += (sender, e) =>
+                {
+
+                };
+
+                discordRpcClient.OnJoinRequested += (sender, e) =>
+                {
+                    
+                };
+
+                discordRpcClient.OnJoin += (sender, e) =>
+                {
+
+                };
+                discordRpcClient.Initialize();
+
+            }
+            catch { }
+
             verbose = _verbose;
             logger = new UnitLogs(this);
             Logger.init(this);
@@ -133,6 +177,7 @@ namespace RhubarbEngine
 
         public void Loop(DateTime startTime, DateTime Frame)
         {
+            discordRpcClient.Invoke();
             renderManager.Update();
             inputManager.Update();
             windowManager.Update();

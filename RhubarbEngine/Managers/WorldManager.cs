@@ -27,6 +27,7 @@ using BulletSharp;
 using System.Numerics;
 using System.Net;
 using RhubarbEngine.Components.Interaction;
+using DiscordRPC;
 
 namespace RhubarbEngine.Managers
 {
@@ -40,11 +41,88 @@ namespace RhubarbEngine.Managers
 
         public World.World localWorld;
 
-        public World.World focusedWorld;
+        private World.World _focusedWorld;
+
+        public World.World focusedWorld { get { return _focusedWorld; } set { _focusedWorld = value; focusedWorldChange(); } }
 
         public PersonalSpace personalSpace;
 
         public bool dontSaveLocal = false;
+        
+        public void updateDiscord()
+        {
+            if (focusedWorld == localWorld)
+            {
+                engine.discordRpcClient.SetPresence(new RichPresence()
+                {
+                    Timestamps = new Timestamps(focusedWorld.startTime),
+                    Details = "The Engine",
+                    State = " in local World",
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "rhubarbvr",
+                        LargeImageText = "Faolan Says HI",
+                        SmallImageKey = "rhubarbvr2"
+                    }
+                });
+            }
+            else if ((int)focusedWorld.accessLevel.value >= 3)
+            {
+                engine.discordRpcClient.SetPresence(new RichPresence()
+                {
+                    Timestamps = new Timestamps(focusedWorld.startTime),
+                    Details = "The Engine",
+                    State = " in " + focusedWorld.Name.value,
+                    Secrets = new Secrets()
+                    {
+                        JoinSecret = "rhubarb://" + focusedWorld.SessionID.value + "/",
+                        MatchSecret = "rhubarb://" + focusedWorld.SessionID.value + "/",
+                        
+                    },
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "rhubarbvr",
+                        LargeImageText = "Faolan Says HI",
+                        SmallImageKey = "rhubarbvr2"
+                    },
+                    Party = new Party()
+                    {
+                        Privacy = Party.PrivacySetting.Public,
+                        ID = focusedWorld.SessionID.value,
+                        Max = focusedWorld.maxUsers,
+                        Size = focusedWorld.users.Count(),
+                    }
+                });
+            }
+            else
+            {
+                engine.discordRpcClient.SetPresence(new RichPresence()
+                {
+                    Timestamps = new Timestamps(focusedWorld.startTime),
+                    Details = "The Engine",
+                    State = $" in {focusedWorld.accessLevel.ToString()} World",
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "rhubarbvr",
+                        LargeImageText = "Faolan Says HI",
+                        SmallImageKey = "rhubarbvr2"
+                    },
+                    Party = new Party()
+                    {
+                        Privacy = Party.PrivacySetting.Private,
+                        ID = focusedWorld.SessionID.value,
+                        Max = focusedWorld.maxUsers,
+                        Size = focusedWorld.users.Count(),
+                    }
+                });
+            }
+        }
+
+        public void focusedWorldChange()
+        {
+            updateDiscord();
+        }
+
         public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
         {
             try { 
