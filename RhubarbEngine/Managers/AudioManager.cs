@@ -21,9 +21,9 @@ namespace RhubarbEngine.Managers
         private bool running = false;
         public Stopwatch stopwatch { get; private set; }
 
-        public const int SamplingRate = 44100;
+        public const int SamplingRate = 48000;
 
-        public const int AudioFrameSize = 1024;
+        public const int AudioFrameSize = 2048;
         public const int AudioFrameSizeInBytes = (AudioFrameSize * sizeof(float));
         //OpenAL
         private IntPtr alAudioDevice;
@@ -106,6 +106,7 @@ namespace RhubarbEngine.Managers
 
         }
 
+
         public void Updater()
         {
             while (running)
@@ -122,7 +123,7 @@ namespace RhubarbEngine.Managers
                 {
                     Logger.Log("Audio Error" + e.ToString(), true);
                 }
-                Thread.Sleep(4);
+                Thread.Sleep(1);
             }
         }
 

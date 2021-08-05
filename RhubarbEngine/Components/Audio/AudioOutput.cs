@@ -123,7 +123,7 @@ namespace RhubarbEngine.Components.Audio
             { 
                 iplInputBuffer.interleavedBuffer = (IntPtr)ptr;
             }
-            IPL.ApplyBinauralEffect(iplBinauralEffect, iplBinauralRenderer, iplInputBuffer, e, IPL.HrtfInterpolation.Bilinear, spatialBlend.value, iplOutputBuffer);
+            IPL.ApplyBinauralEffect(iplBinauralEffect, iplBinauralRenderer, iplInputBuffer, e, IPL.HrtfInterpolation.Nearest, spatialBlend.value, iplOutputBuffer);
         }
 
         public AudioOutput(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)

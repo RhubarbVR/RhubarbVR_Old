@@ -53,8 +53,11 @@ namespace RhubarbEngine.Components.PrivateSpace
             MeshRender meshRender = e.attachComponent<MeshRender>();
             WebBrowser imGUICanvas = e.attachComponent<WebBrowser>();
 
+            var audioe = e.attachComponent<Audio.RawAudioSource>();
+
             var output = e.attachComponent<Audio.AudioOutput>();
             output.audioSource.target = imGUICanvas;
+            //output.audioSource.target = audioe;
             imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(1080, 1080);
            // canvas.target = imGUICanvas;
             imGUICanvas.imputPlane.target = bmeshcol;

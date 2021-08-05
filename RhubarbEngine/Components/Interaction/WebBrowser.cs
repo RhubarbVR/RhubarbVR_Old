@@ -60,9 +60,9 @@ namespace RhubarbEngine.Components.Interaction
 
         public int ChannelCount => 1;
 
-        byte[] frameInputBuffer = new byte[AudioManager.AudioFrameSizeInBytes];
+        RollBuffer frameInputBuffer = new RollBuffer(AudioManager.AudioFrameSizeInBytes);
 
-        public byte[] FrameInputBuffer => frameInputBuffer;
+        public byte[] FrameInputBuffer => frameInputBuffer.array;
 
         public Sync<RenderFrequency> renderFrequency;
         public Sync<Vector2u> scale;
@@ -286,7 +286,7 @@ namespace RhubarbEngine.Components.Interaction
                         }
                     }
                 }
-                frameInputBuffer = samples;
+                frameInputBuffer.Push(samples);
             }
         }
 

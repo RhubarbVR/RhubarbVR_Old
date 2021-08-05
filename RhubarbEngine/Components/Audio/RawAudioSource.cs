@@ -86,13 +86,6 @@ namespace RhubarbEngine.Components.Audio
                 return;
             }
             audioStream.Position = ((int)(((int)((double)AudioManager.SamplingRate * (double)sizeof(float) * playback.Position)) / frameInputBuffer.Length)) * frameInputBuffer.Length;
-            TimeSpan streamPositionTimeSpan = TimeSpan.FromSeconds((int)(audioStream.Position / sizeof(float) / AudioManager.SamplingRate));
-            TimeSpan streamLengthTimeSpan = TimeSpan.FromSeconds((int)(audioStream.Length / sizeof(float) / AudioManager.SamplingRate));
-
-            Console.WriteLine($"Position {playback.Position}   ");
-
-            Console.WriteLine($"Stream position: {streamPositionTimeSpan.Minutes:D2}:{streamPositionTimeSpan.Seconds:D2} / {streamLengthTimeSpan.Minutes:D2}:{streamLengthTimeSpan.Seconds:D2}");
-            Console.WriteLine($"Position { audioStream.Position}   ");
 
             audioStream.Read(frameInputBuffer, 0, frameInputBuffer.Length);
         }
