@@ -21,9 +21,9 @@ namespace RhubarbEngine.Managers
         private bool running = false;
         public Stopwatch stopwatch { get; private set; }
 
-        public const int SamplingRate = 44100;
+        public const int SamplingRate = 48000;
 
-        public const int AudioFrameSize = 1024;
+        public const int AudioFrameSize = 2048;
         public const int AudioFrameSizeInBytes = (AudioFrameSize * sizeof(float));
         //OpenAL
         private IntPtr alAudioDevice;
@@ -32,8 +32,8 @@ namespace RhubarbEngine.Managers
         public const int BufferFormatStereoFloat32 = 0x10011;
 
         private IntPtr outBuff;
-        private IntPtr clear;
-
+        
+        public float[] ee = new float[AudioFrameSize * 2];
 
         public IPL._IPLHRTF_t hrtf;
 
@@ -57,7 +57,6 @@ namespace RhubarbEngine.Managers
             stopwatch = new Stopwatch();
 
             outBuff = Marshal.AllocHGlobal(AudioFrameSizeInBytes * 2);
-            clear = Marshal.AllocHGlobal(AudioFrameSizeInBytes * 2);
 
             alBuffers = new uint[4];
             PrepareOpenAL();
@@ -114,12 +113,13 @@ namespace RhubarbEngine.Managers
             Logger.Log("SteamAudio is ready.");
 
         }
-
+        
 
         public void Updater()
         {
             while (running)
             {
+                IPL.AudioBufferDeinterleave(iplContext, ref ee[0], ref iplOutputBuffer);
                 try
                 {
                     if (engine.worldManager != null)
@@ -138,7 +138,6 @@ namespace RhubarbEngine.Managers
 
         public void RunOutput()
         {
-            IPL.AudioBufferDeinterleave(iplContext, clear, ref iplOutputBuffer);
             foreach (var world in engine.worldManager.worlds)
             {
                 if(world.Focus != World.World.FocusLevel.Background)
@@ -170,9 +169,8 @@ namespace RhubarbEngine.Managers
 
                     numProcessedBuffers--;
                 }
-                IPL.AudioBufferInterleave(iplContext,ref iplOutputBuffer, outBuff);
+                IPL.AudioBufferInterleave(iplContext, ref iplOutputBuffer, outBuff);
                 AL.BufferData(bufferId, BufferFormatStereoFloat32, outBuff, AudioFrameSizeInBytes * 2, SamplingRate);
-
                 AL.SourceQueueBuffers(sourceId, 1, &bufferId);
                 CheckALErrors();
 
