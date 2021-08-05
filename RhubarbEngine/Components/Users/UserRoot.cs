@@ -32,7 +32,7 @@ namespace RhubarbEngine.Components.Users
         public Driver<Quaternionf> rotDriver;
         public Driver<Vector3f> scaleDriver;
 
-        public Matrix4x4 Viewpos => Head.target.globalTrans();
+        public Matrix4x4 Viewpos => entity.globalTrans();
 
         public override void buildSyncObjs(bool newRefIds)
         {

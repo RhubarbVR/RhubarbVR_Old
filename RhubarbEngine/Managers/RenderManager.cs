@@ -174,11 +174,11 @@ namespace RhubarbEngine.Managers
             gd.SubmitCommands(windowCL);
             gd.SwapBuffers(sc);
 
-            HmdPoseState poses = vrContext.WaitForPoses();
             BuildMainRenderQueue();
             // Render Eyes
+            HmdPoseState poses = vrContext.WaitForPoses();
 
-            if(!(engine.backend == GraphicsBackend.OpenGL|| engine.backend == GraphicsBackend.OpenGLES))
+            if (!(engine.backend == GraphicsBackend.OpenGL|| engine.backend == GraphicsBackend.OpenGLES))
             {
                 eyesCL.PushDebugGroup("Left Eye");
             }

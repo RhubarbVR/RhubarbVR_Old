@@ -295,8 +295,11 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             TrackedDevicePose_t hmdPose = _devicePoses[OVR.k_unTrackedDeviceIndex_Hmd];
             headPos = posHelp(hmdPose.mDeviceToAbsoluteTracking);
 
-            Matrix4x4 viewLeft = _headToEyeLeft;
-            Matrix4x4 viewRight = _headToEyeRight;
+            Matrix4x4 deviceToAbsolute = ToSysMatrix(hmdPose.mDeviceToAbsoluteTracking);
+            Matrix4x4.Invert(deviceToAbsolute, out Matrix4x4 absoluteToDevice);
+
+            Matrix4x4 viewLeft = deviceToAbsolute * _headToEyeLeft;
+            Matrix4x4 viewRight = deviceToAbsolute *  _headToEyeRight;
 
             Matrix4x4.Invert(viewLeft, out Matrix4x4 invViewLeft);
             Matrix4x4.Decompose(invViewLeft, out _, out Quaternion leftRotation, out Vector3 leftPosition);
