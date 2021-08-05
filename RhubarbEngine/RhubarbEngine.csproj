@@ -23,7 +23,9 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <NoWarn>1701;1702;</NoWarn>
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">

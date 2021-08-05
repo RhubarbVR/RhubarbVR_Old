@@ -18,6 +18,7 @@ namespace RhubarbEngine.Managers
     {
         private Engine engine;
 
+        private bool running = false;
         public Stopwatch stopwatch { get; private set; }
 
         public const int SamplingRate = 44100;
@@ -41,6 +42,8 @@ namespace RhubarbEngine.Managers
 
         private uint[] alBuffers;
 
+        public Task task;
+
         public unsafe IManager initialize(Engine _engine)
         {
             engine = _engine;
@@ -56,6 +59,9 @@ namespace RhubarbEngine.Managers
 
             stopwatch.Start();
 
+            Console.WriteLine("Starting Audio task");
+            running = true;
+            task = Task.Run(Updater);
             return this;
         }
         private void PrepareSteamAudio()
@@ -63,7 +69,7 @@ namespace RhubarbEngine.Managers
             //Steam Audio Initialization
 
             IPL.CreateContext(null, null, null, out iplContext);
-            
+
             Logger.Log("Created SteamAudio context.");
 
             iplRenderingSettings = new IPL.RenderingSettings
@@ -97,8 +103,50 @@ namespace RhubarbEngine.Managers
             };
 
             Logger.Log("SteamAudio is ready.");
+
         }
 
+        public void Updater()
+        {
+            while (running)
+            {
+                try
+                {
+                    if (engine.worldManager != null)
+                    {
+                        RunOutput();
+                        Update();
+                    }
+                }
+                catch(Exception e)
+                {
+                    Logger.Log("Audio Error" + e.ToString(), true);
+                }
+                Thread.Sleep(4);
+            }
+        }
+
+        public void RunOutput()
+        {
+            int i = 0;
+            var comps = new List<IPL.AudioBuffer>();
+            foreach (var world in engine.worldManager.worlds)
+            {
+                if(world.Focus != World.World.FocusLevel.Background)
+                {
+                    foreach (var comp in world?.updateLists.audioOutputs ?? new List<Components.Audio.AudioOutput>())
+                    {
+                        comp.AudioUpdate();
+                        comps.Add(comp.iplOutputBuffer);
+                        i++;
+                    }
+
+                }
+            }
+            if (i == 0) return;
+            var bufs = comps.ToArray();
+            IPL.MixAudioBuffers(bufs.Length, ref bufs[0], iplOutputBuffer);
+        }
 
         public unsafe void Update()
         {
@@ -186,6 +234,7 @@ namespace RhubarbEngine.Managers
 
         public void unloadAll()
         {
+            running = false;
             UnloadOpenAL();
             UnloadSteamAudio();
         }

@@ -42,9 +42,20 @@ namespace RhubarbEngine.World.ECS
 
         public event Action enabledChanged;
 
+        public bool isEnabled => parentEnabled && enabled.value;
+
+        private void LoadListObject()
+        {
+            foreach (var item in _components)
+            {
+                item.ListObject(isEnabled);
+            }
+        }
+
         public void parentEnabledChange(bool _parentEnabled)
         {
             if (!enabled.value) return;
+            LoadListObject();
             enabledChanged?.Invoke();
             if (_parentEnabled != parentEnabled)
             {
@@ -147,20 +158,21 @@ namespace RhubarbEngine.World.ECS
             enabled.Changed += onEnableChange;
             persistence.Changed += onPersistenceChange;
         }
-        public void onTransChange(IChangeable newValue)
+        private void onTransChange(IChangeable newValue)
         {
             updateGlobalTrans();
         }
 
-        public void onEnableChange(IChangeable newValue)
+        private void onEnableChange(IChangeable newValue)
         {
+            LoadListObject();
             enabledChanged?.Invoke();
             foreach (Entity item in _children)
             {
                 item.parentEnabledChange(enabled.value);
             }
         }
-        public void updateGlobalTrans()
+        private void updateGlobalTrans()
         {
             Matrix4x4 parentMatrix = Matrix4x4.CreateScale(Vector3.One);
             if (parent.target != null)

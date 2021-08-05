@@ -25,11 +25,46 @@ namespace RhubarbEngine.World.ECS
             _entity = (Entity)(parent.Parent);
             LoadToWorld();
         }
+
+        public override void onLoaded()
+        {
+            base.onLoaded();
+            ListObject(entity.isEnabled);
+        }
+
         public virtual void LoadToWorld()
         {
 
         }
         public virtual void OnAttach()
+        {
+
+        }
+
+        public override void Dispose()
+        {
+            ListObject(false);
+            base.Dispose();
+        }
+
+        public void ListObject(bool load)
+        {
+            if (load)
+            {
+                LoadListObject();
+            }
+            else
+            {
+                RemoveListObject();
+            }
+        }
+
+        public virtual void LoadListObject()
+        {
+
+        }
+
+        public virtual void RemoveListObject()
         {
 
         }

@@ -33,7 +33,7 @@ public static class ImageSharpExtensions
         {
             using (var memoryStream = new MemoryStream())
             {
-                bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Bmp);
 
                 memoryStream.Seek(0, SeekOrigin.Begin);
 
@@ -93,5 +93,75 @@ public static class ImageSharpExtensions
         cl.Dispose();
 
     }
+    public unsafe static void UpdateTextureBmp(this Texture tex, System.Drawing.Bitmap update, GraphicsDevice gd, ResourceFactory factory)
+    {
 
+        if (!(update.Width == tex.Width && update.Height == tex.Height)) throw new Exception("Not Same");
+
+        Texture staging = factory.CreateTexture(
+            TextureDescription.Texture2D((uint)update.Width, (uint)update.Height, 1, 1, tex.Format, TextureUsage.Staging));
+
+        Texture ret = tex;
+
+        CommandList cl = gd.ResourceFactory.CreateCommandList();
+        cl.Begin();
+
+        System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0, 0, update.Width, update.Height);
+        System.Drawing.Imaging.BitmapData bmpData =
+            update.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite,
+            update.PixelFormat);
+
+        // Get the address of the first line.
+        IntPtr ptr = bmpData.Scan0;
+
+        // Declare an array to hold the bytes of the bitmap.
+        int bytes = Math.Abs(bmpData.Stride) * update.Height;
+        byte[] argbValues = new byte[bytes + 1];
+        // Copy the RGB values into the array.
+        System.Runtime.InteropServices.Marshal.Copy(ptr, argbValues, 0, bytes);
+        byte e;
+        fixed (byte* apin = argbValues)
+        {
+            for (int i = 0; i < bytes; i += 4)
+            {
+                    e = apin[i];
+                    apin[i] = apin[i+2];
+                    apin[i + 2] = e;
+            }
+        }
+
+            fixed (byte* pine = argbValues)
+            {
+                var pin = pine;
+                MappedResource map = gd.Map(staging, MapMode.Write, 0);
+                uint rowWidth = (uint)((update.Width) * 4);
+                if (rowWidth == map.RowPitch)
+                {
+                    Unsafe.CopyBlock(map.Data.ToPointer(), pin, (uint)((update.Width) * (update.Height) * 4));
+                }
+                else
+                {
+                    for (uint y = 0; y < update.Height; y++)
+                    {
+                        byte* dstStart = (byte*)map.Data.ToPointer() + y * map.RowPitch;
+                        byte* srcStart = (byte*)pin + y * rowWidth;
+                        Unsafe.CopyBlock(dstStart, srcStart, rowWidth);
+                    }
+                }
+                gd.Unmap(staging, 0);
+
+                cl.CopyTexture(
+                    staging, 0, 0, 0, 0, 0,
+                    ret, 0, 0, 0, 0, 0,
+                    (uint)update.Width, (uint)update.Height, 1, 1);
+
+            }
+        
+        cl.End();
+
+        gd.SubmitCommands(cl);
+        staging.Dispose();
+        cl.Dispose();
+
+    }
 }

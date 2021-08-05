@@ -27,6 +27,30 @@ using System.Runtime.InteropServices.ComTypes;
 
 namespace RhubarbEngine.Components.Interaction
 {
+    public class CustomMenuHandler : CefSharp.IContextMenuHandler
+    {
+        public void OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model)
+        {
+            model.Clear();
+        }
+
+        public bool OnContextMenuCommand(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, CefMenuCommand commandId, CefEventFlags eventFlags)
+        {
+
+            return false;
+        }
+
+        public void OnContextMenuDismissed(IWebBrowser browserControl, IBrowser browser, IFrame frame)
+        {
+
+        }
+
+        public bool RunContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model, IRunContextMenuCallback callback)
+        {
+            return false;
+        }
+    }
+
     [Category(new string[] { "Interaction" })]
     public class WebBrowser : AssetProvider<RTexture2D>, IRenderObject, KeyboardStealer, IAudioHandler,IAudioSource
     {
@@ -61,14 +85,19 @@ namespace RhubarbEngine.Components.Interaction
             {
                 Console.WriteLine("Init Cef");
                 var cefSettings = new CefSettings();
+                cefSettings.CachePath = engine.dataPath + @"\WebBrowser";
                 cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
+                cefSettings.CefCommandLineArgs.Add("disable-usb-keyboard-detect", "1");
                 cefSettings.EnableAudio();
                 Cef.Initialize(cefSettings);
             }
             browser = new ChromiumWebBrowser(path.value, null, null, false);
-            browser.CreateBrowser();
-            browser.Size = new System.Drawing.Size { Width = (int)scale.value.x, Height = (int)scale.value.y };
             browser.AudioHandler = this;
+            browser.MenuHandler = new CustomMenuHandler();
+            
+            browser.CreateBrowser();
+            
+            browser.Size = new System.Drawing.Size { Width = (int)scale.value.x, Height = (int)scale.value.y };            
             loaded = true;
         }
 
@@ -114,18 +143,16 @@ namespace RhubarbEngine.Components.Interaction
 
         public void startRenderTask()
         {
-            Console.WriteLine("can render");
             if (lastTask != null) return;
             lastTask = Task.Run(RenderTask);
-            lastTask.Start();
         }
 
         private void RenderTask()
         {
             if (view == null)
             {
-                target = (new ImageSharpTexture(browser.ScreenshotOrNull(PopupBlending.Main).ToImageSharpImage<Rgba32>())).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-                TextureView view = engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
+                target = (new ImageSharpTexture(browser.ScreenshotOrNull(PopupBlending.Main).ToImageSharpImage<Rgba32>(), false)).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+                view = engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
                 var e = new RTexture2D(view);
                 e.addDisposable(target);
                 e.addDisposable(view);
@@ -133,8 +160,8 @@ namespace RhubarbEngine.Components.Interaction
             }
             else
             {
-                ImageSharpTexture uptarget = (new ImageSharpTexture(browser.ScreenshotOrNull(PopupBlending.Main).ToImageSharpImage<Rgba32>()));
-                target.UpdateTexture(uptarget, engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+                //target.UpdateTexture((new ImageSharpTexture(browser.ScreenshotOrNull(PopupBlending.Main).ToImageSharpImage<Rgba32>(),false)), engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+                target.UpdateTextureBmp(browser.ScreenshotOrNull(PopupBlending.Main), engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
             }
             lastTask = null;
         }
@@ -223,8 +250,9 @@ namespace RhubarbEngine.Components.Interaction
             browser.GetBrowser().GetHost().SendMouseMoveEvent(new CefSharp.MouseEvent((int)imp.MousePosition.X,(int)imp.MousePosition.Y, CefEventFlags.None), !imp.focused);
             browser.GetBrowser().GetHost().SendMouseWheelEvent(0, (int)(imp.WheelDelta * 100), 0, (int)(imp.WheelDelta * 100), CefEventFlags.None);
             browser.GetBrowser().GetHost().SetAudioMuted(false);
+            browser.GetBrowser().GetHost().SetFocus(imp.focused);
+         
         }
-
         public bool GetAudioParameters(IWebBrowser chromiumWebBrowser, IBrowser browser, ref AudioParameters parameters)
         {
             parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutMono;
@@ -244,7 +272,7 @@ namespace RhubarbEngine.Components.Interaction
             {
                 float** channelData = (float**)data.ToPointer();
                 int chan = 1;
-                int size = chan * noOfFrames * 4;
+                int size = AudioManager.AudioFrameSizeInBytes * chan;
                 byte[] samples = new byte[size];
                 fixed (byte* pDestByte = samples)
                 {

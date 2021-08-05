@@ -137,7 +137,6 @@ namespace RhubarbEngine
             inputManager.Update();
             windowManager.Update();
             worldManager.Update(startTime, Frame);
-            audioManager.Update();
             platformInfo.Update();
         }
 

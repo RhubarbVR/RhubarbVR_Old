@@ -55,7 +55,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 
             var output = e.attachComponent<Audio.AudioOutput>();
             output.audioSource.target = imGUICanvas;
-
+            imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(1080, 1080);
            // canvas.target = imGUICanvas;
             imGUICanvas.imputPlane.target = bmeshcol;
             mit.Shader.target = shader;
@@ -128,7 +128,7 @@ namespace RhubarbEngine.Components.PrivateSpace
         }
 
         private DateTime opened = DateTime.UtcNow;
-        
+
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
             if (!engine.netApiManager.islogin)

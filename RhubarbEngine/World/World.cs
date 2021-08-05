@@ -23,6 +23,8 @@ namespace RhubarbEngine.World
 {
     public class World : IWorldObject
     {
+        public UpdateLists updateLists = new UpdateLists();
+
         [NoSave]
         public SyncUserList users;
 

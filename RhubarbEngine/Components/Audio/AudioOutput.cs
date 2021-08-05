@@ -13,6 +13,7 @@ using System.Numerics;
 using SteamAudio;
 using RhubarbEngine.Managers;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace RhubarbEngine.Components.Audio
 {
@@ -74,20 +75,45 @@ namespace RhubarbEngine.Components.Audio
                 interleavedBuffer = IntPtr.Zero //Will be assigned before use.
             };
             //Binaural Effect
+            IntPtr outputDataPtr = Marshal.AllocHGlobal(AudioManager.AudioFrameSizeInBytes * 2);
+
+            iplOutputBuffer = new IPL.AudioBuffer
+            {
+                format = iplFormatStereo,
+                numSamples = iplRenderingSettings.frameSize,
+                interleavedBuffer = outputDataPtr
+            };
+
 
             IPL.CreateBinauralEffect(iplBinauralRenderer, iplFormatMono, iplFormatStereo, out iplBinauralEffect);
         }
 
-        public override void CommonUpdate(DateTime startTime, DateTime Frame)
+        public override void LoadListObject()
         {
-            AudioUpdate();
+            base.LoadListObject();
+            try
+            {
+                if (!world.updateLists.audioOutputs.Contains(this))
+                {
+                    world.updateLists.audioOutputs.Add(this);
+                }
+            }
+            catch { }
         }
 
+        public override void RemoveListObject()
+        {
+            base.RemoveListObject();
+            try
+            {
+                world.updateLists.audioOutputs.Remove(this);
+            }
+            catch { }
+        }
         public unsafe void AudioUpdate()
         {
             if (audioSource.target == null) return;
             if (!audioSource.target.IsActive) return;
-            Console.WriteLine("Audio Update");
             Matrix4x4.Decompose(world.playerTrans, out Vector3 sc, out Quaternion ret, out Vector3 trans);
             var position = Vector3.Transform((entity.globalPos().ToSystemNumrics() - trans), Quaternion.Inverse(ret));
             var frameInputBuffer = audioSource.target.FrameInputBuffer;
@@ -97,8 +123,7 @@ namespace RhubarbEngine.Components.Audio
             { 
                 iplInputBuffer.interleavedBuffer = (IntPtr)ptr;
             }
-            Console.WriteLine(" X " + e.x.ToString() + " Y " + e.y.ToString() + " X " + e.z.ToString());
-            IPL.ApplyBinauralEffect(iplBinauralEffect, iplBinauralRenderer, iplInputBuffer, e, IPL.HrtfInterpolation.Nearest, spatialBlend.value, engine.audioManager.iplOutputBuffer);
+            IPL.ApplyBinauralEffect(iplBinauralEffect, iplBinauralRenderer, iplInputBuffer, e, IPL.HrtfInterpolation.Bilinear, spatialBlend.value, iplOutputBuffer);
         }
 
         public AudioOutput(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
