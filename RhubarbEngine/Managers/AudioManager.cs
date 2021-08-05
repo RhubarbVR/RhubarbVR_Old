@@ -21,9 +21,9 @@ namespace RhubarbEngine.Managers
         private bool running = false;
         public Stopwatch stopwatch { get; private set; }
 
-        public const int SamplingRate = 48000;
+        public const int SamplingRate = 44100;
 
-        public const int AudioFrameSize = 2048;
+        public const int AudioFrameSize = 1024;
         public const int AudioFrameSizeInBytes = (AudioFrameSize * sizeof(float));
         //OpenAL
         private IntPtr alAudioDevice;
@@ -31,12 +31,18 @@ namespace RhubarbEngine.Managers
 
         public const int BufferFormatStereoFloat32 = 0x10011;
 
+        private IntPtr outBuff;
+        private IntPtr clear;
+
+
+        public IPL._IPLHRTF_t hrtf;
+
         //Steam Audio
-        public IntPtr iplContext;
-        private IPL.AudioFormat iplFormatMono;
-        private IPL.AudioFormat iplFormatStereo;
+        public IPL._IPLContext_t iplContext;
         public IPL.AudioBuffer iplOutputBuffer;
-        private IPL.RenderingSettings iplRenderingSettings;
+
+        public IPL.AudioSettings iplAudioSettings = new IPL.AudioSettings { frameSize = AudioFrameSize,samplingRate = SamplingRate};
+
 
         public uint sourceId;
 
@@ -50,7 +56,10 @@ namespace RhubarbEngine.Managers
 
             stopwatch = new Stopwatch();
 
-            alBuffers = new uint[2];
+            outBuff = Marshal.AllocHGlobal(AudioFrameSizeInBytes * 2);
+            clear = Marshal.AllocHGlobal(AudioFrameSizeInBytes * 2);
+
+            alBuffers = new uint[4];
             PrepareOpenAL();
             PrepareSteamAudio();
 
@@ -64,43 +73,43 @@ namespace RhubarbEngine.Managers
             task = Task.Run(Updater);
             return this;
         }
+
+        private void steamLogFunction(IPL.LogLevel level, [MarshalAs(UnmanagedType.LPStr)] string message)
+        {
+            switch (level)
+            {
+                case IPL.LogLevel.Info:
+                    Console.WriteLine("Steam Audio Info" + message);
+                    break;
+                case IPL.LogLevel.Warning:
+                    Logger.Log("Steam Audio Warning" + message);
+                    break;
+                case IPL.LogLevel.Error:
+                    Logger.Log("Steam Audio Error" + message,true);
+                    break;
+                case IPL.LogLevel.Debug:
+                    Console.WriteLine("Steam Audio Debug" + message);
+                    break;
+                default:
+                    break;
+            }
+        }
         private void PrepareSteamAudio()
         {
             //Steam Audio Initialization
 
-            IPL.CreateContext(null, null, null, out iplContext);
+            var set = new IPL.ContextSettings { logCallback = steamLogFunction,version = ((((uint)(4) << 16) | ((uint)(0) << 8) | ((uint)(0)))) };
+
+            IPL.ContextCreate(ref set, out iplContext);
+
+
+            var herfset = new IPL.HRTFSettings { type = IPL.HRTFType.Default};
+
+            IPL.HRTFCreate(iplContext, ref iplAudioSettings, ref herfset, out hrtf);
+
 
             Logger.Log("Created SteamAudio context.");
-
-            iplRenderingSettings = new IPL.RenderingSettings
-            {
-                samplingRate = SamplingRate,
-                frameSize = AudioFrameSize
-            };
-
-            //Audio Formats
-
-            iplFormatMono = new IPL.AudioFormat
-            {
-                channelLayoutType = IPL.ChannelLayoutType.Speakers,
-                channelLayout = IPL.ChannelLayout.Mono,
-                channelOrder = IPL.ChannelOrder.Interleaved
-            };
-            iplFormatStereo = new IPL.AudioFormat
-            {
-                channelLayoutType = IPL.ChannelLayoutType.Speakers,
-                channelLayout = IPL.ChannelLayout.Stereo,
-                channelOrder = IPL.ChannelOrder.Interleaved
-            };
-
-            IntPtr outputDataPtr = Marshal.AllocHGlobal(AudioFrameSizeInBytes * 2);
-
-            iplOutputBuffer = new IPL.AudioBuffer
-            {
-                format = iplFormatStereo,
-                numSamples = iplRenderingSettings.frameSize,
-                interleavedBuffer = outputDataPtr
-            };
+            IPL.AudioBufferAllocate(engine.audioManager.iplContext, 2, AudioFrameSize, ref iplOutputBuffer);
 
             Logger.Log("SteamAudio is ready.");
 
@@ -129,24 +138,19 @@ namespace RhubarbEngine.Managers
 
         public void RunOutput()
         {
-            int i = 0;
-            var comps = new List<IPL.AudioBuffer>();
+            IPL.AudioBufferDeinterleave(iplContext, clear, ref iplOutputBuffer);
             foreach (var world in engine.worldManager.worlds)
             {
                 if(world.Focus != World.World.FocusLevel.Background)
                 {
-                    foreach (var comp in world?.updateLists.audioOutputs ?? new List<Components.Audio.AudioOutput>())
+                    foreach (var comp in world.updateLists.audioOutputs)
                     {
                         comp.AudioUpdate();
-                        comps.Add(comp.iplOutputBuffer);
-                        i++;
+                        IPL.AudioBufferMix(iplContext, ref comp.iplOutputBuffer, ref iplOutputBuffer);
                     }
 
                 }
             }
-            if (i == 0) return;
-            var bufs = comps.ToArray();
-            IPL.MixAudioBuffers(bufs.Length, ref bufs[0], iplOutputBuffer);
         }
 
         public unsafe void Update()
@@ -166,8 +170,8 @@ namespace RhubarbEngine.Managers
 
                     numProcessedBuffers--;
                 }
-
-                AL.BufferData(bufferId, BufferFormatStereoFloat32, iplOutputBuffer.interleavedBuffer, AudioFrameSizeInBytes * 2, iplRenderingSettings.samplingRate);
+                IPL.AudioBufferInterleave(iplContext,ref iplOutputBuffer, outBuff);
+                AL.BufferData(bufferId, BufferFormatStereoFloat32, outBuff, AudioFrameSizeInBytes * 2, SamplingRate);
 
                 AL.SourceQueueBuffers(sourceId, 1, &bufferId);
                 CheckALErrors();
@@ -229,8 +233,8 @@ namespace RhubarbEngine.Managers
 
         private void UnloadSteamAudio()
         {
-            IPL.DestroyContext(ref iplContext);
-            IPL.Cleanup();
+            IPL.AudioBufferFree(iplContext, ref iplOutputBuffer);
+            IPL.ContextRelease(ref iplContext);
         }
 
         public void unloadAll()

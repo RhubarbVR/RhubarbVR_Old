@@ -14,6 +14,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -23,7 +24,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <NoWarn>1701;1702;</NoWarn>
     <WarningLevel>0</WarningLevel>
   </PropertyGroup>
@@ -36,8 +37,7 @@
   <ItemGroup>
     <PackageReference Include="BEPUik" Version="1.5.1" />
     <PackageReference Include="BulletSharp.x64" Version="0.12.0" />
-    <PackageReference Include="CefSharp.Common" Version="91.1.230" />
-    <PackageReference Include="CefSharp.OffScreen" Version="91.1.230" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="91.1.230" />
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
     <PackageReference Include="MessagePack" Version="2.3.75" />
     <PackageReference Include="RhuSettings" Version="1.0.0" />

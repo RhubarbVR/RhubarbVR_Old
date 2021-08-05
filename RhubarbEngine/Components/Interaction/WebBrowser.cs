@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Reflection;
 using RhubarbEngine.World.DataStructure;
@@ -135,7 +136,7 @@ namespace RhubarbEngine.Components.Interaction
         public void Render()
         {
             if (!loaded) return;
-            startRenderTask();
+            RenderTask();
             updateInpute();
         }
 
@@ -149,19 +150,26 @@ namespace RhubarbEngine.Components.Interaction
 
         private void RenderTask()
         {
-            if (view == null)
+            try
             {
-                target = (new ImageSharpTexture(browser.ScreenshotOrNull(PopupBlending.Main).ToImageSharpImage<Rgba32>(), false)).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-                view = engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
-                var e = new RTexture2D(view);
-                e.addDisposable(target);
-                e.addDisposable(view);
-                load(e, true);
+                if (view == null)
+                {
+                    target = (new ImageSharpTexture(browser.ScreenshotOrNull(PopupBlending.Main).ToImageSharpImage<Rgba32>(), false)).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+                    view = engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
+                    var e = new RTexture2D(view);
+                    e.addDisposable(target);
+                    e.addDisposable(view);
+                    load(e, true);
+                }
+                else
+                {
+                    //target.UpdateTexture((new ImageSharpTexture(browser.ScreenshotOrNull(PopupBlending.Main).ToImageSharpImage<Rgba32>(),false)), engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+                    target.UpdateTextureBmp(browser.ScreenshotOrNull(PopupBlending.Main), engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+                }
             }
-            else
+            catch (Exception e)
             {
-                //target.UpdateTexture((new ImageSharpTexture(browser.ScreenshotOrNull(PopupBlending.Main).ToImageSharpImage<Rgba32>(),false)), engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-                target.UpdateTextureBmp(browser.ScreenshotOrNull(PopupBlending.Main), engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+                Console.WriteLine("WebBrowser Render Error" + e.ToString());
             }
             lastTask = null;
         }
