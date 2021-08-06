@@ -69,6 +69,7 @@ namespace RhubarbEngine.Components.Interaction
         public Sync<Vector2u> scale;
         public SyncRef<IinputPlane> imputPlane;
         public Sync<string> path;
+        public Sync<bool> globalAudio;
 
         private bool loaded;
 
@@ -78,7 +79,7 @@ namespace RhubarbEngine.Components.Interaction
             base.OnAttach();
        
         }
-
+        IAudioHandler audio;
         public override void onLoaded()
         {
             base.onLoaded();
@@ -93,9 +94,9 @@ namespace RhubarbEngine.Components.Interaction
                 Cef.Initialize(cefSettings);
             }
             browser = new ChromiumWebBrowser(path.value, null, null, false);
-            browser.AudioHandler = this;
             browser.MenuHandler = new CustomMenuHandler();
-            
+            audio = browser.AudioHandler;
+            GlobalAudio_Changed(null);
             browser.CreateBrowser();
             
             browser.Size = new System.Drawing.Size { Width = (int)scale.value.x, Height = (int)scale.value.y };            
@@ -111,8 +112,23 @@ namespace RhubarbEngine.Components.Interaction
             scale.value = new Vector2u(600, 600);
             scale.Changed += onScaleChange;
             path = new Sync<string>(this, newRefIds);
+            globalAudio = new Sync<bool>(this, newRefIds);
+            globalAudio.Changed += GlobalAudio_Changed;
             path.Changed += Path_Changed;
             path.value = "https://www.youtube.com/watch?v=Rp6ehxZvvM4";
+        }
+
+        private void GlobalAudio_Changed(IChangeable obj)
+        {
+            if (browser == null) return;
+            if (globalAudio.value) 
+            {
+                browser.AudioHandler = null;
+            }
+            else
+            {
+                browser.AudioHandler = this;
+            }
         }
 
         private void onScaleChange(IChangeable obj)

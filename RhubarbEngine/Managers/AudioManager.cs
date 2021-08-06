@@ -21,9 +21,10 @@ namespace RhubarbEngine.Managers
         private bool running = false;
         public Stopwatch stopwatch { get; private set; }
 
-        public const int SamplingRate = 48000;
+        public const int SamplingRate = 44100;
 
         public const int AudioFrameSize = 2048;
+
         public const int AudioFrameSizeInBytes = (AudioFrameSize * sizeof(float));
         //OpenAL
         private IntPtr alAudioDevice;
@@ -58,7 +59,7 @@ namespace RhubarbEngine.Managers
 
             outBuff = Marshal.AllocHGlobal(AudioFrameSizeInBytes * 2);
 
-            alBuffers = new uint[4];
+            alBuffers = new uint[2];
             PrepareOpenAL();
             PrepareSteamAudio();
 
@@ -115,24 +116,13 @@ namespace RhubarbEngine.Managers
         }
         
 
-        public void Updater()
+        public unsafe void Updater()
         {
             while (running)
             {
                 IPL.AudioBufferDeinterleave(iplContext, ref ee[0], ref iplOutputBuffer);
-                try
-                {
-                    if (engine.worldManager != null)
-                    {
-                        RunOutput();
-                        Update();
-                    }
-                }
-                catch(Exception e)
-                {
-                    Logger.Log("Audio Error" + e.ToString(), true);
-                }
-                Thread.Sleep(1);
+                RunOutput();
+                Update();
             }
         }
 
