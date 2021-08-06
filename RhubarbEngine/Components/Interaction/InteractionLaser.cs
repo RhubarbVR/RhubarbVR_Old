@@ -67,6 +67,14 @@ namespace RhubarbEngine.Components.Interaction
         {
             if (world.userspace) return;
             if (world.localUser != user.target) return;
+            if ((engine.outputType == VirtualReality.OutputType.Screen) && source.value == InteractionSource.HeadLaser) 
+            {
+                if(meshDriver.target != null)
+                {
+                    meshDriver.Drivevalue = 0;
+                }
+                return;
+            }
             try
             {
                 System.Numerics.Matrix4x4.Decompose((System.Numerics.Matrix4x4.CreateTranslation((rayderection.value * distances.value).ToSystemNumrics()) * entity.globalTrans()), out System.Numerics.Vector3 vs, out System.Numerics.Quaternion vr, out System.Numerics.Vector3 val);
@@ -127,6 +135,27 @@ namespace RhubarbEngine.Components.Interaction
                         inputPlane.updatePos(pos, source.value);
                         if (HasClicked())
                         {
+                            switch (source.value)
+                            {
+                                case InteractionSource.None:
+                                    break;
+                                case InteractionSource.LeftLaser:
+                                    LeftLaser();
+                                    break;
+                                case InteractionSource.LeftFinger:
+                                    break;
+                                case InteractionSource.RightLaser:
+                                    RightLaser();
+                                    break;
+                                case InteractionSource.RightFinger:
+                                    break;
+                                case InteractionSource.HeadLaser:
+                                    break;
+                                case InteractionSource.HeadFinger:
+                                    break;
+                                default:
+                                    break;
+                            }
                             inputPlane.Click(pos, source.value);
                         }
                         return true;
@@ -137,6 +166,30 @@ namespace RhubarbEngine.Components.Interaction
 
                 }
                 return false;
+            }
+        }
+        private void RightLaser()
+        {
+            var e = Input.Creality.Right;
+            if (input.SecondaryPress(e))
+            {
+                input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Right);
+            }
+            if (input.PrimaryPress(e))
+            {
+                input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Left);
+            }
+        }
+        private void LeftLaser()
+        {
+            var e = Input.Creality.Left;
+            if (input.SecondaryPress(e))
+            {
+                input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Right);
+            }
+            if (input.PrimaryPress(e))
+            {
+                input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Left);
             }
         }
 

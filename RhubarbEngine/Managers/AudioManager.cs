@@ -123,6 +123,7 @@ namespace RhubarbEngine.Managers
                 IPL.AudioBufferDeinterleave(iplContext, ref ee[0], ref iplOutputBuffer);
                 RunOutput();
                 Update();
+                Thread.Sleep(1);
             }
         }
 

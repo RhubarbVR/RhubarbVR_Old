@@ -14,7 +14,7 @@ namespace RhubarbEngine.Input
 
         public IReadOnlyList<KeyEvent> KeyEvents => keyEvents;
         public List<MouseEvent> mouseEvents;
-
+        public List<MouseEvent> UpmouseEvents = new List<MouseEvent>();
         public IReadOnlyList<MouseEvent> MouseEvents => mouseEvents;
         public List<char> UpkeyCharPresses = new List<char>();
 
@@ -38,6 +38,12 @@ namespace RhubarbEngine.Input
             }
             return false;
         }
+
+        public void MouseClick(MouseButton mouseButton)
+        {
+            UpmouseEvents.Add(new MouseEvent(mouseButton, true));
+        }
+
         public void CustomFram(InputSnapshot s)
         {
             keyEvents = new List<KeyEvent>(s.KeyEvents);
@@ -59,6 +65,25 @@ namespace RhubarbEngine.Input
                 UpkeyEvents.Add(item);
             }
             mouseEvents = new List<MouseEvent>(s.MouseEvents);
+
+            foreach (var item in UpmouseEvents)
+            {
+                mouseEvents.Add(item);
+            }
+            List<MouseEvent> ewm = new List<MouseEvent>();
+            foreach (var item in UpmouseEvents)
+            {
+                if (item.Down)
+                {
+                    ewm.Add(new MouseEvent(item.MouseButton,false));
+                }
+            }
+            UpmouseEvents.Clear();
+            foreach (var item in ewm)
+            {
+                UpmouseEvents.Add(item);
+            }
+
             keyCharPresses = new List<char>(s.KeyCharPresses);
             foreach (var item in UpkeyCharPresses)
             {

@@ -98,7 +98,6 @@ namespace RhubarbEngine.Components.Interaction
             audio = browser.AudioHandler;
             GlobalAudio_Changed(null);
             browser.CreateBrowser();
-            
             browser.Size = new System.Drawing.Size { Width = (int)scale.value.x, Height = (int)scale.value.y };            
             loaded = true;
         }
@@ -115,6 +114,7 @@ namespace RhubarbEngine.Components.Interaction
             globalAudio = new Sync<bool>(this, newRefIds);
             globalAudio.Changed += GlobalAudio_Changed;
             path.Changed += Path_Changed;
+//          path.value = "https://google.com/";
             path.value = "https://www.youtube.com/watch?v=Rp6ehxZvvM4";
         }
 
