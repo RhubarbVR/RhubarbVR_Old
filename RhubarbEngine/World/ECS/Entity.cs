@@ -55,7 +55,6 @@ namespace RhubarbEngine.World.ECS
         public void parentEnabledChange(bool _parentEnabled)
         {
             if (!enabled.value) return;
-            LoadListObject();
             enabledChanged?.Invoke();
             if (_parentEnabled != parentEnabled)
             {
@@ -65,6 +64,7 @@ namespace RhubarbEngine.World.ECS
                     item.parentEnabledChange(_parentEnabled);
                 }
             }
+            LoadListObject();
         }
 
         public void onPersistenceChange(IChangeable newValue)
@@ -165,12 +165,12 @@ namespace RhubarbEngine.World.ECS
 
         private void onEnableChange(IChangeable newValue)
         {
-            LoadListObject();
             enabledChanged?.Invoke();
             foreach (Entity item in _children)
             {
                 item.parentEnabledChange(enabled.value);
             }
+            LoadListObject();
         }
         private void updateGlobalTrans()
         {

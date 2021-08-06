@@ -49,7 +49,7 @@ namespace RhubarbEngine.Managers
 
         private uint[] alBuffers;
 
-        public Task task;
+        public Thread task;
 
         public unsafe IManager initialize(Engine _engine)
         {
@@ -70,7 +70,11 @@ namespace RhubarbEngine.Managers
 
             Console.WriteLine("Starting Audio task");
             running = true;
-            task = Task.Run(Updater);
+            task = new Thread(Updater);
+            task.Name = "Audio";
+            task.IsBackground = true;
+            task.Priority = ThreadPriority.AboveNormal;
+            task.Start();
             return this;
         }
 
