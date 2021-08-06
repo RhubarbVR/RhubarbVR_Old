@@ -21,7 +21,7 @@ namespace RhubarbEngine.Managers
         private bool running = false;
         public Stopwatch stopwatch { get; private set; }
 
-        public const int SamplingRate = 44100;
+        public const int SamplingRate = 48000;
 
         public const int AudioFrameSize = 2048;
 
@@ -59,7 +59,7 @@ namespace RhubarbEngine.Managers
 
             outBuff = Marshal.AllocHGlobal(AudioFrameSizeInBytes * 2);
 
-            alBuffers = new uint[2];
+            alBuffers = new uint[3];
             PrepareOpenAL();
             PrepareSteamAudio();
 
@@ -120,10 +120,15 @@ namespace RhubarbEngine.Managers
         {
             while (running)
             {
-                IPL.AudioBufferDeinterleave(iplContext, ref ee[0], ref iplOutputBuffer);
-                RunOutput();
-                Update();
-                Thread.Sleep(1);
+                try
+                {
+                    Update();
+                }
+                catch
+                {
+
+                }
+                Thread.Sleep(10);
             }
         }
 
@@ -160,6 +165,8 @@ namespace RhubarbEngine.Managers
 
                     numProcessedBuffers--;
                 }
+                IPL.AudioBufferDeinterleave(iplContext, ref ee[0], ref iplOutputBuffer);
+                RunOutput();
                 IPL.AudioBufferInterleave(iplContext, ref iplOutputBuffer, outBuff);
                 AL.BufferData(bufferId, BufferFormatStereoFloat32, outBuff, AudioFrameSizeInBytes * 2, SamplingRate);
                 AL.SourceQueueBuffers(sourceId, 1, &bufferId);

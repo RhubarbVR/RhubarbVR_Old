@@ -58,7 +58,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(1080, 1080);
             //  canvas.target = imGUICanvas;
             imGUICanvas.imputPlane.target = bmeshcol;
-            imGUICanvas.globalAudio.value = true;
+            imGUICanvas.globalAudio.value = false;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;

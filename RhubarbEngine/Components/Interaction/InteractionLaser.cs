@@ -67,7 +67,7 @@ namespace RhubarbEngine.Components.Interaction
         {
             if (world.userspace) return;
             if (world.localUser != user.target) return;
-            if ((engine.outputType == VirtualReality.OutputType.Screen) && source.value == InteractionSource.HeadLaser) 
+            if ((engine.outputType != VirtualReality.OutputType.Screen) && source.value == InteractionSource.HeadLaser) 
             {
                 if(meshDriver.target != null)
                 {
