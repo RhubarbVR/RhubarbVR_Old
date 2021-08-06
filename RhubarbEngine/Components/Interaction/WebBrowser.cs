@@ -69,9 +69,11 @@ namespace RhubarbEngine.Components.Interaction
         public Sync<Vector2u> scale;
         public SyncRef<IinputPlane> imputPlane;
         public Sync<string> path;
+        public Driver<string> title;
         public Sync<bool> globalAudio;
 
         private bool loaded;
+        private bool updateUrl = false;
 
         ChromiumWebBrowser browser;
         public override void OnAttach()
@@ -93,15 +95,37 @@ namespace RhubarbEngine.Components.Interaction
                 cefSettings.EnableAudio();
                 Cef.Initialize(cefSettings);
             }
-            browser = new ChromiumWebBrowser(path.value, null, null, false);
+            browser = new ChromiumWebBrowser(path.value, null, null, false,onAfterBrowserCreated);
             browser.MenuHandler = new CustomMenuHandler();
             audio = browser.AudioHandler;
+            browser.AddressChanged += Browser_AddressChanged;
+            browser.TitleChanged += Browser_TitleChanged;
             GlobalAudio_Changed(null);
             browser.CreateBrowser();
             browser.Size = new System.Drawing.Size { Width = (int)scale.value.x, Height = (int)scale.value.y };            
             loaded = true;
         }
 
+        private void Browser_TitleChanged(object sender, TitleChangedEventArgs e)
+        {
+            if (title.Linked)
+            {
+                title.Drivevalue = e.Title;
+            }
+        }
+
+        private void Browser_AddressChanged(object sender, AddressChangedEventArgs e)
+        {
+            path.value = e.Address;
+        }
+
+        private void onAfterBrowserCreated(IBrowser obj)
+        {
+            if (updateUrl)
+            {
+                browser.LoadUrlAsync(path.value);
+            }
+        }
 
         public override void buildSyncObjs(bool newRefIds)
         {
@@ -114,8 +138,9 @@ namespace RhubarbEngine.Components.Interaction
             globalAudio = new Sync<bool>(this, newRefIds);
             globalAudio.Changed += GlobalAudio_Changed;
             path.Changed += Path_Changed;
-//          path.value = "https://google.com/";
+            //path.value = "https://google.com/";
             path.value = "https://www.youtube.com/watch?v=Rp6ehxZvvM4";
+            title = new Driver<string>(this, newRefIds);
         }
 
         private void GlobalAudio_Changed(IChangeable obj)
@@ -140,7 +165,16 @@ namespace RhubarbEngine.Components.Interaction
         private void Path_Changed(IChangeable obj)
         {
             if (!loaded) return;
-            browser.LoadUrlAsync(path.value);
+            if (browser.IsBrowserInitialized)
+            {
+                if(path.value != browser.Address)
+                      browser.LoadUrlAsync(path.value);
+            }
+            else
+            {
+                if (path.value != browser.Address)
+                    updateUrl = true;
+            }
         }
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
