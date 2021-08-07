@@ -46,6 +46,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             StaicMainShader shader = e.attachComponent<StaicMainShader>();
             PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
             InputPlane bmeshcol = e.attachComponent<InputPlane>();
+            //bmeshcol.mesh.target = bmesh;
             //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
             e.rotation.value = Quaternionf.CreateFromEuler(90f, -90f, -90f);
             e.position.value = new Vector3f(0, 0, -1);
@@ -58,7 +59,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(1080, 1080);
             //  canvas.target = imGUICanvas;
             imGUICanvas.imputPlane.target = bmeshcol;
-            imGUICanvas.globalAudio.value = false;
+            imGUICanvas.globalAudio.value = true;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;

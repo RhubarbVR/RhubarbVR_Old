@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using g3;
-
+using MessagePack;
 namespace g3
 {
+    [MessagePackObject]
     public struct Frame3f
     {
+        [Key(0)]
         Quaternionf rotation;
+        [Key(1)]
         Vector3f origin;
-
+        [IgnoreMember]
         static readonly public Frame3f Identity = new Frame3f(Vector3f.Zero, Quaternionf.Identity);
 
         public Frame3f(Frame3f copy)

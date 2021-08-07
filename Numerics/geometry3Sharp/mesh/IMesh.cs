@@ -53,7 +53,65 @@ namespace g3
 
         System.Collections.Generic.IEnumerable<int> RenderIndices();
     }
+    public class EnumColl<T> : ICollection<T>
+    {
+        List<T> enumer;
 
+        public int Count => enumer.Count();
+
+        public bool IsReadOnly => false;
+
+        public EnumColl(IEnumerable<T> val)
+        {
+            enumer = new List<T>(val);
+        }
+
+        public void Add(T item)
+        {
+            enumer.Add(item);
+        }
+
+        public void Clear()
+        {
+            enumer.Clear();
+        }
+
+        public bool Contains(T item)
+        {
+            return enumer.Contains(item);
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            enumer.CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return enumer.GetEnumerator();
+        }
+
+        public bool Remove(T item)
+        {
+            return enumer.Remove(item);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return enumer.GetEnumerator();
+        }
+    }
+    public static class helpers
+    {
+        public static ICollection<int> ColTriangleIndices(this IMesh mesh)
+        {
+            return new EnumColl<int>(mesh.TriangleIndices());
+        }
+        public static ICollection<int> ColRenderIndices(this IMesh mesh)
+        {
+            return new EnumColl<int>(mesh.RenderIndices());
+        }
+    }
 
     public interface IDeformableMesh : IMesh
     {

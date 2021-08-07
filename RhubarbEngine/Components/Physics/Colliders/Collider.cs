@@ -81,6 +81,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         public void startShape(CollisionShape shape)
         {
+            shape.LocalScaling = new BulletSharp.Math.Vector3(1, 1, -1);
             buildCollissionObject(LocalCreateRigidBody(mass.value, CastMet(entity.globalTrans()), shape));
         }
         public virtual void BuildShape()

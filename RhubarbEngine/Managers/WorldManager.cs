@@ -77,7 +77,6 @@ namespace RhubarbEngine.Managers
                     {
                         JoinSecret = "rhubarb://" + focusedWorld.SessionID.value + "/",
                         MatchSecret = "rhubarb://" + focusedWorld.SessionID.value + "/",
-                        
                     },
                     Assets = new Assets()
                     {
@@ -288,7 +287,7 @@ namespace RhubarbEngine.Managers
             edd.position.value = new Vector3f(1, 1, 1);
             //buildUI(e);
             //buildUI(edd);
-            AddMesh<BoxMesh>(e);
+           // var a = AddMesh<GenCylMesh>(e);
             //var ouete = e.attachComponent<RawAudioSource>();
             //var thing = e.attachComponent<WebBrowser>();
 

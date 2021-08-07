@@ -45,12 +45,34 @@ namespace RhubarbEngine.Components.Physics.Colliders
             buildCollissionObject(null);
         }
 
+        public int[] index = new int[] { };
+        public BulletSharp.Math.Vector3[] vertices = new BulletSharp.Math.Vector3[] { };
+
         public override void BuildShape()
         {
             if (mesh.Asset == null) { goNull(); return; };
             if (!mesh.target?.loaded??false) { goNull(); return; };
-            TriangleIndexVertexArray stridingMeshInterface = new TriangleIndexVertexArray((ICollection<int>)mesh.Asset.meshes[0].TriangleIndices(), (ICollection<BulletSharp.Math.Vector3>)mesh.Asset.meshes[0].VertexPos().Select(v3 => new BEPUutilities.Vector3(v3.x, v3.y,v3.z)));
-            BvhTriangleMeshShape trys = new BvhTriangleMeshShape(stridingMeshInterface, true);
+            // Initialize TriangleIndexVertexArray with Vector3 array
+            vertices = new BulletSharp.Math.Vector3[mesh.Asset.meshes[0].VertexCount];
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                vertices[i] = new BulletSharp.Math.Vector3(
+                    mesh.Asset.meshes[0].GetVertex(i).x,
+                    mesh.Asset.meshes[0].GetVertex(i).y,
+                    mesh.Asset.meshes[0].GetVertex(i).z);
+            }
+            var e = mesh.Asset.meshes[0].RenderIndices().ToArray();
+
+            // Initialize TriangleIndexIndexArray with int array
+            int[] index = new int[e.Length];
+            for (int i = 0; i < index.Length; i++)
+            {
+                index[i] = e[i];
+            }
+            if (index.Length < 3) return;
+            var indexVertexArray2 = new TriangleIndexVertexArray(index, vertices); 
+            BvhTriangleMeshShape trys = new BvhTriangleMeshShape(indexVertexArray2, true);
+            trys.LocalScaling = new BulletSharp.Math.Vector3(1, 1, -1);
             startShape(trys);
         }
 

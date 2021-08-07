@@ -65,20 +65,23 @@ namespace RhubarbEngine.World
             Dispose();
         }
 
-        public Worker(World _world, IWorldObject _parent, bool newRefID = true)
+        public Worker(World _world, IWorldObject _parent, bool newRefID = true,bool childlisten = false)
         {
             world = _world;
             parent = _parent;
             parent.addDisposable(this);
             inturnalSyncObjs(newRefID);
             buildSyncObjs(newRefID);
-            FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            foreach (var field in fields)
+            if (childlisten)
             {
-                if (typeof(IChangeable).IsAssignableFrom(field.FieldType) && ((IChangeable)field.GetValue(this)) != null)
+                FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                foreach (var field in fields)
                 {
-                    ((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
+                    if (typeof(IChangeable).IsAssignableFrom(field.FieldType) && ((IChangeable)field.GetValue(this)) != null)
+                    {
+                        ((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
 
+                    }
                 }
             }
             if (newRefID)

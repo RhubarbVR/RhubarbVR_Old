@@ -100,7 +100,7 @@ namespace RhubarbEngine.Components.Interaction
 
         }
 
-        public bool HitTest( Vector3 sourcse, Vector3 destination,World.World eworld)
+        public bool HitTest(Vector3 sourcse, Vector3 destination, World.World eworld)
         {
             using (var cb = new ClosestRayResultCallback(ref sourcse, ref destination))
             {
@@ -112,62 +112,127 @@ namespace RhubarbEngine.Components.Interaction
                     {
                         meshDriver.Drivevalue = (source.value == InteractionSource.HeadLaser) ? desklength : -(float)Vector3.Distance(cb.HitPointWorld, sourcse);
                     }
-                    try
+                    Type type = cb.CollisionObject.UserObject.GetType();
+                    if (type == typeof(InputPlane))
                     {
-                        var inputPlane = ((InputPlane)cb.CollisionObject.UserObject);
-                        System.Numerics.Matrix4x4.Decompose(inputPlane.entity.globalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
-                        var size = inputPlane.size.value;
-                        var pixsize = inputPlane.pixelSize.value;
-
-                        var hit = cb.HitPointWorld;
-                        var hitnormal = cb.HitNormalWorld;
-
-                        var stepone = ((hit - new Vector3(translation.X, translation.Y, translation.Z)) / new Vector3(scale.X, scale.Y, scale.Z));
-                        var steptwo = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateTranslation(new System.Numerics.Vector3((float)stepone.X, (float)stepone.Y, (float)stepone.Z));
-                        var stepthree = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateFromQuaternion(System.Numerics.Quaternion.Inverse(rotation));
-                        var stepfour = (steptwo * stepthree);
-                        System.Numerics.Matrix4x4.Decompose(stepfour, out System.Numerics.Vector3 scsdale, out System.Numerics.Quaternion rotatdsion, out System.Numerics.Vector3 trans);
-                        var nonescaleedpos = new Vector2f(trans.X, -trans.Z);
-                        var posnopixs = ((nonescaleedpos * (1 / size)) / 2) + 0.5f;
-                        var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
-
-                        var pos = new System.Numerics.Vector2(pospix.x, pospix.y);
-                        inputPlane.updatePos(pos, source.value);
-                        if (HasClicked())
-                        {
-                            switch (source.value)
-                            {
-                                case InteractionSource.None:
-                                    break;
-                                case InteractionSource.LeftLaser:
-                                    LeftLaser();
-                                    break;
-                                case InteractionSource.LeftFinger:
-                                    break;
-                                case InteractionSource.RightLaser:
-                                    RightLaser();
-                                    break;
-                                case InteractionSource.RightFinger:
-                                    break;
-                                case InteractionSource.HeadLaser:
-                                    break;
-                                case InteractionSource.HeadFinger:
-                                    break;
-                                default:
-                                    break;
-                            }
-                            inputPlane.Click(pos, source.value);
-                        }
-                        return true;
+                       return ProossesInputPlane(cb);
                     }
-                    catch
+                    else if (type == typeof(MeshInputPlane))
                     {
+                        return ProossesMeshInputPlane(cb);
                     }
-
                 }
                 return false;
             }
         }
+        private bool ProossesMeshInputPlane(ClosestRayResultCallback cb)
+        {
+            try
+            {
+                var inputPlane = ((MeshInputPlane)cb.CollisionObject.UserObject);
+                System.Numerics.Matrix4x4.Decompose(inputPlane.entity.globalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
+                var pixsize = inputPlane.pixelSize.value;
+
+                var hit = cb.HitPointWorld;
+                var hitnormal = cb.HitNormalWorld;
+
+                var posnopixs = new Vector2f();
+                var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
+
+                var pos = new System.Numerics.Vector2(pospix.x, pospix.y);
+                inputPlane.updatePos(pos, source.value);
+                if (HasClicked())
+                {
+                    switch (source.value)
+                    {
+                        case InteractionSource.None:
+                            break;
+                        case InteractionSource.LeftLaser:
+                            LeftLaser();
+                            break;
+                        case InteractionSource.LeftFinger:
+                            break;
+                        case InteractionSource.RightLaser:
+                            RightLaser();
+                            break;
+                        case InteractionSource.RightFinger:
+                            break;
+                        case InteractionSource.HeadLaser:
+                            break;
+                        case InteractionSource.HeadFinger:
+                            break;
+                        default:
+                            break;
+                    }
+                    inputPlane.Click(pos, source.value);
+                }
+                return true;
+            }
+            catch
+            {
+            }
+            return false;
+        }
+
+
+
+        private bool ProossesInputPlane(ClosestRayResultCallback cb)
+        {
+            try
+            {
+                var inputPlane = ((InputPlane)cb.CollisionObject.UserObject);
+                System.Numerics.Matrix4x4.Decompose(inputPlane.entity.globalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
+                var size = inputPlane.size.value;
+                var pixsize = inputPlane.pixelSize.value;
+
+                var hit = cb.HitPointWorld;
+                var hitnormal = cb.HitNormalWorld;
+
+                var stepone = ((hit - new Vector3(translation.X, translation.Y, translation.Z)) / new Vector3(scale.X, scale.Y, scale.Z));
+                var steptwo = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateTranslation(new System.Numerics.Vector3((float)stepone.X, (float)stepone.Y, (float)stepone.Z));
+                var stepthree = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateFromQuaternion(System.Numerics.Quaternion.Inverse(rotation));
+                var stepfour = (steptwo * stepthree);
+                System.Numerics.Matrix4x4.Decompose(stepfour, out System.Numerics.Vector3 scsdale, out System.Numerics.Quaternion rotatdsion, out System.Numerics.Vector3 trans);
+                var nonescaleedpos = new Vector2f(trans.X, -trans.Z);
+                var posnopixs = ((nonescaleedpos * (1 / size)) / 2) + 0.5f;
+                var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
+
+                var pos = new System.Numerics.Vector2(pospix.x, pospix.y);
+                inputPlane.updatePos(pos, source.value);
+                if (HasClicked())
+                {
+                    switch (source.value)
+                    {
+                        case InteractionSource.None:
+                            break;
+                        case InteractionSource.LeftLaser:
+                            LeftLaser();
+                            break;
+                        case InteractionSource.LeftFinger:
+                            break;
+                        case InteractionSource.RightLaser:
+                            RightLaser();
+                            break;
+                        case InteractionSource.RightFinger:
+                            break;
+                        case InteractionSource.HeadLaser:
+                            break;
+                        case InteractionSource.HeadFinger:
+                            break;
+                        default:
+                            break;
+                    }
+                    inputPlane.Click(pos, source.value);
+                }
+                return true;
+            }
+            catch
+            {
+            }
+            return false;
+        }
+
+
         private void RightLaser()
         {
             var e = Input.Creality.Right;
