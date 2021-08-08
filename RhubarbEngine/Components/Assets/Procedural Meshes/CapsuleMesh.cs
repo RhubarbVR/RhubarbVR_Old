@@ -34,6 +34,11 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             Profile.value = CapsuleGenerator.UvProfile.Aspect;
         }
         public override void onChanged()
+        {   
+            updateMesh();
+        }
+
+        private void updateMesh()
         {
             _generator.Longitudes = Longitudes.value;
             _generator.Latitudes = Latitudes.value;
@@ -41,12 +46,6 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             _generator.Depth = Depth.value;
             _generator.Radius = Radius.value;
             _generator.Profile = Profile.value;
-            
-            updateMesh();
-        }
-
-        private void updateMesh()
-        {
             MeshGenerator newmesh = _generator.Generate();
             RMesh kite = new RMesh(newmesh.MakeDMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

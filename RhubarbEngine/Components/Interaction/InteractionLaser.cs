@@ -130,7 +130,6 @@ namespace RhubarbEngine.Components.Interaction
         {
             var nep1 = (float)p1.Distance(point);
             var nep2 = (float)p2.Distance(point);
-            var nep3 = (float)p3.Distance(point);
             (float x, float y) = calculateThreeCircleIntersection(p1uv.x, p1uv.y, nep1, p2uv.x, p2uv.y, nep2, p3uv.x, p3uv.y);
             return new Vector2f(x,y);
         }

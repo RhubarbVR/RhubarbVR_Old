@@ -28,14 +28,14 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         }
         public override void onChanged()
         {
-            sphereGen.Radius = Radius.value;
-            sphereGen.EdgeVertices = EdgeVertices.value;
-            sphereGen.NoSharedVertices = NoSharedVertices.value;
             updateMesh();
         }
 
         private void updateMesh()
         {
+            sphereGen.Radius = Radius.value;
+            sphereGen.EdgeVertices = EdgeVertices.value;
+            sphereGen.NoSharedVertices = NoSharedVertices.value;
             MeshGenerator newmesh = sphereGen.Generate();
             RMesh kite = new RMesh(newmesh.MakeDMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

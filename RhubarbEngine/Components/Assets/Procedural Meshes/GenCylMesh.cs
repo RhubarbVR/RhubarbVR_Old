@@ -72,6 +72,11 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
         public override void onChanged()
         {
+            updateMesh();
+        }
+
+        private void updateMesh()
+        {
             _generator.CapCenter = CapCenter.value;
             _generator.Frame = Frame.value;
             _generator.Capped = Capped.value;
@@ -80,11 +85,6 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             _generator.ClosedLoop = ClosedLoop.value;
             _generator.startCapCenterIndex = startCapCenterIndex.value;
             _generator.endCapCenterIndex = endCapCenterIndex.value;
-            updateMesh();
-        }
-
-        private void updateMesh()
-        {
             _generator.Polygon = Polygon.value;
             List<Vector3d> temp = new List<Vector3d>();
             if(Vertices.Count <= 1)

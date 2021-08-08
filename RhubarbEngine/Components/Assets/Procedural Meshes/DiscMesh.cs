@@ -37,15 +37,15 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
         public override void onChanged()
         {
-            _generator.Radius = Radius.value;
-            _generator.StartAngleDeg = StartAngleDeg.value;
-            _generator.EndAngleDeg = EndAngleDeg.value;
-            _generator.Slices = Slices.value;
             updateMesh();
         }
 
         private void updateMesh()
         {
+            _generator.Radius = Radius.value;
+            _generator.StartAngleDeg = StartAngleDeg.value;
+            _generator.EndAngleDeg = EndAngleDeg.value;
+            _generator.Slices = Slices.value;
             MeshGenerator newmesh = _generator.Generate();
             RMesh kite = new RMesh(newmesh.MakeDMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

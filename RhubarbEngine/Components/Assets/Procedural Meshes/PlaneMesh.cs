@@ -35,16 +35,16 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         }
         public override void onChanged()
         {
-            _generator.Width = Width.value;
-            _generator.Height = Height.value;
-            _generator.Normal = Normal.value;
-            _generator.IndicesMap = IndicesMap.value;
-            _generator.UVMode = UVMode.value;
             updateMesh();
         }
 
         private void updateMesh()
         {
+            _generator.Width = Width.value;
+            _generator.Height = Height.value;
+            _generator.Normal = Normal.value;
+            _generator.IndicesMap = IndicesMap.value;
+            _generator.UVMode = UVMode.value;
             MeshGenerator newmesh = _generator.Generate();
             RMesh kite = new RMesh(newmesh.MakeDMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

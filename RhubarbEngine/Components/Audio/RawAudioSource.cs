@@ -25,7 +25,7 @@ namespace RhubarbEngine.Components.Audio
 
         public byte[] FrameInputBuffer => frameInputBuffer;
 
-        byte[] frameInputBuffer = new byte[AudioManager.AudioFrameSizeInBytes];
+        byte[] frameInputBuffer;
 
 
         public Sync<string> Path;
@@ -47,7 +47,7 @@ namespace RhubarbEngine.Components.Audio
         private double Playback_stateChange()
         {
 
-            return (audioStream.Length / sizeof(float) / AudioManager.SamplingRate);
+            return (audioStream.Length / sizeof(float) / engine.audioManager.SamplingRate);
         }
 
         public unsafe override void onLoaded()
@@ -61,7 +61,7 @@ namespace RhubarbEngine.Components.Audio
                 playback.Resume();
                 return;
             }
-            playback.ClipLength = (audioStream.Length / sizeof(float) / AudioManager.SamplingRate);
+            playback.ClipLength = (audioStream.Length / sizeof(float) / engine.audioManager.SamplingRate);
         }
         internal static byte[] LoadRawAudio(string rawAudioPath)
         {
@@ -82,10 +82,10 @@ namespace RhubarbEngine.Components.Audio
             if (!IsActive) return;
             if (!playback.Playing)
             {
-                frameInputBuffer = new byte[AudioManager.AudioFrameSizeInBytes];
+                frameInputBuffer = new byte[engine.audioManager.AudioFrameSizeInBytes];
                 return;
             }
-            audioStream.Position = ((int)(((int)((double)AudioManager.SamplingRate * (double)sizeof(float) * playback.Position)) / frameInputBuffer.Length)) * frameInputBuffer.Length;
+            audioStream.Position = ((int)(((int)((double)engine.audioManager.SamplingRate * (double)sizeof(float) * playback.Position)) / frameInputBuffer.Length)) * frameInputBuffer.Length;
 
             audioStream.Read(frameInputBuffer, 0, frameInputBuffer.Length);
         }
@@ -93,7 +93,7 @@ namespace RhubarbEngine.Components.Audio
 
         public RawAudioSource(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
         {
-
+          frameInputBuffer = new byte[engine.audioManager.AudioFrameSizeInBytes];
         }
         public RawAudioSource()
         {

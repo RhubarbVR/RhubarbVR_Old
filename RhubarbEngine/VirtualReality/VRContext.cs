@@ -8,6 +8,8 @@ using RhubarbEngine.VirtualReality.OpenVR;
 using Veldrid;
 using RhubarbEngine.Input.Controllers;
 using System.Numerics;
+using Valve.VR;
+
 namespace RhubarbEngine.VirtualReality
 {
     public abstract class VRContext : IDisposable
@@ -43,8 +45,8 @@ namespace RhubarbEngine.VirtualReality
         public static VRContext CreateOculus(VRContextOptions options) => new OculusContext(options);
         public static bool IsOculusSupported() => OculusContext.IsSupported();
 
-        public static VRContext CreateOpenVR() => CreateOpenVR(default);
-        public static VRContext CreateOpenVR(VRContextOptions options) => new OpenVRContext(options);
+        public static VRContext CreateOpenVR(EVRApplicationType e = EVRApplicationType.VRApplication_Scene) => CreateOpenVR(default,e);
+        public static VRContext CreateOpenVR(VRContextOptions options, EVRApplicationType e = EVRApplicationType.VRApplication_Scene) => new OpenVRContext(options,e);
         public static bool IsOpenVRSupported() => OpenVRContext.IsSupported();
     }
 }

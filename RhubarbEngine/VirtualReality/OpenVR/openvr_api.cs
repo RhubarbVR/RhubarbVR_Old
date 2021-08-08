@@ -4203,7 +4203,7 @@ namespace Valve.VR
         TextureLockCapacityReached = 32,
         TextureNotLocked = 33,
     }
-    internal enum EVRApplicationType
+    public enum EVRApplicationType
     {
         VRApplication_Other = 0,
         VRApplication_Scene = 1,

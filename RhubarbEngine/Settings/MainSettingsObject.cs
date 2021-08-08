@@ -11,6 +11,15 @@ namespace RhubarbEngine.Settings
     {
         [SettingsField("Render Settings")]
         public RenderSettings RenderSettings = new RenderSettings();
+
+        [SettingsField("UI Settings")]
+        public UISettings UISettings = new UISettings();
+
+        [SettingsField("Audio Settings")]
+        public AudioSettings AudioSettings = new AudioSettings();
+
+        [SettingsField("VR Settings")]
+        public VRSettings VRSettings = new VRSettings();
     }
 
 }

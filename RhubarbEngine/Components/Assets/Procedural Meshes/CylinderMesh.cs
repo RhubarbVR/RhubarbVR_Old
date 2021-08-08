@@ -39,6 +39,11 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         }
         public override void onChanged()
         {
+            updateMesh();
+        }
+
+        private void updateMesh()
+        {
             _generator.BaseRadius = BaseRadius.value;
             _generator.TopRadius = TopRadius.value;
             _generator.Height = Height.value;
@@ -46,11 +51,6 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             _generator.EndAngleDeg = EndAngleDeg.value;
             _generator.Slices = Slices.value;
             _generator.NoSharedVertices = NoSharedVertices.value;
-            updateMesh();
-        }
-
-        private void updateMesh()
-        {
             MeshGenerator newmesh = _generator.Generate();
             RMesh kite = new RMesh(newmesh.MakeDMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

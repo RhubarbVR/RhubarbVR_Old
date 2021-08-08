@@ -40,19 +40,17 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         }
         public override void onChanged()
         {
+            updateMesh();
+        }
+
+        private void updateMesh()
+        {
             _generator.StickRadius = StickRadius.value;
             _generator.StickLength = StickLength.value;
             _generator.HeadBaseRadius = HeadBaseRadius.value;
             _generator.TipRadius = TipRadius.value;
             _generator.HeadLength = HeadLength.value;
             _generator.DoubleSided = DoubleSided.value;
-            
-            updateMesh();
-        }
-
-        private void updateMesh()
-        {
-            logger.Log("Update Mesh");
             MeshGenerator newmesh = _generator.Generate();
             RMesh kite = new RMesh(newmesh.MakeDMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

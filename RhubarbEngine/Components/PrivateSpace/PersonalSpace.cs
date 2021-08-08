@@ -100,7 +100,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             
             var e = d.addChild("Main Panel");
             d.attachComponent<UserInterfacePositioner>();
-            e.attachComponent<DashManager>();
+            e.attachComponent<TaskBarManager>();
 
             Entity rootent = world.RootEntity.addChild();
             rootent.name.value = $"PersonalSpace User";

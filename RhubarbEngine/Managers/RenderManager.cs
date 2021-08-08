@@ -64,7 +64,7 @@ namespace RhubarbEngine.Managers
                 backend = GraphicsBackend.Vulkan;
             }
             engine.logger.Log("Graphics Backend:" + backend, true);
-            if (engine.outputType == OutputType.Auto) {
+            if (engine.outputType == OutputType.Auto && engine.settingsObject.VRSettings.StartInVR) {
                 engine.outputType = OutputType.OculusVR;
                 if (!VRContext.IsOculusSupported())
                 {
@@ -75,6 +75,9 @@ namespace RhubarbEngine.Managers
                         engine.outputType = OutputType.Screen;
                     }
                 }
+            }else if(engine.outputType == OutputType.Auto)
+            {
+                engine.outputType = OutputType.Screen; 
             }
             engine.logger.Log("Output Device:" + engine.outputType.ToString(), true);
             vrContext = buildVRContext();
@@ -110,7 +113,7 @@ namespace RhubarbEngine.Managers
                     return VRContext.CreateScreen(options,engine);
                     break;
                 case OutputType.SteamVR:
-                    return VRContext.CreateOpenVR(options);
+                    return VRContext.CreateOpenVR(options, (engine.settingsObject.VRSettings.StartAsOverlay)?Valve.VR.EVRApplicationType.VRApplication_Overlay: Valve.VR.EVRApplicationType.VRApplication_Scene);
                     break;
                 case OutputType.OculusVR:
                     return VRContext.CreateOculus(options);

@@ -21,11 +21,11 @@ namespace RhubarbEngine.Managers
         private bool running = false;
         public Stopwatch stopwatch { get; private set; }
 
-        public const int SamplingRate = 48000;
+        public int SamplingRate => engine?.settingsObject.AudioSettings.SamplingRate?? 48000;
 
-        public const int AudioFrameSize = 2048;
+        public int AudioFrameSize => engine?.settingsObject.AudioSettings.AudioFrameSize ?? 2048;
 
-        public const int AudioFrameSizeInBytes = (AudioFrameSize * sizeof(float));
+        public int AudioFrameSizeInBytes => (AudioFrameSize * sizeof(float));
         //OpenAL
         private IntPtr alAudioDevice;
         private IntPtr alAudioContext;
@@ -33,8 +33,8 @@ namespace RhubarbEngine.Managers
         public const int BufferFormatStereoFloat32 = 0x10011;
 
         private IntPtr outBuff;
-        
-        public float[] ee = new float[AudioFrameSize * 2];
+
+        public float[] ee;
 
         public IPL._IPLHRTF_t hrtf;
 
@@ -42,7 +42,7 @@ namespace RhubarbEngine.Managers
         public IPL._IPLContext_t iplContext;
         public IPL.AudioBuffer iplOutputBuffer;
 
-        public IPL.AudioSettings iplAudioSettings = new IPL.AudioSettings { frameSize = AudioFrameSize,samplingRate = SamplingRate};
+        public IPL.AudioSettings iplAudioSettings;
 
 
         public uint sourceId;
@@ -53,6 +53,8 @@ namespace RhubarbEngine.Managers
 
         public unsafe IManager initialize(Engine _engine)
         {
+            ee = new float[AudioFrameSize * 2];
+            iplAudioSettings = new IPL.AudioSettings { frameSize = AudioFrameSize, samplingRate = SamplingRate };
             engine = _engine;
 
             stopwatch = new Stopwatch();

@@ -24,46 +24,53 @@ using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.Components.PrivateSpace
 {
-    public class DashManager : Component
+    public class TaskBarManager : Component
     {
         public SyncRef<Entity> root;
-        public SyncRef<ImGUICanvas> canvas;
-
+        public SyncRef<ImGUICanvas> taskbarcanvas;
 
         public override void buildSyncObjs(bool newRefIds)
         {
             root = new SyncRef<Entity>(this, newRefIds);
-            canvas = new SyncRef<ImGUICanvas>(this, newRefIds);
+            taskbarcanvas = new SyncRef<ImGUICanvas>(this, newRefIds);
         }
 
 
         public override void OnAttach()
         {
-            var e = entity.addChild("Main Panel");
+            var e = entity.addChild("TaskBar");
+            root.target = e;
             StaicMainShader shader = e.attachComponent<StaicMainShader>();
             CurvedPlaneMesh bmesh = e.attachComponent<CurvedPlaneMesh>();
-            MeshInputPlane bmeshcol = e.attachComponent<MeshInputPlane>(); bmeshcol.mesh.target = bmesh;
+            bmesh.BottomRadius.value = engine.settingsObject.UISettings.TaskBarCurve;
+            bmesh.TopRadius.value = engine.settingsObject.UISettings.TaskBarCurve + 10f;
+            bmesh.Height.value = 0.15f;
+            bmesh.Width.value = 0.95f;
+            MeshInputPlane bmeshcol = e.attachComponent<MeshInputPlane>(); 
+            bmeshcol.mesh.target = bmesh;
             //InputPlane bmeshcol = e.attachComponent<InputPlane>();
 
             //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
             e.rotation.value = Quaternionf.CreateFromEuler(90f, -90f, -90f);
-            e.position.value = new Vector3f(0, 0, -1);
+            e.position.value = new Vector3f(0, -0.5, -1);
             RMaterial mit = e.attachComponent<RMaterial>();
-            MeshRender meshRender = e.attachComponent<MeshRender>();
-            WebBrowser imGUICanvas = e.attachComponent<WebBrowser>();
-            var output = e.attachComponent<Audio.AudioOutput>();
-            output.audioSource.target = imGUICanvas;
-            //output.audioSource.target = audioe;
-            imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(1080, 1080);
-            //  canvas.target = imGUICanvas;
+            var TaskBar = e.addChild("TaskBarUI");
+            MeshRender meshRender = TaskBar.attachComponent<MeshRender>();
+            ImGUICanvas imGUICanvas = TaskBar.attachComponent<ImGUICanvas>();
+            imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(600, 100);
             imGUICanvas.imputPlane.target = bmeshcol;
-            imGUICanvas.globalAudio.value = true;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
             meshRender.Mesh.target = bmesh;
-            //imGUICanvas.noCloseing.value = true;
+            imGUICanvas.noCloseing.value = true;
+            imGUICanvas.noBackground.value = true;
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = imGUICanvas;
+            taskbarcanvas.target = imGUICanvas;
+            var buton = TaskBar.attachComponent<ImGUIButton>();
+            buton.label.value = "start";
+            imGUICanvas.element.target = buton;
+
         }
 
         private DateTime opened = DateTime.UtcNow;
@@ -83,11 +90,11 @@ namespace RhubarbEngine.Components.PrivateSpace
             }
         }
 
-        public DashManager(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public TaskBarManager(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public DashManager()
+        public TaskBarManager()
         {
         }
     }

@@ -65,7 +65,7 @@ namespace RhubarbEngine.World
             Dispose();
         }
 
-        public Worker(World _world, IWorldObject _parent, bool newRefID = true,bool childlisten = false)
+        public Worker(World _world, IWorldObject _parent, bool newRefID = true,bool childlisten = true)
         {
             world = _world;
             parent = _parent;

@@ -36,17 +36,17 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         }
         public override void onChanged()
         {
+            updateMesh();
+        }
+
+        private void updateMesh()
+        {
             _generator.Box.Center = Center.value;
             _generator.Box.AxisX = AxisX.value;
             _generator.Box.AxisY = AxisY.value;
             _generator.Box.AxisZ = AxisZ.value;
             _generator.Box.Extent = Extent.value;
             _generator.NoSharedVertices = NoSharedVertices.value;
-            updateMesh();
-        }
-
-        private void updateMesh()
-        {
             MeshGenerator newmesh = _generator.Generate();
             RMesh kite = new RMesh(newmesh.MakeDMesh());
             kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

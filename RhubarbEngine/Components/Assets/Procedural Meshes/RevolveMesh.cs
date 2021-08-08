@@ -31,14 +31,15 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             Capped = new Sync<bool>(this, newRefIds);
             Capped.value = false;
             NoSharedVertices = new Sync<bool>(this, newRefIds);
-
-            onChanged();
         }
         public override void onChanged()
         {
-            
+            updateMesh();
+        }
+        public override void onLoaded()
+        {
             Vector3d[] tempArray = new Vector3d[Curve.Count];
-            for (int i=0; i < Curve.Count; i++)
+            for (int i = 0; i < Curve.Count; i++)
             {
                 tempArray[i] = Curve[i].value;
             }
@@ -47,10 +48,6 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             _generator.Slices = Slices.value;
             _generator.Capped = Capped.value;
             _generator.NoSharedVertices = NoSharedVertices.value;
-            updateMesh();
-        }
-        public override void onLoaded()
-        {
             updateMesh();
         }
         private void updateMesh()

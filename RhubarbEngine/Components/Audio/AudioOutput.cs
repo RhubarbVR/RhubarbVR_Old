@@ -27,7 +27,6 @@ namespace RhubarbEngine.Components.Audio
 
         private IPL._IPLBinauralEffect_t iplBinauralEffect;
         private IPL.AudioBuffer iplInputBuffer;
-        public float w = (AudioManager.AudioFrameSizeInBytes );
 
         public override void buildSyncObjs(bool newRefIds)
         {
@@ -40,9 +39,9 @@ namespace RhubarbEngine.Components.Audio
         {
             base.onLoaded();
 
-            IPL.AudioBufferAllocate(engine.audioManager.iplContext, 1, AudioManager.AudioFrameSize, ref iplInputBuffer);
+            IPL.AudioBufferAllocate(engine.audioManager.iplContext, 1, engine.audioManager.AudioFrameSize, ref iplInputBuffer);
 
-            IPL.AudioBufferAllocate(engine.audioManager.iplContext, 2, AudioManager.AudioFrameSize, ref iplOutputBuffer);
+            IPL.AudioBufferAllocate(engine.audioManager.iplContext, 2, engine.audioManager.AudioFrameSize, ref iplOutputBuffer);
 
             var setings = new IPL.BinauralEffectSettings { hrtf = engine.audioManager.hrtf};
 
@@ -82,7 +81,7 @@ namespace RhubarbEngine.Components.Audio
             if (!audioSource.target.IsActive) return;
             var frameInputBuffer = audioSource.target.FrameInputBuffer;
             if (frameInputBuffer == null) return;
-            if (frameInputBuffer.Length < AudioManager.AudioFrameSizeInBytes) return;
+            if (frameInputBuffer.Length < engine.audioManager.AudioFrameSizeInBytes) return;
             Matrix4x4.Decompose(world.playerTrans, out Vector3 sc, out Quaternion ret, out Vector3 trans);
             var position = Vector3.Transform((entity.globalPos().ToSystemNumrics() - trans), Quaternion.Inverse(ret));
             var e = new IPL.Vector3(position.X, position.Y, position.Z);

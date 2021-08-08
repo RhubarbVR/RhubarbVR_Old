@@ -73,12 +73,12 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             return Matrix4x4.CreateScale(1) * Matrix4x4.CreateFromQuaternion(QuaternionFromMatrix(pos)) * Matrix4x4.CreateTranslation(new Vector3(pos.m3, pos.m7, pos.m11));
         }
 
-        public OpenVRContext(VRContextOptions options)
+        public OpenVRContext(VRContextOptions options, EVRApplicationType e = EVRApplicationType.VRApplication_Scene)
         {
             _options = options;
             EVRInitError initError = EVRInitError.None;
 
-            _vrSystem = OVR.Init(ref initError, EVRApplicationType.VRApplication_Scene, OVR.k_pch_SteamVR_NeverKillProcesses_Bool + "true");
+            _vrSystem = OVR.Init(ref initError, e, OVR.k_pch_SteamVR_NeverKillProcesses_Bool + "true");
             if (initError != EVRInitError.None)
             {
                 throw new VeldridException($"Failed to initialize OpenVR: {OVR.GetStringForHmdError(initError)}");

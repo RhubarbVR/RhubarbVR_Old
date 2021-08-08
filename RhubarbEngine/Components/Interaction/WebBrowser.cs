@@ -308,7 +308,7 @@ namespace RhubarbEngine.Components.Interaction
 
         public int ChannelCount => 1;
 
-        RollBuffer frameInputBuffer = new RollBuffer(AudioManager.AudioFrameSizeInBytes);
+        RollBuffer frameInputBuffer;
 
         public byte[] FrameInputBuffer => frameInputBuffer.array;
 
@@ -655,8 +655,8 @@ namespace RhubarbEngine.Components.Interaction
         public bool GetAudioParameters(IWebBrowser chromiumWebBrowser, IBrowser browser, ref AudioParameters parameters)
         {
             parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutMono;
-            parameters.FramesPerBuffer = AudioManager.AudioFrameSize;
-            parameters.SampleRate = AudioManager.SamplingRate;
+            parameters.FramesPerBuffer = engine.audioManager.AudioFrameSize;
+            parameters.SampleRate = engine.audioManager.SamplingRate;
             return true;
         }
 
@@ -671,7 +671,7 @@ namespace RhubarbEngine.Components.Interaction
             {
                 float** channelData = (float**)data.ToPointer();
                 int chan = 1;
-                int size = AudioManager.AudioFrameSizeInBytes * chan;
+                int size = engine.audioManager.AudioFrameSizeInBytes * chan;
                 byte[] samples = new byte[size];
                 fixed (byte* pDestByte = samples)
                 {
@@ -701,10 +701,11 @@ namespace RhubarbEngine.Components.Interaction
 
         public WebBrowser(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
-
+            frameInputBuffer = new RollBuffer(engine.audioManager.AudioFrameSizeInBytes);
         }
         public WebBrowser()
         {
+            frameInputBuffer = new RollBuffer(engine.audioManager.AudioFrameSizeInBytes);
         }
     }
 }

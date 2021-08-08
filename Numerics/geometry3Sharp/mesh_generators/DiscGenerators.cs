@@ -7,37 +7,48 @@ namespace g3
 {
     public class CurvedPlaneMeshGenerator : MeshGenerator
     {
-        public float Radius = 1f;
+        public float bRadius = 1f;
+        public float tRadius = 1f;
         public float Width = 1f;
-        public int Slices = 25;
+        public int Slices = 1;
         public float Height = 1f;
         
         override public MeshGenerator Generate()
         {
             float height = Height;
             int segments = Slices * 2;
-            float ray = (Radius == 0)? 1f : Radius;
-            ray = (float)((ray / 180f) * Math.PI) * 2;
+
+            float bray = (bRadius == 0)? 1f : bRadius;
+            bray = (float)((bray / 180f) * Math.PI) * 2;
+
+            float tray = (tRadius == 0) ? 1f : bRadius;
+            tray = (float)((tray / 180f) * Math.PI) * 2;
+
             vertices = new VectorArray3d((segments) * 4);
             uv = new VectorArray2f((segments) * 4);
             normals = new VectorArray3f((segments) * 4);
             triangles = new IndexArray3i((segments) * 2);
-            float des = (Width/2f) / ((Radius) * (1f/180f));
-            float angle = -(ray/4);
-            float step = (ray) / segments;
+            float bdes = (Width / 2f) / ((bRadius) * (1f / 180f));
+            float tdes = (Width / 2f) / ((tRadius) * (1f / 180f));
+
+            float bangle = -(bray/4);
+            float bstep = (bray) / segments;
+            float tangle = -(tray / 4);
+            float tstep = (tray) / segments;
             for (int i = 0; i < segments; i++)
             {
-                float sin = (float)Math.Sin(angle + step * i);
-                float cos = (float)Math.Cos(angle + step * i);
-
-                vertices[i * 2] = new Vector3d(sin * des, cos * des, height / 2) - new Vector3d(0,des,0);
-                vertices[i * 2 + 1] = new Vector3d(sin * des, cos * des, -height / 2) - new Vector3d(0, des, 0);
+                float bsin = (float)Math.Sin(bangle + bstep * i);
+                float bcos = (float)Math.Cos(bangle + bstep * i);
+                float tsin = (float)Math.Sin(tangle + tstep * i);
+                float tcos = (float)Math.Cos(tangle + tstep * i);
+                vertices[i * 2] = new Vector3d(bsin * bdes, bcos * bdes, height / 2) - new Vector3d(0,bdes,0);
+                vertices[i * 2 + 1] = new Vector3d(tsin * tdes, tcos * tdes, -height / 2) - new Vector3d(0, bdes, 0);
                 var upos = ((float)i) * (1f / ((float)Slices));
                 uv[i * 2] = new Vector2f(upos, 1);
                 uv[i * 2 + 1] = new Vector2f(upos, 0);
 
-                normals[i * 2] = new Vector3f(-sin, -cos, 0);
-                normals[i * 2 + 1] = new Vector3f(-sin, -cos, 0);
+                normals[i * 2] = new Vector3f(-bsin, -bcos, 0);
+                normals[i * 2 + 1] = new Vector3f(-tsin, -tcos, 0);
 
                 if (i != segments - 1)
                 {
