@@ -5,6 +5,54 @@ using System.Text;
 
 namespace g3
 {
+    public class CurvedPlaneMeshGenerator : MeshGenerator
+    {
+        public float Radius = 1f;
+        public float Width = 1f;
+        public int Slices = 25;
+        public float Height = 1f;
+        
+        override public MeshGenerator Generate()
+        {
+            float height = Height;
+            int segments = Slices * 2;
+            float ray = (Radius == 0)? 1f : Radius;
+            ray = (float)((ray / 180f) * Math.PI) * 2;
+            vertices = new VectorArray3d((segments) * 4);
+            uv = new VectorArray2f((segments) * 4);
+            normals = new VectorArray3f((segments) * 4);
+            triangles = new IndexArray3i((segments) * 2);
+            float des = (Width/2f) / ((Radius) * (1f/180f));
+            float angle = -(ray/4);
+            float step = (ray) / segments;
+            for (int i = 0; i < segments; i++)
+            {
+                float sin = (float)Math.Sin(angle + step * i);
+                float cos = (float)Math.Cos(angle + step * i);
+
+                vertices[i * 2] = new Vector3d(sin * des, cos * des, height / 2) - new Vector3d(0,des,0);
+                vertices[i * 2 + 1] = new Vector3d(sin * des, cos * des, -height / 2) - new Vector3d(0, des, 0);
+                var upos = ((float)i) * (1f / ((float)Slices));
+                uv[i * 2] = new Vector2f(upos, 1);
+                uv[i * 2 + 1] = new Vector2f(upos, 0);
+
+                normals[i * 2] = new Vector3f(-sin, -cos, 0);
+                normals[i * 2 + 1] = new Vector3f(-sin, -cos, 0);
+
+                if (i != segments - 1)
+                {
+                    triangles[i * 2] = new Index3i(i, i + 1, i + 2);
+                    triangles[i * 2 + 1] = new Index3i(i + 1, i + 3, i + 2);
+                }
+
+            }
+            return this;
+        }
+    }
+
+
+
+
     // generate a triangle fan, no subdvisions
     public class TrivialDiscGenerator : MeshGenerator
     {

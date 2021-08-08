@@ -15,7 +15,8 @@ namespace g3
         public float y;
         [Key(2)]
         public float z;
-
+        [IgnoreMember]
+        public float magnitude { get { return (x * x + y * y + z * z); } }
         public Vector3f(float f) {  x = y = z = f; }
         public Vector3f(float x, float y, float z) { this.x = x; this.y = y; this.z = z; }
         public Vector3f(float[] v2) { x = v2[0]; y = v2[1]; z = v2[2]; }

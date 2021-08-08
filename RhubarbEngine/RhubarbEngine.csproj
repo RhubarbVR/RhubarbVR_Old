@@ -10,7 +10,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
   </PropertyGroup>
-
+  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
@@ -33,6 +33,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Debuging\**" />
+    <EmbeddedResource Remove="Debuging\**" />
+    <None Remove="Debuging\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BEPUik" Version="1.5.1" />

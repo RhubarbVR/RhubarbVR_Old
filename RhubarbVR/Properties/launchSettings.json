@@ -2,7 +2,8 @@
   "profiles": {
     "RhubarbVR": {
       "commandName": "Project",
-      "commandLineArgs": "-o Screen -verbose"
+      "commandLineArgs": "-o Screen -verbose",
+      "nativeDebugging": false
     },
     "WSL 2": {
       "commandName": "WSL2",

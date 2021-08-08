@@ -26,8 +26,6 @@ namespace RhubarbEngine.Components.PrivateSpace
 {
     public class DashManager : Component
     {
-        string screen = null;
-
         public SyncRef<Entity> root;
         public SyncRef<ImGUICanvas> canvas;
 
@@ -41,12 +39,12 @@ namespace RhubarbEngine.Components.PrivateSpace
 
         public override void OnAttach()
         {
-            base.onLoaded();
             var e = entity.addChild("Main Panel");
             StaicMainShader shader = e.attachComponent<StaicMainShader>();
-            PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
-            InputPlane bmeshcol = e.attachComponent<InputPlane>();
-            //bmeshcol.mesh.target = bmesh;
+            CurvedPlaneMesh bmesh = e.attachComponent<CurvedPlaneMesh>();
+            MeshInputPlane bmeshcol = e.attachComponent<MeshInputPlane>(); bmeshcol.mesh.target = bmesh;
+            //InputPlane bmeshcol = e.attachComponent<InputPlane>();
+
             //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
             e.rotation.value = Quaternionf.CreateFromEuler(90f, -90f, -90f);
             e.position.value = new Vector3f(0, 0, -1);
@@ -68,85 +66,10 @@ namespace RhubarbEngine.Components.PrivateSpace
             field.field.target = imGUICanvas;
         }
 
-        public void OpenScreen(string name)
-        {
-            if (name == screen) return;
-            if(root.target != null)
-            {
-                logger.Log("Destroy");
-                root.target.Destroy();
-            }
-            switch (name)
-            {
-                case "login":
-                    root.target = entity.addChild("LoginScreen");
-                    if (canvas.target != null)
-                    {
-                        var e = root.target.attachComponent<LoginScreen>();
-                        canvas.target.element.target = e;
-                        e.dash.target = this;
-                    }
-                    break;
-                case "register":
-                    root.target = entity.addChild("RegisterScreen");
-                    if (canvas.target != null)
-                    {
-                        var e = root.target.attachComponent<RegisterScreen>();
-                        canvas.target.element.target = e;
-                        e.dash.target = this;
-                    }
-                    break;
-                case "sessions":
-                    root.target = entity.addChild("SessionsScreen");
-                    if (canvas.target != null)
-                    {
-                        var e = root.target.attachComponent<SessionsScreen>();
-                        canvas.target.element.target = e;
-                        e.dash.target = this;
-                    }
-                    break;
-                case "createworld":
-                    root.target = entity.addChild("CreateWorldScreen");
-                    if (canvas.target != null)
-                    {
-                        var e = root.target.attachComponent<CreateWorldScreen>();
-                        canvas.target.element.target = e;
-                        e.dash.target = this;
-                    }
-                    break;
-                case "main":
-                    root.target = entity.addChild("MainScreen");
-                    if (canvas.target != null)
-                    {
-                        var e = root.target.attachComponent<MainScreen>();
-                        canvas.target.element.target = e;
-                        e.dash.target = this;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            screen = name;
-        }
-
         private DateTime opened = DateTime.UtcNow;
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
-            if (!engine.netApiManager.islogin)
-            {
-                if(!(screen == "login" || screen == "register"))
-                {
-                    OpenScreen("login");
-                }
-            }
-            else
-            {
-                if (!(screen == "main" || screen == "createworld" || screen == "sessions"))
-                {
-                    OpenScreen("main");
-                }
-            }
             if (DateTime.UtcNow <= opened + new TimeSpan(0, 0, 2)) return;
             if (((input.mainWindows.GetKey(Veldrid.Key.ControlLeft) || input.mainWindows.GetKey(Veldrid.Key.ControlLeft)) && input.mainWindows.GetKey(Veldrid.Key.Space)) || input.mainWindows.GetKeyDown(Veldrid.Key.Escape))
             {

@@ -14,7 +14,9 @@ namespace g3
         [Key(1)]
         public double y;
         [Key(2)]
-        public double z; 
+        public double z;
+        [IgnoreMember]
+        public double magnitude { get { return (x * x + y * y + z * z); } }
 
         public Vector3d(double f) { x = y = z = f; }
         public Vector3d(double x, double y, double z) { this.x = x; this.y = y; this.z = z; }

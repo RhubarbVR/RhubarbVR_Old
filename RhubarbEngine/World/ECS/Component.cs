@@ -73,7 +73,7 @@ namespace RhubarbEngine.World.ECS
         {
 
         }
-        public Component(IWorldObject _parent, bool newRefIds = true) : base(_parent.World, _parent, newRefIds)
+        public Component(IWorldObject _parent, bool newRefIds = true) : base(_parent.World, _parent, newRefIds,true)
         {
         }
 

@@ -99,14 +99,14 @@ namespace RhubarbEngine.World
             world.netModule?.addToQueue(Net.ReliabilityLevel.LatestOnly, obj, referenceID.id);
         }
 
-        public Sync(World _world, IWorldObject _parent,bool newref = true) : base(_world, _parent, newref)
+        public Sync(World _world, IWorldObject _parent,bool newref = true, T val = default) : base(_world, _parent, newref)
         {
-
+            value = val;
         }
 
-        public Sync(IWorldObject _parent, bool newref = true) : base(_parent.World, _parent,newref)
+        public Sync(IWorldObject _parent, bool newref = true,T val = default) : base(_parent.World, _parent,newref)
         {
-
+            value = val;
         }
 
         public virtual T SaveToBytes(bool netsync)
