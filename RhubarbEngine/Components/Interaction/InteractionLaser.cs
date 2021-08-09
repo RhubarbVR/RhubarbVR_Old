@@ -40,8 +40,7 @@ namespace RhubarbEngine.Components.Interaction
             user.target = world.localUser;
             if (world.userspace) return;
             var (e, m) = MeshHelper.AddMesh<CylinderMesh>(entity);
-            e.rotation.value = Quaternionf.CreateFromYawPitchRoll(0f, -67.5f, 0f);
-            e.position.value = -Vector3f.AxisZ * 0.3f;
+            e.rotation.value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
             meshDriver.target = m.Height;
             m.BaseRadius.value = 0.005f;
             m.TopRadius.value = 0.01f;
@@ -104,13 +103,12 @@ namespace RhubarbEngine.Components.Interaction
         {
             using (var cb = new ClosestRayResultCallback(ref sourcse, ref destination))
             {
-                cb.Flags = 0xFFFFFFFF;
                 eworld.physicsWorld.RayTest(sourcse, destination, cb);
                 if (cb.HasHit)
                 {
                     if (meshDriver.target != null)
                     {
-                        meshDriver.Drivevalue = (source.value == InteractionSource.HeadLaser) ? desklength : -(float)Vector3.Distance(cb.HitPointWorld, sourcse);
+                        meshDriver.Drivevalue = (source.value == InteractionSource.HeadLaser) ? desklength : (float)Vector3.Distance(cb.HitPointWorld, sourcse);
                     }
                     Type type = cb.CollisionObject.UserObject.GetType();
                     if (type == typeof(InputPlane))
@@ -128,57 +126,16 @@ namespace RhubarbEngine.Components.Interaction
 
         private static Vector2f getUVPosOnTry(Vector3d p1, Vector2f p1uv, Vector3d p2, Vector2f p2uv, Vector3d p3, Vector2f p3uv, Vector3d point)
         {
-            var nep1 = (float)p1.Distance(point);
-            var nep2 = (float)p2.Distance(point);
-            (float x, float y) = calculateThreeCircleIntersection(p1uv.x, p1uv.y, nep1, p2uv.x, p2uv.y, nep2, p3uv.x, p3uv.y);
-            return new Vector2f(x,y);
+            var f1 = p1 - point;
+            var f2 = p2 - point;
+            var f3 = p3 - point;
+            var a = Vector3d.Cross(p1 - p2, p1 - p3).magnitude; 
+            var a1 = Vector3d.Cross(f2, f3).magnitude / a; 
+            var a2 = Vector3d.Cross(f3, f1).magnitude / a; 
+            var a3 = Vector3d.Cross(f1, f2).magnitude / a; 
+            var uv = p1uv * (float)a1 + p2uv * (float)a2 + p3uv * (float)a3;
+            return uv;
         }
-        private static (float x, float y) calculateThreeCircleIntersection(float x0, float y0, float r0,
-                                                 float x1, float y1, float r1,
-                                                 float x2, float y2)
-        {
-            float a, dx, dy, d, h, rx, ry;
-            float point2_x, point2_y;
-            dx = x1 - x0;
-            dy = y1 - y0;
-            d = (float)Math.Sqrt((dy * dy) + (dx * dx));
-
-            /* Determine the distance from point 0 to point 2. */
-            a = ((r0 * r0) - (r1 * r1) + (d * d)) / (2.0f * d);
-
-            /* Determine the coordinates of point 2. */
-            point2_x = x0 + (dx * a / d);
-            point2_y = y0 + (dy * a / d);
-
-            /* Determine the distance from point 2 to either of the
-            * intersection points.
-            */
-            h = (float)Math.Sqrt((r0 * r0) - (a * a));
-
-            /* Now determine the offsets of the intersection points from
-            * point 2.
-            */
-            rx = -dy * (h / d);
-            ry = dx * (h / d);
-
-            float intersectionPoint1_x = point2_x + rx;
-            float intersectionPoint2_x = point2_x - rx;
-            float intersectionPoint1_y = point2_y + ry;
-            float intersectionPoint2_y = point2_y - ry;
-            var e = Math.Pow(intersectionPoint1_x - x2, 2) + Math.Pow(intersectionPoint1_x - x2, 2);
-            var e2 = Math.Pow(intersectionPoint2_x - x2, 2) + Math.Pow(intersectionPoint2_x - x2, 2);
-            float dist1 = (float)Math.Sqrt(e);
-            float dist2 = (float)Math.Sqrt(e2);
-            if (dist1 < dist2)
-            {
-                return (intersectionPoint1_x, intersectionPoint1_y);
-            }
-            else
-            {
-                return (intersectionPoint2_x, intersectionPoint2_y);
-            }
-        }
-
         private bool ProossesMeshInputPlane(ClosestRayResultCallback cb)
         {
             try
@@ -207,10 +164,12 @@ namespace RhubarbEngine.Components.Interaction
 
                     var uvpos = getUVPosOnTry(p1.v, p1.uv, p2.v, p2.uv, p3.v, p3.uv,new Vector3d(trans.X, trans.Y, trans.Z));
 
-                    var posnopixs = new Vector2f(uvpos.x, (-uvpos.y)+1);
+                    var posnopixs = new Vector2f(uvpos.x, uvpos.y);
                     var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
                     var pos = new System.Numerics.Vector2(pospix.x, pospix.y);
+                    Console.WriteLine($"uvpos {uvpos}  tryangle {tryangle}  pos {pos}");
                     inputPlane.updatePos(pos, source.value);
+
                     if (HasClicked())
                     {
                         switch (source.value)

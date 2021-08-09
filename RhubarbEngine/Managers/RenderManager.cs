@@ -113,7 +113,7 @@ namespace RhubarbEngine.Managers
                     return VRContext.CreateScreen(options,engine);
                     break;
                 case OutputType.SteamVR:
-                    return VRContext.CreateOpenVR(options, (engine.settingsObject.VRSettings.StartAsOverlay)?Valve.VR.EVRApplicationType.VRApplication_Overlay: Valve.VR.EVRApplicationType.VRApplication_Scene);
+                    return VRContext.CreateOpenVR(options, (engine.settingsObject.VRSettings.StartAsOverlay)?Valve.VR.EVRApplicationType.VRApplication_Scene : Valve.VR.EVRApplicationType.VRApplication_Scene);
                     break;
                 case OutputType.OculusVR:
                     return VRContext.CreateOculus(options);

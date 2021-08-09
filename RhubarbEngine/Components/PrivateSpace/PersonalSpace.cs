@@ -38,6 +38,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 
         public void OpenKeyboard()
         {
+            return;
             if (engine.outputType == VirtualReality.OutputType.Screen)
             {
                 if (Keyboard.target != null)
