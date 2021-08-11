@@ -71,10 +71,9 @@ namespace RhubarbEngine.Components.PrivateSpace
             field.field.target = imGUICanvas;
             taskbarcanvas.target = imGUICanvas;
             var group = TaskBar.attachComponent<ImGUIBeginGroup>();
-            var buton = TaskBar.attachComponent<ImGUIButton>();
+            var buton = TaskBar.attachComponent<ImGUIImageButton>();
             imGUICanvas.element.target = group;
             buton.action.Target = openStartMenu;
-            buton.label.value = "start";
             buton.size.value = new Vector2f(60);
             group.children.Add().target = buton;
 

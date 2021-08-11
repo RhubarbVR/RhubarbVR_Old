@@ -98,11 +98,8 @@ namespace RhubarbEngine.Components.ImGUI
 
         public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
-            var draw_list = ImGui.GetWindowDrawList();
-            draw_list.AddCircleFilled(ImGui.GetMousePos() + new Vector2(50), 30f, 0xFFFFFFFF);
             if (ImGui.ImageButton(imGuiRenderer.GetOrCreateImGuiBinding(engine.renderManager.gd.ResourceFactory, view), new Vector2(size.value.x, size.value.y)) )
             {
-                logger.Log("This is a test of test in test of trains");
                 action.Target?.Invoke();
             }
         }

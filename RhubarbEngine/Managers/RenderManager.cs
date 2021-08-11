@@ -92,7 +92,7 @@ namespace RhubarbEngine.Managers
             var _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "nulltexture.jpg"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
             nulview = engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture);
             var gridtexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Grid.jpg"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-            nulview = engine.renderManager.gd.ResourceFactory.CreateTextureView(gridtexture);
+            gridview = engine.renderManager.gd.ResourceFactory.CreateTextureView(gridtexture);
             skybox = new Skybox(
     Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_ft.png")),
     Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_bk.png")),
