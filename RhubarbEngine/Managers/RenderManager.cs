@@ -48,6 +48,10 @@ namespace RhubarbEngine.Managers
 
         public TextureView gridview;
 
+        public TextureView rhubarbview;
+
+        public TextureView rhubarbSolidview;
+
         public MirrorTextureEyeSource eyeSource = MirrorTextureEyeSource.BothEyes;
         public IManager initialize(Engine _engine)
         {
@@ -93,6 +97,13 @@ namespace RhubarbEngine.Managers
             nulview = engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture);
             var gridtexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Grid.jpg"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
             gridview = engine.renderManager.gd.ResourceFactory.CreateTextureView(gridtexture);
+
+            var rhubatexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR2.png"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+            rhubarbview = engine.renderManager.gd.ResourceFactory.CreateTextureView(rhubatexture);
+
+            var rhubatextures = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR.png"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+            rhubarbSolidview = engine.renderManager.gd.ResourceFactory.CreateTextureView(rhubatextures);
+
             skybox = new Skybox(
     Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_ft.png")),
     Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_bk.png")),

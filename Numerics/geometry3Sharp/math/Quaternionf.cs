@@ -543,10 +543,10 @@ namespace g3
             return new Quaternionf(num4, num5, num6, num3);
         }
 
-        public static Quaternionf CreateFromEuler(float x, float y, float z)
+        public static Quaternionf CreateFromEuler(float yaw, float pitch, float roll)
         {
             
-            return CreateFromYawPitchRoll((float)(Math.PI / 180) * x, (float)(Math.PI / 180) * y, (float)(Math.PI / 180) * z);
+            return CreateFromYawPitchRoll((float)(Math.PI / 180) * yaw, (float)(Math.PI / 180) * pitch, (float)(Math.PI / 180) * roll);
         }
         public Vector3f getEuler()
         {

@@ -38,7 +38,6 @@ namespace RhubarbEngine.Components.PrivateSpace
 
         public void OpenKeyboard()
         {
-            return;
             if (engine.outputType == VirtualReality.OutputType.Screen)
             {
                 if (Keyboard.target != null)
@@ -52,12 +51,17 @@ namespace RhubarbEngine.Components.PrivateSpace
                 var keyboard = Keyboard.target = FollowUser.target.addChild("Keyboard");
                 var e = keyboard;
                 
-                PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
-                InputPlane bmeshcol = e.attachComponent<InputPlane>();
-                bmeshcol.size.value = (new Vector2f(0.5,0.25)/8)*7;
-                bmesh.Height.value = bmeshcol.size.value.y*2;
-                bmesh.Width.value = bmeshcol.size.value.x*2;
+                CurvedPlaneMesh bmesh = e.attachComponent<CurvedPlaneMesh>();
+                bmesh.BottomRadius.value = engine.settingsObject.UISettings.KeyBoardCurve;
+                bmesh.TopRadius.value = engine.settingsObject.UISettings.KeyBoardCurve + 10f;
+                bmesh.Height.value = 0.4f;
+                bmesh.Width.value = 0.5f;
+                MeshInputPlane bmeshcol = e.attachComponent<MeshInputPlane>();
+                Vector2f sizePix = new Vector2f(600, 600);
+                bmeshcol.mesh.target = bmesh;
                 bmeshcol.FocusedOverride.value = true;
+
+                bmeshcol.pixelSize.value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);
                 //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
                 e.rotation.value = Quaternionf.CreateFromEuler(90f, -90f, -90f)* Quaternionf.CreateFromEuler(0f,-40f,0f);
                 e.position.value = new Vector3f(0, -0.5, -0.6);
@@ -65,7 +69,6 @@ namespace RhubarbEngine.Components.PrivateSpace
                 MeshRender meshRender = e.attachComponent<MeshRender>();
                 ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
                 imGUICanvas.noKeyboard.value = true;
-                Vector2f sizePix = new Vector2f(600,600) * (bmeshcol.size.value * 2);
                 imGUICanvas.scale.value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);
                 bmeshcol.pixelSize.value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);
                 ImGUIKeyboard imGUIText = e.attachComponent<ImGUIKeyboard>();
@@ -98,7 +101,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             base.onLoaded();
             var d = world.RootEntity.addChild("User Follower");
             FollowUser.target = d;
-            
+
             var e = d.addChild("Main Panel");
             d.attachComponent<UserInterfacePositioner>();
             e.attachComponent<TaskBarManager>();

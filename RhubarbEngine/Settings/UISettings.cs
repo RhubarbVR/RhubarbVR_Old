@@ -9,8 +9,11 @@ namespace RhubarbEngine.Settings
 {
     public class UISettings : SettingsObject
     {
-        [SettingsField("Task Bar Curve 80 default","/VR")]
+        [SettingsField("Task Bar Curve 80 default", "/VR")]
         public float TaskBarCurve = 80;
+
+        [SettingsField("KeyBoard Curve 80 default", "/VR")]
+        public float KeyBoardCurve = 50;
     }
 
 }

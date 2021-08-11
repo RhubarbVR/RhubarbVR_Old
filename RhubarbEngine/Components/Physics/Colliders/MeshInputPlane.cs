@@ -28,6 +28,8 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         public Sync<bool> FocusedOverride;
 
+        public SyncDelegate onFocusLost;
+
         public IReadOnlyList<KeyEvent> KeyEvents { get { if (!focused) return new List<KeyEvent>(); return input.mainWindows.FrameSnapshot.KeyEvents; } }
 
         public IReadOnlyList<MouseEvent> MouseEvents { get { if (!focused) return new List<MouseEvent>(); return input.mainWindows.FrameSnapshot.MouseEvents; } }
@@ -81,6 +83,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
             pixelSize = new Sync<Vector2u>(this, newRefIds);
             pixelSize.value = new Vector2u(600, 600);
             FocusedOverride = new Sync<bool>(this, newRefIds);
+            onFocusLost = new SyncDelegate(this, newRefIds);
             mesh = new AssetRef<RMesh>(this, newRefIds);
             mesh.loadChange += Mesh_loadChange;
         }
@@ -241,6 +244,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         public void Removefocused()
         {
+            onFocusLost.Target?.Invoke();
             input.removeFocus -= Removefocused;
             _focused = false;
         }

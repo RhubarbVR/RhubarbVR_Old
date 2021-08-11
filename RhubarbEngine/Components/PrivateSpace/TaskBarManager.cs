@@ -27,29 +27,85 @@ namespace RhubarbEngine.Components.PrivateSpace
     public class TaskBarManager : Component
     {
         public SyncRef<Entity> root;
+        public SyncRef<Entity> startMenu;
         public SyncRef<ImGUICanvas> taskbarcanvas;
-
+        public SyncRef<ImGUICanvas> startcanvas;
+        public Driver<string> dateTextDriver;
         public override void buildSyncObjs(bool newRefIds)
         {
             root = new SyncRef<Entity>(this, newRefIds);
+            startMenu = new SyncRef<Entity>(this, newRefIds);
             taskbarcanvas = new SyncRef<ImGUICanvas>(this, newRefIds);
+            startcanvas = new SyncRef<ImGUICanvas>(this, newRefIds);
+            dateTextDriver = new Driver<string>(this, newRefIds);
         }
 
-        public void openStartMenu()
+        public void startMenuClick()
         {
-
+            if (startMenu.target == null) return;
+            startMenu.target.enabled.value = !startMenu.target.enabled.value;
         }
+
+        private void startMenuFocusLost()
+        {
+            if (startMenu.target == null) return;
+            if (startMenu.target.enabled.value)
+            {
+                startMenu.target.enabled.value = false;
+            }
+        }
+
+        private void buildStartMenu(Entity e)
+        {
+            startMenu.target = e;
+            BasicUnlitShader shader = world.staticAssets.basicUnlitShader;
+            PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
+            bmesh.Height.value = 0.30f;
+            bmesh.Width.value = 0.30f;
+            InputPlane bmeshcol = e.attachComponent<InputPlane>();
+            bmeshcol.onFocusLost.Target = startMenuFocusLost;
+            //InputPlane bmeshcol = e.attachComponent<InputPlane>();
+            e.position.value = new Vector3f(-0.5, 0.05, 0.25);
+            RMaterial mit = e.attachComponent<RMaterial>();
+            var TaskBar = e.addChild("UI");
+            MeshRender meshRender = TaskBar.attachComponent<MeshRender>();
+            ImGUICanvas imGUICanvas = TaskBar.attachComponent<ImGUICanvas>();
+            imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(150, 150);
+            imGUICanvas.imputPlane.target = bmeshcol;
+            mit.Shader.target = shader;
+            meshRender.Materials.Add().target = mit;
+            meshRender.Mesh.target = bmesh;
+            imGUICanvas.noCloseing.value = true;
+            imGUICanvas.noBackground.value = true;
+            Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+            field.field.target = imGUICanvas;
+            startcanvas.target = imGUICanvas;
+            var group = TaskBar.attachComponent<ImGUIBeginGroup>();
+            var createCube = TaskBar.attachComponent<ImGUIButton>();
+            createCube.label.value = "Create Cube";
+            createCube.action.Target = CreateCube;
+            imGUICanvas.element.target = group;
+            group.children.Add().target = createCube;
+
+            e.enabled.value = false;
+        }
+
+        private void CreateCube()
+        {
+            logger.Log("Create Cube");
+        }
+
         public override void OnAttach()
         {
             var e = entity.addChild("TaskBar");
             root.target = e;
-            BasicUnlitShader shader = e.attachComponent<BasicUnlitShader>();
+            BasicUnlitShader shader = world.staticAssets.basicUnlitShader;
             CurvedPlaneMesh bmesh = e.attachComponent<CurvedPlaneMesh>();
             bmesh.BottomRadius.value = engine.settingsObject.UISettings.TaskBarCurve;
             bmesh.TopRadius.value = engine.settingsObject.UISettings.TaskBarCurve + 10f;
             bmesh.Height.value = 0.12f;
             bmesh.Width.value = 0.95f;
-            MeshInputPlane bmeshcol = e.attachComponent<MeshInputPlane>(); 
+            MeshInputPlane bmeshcol = e.attachComponent<MeshInputPlane>();
             bmeshcol.mesh.target = bmesh;
             //InputPlane bmeshcol = e.attachComponent<InputPlane>();
 
@@ -60,7 +116,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             var TaskBar = e.addChild("TaskBarUI");
             MeshRender meshRender = TaskBar.attachComponent<MeshRender>();
             ImGUICanvas imGUICanvas = TaskBar.attachComponent<ImGUICanvas>();
-            imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(((uint)(7.69 * engine.settingsObject.UISettings.TaskBarCurve)), 76);
+            imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(((uint)(7.69 * engine.settingsObject.UISettings.TaskBarCurve)) * 2, 76 * 2);
             imGUICanvas.imputPlane.target = bmeshcol;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
@@ -70,20 +126,34 @@ namespace RhubarbEngine.Components.PrivateSpace
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = imGUICanvas;
             taskbarcanvas.target = imGUICanvas;
-            var group = TaskBar.attachComponent<ImGUIBeginGroup>();
+            var group = TaskBar.attachComponent<ImGUIBeginRow>();
             var buton = TaskBar.attachComponent<ImGUIImageButton>();
+            var items = TaskBar.attachComponent<ImGUIBeginChild>();
+            var timeText = TaskBar.attachComponent<ImGUIText>();
+            dateTextDriver.target = timeText.text;
+            buton.big.value = Colorf.Black;
+            var rhutext = TaskBar.attachComponent<RhubarbTextue2D>();
+            buton.texture.target = rhutext;
             imGUICanvas.element.target = group;
-            buton.action.Target = openStartMenu;
-            buton.size.value = new Vector2f(60);
+            buton.action.Target = startMenuClick;
+            buton.size.value = new Vector2f(60 * 2);
             group.children.Add().target = buton;
-
+            group.children.Add().target = items;
+            group.children.Add().target = timeText;
+            buildStartMenu(e.addChild("Start Menu"));
         }
 
         private DateTime opened = DateTime.UtcNow;
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
-            if (DateTime.UtcNow <= opened + new TimeSpan(0, 0, 2)) return;
+            if (dateTextDriver.Linked)
+            {
+                var now = DateTime.Now;
+                dateTextDriver.Drivevalue = $"{((now.Hour>12)? $"pm {now.Hour-12}":((now.Hour == 0)? "pm 12" : $"am {now.Hour}"))}:{((now.Minute < 10) ? $"0{now.Minute}" : now.Minute)}\n";
+                dateTextDriver.Drivevalue += $"{now.Month}/{((now.Day < 10) ? $"0{now.Day}" : now.Day)}/{now.Year}\n";
+            }
+            if (DateTime.UtcNow <= opened + new TimeSpan(0, 0, 1)) return;
             if (((input.mainWindows.GetKey(Veldrid.Key.ControlLeft) || input.mainWindows.GetKey(Veldrid.Key.ControlLeft)) && input.mainWindows.GetKey(Veldrid.Key.Space)) || input.mainWindows.GetKeyDown(Veldrid.Key.Escape))
             {
                 entity.enabled.value = !entity.enabled.value;

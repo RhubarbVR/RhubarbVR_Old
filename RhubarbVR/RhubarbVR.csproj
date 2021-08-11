@@ -26,6 +26,12 @@
     <None Update="StaticAssets\nulltexture.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="StaticAssets\RhubarbVR.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="StaticAssets\RhubarbVR2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="WorldTemplates\Basic.RWorld">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
