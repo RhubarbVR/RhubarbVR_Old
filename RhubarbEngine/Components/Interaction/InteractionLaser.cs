@@ -76,6 +76,11 @@ namespace RhubarbEngine.Components.Interaction
             }
             try
             {
+                if(source.value == InteractionSource.HeadLaser)
+                {
+                    mesh.target.BaseRadius.value = 0.005f / 10;
+                    mesh.target.TopRadius.value = 0.01f / 10;
+                }
                 System.Numerics.Matrix4x4.Decompose((System.Numerics.Matrix4x4.CreateTranslation((rayderection.value * distances.value).ToSystemNumrics()) * entity.globalTrans()), out System.Numerics.Vector3 vs, out System.Numerics.Quaternion vr, out System.Numerics.Vector3 val);
                 System.Numerics.Matrix4x4.Decompose(entity.globalTrans(), out System.Numerics.Vector3 vsg, out System.Numerics.Quaternion vrg, out System.Numerics.Vector3 global);
                 Vector3 sourcse = new Vector3(global.X, global.Y, global.Z);
@@ -136,6 +141,13 @@ namespace RhubarbEngine.Components.Interaction
             var uv = (p1uv * (float)a1) + (p2uv * (float)a2) + (p3uv * (float)a3);
             return uv;
         }
+
+        public static Vector3d getNearestPosOnTry(Vector3d p1, Vector3d p2, Vector3d p3, Vector3d point)
+        {
+
+            return new Vector3d();
+        }
+
         private bool ProossesMeshInputPlane(ClosestRayResultCallback cb)
         {
             try
@@ -164,10 +176,9 @@ namespace RhubarbEngine.Components.Interaction
 
                     var uvpos = getUVPosOnTry(p1.v, p1.uv, p2.v, p2.uv, p3.v, p3.uv,new Vector3d(trans.X, trans.Y, trans.Z));
 
-                    var posnopixs = new Vector2f(uvpos.x, uvpos.y);
+                    var posnopixs = new Vector2f(uvpos.x, (-uvpos.y)+1);
                     var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
                     var pos = new System.Numerics.Vector2(pospix.x, pospix.y);
-                    Console.WriteLine($"uvpos {uvpos}  tryangle {tryangle}  pos {pos}");
                     inputPlane.updatePos(pos, source.value);
 
                     if (HasClicked())
@@ -225,8 +236,6 @@ namespace RhubarbEngine.Components.Interaction
                 System.Numerics.Matrix4x4.Decompose(stepfour, out System.Numerics.Vector3 scsdale, out System.Numerics.Quaternion rotatdsion, out System.Numerics.Vector3 trans);
                 var nonescaleedpos = new Vector2f(trans.X, -trans.Z);
                 var posnopixs = ((nonescaleedpos * (1 / size)) / 2) + 0.5f;
-
-                Console.WriteLine("Pix pos " + posnopixs);
 
                 var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
 

@@ -72,7 +72,6 @@ namespace RhubarbEngine.Components.Physics.Colliders
             if (index.Length < 3) return;
             var indexVertexArray2 = new TriangleIndexVertexArray(index, vertices); 
             BvhTriangleMeshShape trys = new BvhTriangleMeshShape(indexVertexArray2, true);
-            trys.LocalScaling = new BulletSharp.Math.Vector3(1, 1, -1);
             startShape(trys);
         }
 
