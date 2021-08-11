@@ -25,6 +25,8 @@ namespace RhubarbEngine.World
     {
         public UpdateLists updateLists = new UpdateLists();
 
+        public StaticAssets staticAssets;
+
         [NoSave]
         public SyncUserList users;
 
@@ -428,6 +430,7 @@ namespace RhubarbEngine.World
             dispatcher = new CollisionDispatcher(collisionConfiguration);
             broadphase = new DbvtBroadphase();
             physicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, null, collisionConfiguration);
+            staticAssets = new StaticAssets(this);
         }
 
 

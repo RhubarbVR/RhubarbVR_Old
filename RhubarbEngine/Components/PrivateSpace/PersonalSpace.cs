@@ -51,7 +51,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             {
                 var keyboard = Keyboard.target = FollowUser.target.addChild("Keyboard");
                 var e = keyboard;
-                StaicMainShader shader = e.attachComponent<StaicMainShader>();
+                
                 PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
                 InputPlane bmeshcol = e.attachComponent<InputPlane>();
                 bmeshcol.size.value = (new Vector2f(0.5,0.25)/8)*7;
@@ -71,7 +71,7 @@ namespace RhubarbEngine.Components.PrivateSpace
                 ImGUIKeyboard imGUIText = e.attachComponent<ImGUIKeyboard>();
                 imGUICanvas.imputPlane.target = bmeshcol;
                 imGUICanvas.element.target = imGUIText;
-                mit.Shader.target = shader;
+                mit.Shader.target = world.staticAssets.basicUnlitShader;
                 meshRender.Materials.Add().target = mit;
                 meshRender.Mesh.target = bmesh;
                 imGUICanvas.noCloseing.value = true;

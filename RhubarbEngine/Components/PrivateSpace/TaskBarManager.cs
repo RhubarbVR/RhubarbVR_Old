@@ -35,16 +35,19 @@ namespace RhubarbEngine.Components.PrivateSpace
             taskbarcanvas = new SyncRef<ImGUICanvas>(this, newRefIds);
         }
 
+        public void openStartMenu()
+        {
 
+        }
         public override void OnAttach()
         {
             var e = entity.addChild("TaskBar");
             root.target = e;
-            StaicMainShader shader = e.attachComponent<StaicMainShader>();
+            BasicUnlitShader shader = e.attachComponent<BasicUnlitShader>();
             CurvedPlaneMesh bmesh = e.attachComponent<CurvedPlaneMesh>();
             bmesh.BottomRadius.value = engine.settingsObject.UISettings.TaskBarCurve;
             bmesh.TopRadius.value = engine.settingsObject.UISettings.TaskBarCurve + 10f;
-            bmesh.Height.value = 0.15f;
+            bmesh.Height.value = 0.12f;
             bmesh.Width.value = 0.95f;
             MeshInputPlane bmeshcol = e.attachComponent<MeshInputPlane>(); 
             bmeshcol.mesh.target = bmesh;
@@ -57,7 +60,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             var TaskBar = e.addChild("TaskBarUI");
             MeshRender meshRender = TaskBar.attachComponent<MeshRender>();
             ImGUICanvas imGUICanvas = TaskBar.attachComponent<ImGUICanvas>();
-            imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(600, 100);
+            imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(((uint)(7.69 * engine.settingsObject.UISettings.TaskBarCurve)), 76);
             imGUICanvas.imputPlane.target = bmeshcol;
             mit.Shader.target = shader;
             meshRender.Materials.Add().target = mit;
@@ -67,9 +70,13 @@ namespace RhubarbEngine.Components.PrivateSpace
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = imGUICanvas;
             taskbarcanvas.target = imGUICanvas;
+            var group = TaskBar.attachComponent<ImGUIBeginGroup>();
             var buton = TaskBar.attachComponent<ImGUIButton>();
+            imGUICanvas.element.target = group;
+            buton.action.Target = openStartMenu;
             buton.label.value = "start";
-            imGUICanvas.element.target = buton;
+            buton.size.value = new Vector2f(60);
+            group.children.Add().target = buton;
 
         }
 

@@ -211,6 +211,31 @@ namespace RhubarbEngine.World.ECS
         {
             updateGlobalTrans();
         }
+        [NoSync]
+        [NoSave]
+        public T getFirstComponent<T>() where T : Component
+        {
+            foreach (var item in _components)
+            {
+                if ((T)item != null)
+                {
+                    return (T)item;
+                }
+            }
+            return null;
+        }
+        [NoSync]
+        [NoSave]
+        public IEnumerable<T> getAllComponents<T>() where T : Component
+        {
+            foreach (var item in _components)
+            {
+                if ((T)item != null)
+                {
+                    yield return (T)item;
+                }
+            }
+        }
 
         public void addToRenderQueue(RenderQueue gu, Vector3 playpos, RemderLayers layer)
         {

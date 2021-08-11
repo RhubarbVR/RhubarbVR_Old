@@ -260,7 +260,7 @@ namespace RhubarbEngine.Managers
         public void buildUI(Entity e)
         {
 
-            StaicMainShader shader = e.attachComponent<StaicMainShader>();
+            BasicUnlitShader shader = e.world.staticAssets.basicUnlitShader;
             PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
             InputPlane bmeshcol = e.attachComponent<InputPlane>();
             //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
@@ -307,7 +307,7 @@ namespace RhubarbEngine.Managers
         public Entity AddMesh<T>(Entity ea) where T: ProceduralMesh
         {
             Entity e = ea.addChild();
-            StaicMainShader shader = e.attachComponent<StaicMainShader>();
+            BasicUnlitShader shader = e.world.staticAssets.basicUnlitShader;
             T bmesh = e.attachComponent<T>();
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();

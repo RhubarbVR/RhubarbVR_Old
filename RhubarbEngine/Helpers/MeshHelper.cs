@@ -33,7 +33,7 @@ namespace RhubarbEngine.Helpers
         public static (Entity,T) AddMesh<T>(Entity ea) where T : ProceduralMesh
         {
             Entity e = ea.addChild();
-            StaicMainShader shader = e.attachComponent<StaicMainShader>();
+            BasicUnlitShader shader = e.attachComponent<BasicUnlitShader>();
             T bmesh = e.attachComponent<T>();
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();

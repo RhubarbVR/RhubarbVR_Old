@@ -26,7 +26,7 @@ using RhubarbEngine.Components.Assets;
 namespace RhubarbEngine.Components.Assets
 {
     [Category(new string[] { "Assets" })]
-    public class StaicMainShader : AssetProvider<RShader>,IAsset
+    public class BasicUnlitShader : AssetProvider<RShader>,IAsset
     {
 
         public override void onLoaded()
@@ -59,11 +59,11 @@ void main()
         {
 
         }
-        public StaicMainShader(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
+        public BasicUnlitShader(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
         {
 
         }
-        public StaicMainShader()
+        public BasicUnlitShader()
         {
         }
     }
