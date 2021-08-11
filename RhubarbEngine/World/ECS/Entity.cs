@@ -217,7 +217,7 @@ namespace RhubarbEngine.World.ECS
         {
             foreach (var item in _components)
             {
-                if ((T)item != null)
+                if (item.GetType() == typeof(T))
                 {
                     return (T)item;
                 }

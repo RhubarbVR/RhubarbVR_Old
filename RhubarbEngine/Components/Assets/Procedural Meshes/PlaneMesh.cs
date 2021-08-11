@@ -23,9 +23,9 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         public override void buildSyncObjs(bool newRefIds)
         {
             Width = new Sync<float>(this, newRefIds);
-            Width.value = 1.0f;
+            Width.value = 1f;
             Height = new Sync<float>(this, newRefIds);
-            Height.value = 1.0f;
+            Height.value = 1f;
             Normal = new Sync<Vector3f>(this, newRefIds);
             Normal.value = Vector3f.AxisZ;
             IndicesMap = new Sync<Index2i>(this, newRefIds);

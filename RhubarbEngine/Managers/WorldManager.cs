@@ -282,26 +282,23 @@ namespace RhubarbEngine.Managers
         public void BuildLocalWorld(World.World world)
         {
             world.RootEntity.attachComponent<SimpleSpawn>();
-            Entity e = world.RootEntity.addChild("Gay");
-            Entity edd = world.RootEntity.addChild("Gay");
-            edd.position.value = new Vector3f(1, 1, 1);
-            //buildUI(e);
-            //buildUI(edd);
-           // var a = AddMesh<GenCylMesh>(e);
-            //var ouete = e.attachComponent<RawAudioSource>();
-            //var thing = e.attachComponent<WebBrowser>();
+            Entity floor = world.RootEntity.addChild("Floor");
+            var mit = floor.attachComponent<RMaterial>();
+            mit.Shader.target = world.staticAssets.tilledUnlitShader;
+            var planemesh = floor.attachComponent<PlaneMesh>();
+            var planecol = floor.attachComponent<BoxCollider>();
+            planemesh.Width.value = 1000f;
+            planemesh.Height.value = 1000f;
+            planecol.boxHalfExtents.value = new Vector3f(planemesh.Width.value, planemesh.Height.value, 0.01f);
+            var meshRender = floor.attachComponent<MeshRender>();
+            meshRender.Materials.Add().target = mit;
+            meshRender.Mesh.target = planemesh;
+            Render.Material.Fields.Vec2Field tilefield = mit.getField<Render.Material.Fields.Vec2Field>("Tile", Render.Shader.ShaderType.MainFrag);
+            tilefield.field.value = new Vector2f(500, 500);
 
-            //var oute = e.attachComponent<AudioOutput>();
-            //oute.audioSource.target = ouete;
-            //mit.setValueAtField("Texture", Render.Shader.ShaderType.MainFrag, textue2DFromUrl);
-
-
-            //  rgbainbowDriver.driver.setDriveTarget(field.field);
-            // rgbainbowDriver.speed.value = 50f;
-
-            //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
-            //e.scale.value = new Vector3f(1f);
-
+            GridTextue2D textue2DF = floor.attachComponent<GridTextue2D>();
+            Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+            field.field.target = textue2DF;
         }
 
         public Entity AddMesh<T>(Entity ea) where T: ProceduralMesh
@@ -318,6 +315,7 @@ namespace RhubarbEngine.Managers
             meshRender.Mesh.target = bmesh;
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = textue2DFromUrl;
+
             // rgbainbowDriver.driver.setDriveTarget(field.field);
             // rgbainbowDriver.speed.value = 50f;
             return e;
