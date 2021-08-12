@@ -31,6 +31,7 @@ namespace RhubarbEngine.Components.PrivateSpace
         public SyncRef<ImGUICanvas> taskbarcanvas;
         public SyncRef<ImGUICanvas> startcanvas;
         public Driver<string> dateTextDriver;
+
         public override void buildSyncObjs(bool newRefIds)
         {
             root = new SyncRef<Entity>(this, newRefIds);
@@ -63,13 +64,13 @@ namespace RhubarbEngine.Components.PrivateSpace
             bmesh.Height.value = 0.30f;
             bmesh.Width.value = 0.30f;
             InputPlane bmeshcol = e.attachComponent<InputPlane>();
-            bmeshcol.onFocusLost.Target = startMenuFocusLost;
+            //bmeshcol.onFocusLost.Target = startMenuFocusLost;
+            bmeshcol.size.value = (new Vector2f(bmesh.Width.value, bmesh.Height.value))/2;
             //InputPlane bmeshcol = e.attachComponent<InputPlane>();
-            e.position.value = new Vector3f(-0.5, 0.05, 0.25);
             RMaterial mit = e.attachComponent<RMaterial>();
-            var TaskBar = e.addChild("UI");
-            MeshRender meshRender = TaskBar.attachComponent<MeshRender>();
-            ImGUICanvas imGUICanvas = TaskBar.attachComponent<ImGUICanvas>();
+            MeshRender meshRender = e.attachComponent<MeshRender>();
+            ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
+            e.position.value = new Vector3f(-0.5, 0.05, 0.25);
             imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(150, 150);
             imGUICanvas.imputPlane.target = bmeshcol;
             mit.Shader.target = shader;
@@ -80,12 +81,12 @@ namespace RhubarbEngine.Components.PrivateSpace
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = imGUICanvas;
             startcanvas.target = imGUICanvas;
-            var group = TaskBar.attachComponent<ImGUIBeginGroup>();
-          //  var createCube = TaskBar.attachComponent<ImGUIButton>();
-          //  createCube.label.value = "Create Cube";
-          //  createCube.action.Target = CreateCube;
+            var group = e.attachComponent<ImGUIBeginGroup>();
+            var createCube = e.attachComponent<ImGUIButton>();
+            createCube.label.value = "Create Cube";
+            createCube.action.Target = CreateCube;
             imGUICanvas.element.target = group;
-          //  group.children.Add().target = createCube;
+            group.children.Add().target = createCube;
 
             e.enabled.value = false;
         }

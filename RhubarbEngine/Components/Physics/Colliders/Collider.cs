@@ -63,7 +63,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         private void Enabled_Changed()
         {
-            if (entity.enabled.value && entity.parentEnabled)
+            if (!entity.isEnabled)
             {
                 if (!Added) return;
                 Added = false;

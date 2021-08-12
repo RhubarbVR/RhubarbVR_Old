@@ -54,8 +54,8 @@ namespace RhubarbEngine.World.ECS
 
         public void parentEnabledChange(bool _parentEnabled)
         {
-            if (!enabled.value) return;
             enabledChanged?.Invoke();
+            if (!enabled.value) return;
             if (_parentEnabled != parentEnabled)
             {
                 parentEnabled = _parentEnabled;
