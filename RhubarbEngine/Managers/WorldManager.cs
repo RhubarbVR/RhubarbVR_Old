@@ -335,7 +335,7 @@ namespace RhubarbEngine.Managers
 
             Entity webBrowser = world.RootEntity.addChild("Floor");
             webBrowser.position.value = new Vector3f(0, 4.3, -5);
-            var browser= buildWebBrowser(webBrowser, new Vector2u(1920, 1080), new Vector2f(16 / 2, 9 / 2));
+            var browser= buildWebBrowser(webBrowser, (new Vector2u(1920, 1080))/2, new Vector2f(16 / 2, 9 / 2));
 
 
             AttachSpiningCubes(world.RootEntity.addChild("Cubes"), browser);
