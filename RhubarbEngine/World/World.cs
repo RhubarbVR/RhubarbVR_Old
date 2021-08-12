@@ -188,6 +188,7 @@ namespace RhubarbEngine.World
 
         }
         public Matrix4x4 playerTrans => (userRoot != null)? userRoot.Viewpos : Matrix4x4.CreateScale(1f);
+        public Matrix4x4 headTrans => (userRoot != null) ? userRoot.Headpos : Matrix4x4.CreateScale(1f);
 
         [NoSync]
         [NoSave]

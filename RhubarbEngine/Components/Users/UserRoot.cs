@@ -34,6 +34,8 @@ namespace RhubarbEngine.Components.Users
 
         public Matrix4x4 Viewpos => entity.globalTrans();
 
+        public Matrix4x4 Headpos => Head.target?.globalTrans()?? entity.globalTrans();
+
         public override void buildSyncObjs(bool newRefIds)
         {
             Head = new SyncRef<Entity>(this, newRefIds);

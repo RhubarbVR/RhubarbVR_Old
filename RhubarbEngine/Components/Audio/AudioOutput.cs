@@ -82,7 +82,7 @@ namespace RhubarbEngine.Components.Audio
             var frameInputBuffer = audioSource.target.FrameInputBuffer;
             if (frameInputBuffer == null) return;
             if (frameInputBuffer.Length < engine.audioManager.AudioFrameSizeInBytes) return;
-            Matrix4x4.Decompose(world.playerTrans, out Vector3 sc, out Quaternion ret, out Vector3 trans);
+            Matrix4x4.Decompose(world.headTrans, out Vector3 sc, out Quaternion ret, out Vector3 trans);
             var position = Vector3.Transform((entity.globalPos().ToSystemNumrics() - trans), Quaternion.Inverse(ret));
             var e = new IPL.Vector3(position.X, position.Y, position.Z);
             fixed (byte* ptr = frameInputBuffer)
