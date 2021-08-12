@@ -62,10 +62,20 @@ namespace RhubarbEngine.Components.Interaction
 
         private static float desklength = 0.1f;
 
+        bool setHeadLazerScale = false;
+
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
             if (world.userspace) return;
             if (world.localUser != user.target) return;
+            if((engine.outputType == VirtualReality.OutputType.Screen) && source.value != InteractionSource.HeadLaser)
+            {
+                if (meshDriver.target != null)
+                {
+                    meshDriver.Drivevalue = 0;
+                }
+                return;
+            }
             if ((engine.outputType != VirtualReality.OutputType.Screen) && source.value == InteractionSource.HeadLaser)
             {
                 if (meshDriver.target != null)
@@ -76,10 +86,11 @@ namespace RhubarbEngine.Components.Interaction
             }
             try
             {
-                if(source.value == InteractionSource.HeadLaser)
+                if(source.value == InteractionSource.HeadLaser&& !setHeadLazerScale)
                 {
-                    mesh.target.BaseRadius.value = 0.005f / 10;
-                    mesh.target.TopRadius.value = 0.01f / 10;
+                    mesh.target.BaseRadius.value = 0.005f / 40;
+                    mesh.target.TopRadius.value = 0.01f / 40;
+                    setHeadLazerScale = true;
                 }
                 System.Numerics.Matrix4x4.Decompose((System.Numerics.Matrix4x4.CreateTranslation((rayderection.value * distances.value).ToSystemNumrics()) * entity.globalTrans()), out System.Numerics.Vector3 vs, out System.Numerics.Quaternion vr, out System.Numerics.Vector3 val);
                 System.Numerics.Matrix4x4.Decompose(entity.globalTrans(), out System.Numerics.Vector3 vsg, out System.Numerics.Quaternion vrg, out System.Numerics.Vector3 global);
@@ -140,12 +151,6 @@ namespace RhubarbEngine.Components.Interaction
             var a3 = Vector3d.Cross(f1, f2).magnitude / a; 
             var uv = (p1uv * (float)a1) + (p2uv * (float)a2) + (p3uv * (float)a3);
             return uv;
-        }
-
-        public static Vector3d getNearestPosOnTry(Vector3d p1, Vector3d p2, Vector3d p3, Vector3d point)
-        {
-
-            return new Vector3d();
         }
 
         private bool ProossesMeshInputPlane(ClosestRayResultCallback cb)

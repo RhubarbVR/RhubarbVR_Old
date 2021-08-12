@@ -333,6 +333,7 @@ namespace RhubarbEngine.Components.Interaction
         public override void onLoaded()
         {
             base.onLoaded();
+            frameInputBuffer = new RollBuffer(engine.audioManager.AudioFrameSizeInBytes);
             if (!Cef.IsInitialized) // Check before init
             {
                 Console.WriteLine("Init Cef");
@@ -701,11 +702,9 @@ namespace RhubarbEngine.Components.Interaction
 
         public WebBrowser(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
-            frameInputBuffer = new RollBuffer(engine.audioManager.AudioFrameSizeInBytes);
         }
         public WebBrowser()
         {
-            frameInputBuffer = new RollBuffer(engine.audioManager.AudioFrameSizeInBytes);
         }
     }
 }

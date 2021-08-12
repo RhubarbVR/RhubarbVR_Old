@@ -57,6 +57,12 @@ namespace RhubarbEngine
                 engine.renderManager = new Managers.RenderManager();
                 engine.renderManager.initialize(engine);
 
+
+                intphase = "Audio Manager";
+                engine.logger.Log("Starting Audio Manager:");
+                engine.audioManager = new Managers.AudioManager();
+                engine.audioManager.initialize(engine);
+
                 intphase = "Net Api Manager";
                 engine.logger.Log("Starting Net Api Manager:");
                 engine.netApiManager = new Managers.NetApiManager();
@@ -65,11 +71,6 @@ namespace RhubarbEngine
                     engine.netApiManager.token = token;
                 }
                 engine.netApiManager.initialize(engine);
-
-                intphase = "Audio Manager";
-                engine.logger.Log("Starting Audio Manager:");
-                engine.audioManager = new Managers.AudioManager();
-                engine.audioManager.initialize(engine);
 
                 intphase = "World Manager";
                 engine.logger.Log("Starting World Manager:");

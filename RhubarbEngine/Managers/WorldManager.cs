@@ -257,7 +257,7 @@ namespace RhubarbEngine.Managers
         }
 
 
-        public void buildUI(Entity e)
+        public ImGUICanvas buildUI(Entity e)
         {
 
             BasicUnlitShader shader = e.world.staticAssets.basicUnlitShader;
@@ -269,7 +269,6 @@ namespace RhubarbEngine.Managers
             MeshRender meshRender = e.attachComponent<MeshRender>();
             ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
             ImGUIInputText imGUIText = e.attachComponent<ImGUIInputText>();
-            Textue2DFromUrl urr = e.attachComponent<Textue2DFromUrl>();
             imGUICanvas.imputPlane.target = bmeshcol;
             imGUICanvas.element.target = imGUIText;
             mit.Shader.target = shader;
@@ -277,6 +276,40 @@ namespace RhubarbEngine.Managers
             meshRender.Mesh.target = bmesh;
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = imGUICanvas;
+            return imGUICanvas;
+        }
+
+        public WebBrowser buildWebBrowser(Entity e, Vector2u pixsize, Vector2f size, bool globalAudio = false)
+        {
+            BasicUnlitShader shader = e.world.staticAssets.basicUnlitShader;
+            PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
+            InputPlane bmeshcol = e.attachComponent<InputPlane>();
+            bmesh.Width.value = size.x;
+            bmesh.Height.value = size.y;
+            bmeshcol.size.value = size / 2;
+            //e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
+            e.rotation.value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
+            RMaterial mit = e.attachComponent<RMaterial>();
+            MeshRender meshRender = e.attachComponent<MeshRender>();
+            WebBrowser imGUICanvas = e.attachComponent<WebBrowser>();
+            bmeshcol.pixelSize.value = imGUICanvas.scale.value = pixsize;
+            imGUICanvas.imputPlane.target = bmeshcol;
+            mit.Shader.target = shader;
+            meshRender.Materials.Add().target = mit;
+            meshRender.Mesh.target = bmesh;
+            Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+            field.field.target = imGUICanvas;
+            if (!globalAudio)
+            {
+                var audio = e.attachComponent<AudioOutput>();
+                audio.audioSource.target = imGUICanvas;
+                imGUICanvas.globalAudio.value = false;
+            }
+            else
+            {
+                imGUICanvas.globalAudio.value = true;
+            }
+            return imGUICanvas;
         }
 
         public void BuildLocalWorld(World.World world)
@@ -299,7 +332,95 @@ namespace RhubarbEngine.Managers
             GridTextue2D textue2DF = floor.attachComponent<GridTextue2D>();
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = textue2DF;
+
+            Entity webBrowser = world.RootEntity.addChild("Floor");
+            webBrowser.position.value = new Vector3f(0, 4.3, -5);
+            var browser= buildWebBrowser(webBrowser, new Vector2u(1920, 1080), new Vector2f(16 / 2, 9 / 2));
+
+
+            AttachSpiningCubes(world.RootEntity.addChild("Cubes"), browser);
+
+
+
+
         }
+
+        public void AttachSpiningCubes(Entity root,AssetProvider<RTexture2D> textue2D)
+        {
+            var speed = 0.5f;
+            var group1 = root.addChild("group1");
+            group1.attachComponent<Spinner>().speed.value = new Vector3f(speed, 0, 0);
+            var group2 = root.addChild("group2");
+            group2.attachComponent<Spinner>().speed.value = new Vector3f(0, speed, 0);
+            var group3 = root.addChild("group3");
+            group3.attachComponent<Spinner>().speed.value = new Vector3f(0, 0, speed/2);
+            var group4 = root.addChild("group4");
+            group4.attachComponent<Spinner>().speed.value = new Vector3f(speed, speed, 0);
+            var group5 = root.addChild("group5");
+            group5.attachComponent<Spinner>().speed.value = new Vector3f(speed/2, speed, speed);
+            var group6 = root.addChild("group6");
+            group6.attachComponent<Spinner>().speed.value = new Vector3f(speed, 0, speed/2);
+            var group11 = root.addChild("group1");
+            group11.attachComponent<Spinner>().speed.value = new Vector3f(-speed, 0, 0);
+            var group21 = root.addChild("group2");
+            group21.attachComponent<Spinner>().speed.value = new Vector3f(0, -speed, 0);
+            var group31 = root.addChild("group3");
+            group31.attachComponent<Spinner>().speed.value = new Vector3f(0, 0, -speed);
+            var group41 = root.addChild("group4");
+            group41.attachComponent<Spinner>().speed.value = new Vector3f(-speed, -speed/2, 0);
+            var group51 = root.addChild("group5");
+            group51.attachComponent<Spinner>().speed.value = new Vector3f(-speed/2, -speed, -speed);
+            var group61 = root.addChild("group6");
+            group61.attachComponent<Spinner>().speed.value = new Vector3f(-speed, 0, -speed);
+
+            
+            BasicUnlitShader shader = root.world.staticAssets.basicUnlitShader;
+            BoxMesh bmesh = root.attachComponent<BoxMesh>();
+            RMaterial mit = root.attachComponent<RMaterial>();
+            mit.Shader.target = shader;
+            Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+            field.field.target = textue2D;
+            BuildGroup(bmesh, mit, group1);
+            BuildGroup(bmesh, mit, group2);
+            BuildGroup(bmesh, mit, group3);
+            BuildGroup(bmesh, mit, group4);
+            BuildGroup(bmesh, mit, group5);
+            BuildGroup(bmesh, mit, group6);
+            BuildGroup(bmesh, mit, group11);
+            BuildGroup(bmesh, mit, group21);
+            BuildGroup(bmesh, mit, group31);
+            BuildGroup(bmesh, mit, group41);
+            BuildGroup(bmesh, mit, group51);
+            BuildGroup(bmesh, mit, group61);
+
+        }
+        static Random random = new Random();
+        static float NextFloat()
+        {
+            var buffer = new byte[4];
+            random.NextBytes(buffer);
+            return BitConverter.ToSingle(buffer, 0);
+        }
+        public void BuildGroup(BoxMesh bmesh, RMaterial mit, Entity entity)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                var cubeholder = entity.addChild("CubeHolder");
+                cubeholder.rotation.value = Quaternionf.CreateFromEuler(NextFloat(), NextFloat(), NextFloat());
+                var cube = cubeholder.addChild("Cube");
+                cube.position.value = new Vector3f(0, 15, 0);
+                cube.scale.value = new Vector3f(0.5f);
+                attachRender(bmesh, mit, cube);
+            }
+        }
+
+        public void attachRender(BoxMesh bmesh, RMaterial mit,Entity entity)
+        {
+            MeshRender meshRender = entity.attachComponent<MeshRender>();
+            meshRender.Materials.Add().target = mit;
+            meshRender.Mesh.target = bmesh;
+        }
+
 
         public Entity AddMesh<T>(Entity ea) where T: ProceduralMesh
         {
@@ -316,8 +437,7 @@ namespace RhubarbEngine.Managers
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = textue2DFromUrl;
 
-            // rgbainbowDriver.driver.setDriveTarget(field.field);
-            // rgbainbowDriver.speed.value = 50f;
+
             return e;
         }
 

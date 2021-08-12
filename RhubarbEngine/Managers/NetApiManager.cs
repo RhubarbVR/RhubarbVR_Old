@@ -152,7 +152,10 @@ namespace RhubarbEngine.Managers
 
         public void Close()
         {
-            statusApi.StatusClearstatusGet(token);
+            if (islogin)
+            {
+                statusApi.StatusClearstatusGet(token);
+            }
         }
     }
 }

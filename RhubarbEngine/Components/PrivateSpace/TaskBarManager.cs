@@ -81,11 +81,11 @@ namespace RhubarbEngine.Components.PrivateSpace
             field.field.target = imGUICanvas;
             startcanvas.target = imGUICanvas;
             var group = TaskBar.attachComponent<ImGUIBeginGroup>();
-            var createCube = TaskBar.attachComponent<ImGUIButton>();
-            createCube.label.value = "Create Cube";
-            createCube.action.Target = CreateCube;
+          //  var createCube = TaskBar.attachComponent<ImGUIButton>();
+          //  createCube.label.value = "Create Cube";
+          //  createCube.action.Target = CreateCube;
             imGUICanvas.element.target = group;
-            group.children.Add().target = createCube;
+          //  group.children.Add().target = createCube;
 
             e.enabled.value = false;
         }
