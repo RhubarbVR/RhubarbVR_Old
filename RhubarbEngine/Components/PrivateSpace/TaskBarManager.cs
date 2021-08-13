@@ -94,6 +94,15 @@ namespace RhubarbEngine.Components.PrivateSpace
         private void CreateCube()
         {
             logger.Log("Create Cube");
+            World.World createWorld = world.worldManager.focusedWorld ?? world;
+            Entity User = createWorld.userRoot.entity;
+            Entity par = User.parent.target;
+            var (cube, mesh) = Helpers.MeshHelper.AddMesh<BoxMesh>(par, "Cube");
+            var headPos = createWorld.userRoot.Headpos;
+            var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0,-1,-5));
+            cube.setGlobalTrans(move*headPos);
+            var col = cube.attachComponent<BoxCollider>();
+            cube.attachComponent<Grabbable>();
         }
 
         public override void OnAttach()

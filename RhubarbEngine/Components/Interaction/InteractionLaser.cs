@@ -32,6 +32,8 @@ namespace RhubarbEngine.Components.Interaction
 
         public SyncRef<CylinderMesh> mesh;
 
+        public SyncRef<GrabbableHolder> grabholder;
+
         public Driver<float> meshDriver;
 
         public override void OnAttach()
@@ -45,6 +47,8 @@ namespace RhubarbEngine.Components.Interaction
             m.BaseRadius.value = 0.005f;
             m.TopRadius.value = 0.01f;
             mesh.target = m;
+            grabholder.target = entity.attachComponent<GrabbableHolder>();
+            grabholder.target.laser.target = this;
         }
 
         public override void buildSyncObjs(bool newRefIds)
@@ -58,6 +62,7 @@ namespace RhubarbEngine.Components.Interaction
             user = new SyncRef<User>(this, newRefIds);
             meshDriver = new Driver<float>(this, newRefIds);
             mesh = new SyncRef<CylinderMesh>(this, newRefIds);
+            grabholder = new SyncRef<GrabbableHolder>(this,newRefIds);
         }
 
         private static float desklength = 0.1f;
@@ -135,9 +140,58 @@ namespace RhubarbEngine.Components.Interaction
                     {
                         return ProossesMeshInputPlane(cb);
                     }
+                    else if(typeof(Collider).IsAssignableFrom(type))
+                    {
+                        return ProssesCollider(cb);
+                    }
                 }
                 return false;
             }
+        }
+
+        public bool ProssesCollider(ClosestRayResultCallback cb)
+        {
+            Collider col = (Collider)cb.CollisionObject.UserObject;
+            if(col == null)
+            {
+                return false;
+            }
+            Entity ent = col.entity;
+            if (HasClicked())
+            {
+                ent.SendClick();
+                switch (source.value)
+                {
+                    case InteractionSource.None:
+                        break;
+                    case InteractionSource.LeftLaser:
+                        ent.SendTriggerTouching(input.TriggerTouching(Input.Creality.Left));
+                        ent.SendSecondary(input.SecondaryPress(Input.Creality.Left));
+                        ent.SendPrimary(input.PrimaryPress(Input.Creality.Left));
+                        ent.SendGrip(grabholder.target, input.GrabPress(Input.Creality.Left));
+                        break;
+                    case InteractionSource.LeftFinger:
+                        break;
+                    case InteractionSource.RightLaser:
+                        ent.SendTriggerTouching(input.TriggerTouching(Input.Creality.Right));
+                        ent.SendSecondary(input.SecondaryPress(Input.Creality.Right));
+                        ent.SendPrimary(input.PrimaryPress(Input.Creality.Right));
+                        ent.SendGrip(grabholder.target, input.GrabPress(Input.Creality.Right));
+                        break;
+                    case InteractionSource.RightFinger:
+                        break;
+                    case InteractionSource.HeadLaser:
+                        ent.SendSecondary(input.mainWindows.GetMouseButtonDown(MouseButton.Middle));
+                        ent.SendPrimary(input.mainWindows.GetMouseButtonDown(MouseButton.Left));
+                        ent.SendGrip(grabholder.target, input.mainWindows.GetMouseButtonDown(MouseButton.Right));
+                        break;
+                    case InteractionSource.HeadFinger:
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return true;
         }
 
         public static Vector2f getUVPosOnTry(Vector3d p1, Vector2f p1uv, Vector3d p2, Vector2f p2uv, Vector3d p3, Vector2f p3uv, Vector3d point)

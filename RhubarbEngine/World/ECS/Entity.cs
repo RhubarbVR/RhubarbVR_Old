@@ -9,10 +9,11 @@ using RhubarbEngine.Components;
 using RhubarbEngine.Components.Rendering;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using System.Numerics;
+using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.World.ECS
 {
-    public class Entity : Worker
+    public class Entity : Worker,IWorldObject
     {
         public Sync<Vector3f> position;
 
@@ -24,7 +25,15 @@ namespace RhubarbEngine.World.ECS
 
         private Matrix4x4 cashedLocalMatrix = Matrix4x4.CreateScale(Vector3.One);
 
+        [NoSave]
+        [NoSync]
+        private Entity internalParent;
+
         public SyncRef<Entity> parent;
+
+        [NoSave]
+        [NoSync]
+        IWorldObject IWorldObject.Parent => internalParent?._children??(IWorldObject)world;
 
         public Sync<string> name;
 
@@ -42,6 +51,52 @@ namespace RhubarbEngine.World.ECS
 
         public event Action enabledChanged;
 
+        public event Action onClick;
+
+        public event Action<GrabbableHolder> onGrip;
+
+        public event Action onPrimary;
+
+        public event Action onSecondary;
+
+        public event Action onTriggerTouching;
+
+        public void SetParent(Entity entity,bool preserverGlobal = true)
+        {
+            Matrix4x4 mach = cashedGlobalTrans;
+            parent.target = entity;
+            if (preserverGlobal)
+            {
+               setGlobalTrans(mach);
+            }
+        }
+
+        public void SendTriggerTouching(bool click = true)
+        {
+            if (!click) return;
+            onTriggerTouching?.Invoke();
+        }
+
+        public void SendClick(bool click = true)
+        {
+            if (!click) return;
+            onClick?.Invoke();
+        }
+        public void SendGrip(GrabbableHolder holder, bool click = true)
+        {
+            if (!click) return;
+            onGrip?.Invoke(holder);
+        }
+        public void SendPrimary(bool click = true)
+        {
+            if (!click) return;
+            onPrimary?.Invoke();
+        }
+        public void SendSecondary(bool click = true)
+        {
+            if (!click) return;
+            onSecondary?.Invoke();
+        }
         public bool isEnabled => parentEnabled && enabled.value;
 
         private void LoadListObject()
@@ -54,7 +109,6 @@ namespace RhubarbEngine.World.ECS
 
         public void parentEnabledChange(bool _parentEnabled)
         {
-            enabledChanged?.Invoke();
             if (!enabled.value) return;
             if (_parentEnabled != parentEnabled)
             {
@@ -65,6 +119,7 @@ namespace RhubarbEngine.World.ECS
                 }
             }
             LoadListObject();
+            enabledChanged?.Invoke();
         }
 
         public void onPersistenceChange(IChangeable newValue)
@@ -99,7 +154,7 @@ namespace RhubarbEngine.World.ECS
 
         public Vector3f up { get
             {
-                var mat = globalTrans();
+                var mat = cashedGlobalTrans;
                 var e = new Vector3f(mat.M11 * Vector3f.AxisY.x + mat.M12 * Vector3f.AxisY.y + mat.M13 * Vector3f.AxisY.z, mat.M21 * Vector3f.AxisY.x + mat.M22 * Vector3f.AxisY.y + mat.M23 * Vector3f.AxisY.z, mat.M31 * Vector3f.AxisY.x + mat.M32 * Vector3f.AxisY.y + mat.M33 * Vector3f.AxisY.z);
                 return e;
 
@@ -114,16 +169,18 @@ namespace RhubarbEngine.World.ECS
         public void setGlobalTrans(Matrix4x4 newtrans)
         {
             Matrix4x4 parentMatrix = Matrix4x4.CreateScale(Vector3.One);
-            if (parent.target != null)
+            if (internalParent != null)
             {
-                parentMatrix = parent.target.globalTrans();
+                parentMatrix = internalParent.globalTrans();
             }
-            Matrix4x4 newlocal = parentMatrix * newtrans;
+            Matrix4x4.Invert(parentMatrix, out Matrix4x4 invparentMatrix);
+            Matrix4x4 newlocal = newtrans * invparentMatrix;
             Matrix4x4.Decompose(newlocal, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
-            position.value = new Vector3f(newtranslation.X, newtranslation.Y, newtranslation.Z);
-            rotation.value = new Quaternionf(newrotation.X, newrotation.Y, newrotation.Z, newrotation.W);
-            scale.value = new Vector3f(newscale.X, newscale.Y, newscale.Z);
+            position.setValueNoOnChange(new Vector3f(newtranslation.X, newtranslation.Y, newtranslation.Z));
+            rotation.setValueNoOnChange(new Quaternionf(newrotation.X, newrotation.Y, newrotation.Z, newrotation.W));
+            scale.setValueNoOnChange(new Vector3f(newscale.X, newscale.Y, newscale.Z));
             cashedGlobalTrans = newtrans;
+            updateGlobalTrans();
         }
 
         public Action<Matrix4x4> GlobalTransformChange;
@@ -150,6 +207,7 @@ namespace RhubarbEngine.World.ECS
             _components = new SyncAbstractObjList<Component>(this, newRefIds);
             enabled.value = true;
             parent = new SyncRef<Entity>(this, newRefIds);
+            parent.Changed += Parent_Changed;
             remderlayer = new Sync<int>(this, newRefIds);
             remderlayer.value = (int)RemderLayers.normal;
             position.Changed += onTransChange;
@@ -158,6 +216,49 @@ namespace RhubarbEngine.World.ECS
             enabled.Changed += onEnableChange;
             persistence.Changed += onPersistenceChange;
         }
+
+        private void Parent_Changed(IChangeable obj)
+        {
+            if (world.RootEntity == this) return;
+            if (parent.target == internalParent) return;
+            if(internalParent == null)
+            {
+                internalParent = parent.target;
+                return;
+            }
+            if (parent.target == null) {
+                parent.target = world.RootEntity;
+                return;
+            }
+            if(world != parent.target.world)
+            {
+                logger.Log("tried to set parent from another world");
+                return;
+            }
+            if (!parent.target.CheckIfParented(this))
+            {
+                parent.target._children.AddInternal(this);
+                internalParent._children.RemoveInternal(this);
+                internalParent = parent.target;
+                parentEnabledChange(internalParent.isEnabled);
+                updateGlobalTrans();
+            }
+            else
+            {
+                parent.target = internalParent;
+            }
+        }
+        public bool CheckIfParented(Entity entity)
+        {
+            if(entity == this)
+            {
+                return true;
+            }
+            else
+            {
+                return internalParent?.CheckIfParented(entity)??false;
+            }
+        }
         private void onTransChange(IChangeable newValue)
         {
             updateGlobalTrans();
@@ -165,19 +266,19 @@ namespace RhubarbEngine.World.ECS
 
         private void onEnableChange(IChangeable newValue)
         {
-            enabledChanged?.Invoke();
             foreach (Entity item in _children)
             {
                 item.parentEnabledChange(enabled.value);
             }
             LoadListObject();
+            enabledChanged?.Invoke();
         }
         private void updateGlobalTrans()
         {
             Matrix4x4 parentMatrix = Matrix4x4.CreateScale(Vector3.One);
-            if (parent.target != null)
+            if (internalParent != null)
             {
-                parentMatrix = parent.target.globalTrans();
+                parentMatrix = internalParent.globalTrans();
             }
             Matrix4x4 localMatrix = Matrix4x4.CreateScale(scale.value.x, scale.value.y, scale.value.z) * Matrix4x4.CreateFromQuaternion(rotation.value.ToSystemNumric()) * Matrix4x4.CreateTranslation(position.value.x, position.value.y, position.value.z);
             cashedGlobalTrans = localMatrix * parentMatrix;
@@ -230,7 +331,7 @@ namespace RhubarbEngine.World.ECS
         {
             foreach (var item in _components)
             {
-                if ((T)item != null)
+                if (typeof(T).IsAssignableFrom(item.GetType()))
                 {
                     yield return (T)item;
                 }

@@ -22,14 +22,21 @@ namespace RhubarbEngine.World
         }
         public IEnumerator<T> GetEnumerator()
         {
-            for (int i = 0; i < _synclist.Count; i++)
-            {
-                yield return this[i];
-            }
+            return _synclist.GetEnumerator();
         }
         public int Count()
         {
             return _synclist.Count;
+        }
+
+        public void AddInternal(T value)
+        {
+            _synclist.Add(value);
+        }
+
+        public void RemoveInternal(T value)
+        {
+            _synclist.Remove(value);
         }
 
         public T Add(bool Refid = true)

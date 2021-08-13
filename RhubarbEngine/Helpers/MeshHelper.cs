@@ -30,10 +30,10 @@ namespace RhubarbEngine.Helpers
 {
     public static class MeshHelper
     {
-        public static (Entity,T) AddMesh<T>(Entity ea) where T : ProceduralMesh
+        public static (Entity,T) AddMesh<T>(Entity ea,string name="Entity") where T : ProceduralMesh
         {
-            Entity e = ea.addChild();
-            BasicUnlitShader shader = e.attachComponent<BasicUnlitShader>();
+            Entity e = ea.addChild(name);
+            BasicUnlitShader shader = e.world.staticAssets.basicUnlitShader;
             T bmesh = e.attachComponent<T>();
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
@@ -44,8 +44,7 @@ namespace RhubarbEngine.Helpers
             meshRender.Mesh.target = bmesh;
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = textue2DFromUrl;
-            // rgbainbowDriver.driver.setDriveTarget(field.field);
-            // rgbainbowDriver.speed.value = 50f;
+
             return (e,bmesh);
         }
     }

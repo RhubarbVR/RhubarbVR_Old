@@ -83,6 +83,16 @@ namespace RhubarbEngine.World
             }
         }
 
+        public void setValueNoOnChange(T value)
+        {
+            _value = value;
+            if (!isDriven)
+            {
+                UpdateValue();
+            }
+            UpdatedValue();
+        }
+
         private void UpdateValue()
         {
             DataNodeGroup obj = new DataNodeGroup();

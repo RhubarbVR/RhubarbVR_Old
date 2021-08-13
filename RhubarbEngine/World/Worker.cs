@@ -101,7 +101,7 @@ namespace RhubarbEngine.World
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
             {
-                if (typeof(IChangeable).IsAssignableFrom(field.FieldType))
+                if (typeof(IChangeable).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0)))
                 {
                     ((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
                 }
