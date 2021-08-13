@@ -366,17 +366,17 @@ namespace RhubarbEngine.Components.Interaction
                 case InteractionSource.None:
                     break;
                 case InteractionSource.LeftLaser:
-                    return input.TriggerTouching(Input.Creality.Left) | input.SecondaryPress(Input.Creality.Left) | input.PrimaryPress(Input.Creality.Left);
+                    return input.TriggerTouching(Input.Creality.Left) | input.GrabPress(Input.Creality.Left) | input.PrimaryPress(Input.Creality.Left);
                     break;
                 case InteractionSource.LeftFinger:
                     break;
                 case InteractionSource.RightLaser:
-                    return input.TriggerTouching(Input.Creality.Right) | input.SecondaryPress(Input.Creality.Right) | input.PrimaryPress(Input.Creality.Right);
+                    return input.TriggerTouching(Input.Creality.Right) | input.GrabPress(Input.Creality.Right) | input.PrimaryPress(Input.Creality.Right);
                     break;
                 case InteractionSource.RightFinger:
                     break;
                 case InteractionSource.HeadLaser:
-                    return engine.inputManager.mainWindows.GetMouseButtonDown(MouseButton.Right)| engine.inputManager.mainWindows.GetMouseButtonDown(MouseButton.Left) | engine.inputManager.mainWindows.GetMouseButtonDown(MouseButton.Middle);
+                    return (engine.inputManager.mainWindows.GetMouseButtonDown(MouseButton.Right))| engine.inputManager.mainWindows.GetMouseButtonDown(MouseButton.Left) | engine.inputManager.mainWindows.GetMouseButtonDown(MouseButton.Middle);
                     break;
                 case InteractionSource.HeadFinger:
                     break;

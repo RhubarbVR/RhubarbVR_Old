@@ -615,7 +615,6 @@ namespace RhubarbEngine.Components.Interaction
                 k.Type = (item.Down) ? KeyEventType.KeyDown : KeyEventType.KeyUp;
                 k.IsSystemKey = false;
                 browser.GetBrowser().GetHost().SendKeyEvent(k);
-                Console.WriteLine(item.ToString());
             }
             foreach (var item in imp.KeyCharPresses)
             {

@@ -169,7 +169,7 @@ namespace RhubarbEngine.VirtualReality
         public void updateInput()
         {
             Vector2 mouseDelta = default;
-            if ((_eng.inputManager.mainWindows.GetMouseButton(MouseButton.Left) || _eng.inputManager.mainWindows.GetMouseButton(MouseButton.Right)))
+            if (_eng.inputManager.mainWindows.GetKeyDown(Key.Tab))
             {
                 if (!_mousePressed)
                 {
@@ -178,19 +178,22 @@ namespace RhubarbEngine.VirtualReality
                     Sdl2Native.SDL_ShowCursor(0);
                     Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.mainWindow.window.SdlWindowHandle, true);
                 }
+                else
+                {
+                    Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
+                    Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.mainWindow.window.SdlWindowHandle, false);
+                    Sdl2Native.SDL_ShowCursor(1);
+                    _mousePressed = false;
+                }
                 mouseDelta = _mousePressedPos - _eng.inputManager.mainWindows.MousePosition ;
                 Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
-                
-
             }
             else if (_mousePressed)
             {
+                mouseDelta = _mousePressedPos - _eng.inputManager.mainWindows.MousePosition;
                 Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
-                Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.mainWindow.window.SdlWindowHandle, false);
-                Sdl2Native.SDL_ShowCursor(1);
-                _mousePressed = false;
             }
-            if(mouseDelta != default)
+            if (mouseDelta != default)
             {
                 HorizontalAngle += (mouseDelta.X * 0.002f);
                 VerticalAngle = Math.Clamp(VerticalAngle + (mouseDelta.Y * 0.002f), VerticalMin/90, VerticalMax/90);

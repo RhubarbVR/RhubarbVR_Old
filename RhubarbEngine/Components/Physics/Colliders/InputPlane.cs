@@ -32,7 +32,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
         public SyncDelegate onFocusLost;
         public IReadOnlyList<KeyEvent> KeyEvents { get { if (!focused) return new List<KeyEvent>(); return input.mainWindows.FrameSnapshot.KeyEvents; } }
 
-        public IReadOnlyList<MouseEvent> MouseEvents { get { if (!focused) return new List<MouseEvent>(); return input.mainWindows.FrameSnapshot.MouseEvents; } }
+        public IReadOnlyList<MouseEvent> MouseEvents { get { if (isNotTakingInput) return new List<MouseEvent>(); return input.mainWindows.FrameSnapshot.MouseEvents; } }
 
         public IReadOnlyList<char> KeyCharPresses { get { if (!focused) return new List<Char>(); return input.mainWindows.FrameSnapshot.KeyCharPresses;  } }
 
@@ -54,13 +54,14 @@ namespace RhubarbEngine.Components.Physics.Colliders
             if (StopMousePos) return;
             if (sourc != val) return;
             mousePosition = pos;
+            hover = 0;
         }
 
         public float WheelDelta
         {
             get
             {
-                if (!focused) return 0f;
+                if (isNotTakingInput) return 0f;
                 return input.mainWindows.FrameSnapshot.WheelDelta;
             }
         }
@@ -70,6 +71,11 @@ namespace RhubarbEngine.Components.Physics.Colliders
         public InteractionSource source => val;
 
         private bool _focused = false;
+
+        public bool isNotTakingInput => (!focused || (hover>3));
+
+
+        private byte hover = 0;
 
         public bool focused => _focused;
 
@@ -96,10 +102,26 @@ namespace RhubarbEngine.Components.Physics.Colliders
             BuildShape();
         }
 
+        public override void CommonUpdate(DateTime startTime, DateTime Frame)
+        {
+            base.CommonUpdate(startTime, Frame);
+            if (hover > 3) return;
+            hover++;
+        }
+
         public override void onLoaded()
         {
             base.onLoaded();
             BuildShape();
+            entity.enabledChanged += Entity_enabledChanged;
+        }
+
+        private void Entity_enabledChanged()
+        {
+            if ((!entity.isEnabled)&&focused)
+            {
+                Removefocused();
+            }
         }
 
         public override void BuildShape()
@@ -110,7 +132,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
         public bool IsMouseDown(MouseButton button)
         {
             if (StopMousePos) return false;
-            if (!focused) return false;
+            if (isNotTakingInput) return false;
             switch (source)
             {
                 case InteractionSource.None:
@@ -122,10 +144,10 @@ namespace RhubarbEngine.Components.Physics.Colliders
                             return input.PrimaryPress(Input.Creality.Left);
                             break;
                         case MouseButton.Middle:
-                            return input.TriggerTouching(Input.Creality.Left);
+                            return input.SecondaryPress(Input.Creality.Left);
                             break;
                         case MouseButton.Right:
-                            return input.SecondaryPress(Input.Creality.Left);
+                            return input.GrabPress(Input.Creality.Left);
                             break;
                         case MouseButton.Button1:
                             break;
@@ -160,10 +182,10 @@ namespace RhubarbEngine.Components.Physics.Colliders
                             return input.PrimaryPress(Input.Creality.Right);
                             break;
                         case MouseButton.Middle:
-                            return input.TriggerTouching(Input.Creality.Right);
+                            return input.SecondaryPress(Input.Creality.Right);
                             break;
                         case MouseButton.Right:
-                            return input.SecondaryPress(Input.Creality.Right);
+                            return input.GrabPress(Input.Creality.Right);
                             break;
                         case MouseButton.Button1:
                             break;
