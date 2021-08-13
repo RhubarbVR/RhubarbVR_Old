@@ -52,6 +52,10 @@ namespace RhubarbEngine.Components.Interaction
                         }
                     }
                 }
+                else
+                {
+                    world.lastHolder = this;
+                }
             }
         }
 

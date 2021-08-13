@@ -72,7 +72,6 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         public bool isNotTakingInput => (!focused || (hover > 3));
 
-
         private byte hover = 0;
 
         private bool _focused = false;

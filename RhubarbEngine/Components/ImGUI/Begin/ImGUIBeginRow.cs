@@ -43,7 +43,6 @@ namespace RhubarbEngine.Components.ImGUI
                 item.target?.ImguiRender(imGuiRenderer);
                 ImGui.NextColumn();
             }
-            ImGui.End();
         }
     }
 }

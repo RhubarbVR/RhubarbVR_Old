@@ -32,18 +32,32 @@ namespace RhubarbEngine.World
         public void AddInternal(T value)
         {
             _synclist.Add(value);
+            value.onDispose += Value_onDispose;
+        }
+
+        private void Value_onDispose(Worker worker)
+        {
+            try
+            {
+                _synclist.Remove((T)worker);
+            }
+            catch
+            {
+
+            }
         }
 
         public void RemoveInternal(T value)
         {
             _synclist.Remove(value);
+            value.onDispose -= Value_onDispose;
         }
 
         public T Add(bool Refid = true)
         {
             T a = new T();
             a.initialize(this.world, this, Refid);
-            _synclist.Add(a);
+            AddInternal(a);
             if (Refid)
             {
                 netAdd(a);

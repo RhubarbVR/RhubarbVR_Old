@@ -45,6 +45,10 @@ namespace RhubarbEngine.Components.ImGUI
 
         private bool UIloaded = false;
 
+        public SyncDelegate onClose;
+        public SyncDelegate onHeaderGrab;
+        public SyncDelegate onHeaderClick;
+
         public RenderFrequency renderFrac => renderFrequency.value;
 
         public override void buildSyncObjs(bool newRefIds)
@@ -59,12 +63,16 @@ namespace RhubarbEngine.Components.ImGUI
             name = new Sync<string>(this, newRefIds);
             noCloseing = new Sync<bool>(this, newRefIds);
             noBackground = new Sync<bool>(this, newRefIds);
-            noKeyboard = new Sync<bool>(this,newRefIds);
+            noKeyboard = new Sync<bool>(this, newRefIds);
+            onClose = new SyncDelegate(this, newRefIds);
+            onHeaderClick = new SyncDelegate(this, newRefIds);
+            onHeaderGrab = new SyncDelegate(this, newRefIds);
         }
 
         private void onScaleChange(IChangeable val)
         {
-            if(framebuffer != null && igr != null && UIloaded)
+            if (UIcommandList == null) return;
+            if(((framebuffer != null) && (igr != null) && UIloaded))
             {
                 UIloaded = false;
                 load(null);
@@ -101,8 +109,9 @@ namespace RhubarbEngine.Components.ImGUI
         private  void loadUI()
         {
             try
-            { 
+            {
                 logger.Log("Loading ui");
+                if (scale.value.x < 2 || scale.value.y < 2) throw new Exception("UI too Small");
                 framebuffer = CreateFramebuffer(scale.value.x, scale.value.y);
                 igr = new ImGuiRenderer(engine.renderManager.gd, framebuffer.OutputDescription, (int)scale.value.x, (int)scale.value.y, ColorSpaceHandling.Linear);
                 UIloaded = true;
@@ -133,37 +142,48 @@ namespace RhubarbEngine.Components.ImGUI
                 return false;
             }
         }
-
         private void ImGuiUpdate()
         {
-            if (element.target != null)
+            var ui = ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize;
+            if (noBackground.value)
             {
-                var ui = ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize;
-                if (noBackground.value)
+                ui |= ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoTitleBar;
+            }
+            bool val = false;
+            bool e = true;
+            if (!noCloseing.value)
+            {
+                val = ImGui.Begin(name.value ?? "Null", ref e, ui);
+            }
+            else
+            {
+                val = ImGui.Begin(name.value ?? "Null", ui);
+            }
+            if (val)
+            {
+                ImGui.SetWindowPos(Vector2.Zero);
+                ImGui.SetWindowSize(new Vector2(scale.value.x, scale.value.y));
+                if (element.target != null)
                 {
-                    ui |= ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoTitleBar;
-                }
-                if (!noCloseing.value)
-                {
-                    bool e = false;
-                    ImGui.Begin(name.value ?? "Null", ref e, ui);
-                    ImGui.SetWindowPos(Vector2.Zero);
-                    ImGui.SetWindowSize(new Vector2(scale.value.x, scale.value.y));
                     element.target.ImguiRender(igr);
-                    if (e)
-                    {
-                        entity.Destroy();
-                    }
-                    ImGui.End();
-
                 }
                 else
                 {
-                    ImGui.Begin(name.value ?? "Null", ui);
-                    ImGui.SetWindowPos(Vector2.Zero);
-                    ImGui.SetWindowSize(new Vector2(scale.value.x, scale.value.y));
-                    element.target.ImguiRender(igr);
-                    ImGui.End();
+                    ImGui.Text("NUll");
+                }
+                if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                {
+                    float titleBarHeight = (((int)ui & (int)ImGuiWindowFlags.NoTitleBar) == 1) ?0f: ImGui.GetFontSize() + ImGui.GetStyle().FramePadding.Y * 2.0f;
+                    var pos = ImGui.GetWindowPos();
+                    if (ImGui.IsMouseHoveringRect(pos, new Vector2(pos.X + ImGui.GetWindowSize().X, pos.Y + titleBarHeight),false))
+                        onHeaderGrab.Target?.Invoke();
+                }
+                if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                {
+                    float titleBarHeight = (((int)ui & (int)ImGuiWindowFlags.NoTitleBar) == 1) ? 0f : ImGui.GetFontSize() + ImGui.GetStyle().FramePadding.Y * 2.0f;
+                    var pos = ImGui.GetWindowPos();
+                    if (ImGui.IsMouseHoveringRect(pos, new Vector2(pos.X + ImGui.GetWindowSize().X, pos.Y + titleBarHeight), false))
+                        onHeaderClick.Target?.Invoke();
                 }
                 if (noKeyboard.value) return;
                 if (ImGui.IsAnyItemActive())
@@ -185,16 +205,30 @@ namespace RhubarbEngine.Components.ImGUI
                         imputPlane.target.StopMouse = false;
                     }
                 }
-
-
+                ImGui.End();
+            }
+            if (!e)
+            {
+                onClose.Target?.Invoke();
             }
         }
+        public static FakeInputSnapshot fakeInputSnapshot =  new FakeInputSnapshot();
 
         public void Render()
         {
+            if (!loaded) return; 
             try
             {
-                igr.Update((float)engine.platformInfo.deltaSeconds, (InputSnapshot)imputPlane.target??(InputSnapshot)new FakeInputSnapshot());
+                InputSnapshot inputSnapshot;
+                if (imputPlane.target == null)
+                {
+                    inputSnapshot = fakeInputSnapshot;
+                }
+                else
+                {
+                    inputSnapshot = imputPlane.target;
+                }
+                igr.Update((float)engine.platformInfo.deltaSeconds, inputSnapshot);
                 ImGuiUpdate();
                 UIcommandList.Begin();
                 UIcommandList.SetFramebuffer(framebuffer);

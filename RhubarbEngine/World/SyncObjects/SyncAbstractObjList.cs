@@ -36,7 +36,7 @@ namespace RhubarbEngine.World
         public T Add(T val, bool Refid = true)
         {
             val.initialize(this.world, this, Refid);
-            _synclist.Add(val);
+            AddInternal(val);
             if (Refid)
             {
                 netAdd(val);
@@ -47,7 +47,7 @@ namespace RhubarbEngine.World
         {
             L val = (L)Activator.CreateInstance(typeof(L));
             val.initialize(this.world, this, Refid);
-            _synclist.Add(val);
+            AddInternal(val);
             if (Refid)
             {
                 netAdd(val);
@@ -55,11 +55,35 @@ namespace RhubarbEngine.World
             return _synclist[_synclist.Count - 1];
         }
 
+        public void AddInternal(T value)
+        {
+            _synclist.Add(value);
+            value.onDispose += Value_onDispose;
+        }
+
+        public void RemoveInternal(T value)
+        {
+            _synclist.Remove(value);
+            value.onDispose -= Value_onDispose;
+        }
+
+        private void Value_onDispose(Worker worker)
+        {
+            try
+            {
+                _synclist.Remove((T)worker);
+            }
+            catch
+            {
+
+            }
+        }
+
         public T Add(Type type,bool Refid = true) 
         {
             T val = (T)Activator.CreateInstance(type);
             val.initialize(this.world, this, Refid);
-            _synclist.Add(val);
+            AddInternal(val);
             if (Refid)
             {
                 netAdd(val);

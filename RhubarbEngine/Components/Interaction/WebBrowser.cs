@@ -448,7 +448,7 @@ namespace RhubarbEngine.Components.Interaction
         private void onScaleChange(IChangeable obj)
         {
             if (!loaded) return;
-            browser.Size = new System.Drawing.Size { Width = (int)scale.value.x, Height = (int)scale.value.y };
+            browser.Size = new Size { Width = (int)scale.value.x, Height = (int)scale.value.y };
         }
 
         private void Path_Changed(IChangeable obj)

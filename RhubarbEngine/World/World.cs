@@ -18,6 +18,7 @@ using RhubarbEngine.World.Net;
 using BulletSharp;
 using BulletSharp.Math;
 using System.Net;
+using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.World
 {
@@ -26,6 +27,11 @@ namespace RhubarbEngine.World
         public UpdateLists updateLists = new UpdateLists();
 
         public StaticAssets staticAssets;
+
+
+        [NoSync]
+        [NoSave]
+        public GrabbableHolder lastHolder;
 
         [NoSave]
         public SyncUserList users;

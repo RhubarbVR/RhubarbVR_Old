@@ -25,11 +25,33 @@ using Org.OpenAPITools.Model;
 using BulletSharp;
 using System.Numerics;
 using System.Net;
+using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.Helpers
 {
     public static class MeshHelper
     {
+        public static (Entity, Window,T) attachWindow<T>(Entity ea, string name = "Window")where T:UIWidget
+        {
+            if(name == "Window")
+            {
+                name = typeof(T).Name;
+            }
+            Entity e = ea.addChild(name);
+            Window window = e.attachComponent<Window>();
+            T trains = e.attachComponent<T>();
+            window.element.target = trains;
+            return (e, window, trains);
+        }
+
+        public static (Entity, Window) attachWindow(Entity ea,UIWidget uI, string name = "Window")
+        {
+            Entity e = ea.addChild(name);
+            Window window = e.attachComponent<Window>();
+            window.element.target = uI;
+            return (e, window);
+        }
+
         public static (Entity,T) AddMesh<T>(Entity ea,string name="Entity") where T : ProceduralMesh
         {
             Entity e = ea.addChild(name);

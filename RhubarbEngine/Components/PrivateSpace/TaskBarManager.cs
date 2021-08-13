@@ -83,12 +83,30 @@ namespace RhubarbEngine.Components.PrivateSpace
             startcanvas.target = imGUICanvas;
             var group = e.attachComponent<ImGUIBeginGroup>();
             var createCube = e.attachComponent<ImGUIButton>();
+            var createWindow = e.attachComponent<ImGUIButton>();
             createCube.label.value = "Create Cube";
             createCube.action.Target = CreateCube;
             imGUICanvas.element.target = group;
             group.children.Add().target = createCube;
 
+            createWindow.label.value = "Create Window";
+            createWindow.action.Target = CreateWindow;
+            group.children.Add().target = createWindow;
+
             e.enabled.value = false;
+        }
+
+        private void CreateWindow()
+        {
+            logger.Log("Create Window");
+            World.World createWorld = world.worldManager.focusedWorld ?? world;
+            Entity User = createWorld.userRoot.entity;
+            Entity par = User.parent.target;
+            var (cube, win,but) = Helpers.MeshHelper.attachWindow<ImGUIButtonRow>(par);
+            var headPos = createWorld.userRoot.Headpos;
+            var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 2, 0.5f))*Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f,-90f,0f).ToSystemNumric());
+            cube.setGlobalTrans(move * headPos);
+
         }
 
         private void CreateCube()

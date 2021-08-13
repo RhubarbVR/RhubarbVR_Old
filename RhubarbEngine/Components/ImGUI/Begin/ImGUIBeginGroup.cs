@@ -39,14 +39,11 @@ namespace RhubarbEngine.Components.ImGUI
 
         public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
-            ImGui.BeginGroup();
-            
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer);
-                }
-                ImGui.EndGroup();
+            foreach (var item in children)
+            {
+               item.target?.ImguiRender(imGuiRenderer);
             }
         }
     }
+}
 

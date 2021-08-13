@@ -161,10 +161,13 @@ namespace RhubarbEngine.World
 
         }
 
+        public event Action<Worker> onDispose;
+
         public virtual void Dispose()
         {
             Removed();
             world.removeWorldObj(this);
+            onDispose?.Invoke(this);
             foreach (IDisposable dep in _disposables)
             {
                 dep.Dispose();
