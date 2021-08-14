@@ -83,7 +83,7 @@ namespace RhubarbEngine.VirtualReality
             {
                 Logger.Log("Error Loading Frame Buffer", true);
             }
-            changeProject(_eng.renderManager.fieldOfView, _eng.renderManager.aspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
+            changeProject((float)(Math.PI / 180) * _eng.renderManager.fieldOfView, _eng.renderManager.aspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
         }
 
         private void Window_Resized()
@@ -174,7 +174,7 @@ namespace RhubarbEngine.VirtualReality
                 if (!_mousePressed)
                 {
                     _mousePressed = true;
-                    _mousePressedPos = _eng.inputManager.mainWindows.MousePosition;
+                    _mousePressedPos = new Vector2(_eng.windowManager.mainWindow.window.Width / 2, _eng.windowManager.mainWindow.window.Height / 2);
                     Sdl2Native.SDL_ShowCursor(0);
                     Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.mainWindow.window.SdlWindowHandle, true);
                 }
@@ -185,7 +185,7 @@ namespace RhubarbEngine.VirtualReality
                     Sdl2Native.SDL_ShowCursor(1);
                     _mousePressed = false;
                 }
-                mouseDelta = _mousePressedPos - _eng.inputManager.mainWindows.MousePosition ;
+                mouseDelta = Vector2.Zero;
                 Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
             }
             else if (_mousePressed)

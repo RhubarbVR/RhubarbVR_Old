@@ -26,6 +26,6 @@ namespace RhubarbEngine.Settings
         public bool auto = true;
 
         [SettingsField("Fov")]
-        public float fov = 0.9f;
+        public float fov = 60f;
     }
 }

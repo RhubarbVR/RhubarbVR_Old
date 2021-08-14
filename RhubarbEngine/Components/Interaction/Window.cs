@@ -117,7 +117,7 @@ namespace RhubarbEngine.Components.Interaction
             else
             {
                 float titleBarHeight = ImGui.GetFontSize() + ImGui.GetStyle().FramePadding.Y * 2.0f;
-                float framePad = (ImGui.GetStyle().FramePadding.Y * 2.0f) * 6f;
+                float framePad = (ImGui.GetStyle().FramePadding.Y * 2.0f) * 8f;
                 var size = ImGui.GetWindowSize();
                 var parentsize = new Vector2();
                 bool flip = false;
@@ -131,11 +131,11 @@ namespace RhubarbEngine.Components.Interaction
                         flip = true;
                         break;
                     case DockPos.Left:
-                        parentsize = new Vector2(size.X / 2, size.Y);
+                        parentsize = new Vector2((clapsed) ? size.X:(size.X / 2), size.Y - (titleBarHeight * 2));
                         flip = true;
                         break;
                     case DockPos.Right:
-                        parentsize = new Vector2(size.X / 2, size.Y);
+                        parentsize = new Vector2((clapsed) ? size.X : (size.X / 2), size.Y - (titleBarHeight * 2));
                         break;
                     default:
                         break;
@@ -149,9 +149,24 @@ namespace RhubarbEngine.Components.Interaction
                         ImGui.EndChildFrame();
                     }
                     bool e = true;
-                    if (ImGui.CollapsingHeader(ChildDock.target.entity.name.value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen| ImGuiTreeNodeFlags.SpanAvailWidth))
+                    if ((int)ChildDocPos.value < 2)
                     {
+                        ImGui.SetCursorPos(pos + new Vector2(0f, parentsize.Y));
+                    }
+                    else
+                    {
+                        if (clapsed) 
+                        {
+                            ImGui.SetCursorPos(pos + new Vector2(parentsize.X/2, framePad));
+                        }
+                        else
+                        {
+                            ImGui.SetCursorPos(pos + new Vector2(parentsize.X, framePad));
+                        }
                         ImGui.SetNextItemWidth(parentsize.X);
+                    }
+                    if (ImGui.CollapsingHeader(ChildDock.target.entity.name.value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen| ImGuiTreeNodeFlags.SpanAvailWidth| ImGuiTreeNodeFlags.AllowItemOverlap))
+                    {
                         clapsed = false;
                         if (ImGui.BeginChildFrame((uint)referenceID.id + 1, parentsize))
                         {
@@ -178,6 +193,10 @@ namespace RhubarbEngine.Components.Interaction
                     {
                         ImGui.SetCursorPos(pos + new Vector2(parentsize.X, titleBarHeight));
                     }
+                    if (clapsed)
+                    {
+                        ImGui.SetCursorPos(pos + new Vector2(0f, titleBarHeight));
+                    }
                     if (ImGui.BeginChildFrame((uint)referenceID.id, parentsize))
                     {
                         element.target?.ImguiRender(imGuiRenderer);
@@ -185,10 +204,10 @@ namespace RhubarbEngine.Components.Interaction
                     }
                     ImGui.SetCursorPos(pos);
                     bool e = true;
-                    if (ImGui.CollapsingHeader(ChildDock.target.entity.name.value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth))
+                    ImGui.SetNextItemWidth(parentsize.X);
+                    if (ImGui.CollapsingHeader(ChildDock.target.entity.name.value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.AllowItemOverlap))
                     {
                         ImGui.SetNextItemWidth(parentsize.X);
-                        ImGui.SetCursorPos(pos + new Vector2(0f, parentsize.Y + titleBarHeight));
                         clapsed = false;
                         if (ImGui.BeginChildFrame((uint)referenceID.id + 1, parentsize))
                         {

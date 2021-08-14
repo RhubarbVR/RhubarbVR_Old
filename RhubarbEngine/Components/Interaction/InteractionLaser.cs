@@ -32,6 +32,8 @@ namespace RhubarbEngine.Components.Interaction
 
         public SyncRef<CylinderMesh> mesh;
 
+        public Driver<Quaternionf> rotation;
+
         public SyncRef<GrabbableHolder> grabholder;
 
         public Driver<float> meshDriver;
@@ -43,6 +45,7 @@ namespace RhubarbEngine.Components.Interaction
             if (world.userspace) return;
             var (e, m) = MeshHelper.AddMesh<CylinderMesh>(entity);
             e.rotation.value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
+            rotation.setDriveTarget(entity.rotation);
             meshDriver.target = m.Height;
             m.BaseRadius.value = 0.005f;
             m.TopRadius.value = 0.01f;
@@ -50,6 +53,7 @@ namespace RhubarbEngine.Components.Interaction
             grabholder.target = entity.attachComponent<GrabbableHolder>();
             grabholder.target.laser.target = this;
         }
+
 
         public override void buildSyncObjs(bool newRefIds)
         {
@@ -62,7 +66,8 @@ namespace RhubarbEngine.Components.Interaction
             user = new SyncRef<User>(this, newRefIds);
             meshDriver = new Driver<float>(this, newRefIds);
             mesh = new SyncRef<CylinderMesh>(this, newRefIds);
-            grabholder = new SyncRef<GrabbableHolder>(this,newRefIds);
+            grabholder = new SyncRef<GrabbableHolder>(this, newRefIds);
+            rotation = new Driver<Quaternionf>(this, newRefIds);
         }
 
         private static float desklength = 0.1f;
@@ -93,9 +98,21 @@ namespace RhubarbEngine.Components.Interaction
             {
                 if(source.value == InteractionSource.HeadLaser&& !setHeadLazerScale)
                 {
-                    mesh.target.BaseRadius.value = 0.005f / 40;
-                    mesh.target.TopRadius.value = 0.01f / 40;
-                    setHeadLazerScale = true;
+                    if(mesh.target != null)
+                    {
+                        mesh.target.BaseRadius.value = 0.005f / 40;
+                        mesh.target.TopRadius.value = 0.01f / 40;
+                        setHeadLazerScale = true;
+                    }
+                }
+                if(source.value == InteractionSource.HeadLaser)
+                {
+                        var mousepos = engine.inputManager.mainWindows.MousePosition;
+                        var size = new System.Numerics.Vector2(engine.windowManager.mainWindow.width, engine.windowManager.mainWindow.height);
+                        var hfov = (2 * Math.Atan(Math.Tan(((float)(Math.PI / 180) * engine.settingsObject.RenderSettings.DesktopRenderSettings.fov / 2)) / (size.Y / size.X)));
+                        var radsPerPix = new System.Numerics.Vector2((float)hfov / size.X, ((float)(Math.PI / 180) * engine.settingsObject.RenderSettings.DesktopRenderSettings.fov)/size.Y);
+                        var mouseRads = radsPerPix * (((size/2)-mousepos));
+                        entity.rotation.value = Quaternionf.CreateFromYawPitchRoll(mouseRads.X, mouseRads.Y, 0f);
                 }
                 System.Numerics.Matrix4x4.Decompose((System.Numerics.Matrix4x4.CreateTranslation((rayderection.value * distances.value).ToSystemNumrics()) * entity.globalTrans()), out System.Numerics.Vector3 vs, out System.Numerics.Quaternion vr, out System.Numerics.Vector3 val);
                 System.Numerics.Matrix4x4.Decompose(entity.globalTrans(), out System.Numerics.Vector3 vsg, out System.Numerics.Quaternion vrg, out System.Numerics.Vector3 global);
