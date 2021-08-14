@@ -68,6 +68,7 @@ namespace RhubarbEngine.Components.Interaction
             {
                 lastParent.target = entity.parent.target;
             }
+            entity.manager = world.localUser;
             grabbableHolder.target = obj;
             grabbingUser.target = world.localUser;
             entity.SetParent(obj.holder.target);

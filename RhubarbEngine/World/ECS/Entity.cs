@@ -17,6 +17,50 @@ namespace RhubarbEngine.World.ECS
     {
         public Sync<Vector3f> position;
 
+        [NoSave]
+        public SyncRef<User> _manager;
+
+        [NoSave]
+        [NoSync]
+        public User manager { 
+            get {
+                User retur;
+                if(_manager.target == null)
+                {
+                    retur = parent.target?.nullableManager;
+                }
+                else
+                {
+                    retur = _manager.target;
+                }
+                if(retur == null)
+                {
+                    retur = world.users[(int)referenceID.getOwnerID()];
+                }
+                return retur;
+            }
+            set { _manager.target = value; }
+        }
+
+        [NoSave]
+        [NoSync]
+        public User nullableManager
+        {
+            get
+            {
+                User retur;
+                if (_manager.target == null)
+                {
+                    retur = parent.target?.manager;
+                }
+                else
+                {
+                    retur = _manager.target;
+                }
+                return retur;
+            }
+        }
+
         public Sync<Quaternionf> rotation;
 
         public Sync<Vector3f> scale;
@@ -218,6 +262,7 @@ namespace RhubarbEngine.World.ECS
             persistence.value = true;
             _children = new SyncObjList<Entity>(this, newRefIds);
             _components = new SyncAbstractObjList<Component>(this, newRefIds);
+            _manager = new SyncRef<User>(this, newRefIds);
             enabled.value = true;
             parent = new SyncRef<Entity>(this, newRefIds);
             parent.Changed += Parent_Changed;

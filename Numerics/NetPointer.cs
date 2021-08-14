@@ -22,7 +22,10 @@ namespace RhubarbDataTypes
         {
             return id;
         }
-
+        public int getOwnerID()
+        {
+            return (int)((id >> 8)& 0xFF);
+        }
         public static NetPointer BuildID(ulong position, byte user)
         {
             return new NetPointer(((position << 16)&0xFFFF0000) | ((((ulong)user) & 0xFF) << 8)|(position&0xFF));
