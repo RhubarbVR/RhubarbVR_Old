@@ -55,19 +55,25 @@ namespace RhubarbEngine.World.ECS
 
         public event Action<GrabbableHolder> onGrip;
 
+        public event Action<GrabbableHolder> onDrop;
+
         public event Action onPrimary;
 
         public event Action onSecondary;
 
         public event Action onTriggerTouching;
 
-        public void SetParent(Entity entity,bool preserverGlobal = true)
+        public void SetParent(Entity entity,bool preserverGlobal = true, bool resetPos = false)
         {
             Matrix4x4 mach = cashedGlobalTrans;
             parent.target = entity;
             if (preserverGlobal)
             {
                setGlobalTrans(mach);
+            }
+            else if (resetPos)
+            {
+                setGlobalTrans(entity.cashedGlobalTrans);
             }
         }
 
@@ -87,6 +93,13 @@ namespace RhubarbEngine.World.ECS
             if (!click) return;
             onGrip?.Invoke(holder);
         }
+
+        public void SendDrop(GrabbableHolder holder, bool click = true)
+        {
+            if (!click) return;
+            onDrop?.Invoke(holder);
+        }
+
         public void SendPrimary(bool click = true)
         {
             if (!click) return;

@@ -18,8 +18,22 @@ namespace RhubarbEngine.World
         private List<IDisposable> _disposables = new List<IDisposable>();
         public void addDisposable(IDisposable add)
         {
-            _disposables.Add(add);
+            try
+            {
+                _disposables.Add(add);
+            }
+            catch { }
         }
+
+        public void removeDisposable(IDisposable add)
+        {
+            try
+            {
+                _disposables.Remove(add);
+            }
+            catch { }
+        }
+
         public event Action<IChangeable> Changed;
 
         [NoSync]

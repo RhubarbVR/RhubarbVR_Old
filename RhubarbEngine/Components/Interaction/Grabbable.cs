@@ -46,9 +46,10 @@ namespace RhubarbEngine.Components.Interaction
         public void Drop()
         {
             if (world.localUser != grabbingUser.target) return;
-            grabbableHolder.target = null;
             grabbingUser.target = null;
             entity.SetParent(lastParent.target);
+            entity.SendDrop(grabbableHolder.target, true);
+            grabbableHolder.target = null;
         }
 
 

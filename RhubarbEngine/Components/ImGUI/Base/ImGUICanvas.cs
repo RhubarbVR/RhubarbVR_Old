@@ -165,7 +165,7 @@ namespace RhubarbEngine.Components.ImGUI
                 ImGui.SetWindowSize(new Vector2(scale.value.x, scale.value.y));
                 if (element.target != null)
                 {
-                    element.target.ImguiRender(igr);
+                  element.target.ImguiRender(igr);
                 }
                 else
                 {

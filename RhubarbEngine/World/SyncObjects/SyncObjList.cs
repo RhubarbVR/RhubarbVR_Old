@@ -33,6 +33,7 @@ namespace RhubarbEngine.World
         {
             _synclist.Add(value);
             value.onDispose += Value_onDispose;
+            addDisposable(value);
         }
 
         private void Value_onDispose(Worker worker)
@@ -51,6 +52,7 @@ namespace RhubarbEngine.World
         {
             _synclist.Remove(value);
             value.onDispose -= Value_onDispose;
+            removeDisposable(value);
         }
 
         public T Add(bool Refid = true)

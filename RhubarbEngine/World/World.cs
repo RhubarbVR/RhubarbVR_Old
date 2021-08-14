@@ -33,6 +33,10 @@ namespace RhubarbEngine.World
         [NoSave]
         public GrabbableHolder lastHolder;
 
+        [NoSync]
+        [NoSave]
+        public Window grabedWindow;
+
         [NoSave]
         public SyncUserList users;
 
@@ -191,7 +195,9 @@ namespace RhubarbEngine.World
 
         public void addDisposable(IDisposable val)
         {
-
+        }
+        public void removeDisposable(IDisposable add)
+        {
         }
         public Matrix4x4 playerTrans => (userRoot != null)? userRoot.Viewpos : Matrix4x4.CreateScale(1f);
         public Matrix4x4 headTrans => (userRoot != null) ? userRoot.Headpos : Matrix4x4.CreateScale(1f);

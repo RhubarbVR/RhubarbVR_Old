@@ -21,12 +21,21 @@ using RhubarbEngine.Components.ImGUI;
 using RhubarbEngine.Components.Physics.Colliders;
 using RhubarbEngine.Components.PrivateSpace;
 using RhubarbEngine.Components.Interaction;
-
+using Veldrid;
+using ImGuiNET;
 
 namespace RhubarbEngine.Components.Interaction
 {
-    public class Window : Component
+    public class Window : UIWidget
     {
+        public enum DockPos
+        {
+            Up,
+            Down,
+            Left,
+            Right
+        }
+
         public SyncRef<UIWidget> element;
 
         public SyncRef<ImGUICanvas> canvas;
@@ -44,9 +53,169 @@ namespace RhubarbEngine.Components.Interaction
 
         public Driver<Vector2u> colPixelsizeDriver;
         public Driver<Vector2u> canvasPixelsizeDriver;
+        public Driver<bool> renderEnableDriver;
+
+        public Sync<DockPos> ChildDocPos;
+
+        public SyncRef<Window> ChildDock;
+        public SyncRef<Window> ParentDock;
+
+        public void Dock(Window window,DockPos pos)
+        {
+            if(world.grabedWindow == this)
+            {
+                world.grabedWindow = null;
+            }
+            window.ChildDock.target = this;
+            ParentDock.target = this;
+            window.ChildDocPos.value = pos;
+            entity.SetParent(window.entity, false,true);
+            sizeUpdate();
+        }
+
+        public void unDock()
+        {
+            if (ParentDock.target == null) return;
+            entity.SetParent(ParentDock.target.entity.parent.target, false, true);
+            sizeUpdate();
+        }
+
+        private bool clapsed;
+
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        {
+            var pos = ImGui.GetCursorPos();
+            if ((world.grabedWindow != this) && (world.grabedWindow != null) && (ChildDock.target == null))
+            {
+                var size = ImGui.GetWindowSize() / 2;
+                ImGui.SetCursorPos(size + new Vector2(-20, 0));
+                if (ImGui.ArrowButton("left"+referenceID.ToString(), ImGuiDir.Left))
+                {
+                    world.grabedWindow.Dock(this, DockPos.Left);
+                }
+                ImGui.SetCursorPos(size + new Vector2(20, 0));
+                if (ImGui.ArrowButton("right" + referenceID.ToString(), ImGuiDir.Right))
+                {
+                    world.grabedWindow.Dock(this, DockPos.Right);
+                }
+                ImGui.SetCursorPos(size + new Vector2(0, -20));
+                if (ImGui.ArrowButton("up" + referenceID.ToString(), ImGuiDir.Up))
+                {
+                    world.grabedWindow.Dock(this, DockPos.Up);
+                }
+                ImGui.SetCursorPos(size + new Vector2(0, 20));
+                if (ImGui.ArrowButton("down" + referenceID.ToString(), ImGuiDir.Down))
+                {
+                    world.grabedWindow.Dock(this, DockPos.Down);
+                }
+                ImGui.SetCursorPos(pos);
+            }
+            if(ChildDock.target == null)
+            {
+                element.target?.ImguiRender(imGuiRenderer);
+            }
+            else
+            {
+                float titleBarHeight = ImGui.GetFontSize() + ImGui.GetStyle().FramePadding.Y * 2.0f;
+                float framePad = (ImGui.GetStyle().FramePadding.Y * 2.0f) * 6f;
+                var size = ImGui.GetWindowSize();
+                var parentsize = new Vector2();
+                bool flip = false;
+                switch (ChildDocPos.value)
+                {
+                    case DockPos.Up:
+                        parentsize = new Vector2(size.X,(clapsed)?((size.Y - (titleBarHeight + framePad))): ((size.Y - (titleBarHeight + framePad)) / 2));
+                        break;
+                    case DockPos.Down:
+                        parentsize = new Vector2(size.X, (clapsed) ? ((size.Y - (titleBarHeight + framePad))) : ((size.Y - (titleBarHeight + framePad)) / 2));
+                        flip = true;
+                        break;
+                    case DockPos.Left:
+                        parentsize = new Vector2(size.X / 2, size.Y);
+                        flip = true;
+                        break;
+                    case DockPos.Right:
+                        parentsize = new Vector2(size.X / 2, size.Y);
+                        break;
+                    default:
+                        break;
+                }
+                if (flip)
+                {
+                    ImGui.SetCursorPos(pos);
+                    if (ImGui.BeginChildFrame((uint)referenceID.id, parentsize))
+                    {
+                        element.target?.ImguiRender(imGuiRenderer);
+                        ImGui.EndChildFrame();
+                    }
+                    bool e = true;
+                    if (ImGui.CollapsingHeader(ChildDock.target.entity.name.value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen| ImGuiTreeNodeFlags.SpanAvailWidth))
+                    {
+                        ImGui.SetNextItemWidth(parentsize.X);
+                        clapsed = false;
+                        if (ImGui.BeginChildFrame((uint)referenceID.id + 1, parentsize))
+                        {
+                            ChildDock.target?.ImguiRender(imGuiRenderer);
+                            ImGui.EndChildFrame();
+                        }
+                    }
+                    else
+                    {
+                        clapsed = true;
+                    }
+                    if (!e)
+                    {
+                        ChildDock.target.Close();
+                    }
+                }
+                else
+                {
+                    if ((int)ChildDocPos.value < 2)
+                    {
+                        ImGui.SetCursorPos(pos + new Vector2(0f, parentsize.Y + titleBarHeight));
+                    }
+                    else
+                    {
+                        ImGui.SetCursorPos(pos + new Vector2(parentsize.X, titleBarHeight));
+                    }
+                    if (ImGui.BeginChildFrame((uint)referenceID.id, parentsize))
+                    {
+                        element.target?.ImguiRender(imGuiRenderer);
+                        ImGui.EndChildFrame();
+                    }
+                    ImGui.SetCursorPos(pos);
+                    bool e = true;
+                    if (ImGui.CollapsingHeader(ChildDock.target.entity.name.value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth))
+                    {
+                        ImGui.SetNextItemWidth(parentsize.X);
+                        ImGui.SetCursorPos(pos + new Vector2(0f, parentsize.Y + titleBarHeight));
+                        clapsed = false;
+                        if (ImGui.BeginChildFrame((uint)referenceID.id + 1, parentsize))
+                        {
+                            ChildDock.target?.ImguiRender(imGuiRenderer);
+                            ImGui.EndChildFrame();
+                        }
+                    }
+                    else
+                    {
+                        clapsed = true;
+                    }
+                    if (!e)
+                    {
+                        ChildDock.target.Close();
+                    }
+                }
+
+            }
+
+        }
 
         private void sizeUpdate()
         {
+            if (renderEnableDriver.Linked) 
+            {
+                renderEnableDriver.Drivevalue = ParentDock.target == null;
+            }
             if (colBackGround.Linked)
             {
                 colBackGround.Drivevalue = new Vector3f(size.value.x/2, 0.01f, size.value.y/2); 
@@ -96,12 +265,28 @@ namespace RhubarbEngine.Components.Interaction
             colBackGround.setDriveTarget(col.boxExtents);
         }
 
+        public override void onLoaded()
+        {
+            base.onLoaded();
+            entity.onDrop += Entity_onDrop;
+        }
+
+        private void Entity_onDrop(GrabbableHolder obj)
+        {
+            world.grabedWindow = null;
+        }
+
         private void OnGrabHeader()
         {
+            if(ParentDock.target != null)
+            {
+                unDock();
+            }
             foreach (var grab in entity.getAllComponents<Grabbable>())
             {
                 grab.RemoteGrab();
             }
+            world.grabedWindow = this;
         }
 
         public override void OnAttach()
@@ -111,21 +296,21 @@ namespace RhubarbEngine.Components.Interaction
             meshWidth.setDriveTarget(mesh.Width);
             meshHeight.setDriveTarget(mesh.Height);
             var UIRender = entity.addChild("UIRender");
+            renderEnableDriver.setDriveTarget(UIRender.enabled);
             AttachBackGround();
             InputPlane col = UIRender.attachComponent<InputPlane>();
             colDriver.setDriveTarget(col.size);
             colPixelsizeDriver.setDriveTarget(col.pixelSize);
             RMaterial mit = entity.attachComponent<RMaterial>();
             MeshRender meshRender = UIRender.attachComponent<MeshRender>();
-            UIRender.position.value = new Vector3f(0f, -0.011f, 0f);
+            UIRender.position.value = new Vector3f(0f, -0.012f, 0f);
             ImGUICanvas imGUICanvas = entity.attachComponent<ImGUICanvas>();
             imGUICanvas.onClose.Target = Close;
             imGUICanvas.imputPlane.target = col;
             imGUICanvas.scale.value = new Vector2u(300);
             imGUICanvas.onHeaderGrab.Target = OnGrabHeader;
             labelDriver.setDriveTarget(imGUICanvas.name);
-            var group = entity.attachComponent<ImGUIText>();
-            imGUICanvas.element.target = group;
+            imGUICanvas.element.target = this;
             canvasPixelsizeDriver.setDriveTarget(imGUICanvas.scale);
             mit.Shader.target = world.staticAssets.basicUnlitShader;
             canvas.target = imGUICanvas;
@@ -145,7 +330,6 @@ namespace RhubarbEngine.Components.Interaction
         {
             base.buildSyncObjs(newRefIds);
             element = new SyncRef<UIWidget>(this, newRefIds);
-            element.Changed += Element_Changed;
             canvas = new SyncRef<ImGUICanvas>(this, newRefIds);
             size = new Sync<Vector2f>(this, newRefIds);
             size.value = new Vector2f(1, 1.5);
@@ -160,14 +344,10 @@ namespace RhubarbEngine.Components.Interaction
             labelDriver = new Driver<string>(this, newRefIds);
             BackGround = new Driver<Vector3d>(this, newRefIds);
             colBackGround = new Driver<Vector3f>(this, newRefIds);
-        }
-
-        private void Element_Changed(IChangeable obj)
-        {
-            if(canvas.target != null)
-            {
-                canvas.target.element.target = element.target;
-            }
+            renderEnableDriver = new Driver<bool>(this, newRefIds);
+            ChildDocPos = new Sync<DockPos>(this, newRefIds);
+            ChildDock = new SyncRef<Window>(this, newRefIds);
+            ParentDock = new SyncRef<Window>(this, newRefIds);
         }
 
         private void Size_Changed(IChangeable obj)

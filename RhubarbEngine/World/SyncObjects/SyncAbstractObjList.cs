@@ -59,12 +59,14 @@ namespace RhubarbEngine.World
         {
             _synclist.Add(value);
             value.onDispose += Value_onDispose;
+            addDisposable(value);
         }
 
         public void RemoveInternal(T value)
         {
             _synclist.Remove(value);
             value.onDispose -= Value_onDispose;
+            removeDisposable(value);
         }
 
         private void Value_onDispose(Worker worker)

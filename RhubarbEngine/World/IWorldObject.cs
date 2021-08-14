@@ -15,6 +15,9 @@ namespace RhubarbEngine.World
         World World { get; }
 
         void addDisposable(IDisposable val);
+
+        void removeDisposable(IDisposable val);
+
         IWorldObject Parent { get; }
 
         bool IsLocalObject { get; }
