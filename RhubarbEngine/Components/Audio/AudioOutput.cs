@@ -79,13 +79,12 @@ namespace RhubarbEngine.Components.Audio
             if (iplBinauralEffect == default) return;
             if (audioSource.target == null) return;
             if (!audioSource.target.IsActive) return;
-            var frameInputBuffer = audioSource.target.FrameInputBuffer;
-            if (frameInputBuffer == null) return;
-            if (frameInputBuffer.Length < engine.audioManager.AudioFrameSizeInBytes) return;
+            if (audioSource.target.FrameInputBuffer == null) return;
+            if (audioSource.target.FrameInputBuffer.Length < engine.audioManager.AudioFrameSizeInBytes) return;
             Matrix4x4.Decompose(world.headTrans, out Vector3 sc, out Quaternion ret, out Vector3 trans);
             var position = Vector3.Transform((entity.globalPos().ToSystemNumrics() - trans), Quaternion.Inverse(ret));
             var e = new IPL.Vector3(position.X, position.Y, position.Z);
-            fixed (byte* ptr = frameInputBuffer)
+            fixed (byte* ptr = audioSource.target.FrameInputBuffer)
             {
                 var prams = new IPL.BinauralEffectParams { direction = e, interpolation = IPL.HRTFInterpolation.Nearest, spatialBlend = spatialBlend.value,hrtf = engine.audioManager.hrtf};
                 IPL.AudioBufferDeinterleave(engine.audioManager.iplContext, (IntPtr)ptr, ref iplInputBuffer);

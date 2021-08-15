@@ -15,8 +15,8 @@ namespace RhubarbEngine.Settings
         [SettingsField("Size of Buffer 2048 or 1024 is recommended", "/advanced")]
         public int AudioFrameSize = 2048;
 
-        [SettingsField("Can reduce popping but adds latency to audio 3 is recommended", "/advanced")]
-        public int BufferCount = 3;
+        [SettingsField("Can reduce popping but adds latency to audio 2 is recommended", "/advanced")]
+        public int BufferCount = 2;
 
     }
 

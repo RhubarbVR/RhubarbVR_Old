@@ -61,7 +61,7 @@ namespace RhubarbEngine.Managers
 
             outBuff = Marshal.AllocHGlobal(AudioFrameSizeInBytes * 2);
 
-            alBuffers = new uint[3];
+            alBuffers = new uint[engine.settingsObject.AudioSettings.BufferCount];
             PrepareOpenAL();
             PrepareSteamAudio();
 

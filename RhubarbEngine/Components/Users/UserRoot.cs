@@ -70,6 +70,10 @@ namespace RhubarbEngine.Components.Users
             };
             if (world.localUser == user.target)
             {
+                if (input.mainWindows.GetKeyDown(Key.F7))
+                {
+                    Console.WriteLine(entity.globalPos());
+                }
                 if (input.isKeyboardinuse) return;
                 float deltaSeconds = (float)world.worldManager.engine.platformInfo.deltaSeconds;
                 float sprintFactor = world.worldManager.engine.inputManager.mainWindows.GetKey(Key.ControlLeft) || engine.inputManager.PrimaryPress()
