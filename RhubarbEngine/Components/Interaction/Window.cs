@@ -149,7 +149,7 @@ namespace RhubarbEngine.Components.Interaction
                         ImGui.EndChildFrame();
                     }
                     bool e = true;
-                    if ((int)ChildDocPos.value < 2)
+                    if ((int)ChildDocPos.value <= 2)
                     {
                         ImGui.SetCursorPos(pos + new Vector2(0f, parentsize.Y));
                     }
@@ -157,13 +157,13 @@ namespace RhubarbEngine.Components.Interaction
                     {
                         if (clapsed)
                         {
-                            ImGui.SetCursorPos(pos + new Vector2(parentsize.X / 2, framePad));
+                            ImGui.SetCursorPos(pos + new Vector2(parentsize.X / 2, framePad * 2f));
                         }
                         else
                         {
-                            ImGui.SetCursorPos(pos + new Vector2(parentsize.X, framePad));
+                            ImGui.SetCursorPos(pos + new Vector2(parentsize.X, framePad * 2f));
                         }
-                        ImGui.SetNextItemWidth(parentsize.X);
+                        ImGui.SetNextItemWidth((size.X / 2));
                     }
                     if (ImGui.CollapsingHeader(ChildDock.target.entity.name.value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.AllowItemOverlap))
                     {
