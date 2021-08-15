@@ -31,7 +31,6 @@ namespace RhubarbEngine.WindowManager
                 WindowTitle = windowName
             };
             window = VeldridStartup.CreateWindow(ref windowCI);
-
         }
 
         public InputSnapshot Update()

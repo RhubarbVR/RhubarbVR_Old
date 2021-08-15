@@ -92,7 +92,9 @@ namespace RhubarbEngine.Managers
             vrContext.Initialize(gd);
             windowCL = gd.ResourceFactory.CreateCommandList();
             eyesCL = gd.ResourceFactory.CreateCommandList();
-            mainQueue = new RenderQueue();
+            mainQueue =new RenderQueue();
+            engine.windowManager.mainWindow.window. Resized += Window_Resized;
+            Window_Resized();
             var _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "nulltexture.jpg"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
             nulview = engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture);
             var gridtexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Grid.jpg"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
@@ -114,6 +116,18 @@ namespace RhubarbEngine.Managers
             skybox.CreateDeviceObjects(gd, vrContext.LeftEyeFramebuffer.OutputDescription);
 
             return this;
+        }
+
+        private void Window_Resized()
+        {
+            if (engine.settingsObject.RenderSettings.DesktopRenderSettings.auto)
+            {
+                sc.Resize((uint)engine.windowManager.mainWindow.window.Width, (uint)engine.windowManager.mainWindow.window.Height);
+            }
+            else
+            {
+                sc.Resize((uint)engine.settingsObject.RenderSettings.DesktopRenderSettings.x, (uint)engine.settingsObject.RenderSettings.DesktopRenderSettings.y);
+            }
         }
 
         public VRContext buildVRContext()
