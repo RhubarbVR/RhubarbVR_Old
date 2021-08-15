@@ -124,7 +124,10 @@ namespace RhubarbEngine.Components.Users
                 {
 
                     motionDir = Vector3.Transform(motionDir, lookRotation);
-
+                    if((motionDir.X == float.NaN)|| (motionDir.Y == float.NaN)|| (motionDir.Z == float.NaN))
+                    {
+                        return;
+                    }
 
                     Matrix4x4 addTo = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(lookRotation) * Matrix4x4.CreateTranslation(motionDir * _moveSpeed * sprintFactor * deltaSeconds);
 
