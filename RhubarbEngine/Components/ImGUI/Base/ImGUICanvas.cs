@@ -186,7 +186,7 @@ namespace RhubarbEngine.Components.ImGUI
                         onHeaderClick.Target?.Invoke();
                 }
                 if (noKeyboard.value) return;
-                if (ImGui.IsAnyItemActive())
+                if (ImGui.GetIO().WantTextInput)
                 {
                     input.keyboard = this;
                     if (imputPlane.target != null)

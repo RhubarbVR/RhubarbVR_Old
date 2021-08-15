@@ -38,14 +38,14 @@ namespace RhubarbEngine.Components.PrivateSpace
 
         public void OpenKeyboard()
         {
-            if (engine.outputType == VirtualReality.OutputType.Screen)
-            {
-                if (Keyboard.target != null)
-                {
-                    Keyboard.target.enabled.value = false;
-                }
-                return;
-            }
+        //    if (engine.outputType == VirtualReality.OutputType.Screen)
+        //    {
+        //        if (Keyboard.target != null)
+        //        {
+        //            Keyboard.target.enabled.value = false;
+        //        }
+        //        return;
+        //    }
             if (Keyboard.target == null)
             {
                 var keyboard = Keyboard.target = FollowUser.target.addChild("Keyboard");
