@@ -53,12 +53,12 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
 
         InputAnalogActionData_t GeneralmAxisData = new InputAnalogActionData_t();
         private ulong GeneralmAxisHandle = 0;
-        Vector2f IController.Axis => new Vector2f(GeneralmAxisData.x, GeneralmAxisData.y);
+        Vector2f IController.Axis => new Vector2f(MakeGoodFloat(GeneralmAxisData.x), MakeGoodFloat(GeneralmAxisData.y));
 
 
         InputAnalogActionData_t GeneralmTriggerAixData = new InputAnalogActionData_t();
         private ulong GeneralmTriggerAixHandle = 0;
-        float IController.TriggerAix => GeneralmTriggerAixData.x;
+        float IController.TriggerAix => MakeGoodFloat(GeneralmTriggerAixData.x);
 
         InputPoseActionData_t GeneralmPosistionData = new InputPoseActionData_t();
         private ulong GeneralmPosistionHandle = 0;
@@ -88,7 +88,10 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
                 Z = (float)((m.m4 - m.m1) / (4 * w))
             };
         }
-
+        public static float MakeGoodFloat(float val)
+        {
+            return ((val == float.NaN) || (float.IsInfinity(val))) ? 0f : val;
+        }
 
         public static Matrix4x4 posHelp(HmdMatrix34_t pos)
         {
