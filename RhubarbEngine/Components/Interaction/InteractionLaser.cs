@@ -107,12 +107,15 @@ namespace RhubarbEngine.Components.Interaction
                 }
                 if(source.value == InteractionSource.HeadLaser)
                 {
-                        var mousepos = engine.inputManager.mainWindows.MousePosition;
-                        var size = new System.Numerics.Vector2(engine.windowManager.mainWindow.width, engine.windowManager.mainWindow.height);
-                        var hfov = (2 * Math.Atan(Math.Tan(((float)(Math.PI / 180) * engine.settingsObject.RenderSettings.DesktopRenderSettings.fov / 2)) / (size.Y / size.X)));
-                        var radsPerPix = new System.Numerics.Vector2((float)hfov / size.X, ((float)(Math.PI / 180) * engine.settingsObject.RenderSettings.DesktopRenderSettings.fov)/size.Y);
-                        var mouseRads = radsPerPix * (((size/2)-mousepos));
-                        entity.rotation.value = Quaternionf.CreateFromYawPitchRoll(mouseRads.X, mouseRads.Y, 0f);
+                    var mousepos = engine.inputManager.mainWindows.MousePosition;
+                    var size = new System.Numerics.Vector2(engine.windowManager.mainWindow.width, engine.windowManager.mainWindow.height);
+                    float x = 2.0f * mousepos.X / size.X - 1.0f;
+                    float y = 2.0f * mousepos.Y / size.Y - 1.0f;
+                    float ar = size.X / size.Y;
+                    float tan = (float)Math.Tan(engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI/ 360);
+                    Vector3f vectforward = new Vector3f(-x * tan * ar, y * tan, 1);
+                    Vector3f vectup = new Vector3f(0, 1, 0);
+                    entity.rotation.value = Quaternionf.LookRotation(vectforward, vectup);
                 }
                 System.Numerics.Matrix4x4.Decompose((System.Numerics.Matrix4x4.CreateTranslation((rayderection.value * distances.value).ToSystemNumrics()) * entity.globalTrans()), out System.Numerics.Vector3 vs, out System.Numerics.Quaternion vr, out System.Numerics.Vector3 val);
                 System.Numerics.Matrix4x4.Decompose(entity.globalTrans(), out System.Numerics.Vector3 vsg, out System.Numerics.Quaternion vrg, out System.Numerics.Vector3 global);

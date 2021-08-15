@@ -323,7 +323,7 @@ namespace RhubarbEngine.Components.Interaction
             RMaterial mit = entity.attachComponent<RMaterial>();
             MeshRender meshRender = UIRender.attachComponent<MeshRender>();
             UIRender.position.value = new Vector3f(0f, -0.012f, 0f);
-            ImGUICanvas imGUICanvas = entity.attachComponent<ImGUICanvas>();
+            ImGUICanvas imGUICanvas = UIRender.attachComponent<ImGUICanvas>();
             imGUICanvas.onClose.Target = Close;
             imGUICanvas.imputPlane.target = col;
             imGUICanvas.scale.value = new Vector2u(300);

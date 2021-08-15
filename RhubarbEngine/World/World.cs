@@ -411,14 +411,20 @@ namespace RhubarbEngine.World
             catch(Exception e)
             {
             }
-
-            foreach (IWorldObject val in worldObjects.Values)
+            try
             {
-                if (((Worker)val) != null)
+                foreach (IWorldObject val in worldObjects.Values)
                 {
-                    ((Worker)val).onUpdate();
+                    if (((Worker)val) != null)
+                    {
+                        ((Worker)val).onUpdate();
+                    }
                 }
             }
+            catch (Exception e)
+            {
+            }
+
             netModule.netupdate();
         }
 

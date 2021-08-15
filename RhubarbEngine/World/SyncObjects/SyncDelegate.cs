@@ -102,16 +102,19 @@ namespace RhubarbEngine.World
 
         public void BuildDelegate()
         {
-            if (_type == null || _method == "" || _method == null) return;
+            if (_type == null || _method == "" || _method == null|| base.target == null) return;
             try
             {
-                _DelegateTarget = (T)(object)Delegate.CreateDelegate(typeof(T), _type, _method);
+                Delegate _delegate = Delegate.CreateDelegate(typeof(T), base.target, _method, false, true);
+                _DelegateTarget = _delegate as T;
             }
-            catch
+            catch(Exception e)
             {
+                logger.Log($"Failed To load Delegate Type {_type}  Method {_method} Error" + e.ToString());
                 _type = null;
                 _method = "";
                 base.target = null;
+                _DelegateTarget = null;
             }
         }
 
