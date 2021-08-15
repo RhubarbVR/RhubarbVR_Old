@@ -62,7 +62,7 @@ namespace RhubarbEngine.Components.Interaction
             rayderection = new Sync<Vector3f>(this, newRefIds);
             rayderection.value = -Vector3f.AxisZ;
             distances = new Sync<float>(this, newRefIds);
-            distances.value = 10f;
+            distances.value = 25f;
             user = new SyncRef<User>(this, newRefIds);
             meshDriver = new Driver<float>(this, newRefIds);
             mesh = new SyncRef<CylinderMesh>(this, newRefIds);

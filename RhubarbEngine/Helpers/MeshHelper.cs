@@ -40,7 +40,7 @@ namespace RhubarbEngine.Helpers
             Entity e = ea.addChild(name);
             Window window = e.attachComponent<Window>();
             T trains = e.attachComponent<T>();
-            //window.element.target = trains;
+            window.element.target = trains;
             return (e, window, trains);
         }
 
@@ -48,7 +48,7 @@ namespace RhubarbEngine.Helpers
         {
             Entity e = ea.addChild(name);
             Window window = e.attachComponent<Window>();
-            //window.element.target = uI;
+            window.element.target = uI;
             return (e, window);
         }
 

@@ -108,6 +108,7 @@ namespace RhubarbEngine.VirtualReality
                 oldbuf.Dispose();
                 _mirrorTexture.clearLeftSet();
             }
+            changeProject((float)(Math.PI / 180) * _eng.renderManager.fieldOfView, _eng.renderManager.aspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
         }
 
         private Framebuffer CreateFramebuffer(uint width, uint height)
