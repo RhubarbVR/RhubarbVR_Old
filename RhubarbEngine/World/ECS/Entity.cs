@@ -282,6 +282,7 @@ namespace RhubarbEngine.World.ECS
             if(internalParent == null)
             {
                 internalParent = parent.target;
+                updateGlobalTrans();
                 return;
             }
             if (parent.target == null) {
@@ -368,6 +369,7 @@ namespace RhubarbEngine.World.ECS
         }
         public override void onLoaded()
         {
+            base.onLoaded();
             updateGlobalTrans();
         }
         [NoSync]

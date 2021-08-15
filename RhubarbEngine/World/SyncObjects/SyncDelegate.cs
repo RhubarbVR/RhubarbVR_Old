@@ -42,7 +42,7 @@ namespace RhubarbEngine.World
                 {
                     return;
                 }
-                Delegate @delegate = value as Delegate;
+                Delegate @delegate = value;
                 if (@delegate.Target == null)
                 {
                     _type = @delegate.Method.DeclaringType;
@@ -72,12 +72,18 @@ namespace RhubarbEngine.World
             BuildDelegate();
         }
 
+        public override void Bind()
+        {
+            base.Bind();
+            BuildDelegate();
+        }
+
         public override void UpdateNetIngect(DataNodeGroup data)
         {
             data.setValue("Method", new DataNode<string>(_method));
             if (_type != null)
             {
-                data.setValue("Type", new DataNode<string>(_type.Name));
+                data.setValue("Type", new DataNode<string>(_type.FullName));
             }
             else
             {

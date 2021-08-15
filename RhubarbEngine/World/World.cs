@@ -28,7 +28,6 @@ namespace RhubarbEngine.World
 
         public StaticAssets staticAssets;
 
-
         [NoSync]
         [NoSave]
         public GrabbableHolder lastHolder;
