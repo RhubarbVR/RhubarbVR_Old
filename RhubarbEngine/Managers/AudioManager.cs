@@ -11,12 +11,20 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using OpenAL;
+using NAudio;
+using NAudio.Wave;
 
 namespace RhubarbEngine.Managers
 {
     public class AudioManager : IManager
     {
         private Engine engine;
+
+        public bool OpenAl = false;
+
+        //NAudio
+        private DirectSoundOut waveOutDevice;
+        private BufferedWaveProvider mainOutputStream;
 
         private bool running = false;
         public Stopwatch stopwatch { get; private set; }
@@ -53,31 +61,80 @@ namespace RhubarbEngine.Managers
 
         public unsafe IManager initialize(Engine _engine)
         {
+
             ee = new float[AudioFrameSize * 2];
             iplAudioSettings = new IPL.AudioSettings { frameSize = AudioFrameSize, samplingRate = SamplingRate };
             engine = _engine;
+            GC.KeepAlive(ee);
 
             stopwatch = new Stopwatch();
 
             outBuff = Marshal.AllocHGlobal(AudioFrameSizeInBytes * 2);
 
-            alBuffers = new uint[engine.settingsObject.AudioSettings.BufferCount];
-            PrepareOpenAL();
+            if (OpenAl)
+            {
+                PrepareOpenAL();
+            }
+            else
+            {
+                PrepareNAudio();
+            }
+
             PrepareSteamAudio();
 
-            AL.GenBuffers(alBuffers.Length, alBuffers);
-            AL.GenSource(out sourceId);
-
+            if (OpenAl)
+            {
+                AL.GenBuffers(alBuffers.Length, alBuffers);
+                AL.GenSource(out sourceId);
+            }
             stopwatch.Start();
 
             Console.WriteLine("Starting Audio task");
             running = true;
-            task = new Thread(Updater);
+            if (OpenAl)
+            {
+                task = new Thread(OpenALUpdater);
+            }
+            else
+            {
+                task = new Thread(NaudioUpdater);
+            }
             task.Name = "Audio";
             task.IsBackground = true;
             task.Priority = ThreadPriority.AboveNormal;
             task.Start();
             return this;
+        }
+
+        private void PrepareNAudio()
+        {
+            managedArray = new byte[(AudioFrameSizeInBytes * 2)];
+            GC.KeepAlive(managedArray);
+
+            try
+            {
+                waveOutDevice = new DirectSoundOut(70);
+            }
+            catch (Exception driverCreateException)
+            {
+                Console.WriteLine(String.Format("{0}", driverCreateException.Message));
+                return;
+            }
+
+            mainOutputStream = new BufferedWaveProvider( new WaveFormat(SamplingRate,16,2));
+            mainOutputStream.BufferLength = AudioFrameSizeInBytes*4;   
+            mainOutputStream.DiscardOnBufferOverflow = true;
+
+            try
+            {
+                waveOutDevice.Init(mainOutputStream);
+                waveOutDevice.Play();
+            }
+            catch (Exception initException)
+            {
+                Console.WriteLine(String.Format("{0}", initException.Message), "Error Initializing Output");
+                return;
+            }
         }
 
         private void steamLogFunction(IPL.LogLevel level, [MarshalAs(UnmanagedType.LPStr)] string message)
@@ -122,13 +179,28 @@ namespace RhubarbEngine.Managers
         }
         
 
-        public unsafe void Updater()
+        public unsafe void OpenALUpdater()
         {
             while (running)
             {
                 try
                 {
-                    Update();
+                    OpenALUpdate();
+                }
+                catch
+                {
+
+                }
+                Thread.Sleep(10);
+            }
+        }
+        private unsafe void NaudioUpdater()
+        {
+            while (running)
+            {
+                try
+                {
+                    NaudioUpdate();
                 }
                 catch
                 {
@@ -140,6 +212,7 @@ namespace RhubarbEngine.Managers
 
         public void RunOutput()
         {
+            IPL.AudioBufferDeinterleave(iplContext, ref ee[0], ref iplOutputBuffer);
             foreach (var world in engine.worldManager.worlds)
             {
                 if(world.Focus != World.World.FocusLevel.Background)
@@ -152,9 +225,28 @@ namespace RhubarbEngine.Managers
 
                 }
             }
+            IPL.AudioBufferInterleave(iplContext, ref iplOutputBuffer, outBuff);
+        }
+        long times;        
+
+        byte[] managedArray;
+        public unsafe void NaudioUpdate()
+        {
+            int space = mainOutputStream.BufferLength - mainOutputStream.BufferedBytes;
+            if (space > managedArray.Length)
+            {
+                if (times == 0)
+                {
+                    RunOutput();
+                    Marshal.Copy(outBuff, managedArray, 0, managedArray.Length);
+                    mainOutputStream.AddSamples(managedArray, 0, managedArray.Length);
+                }
+
+                times = (times + 1) % 100;
+            }
         }
 
-        public unsafe void Update()
+        public unsafe void OpenALUpdate()
         {
             AL.GetSource(sourceId, AL.GetSourceInt.BuffersProcessed, out int numProcessedBuffers);
             AL.GetSource(sourceId, AL.GetSourceInt.BuffersQueued, out int numQueuedBuffers);
@@ -204,6 +296,8 @@ namespace RhubarbEngine.Managers
 
         private void PrepareOpenAL()
         {
+            alBuffers = new uint[engine.settingsObject.AudioSettings.BufferCount];
+
             alAudioDevice = ALC.OpenDevice(null);
             alAudioContext = ALC.CreateContext(alAudioDevice, null);
 
@@ -242,7 +336,10 @@ namespace RhubarbEngine.Managers
         public void unloadAll()
         {
             running = false;
-            UnloadOpenAL();
+            if (OpenAl)
+            {
+                UnloadOpenAL();
+            }
             UnloadSteamAudio();
         }
     }
