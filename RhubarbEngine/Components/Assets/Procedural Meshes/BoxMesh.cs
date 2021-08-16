@@ -30,7 +30,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             AxisZ = new Sync<Vector3d>(this, newRefIds);
             AxisZ.value = Vector3d.AxisZ;
             Extent = new Sync<Vector3d>(this, newRefIds);
-            Extent.value = Vector3d.One;
+            Extent.value = new Vector3d(0.5f);
             NoSharedVertices = new Sync<bool>(this, newRefIds);
             NoSharedVertices.value = false;
         }
