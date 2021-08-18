@@ -298,7 +298,7 @@ namespace RhubarbEngine.Components.Interaction
     [Category(new string[] { "Interaction" })]
     public class WebBrowser : AssetProvider<RTexture2D>, IRenderObject, KeyboardStealer, IAudioHandler,IAudioSource
     {
-                private Size popupSize;
+        private Size popupSize;
         private Point popupPosition;
 
 
@@ -671,7 +671,7 @@ namespace RhubarbEngine.Components.Interaction
             {
                 float** channelData = (float**)data.ToPointer();
                 int chan = 1;
-                int size = engine.audioManager.AudioFrameSizeInBytes * chan;
+                int size = noOfFrames*sizeof(float) * chan;
                 byte[] samples = new byte[size];
                 fixed (byte* pDestByte = samples)
                 {

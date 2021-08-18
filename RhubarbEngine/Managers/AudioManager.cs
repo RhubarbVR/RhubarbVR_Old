@@ -20,7 +20,7 @@ namespace RhubarbEngine.Managers
     {
         private Engine engine;
 
-        public bool OpenAl = false;
+        public bool OpenAl => engine?.settingsObject.AudioSettings.OpenAL ?? true;
 
         //NAudio
         private DirectSoundOut waveOutDevice;
@@ -59,9 +59,11 @@ namespace RhubarbEngine.Managers
 
         public Thread task;
 
+        public int audioframeTimeMs;
+
         public unsafe IManager initialize(Engine _engine)
         {
-
+            audioframeTimeMs = AudioFrameSize/(SamplingRate / 1000);
             ee = new float[AudioFrameSize * 2];
             iplAudioSettings = new IPL.AudioSettings { frameSize = AudioFrameSize, samplingRate = SamplingRate };
             engine = _engine;
@@ -101,7 +103,7 @@ namespace RhubarbEngine.Managers
             }
             task.Name = "Audio";
             task.IsBackground = true;
-            task.Priority = ThreadPriority.AboveNormal;
+            task.Priority = ThreadPriority.Highest;
             task.Start();
             return this;
         }
@@ -120,10 +122,10 @@ namespace RhubarbEngine.Managers
                 Console.WriteLine(String.Format("{0}", driverCreateException.Message));
                 return;
             }
-
-            mainOutputStream = new BufferedWaveProvider( new WaveFormat(SamplingRate,16,2));
+            
+            mainOutputStream = new BufferedWaveProvider(WaveFormat.CreateIeeeFloatWaveFormat(SamplingRate, 2));
             mainOutputStream.BufferLength = AudioFrameSizeInBytes*4;   
-            mainOutputStream.DiscardOnBufferOverflow = true;
+            mainOutputStream.DiscardOnBufferOverflow = false;
 
             try
             {
@@ -191,7 +193,6 @@ namespace RhubarbEngine.Managers
                 {
 
                 }
-                Thread.Sleep(10);
             }
         }
         private unsafe void NaudioUpdater()
@@ -206,7 +207,6 @@ namespace RhubarbEngine.Managers
                 {
 
                 }
-                Thread.Sleep(10);
             }
         }
 
@@ -227,22 +227,19 @@ namespace RhubarbEngine.Managers
             }
             IPL.AudioBufferInterleave(iplContext, ref iplOutputBuffer, outBuff);
         }
-        long times;        
-
         byte[] managedArray;
         public unsafe void NaudioUpdate()
         {
-            int space = mainOutputStream.BufferLength - mainOutputStream.BufferedBytes;
-            if (space > managedArray.Length)
+            int space = (int)(waveOutDevice.GetPosition()% managedArray.Length);
+            if (space < (int)(AudioFrameSizeInBytes/2))
             {
-                if (times == 0)
-                {
-                    RunOutput();
-                    Marshal.Copy(outBuff, managedArray, 0, managedArray.Length);
-                    mainOutputStream.AddSamples(managedArray, 0, managedArray.Length);
-                }
-
-                times = (times + 1) % 100;
+                var watch = new System.Diagnostics.Stopwatch();
+                watch.Start();
+                RunOutput();
+                Marshal.Copy(outBuff, managedArray, 0, managedArray.Length);
+                mainOutputStream.AddSamples(managedArray, 0, managedArray.Length);
+                watch.Stop();
+                Thread.Sleep((audioframeTimeMs - (int)watch.ElapsedMilliseconds)-5);
             }
         }
 
