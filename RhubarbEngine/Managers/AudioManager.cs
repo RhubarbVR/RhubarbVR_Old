@@ -210,7 +210,7 @@ namespace RhubarbEngine.Managers
             }
         }
 
-        public void RunOutput()
+        public unsafe void RunOutput()
         {
             IPL.AudioBufferDeinterleave(iplContext, ref ee[0], ref iplOutputBuffer);
             foreach (var world in engine.worldManager.worlds)
@@ -250,6 +250,10 @@ namespace RhubarbEngine.Managers
 
             int buffersToAdd = alBuffers.Length - numQueuedBuffers + numProcessedBuffers;
 
+            if (buffersToAdd <= 0) return;
+
+            var task = Task.Run(RunOutput);
+
             while (buffersToAdd > 0)
             {
                 uint bufferId = alBuffers[buffersToAdd - 1];
@@ -260,9 +264,7 @@ namespace RhubarbEngine.Managers
 
                     numProcessedBuffers--;
                 }
-                IPL.AudioBufferDeinterleave(iplContext, ref ee[0], ref iplOutputBuffer);
-                RunOutput();
-                IPL.AudioBufferInterleave(iplContext, ref iplOutputBuffer, outBuff);
+                task.Wait();
                 AL.BufferData(bufferId, BufferFormatStereoFloat32, outBuff, AudioFrameSizeInBytes * 2, SamplingRate);
                 AL.SourceQueueBuffers(sourceId, 1, &bufferId);
                 CheckALErrors();
