@@ -25,6 +25,13 @@ namespace g3
         public Vector3f(double f) {  x = y = z = (float)f; }
         public Vector3f(double x, double y, double z) { this.x = (float)x; this.y = (float)y; this.z = (float)z; }
         public Vector3f(double[] v2) {  x = (float)v2[0]; y = (float)v2[1]; z = (float)v2[2]; }
+
+        public float Distance(Vector3 v2)
+        {
+            float dx = v2.X - x, dy = v2.Y - y, dz = v2.Z - z;
+            return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
+        }
+
         public Vector3f(Vector3d copy) {  x = (float)copy.x; y = (float)copy.y; z = (float)copy.z; }
         [IgnoreMember]
         static public readonly Vector3f Zero = new Vector3f(0.0f, 0.0f, 0.0f);

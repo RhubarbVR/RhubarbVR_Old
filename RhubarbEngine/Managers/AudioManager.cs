@@ -219,8 +219,11 @@ namespace RhubarbEngine.Managers
                 {
                     foreach (var comp in world.updateLists.audioOutputs)
                     {
-                        comp.AudioUpdate();
-                        IPL.AudioBufferMix(iplContext, ref comp.iplOutputBuffer, ref iplOutputBuffer);
+                        if (comp.isNotCulled)
+                        {
+                            comp.AudioUpdate();
+                            IPL.AudioBufferMix(iplContext, ref comp.iplOutputBuffer, ref iplOutputBuffer);
+                        }
                     }
 
                 }

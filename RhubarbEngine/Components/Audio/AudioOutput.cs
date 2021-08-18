@@ -23,16 +23,28 @@ namespace RhubarbEngine.Components.Audio
         public SyncRef<IAudioSource> audioSource;
 
         public Sync<float> spatialBlend;
+        public Sync<float> cullingDistance;
+
         public IPL.AudioBuffer iplOutputBuffer;
 
         private IPL._IPLBinauralEffect_t iplBinauralEffect;
         private IPL.AudioBuffer iplInputBuffer;
+
+        public bool isNotCulled {
+            get
+            {
+                float e = entity.globalPos().Distance(world.headTrans.Translation);
+                return (e <= cullingDistance.value);
+            }
+        }
 
         public override void buildSyncObjs(bool newRefIds)
         {
             audioSource = new SyncRef<IAudioSource>(this, newRefIds);
             spatialBlend = new Sync<float>(this, newRefIds);
             spatialBlend.value = 1f;
+            cullingDistance = new Sync<float>(this, newRefIds);
+            cullingDistance.value = 100f;
         }
 
         public override void onLoaded()
