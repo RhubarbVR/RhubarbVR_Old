@@ -76,7 +76,7 @@ namespace RhubarbEngine.Components.Interaction
                     case InteractionSource.RightFinger:
                         break;
                     case InteractionSource.HeadLaser:
-                        return engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right);
+                        return engine.inputManager.mainWindows.GetMouseButtonDown(MouseButton.Right);
                         break;
                     case InteractionSource.HeadFinger:
                         break;
