@@ -102,8 +102,8 @@ namespace RhubarbEngine.Managers
                 task = new Thread(NaudioUpdater);
             }
             task.Name = "Audio";
-            task.IsBackground = true;
-            task.Priority = ThreadPriority.Highest;
+            task.IsBackground = false;
+            task.Priority = ThreadPriority.AboveNormal;
             task.Start();
             return this;
         }
