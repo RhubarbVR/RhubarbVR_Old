@@ -30,25 +30,25 @@ namespace RhubarbEngine.Components.Interaction
 
         public SyncRef<User> user;
 
-        public SyncRef<CylinderMesh> mesh;
+        public SyncRef<CurvedTubeMesh> mesh;
 
         public Driver<Quaternionf> rotation;
 
         public SyncRef<GrabbableHolder> grabholder;
 
-        public Driver<float> meshDriver;
+        public Driver<Vector3d> meshDriver;
 
         public override void OnAttach()
         {
             base.OnAttach();
             user.target = world.localUser;
             if (world.userspace) return;
-            var (e, m) = MeshHelper.AddMesh<CylinderMesh>(entity);
+            var (e, m) = MeshHelper.AddMesh<CurvedTubeMesh>(entity);
             e.rotation.value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
             rotation.setDriveTarget(entity.rotation);
-            meshDriver.target = m.Height;
-            m.BaseRadius.value = 0.005f;
-            m.TopRadius.value = 0.01f;
+            meshDriver.target = m.Endpoint;
+            m.Radius.value = 0.005f;
+            m.Radius.value = 0.01f;
             mesh.target = m;
             grabholder.target = entity.attachComponent<GrabbableHolder>();
             grabholder.target.laser.target = this;
@@ -64,8 +64,8 @@ namespace RhubarbEngine.Components.Interaction
             distances = new Sync<float>(this, newRefIds);
             distances.value = 25f;
             user = new SyncRef<User>(this, newRefIds);
-            meshDriver = new Driver<float>(this, newRefIds);
-            mesh = new SyncRef<CylinderMesh>(this, newRefIds);
+            meshDriver = new Driver<Vector3d>(this, newRefIds);
+            mesh = new SyncRef<CurvedTubeMesh>(this, newRefIds);
             grabholder = new SyncRef<GrabbableHolder>(this, newRefIds);
             rotation = new Driver<Quaternionf>(this, newRefIds);
         }
@@ -82,7 +82,7 @@ namespace RhubarbEngine.Components.Interaction
             {
                 if (meshDriver.target != null)
                 {
-                    meshDriver.Drivevalue = 0;
+                    meshDriver.Drivevalue = Vector3d.Zero;
                 }
                 return;
             }
@@ -90,7 +90,7 @@ namespace RhubarbEngine.Components.Interaction
             {
                 if (meshDriver.target != null)
                 {
-                    meshDriver.Drivevalue = 0;
+                    meshDriver.Drivevalue = Vector3d.Zero;
                 }
                 return;
             }
@@ -100,8 +100,7 @@ namespace RhubarbEngine.Components.Interaction
                 {
                     if(mesh.target != null)
                     {
-                        mesh.target.BaseRadius.value = 0.005f / 40;
-                        mesh.target.TopRadius.value = 0.01f / 40;
+                        mesh.target.Radius.value = 0.005f / 40;
                         setHeadLazerScale = true;
                     }
                 }
@@ -127,7 +126,7 @@ namespace RhubarbEngine.Components.Interaction
                     {
                         if (meshDriver.target != null)
                         {
-                            meshDriver.Drivevalue = (source.value == InteractionSource.HeadLaser) ? desklength : distances.value;
+                            meshDriver.Drivevalue = new Vector3d((source.value == InteractionSource.HeadLaser) ? desklength : distances.value,0,0);
                         }
                         if (!input.isKeyboardinuse)
                         {
@@ -153,7 +152,7 @@ namespace RhubarbEngine.Components.Interaction
                 {
                     if (meshDriver.target != null)
                     {
-                        meshDriver.Drivevalue = (source.value == InteractionSource.HeadLaser) ? desklength : (float)Vector3.Distance(cb.HitPointWorld, sourcse);
+                        meshDriver.Drivevalue = new Vector3d((source.value == InteractionSource.HeadLaser) ? desklength : distances.value, 0, 0);
                     }
                     Type type = cb.CollisionObject.UserObject.GetType();
                     if (type == typeof(InputPlane))

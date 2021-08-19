@@ -81,6 +81,13 @@ namespace g3
         public double Min {
 			get { return Math.Min(x, Math.Min(y, z)); }
 		}
+        public static Vector3d bezier(Vector3d a, Vector3d b, Vector3d c, Vector3d d, float t)
+        {
+            var it = Lerp(b, c, t);
+            return Lerp(Lerp(Lerp(a, b, t), it, t), Lerp(it, Lerp(c, d, t), t), t);
+        }
+
+
         [IgnoreMember]
         public double MaxAbs {
 			get { return Math.Max(Math.Abs(x), Math.Max(Math.Abs(y), Math.Abs(z))); }

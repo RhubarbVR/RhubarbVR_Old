@@ -363,7 +363,14 @@ namespace RhubarbEngine.World.ECS
         {
             T newcomp = (T)Activator.CreateInstance(typeof(T));
             _components.Add(newcomp);
-            newcomp.OnAttach();
+            try
+            {
+                newcomp.OnAttach();
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Failed To run Attach On Component" + typeof(T).Name + " Error:" + e.ToString());
+            }
             newcomp.onLoaded();
             return newcomp;
         }
