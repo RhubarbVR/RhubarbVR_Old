@@ -26,7 +26,7 @@
     ·
     <a href="https://github.com/RhubarbVR/RhubarbVR/issues">Issues</a>
     ·
-    <a href="https://github.com/RhubarbVR/RhubarbVR/issues/new?assignees=&labels=&template=bug_report.md&title=Report%20Bug%Title">Report Bug</a>
+    <a href="https://github.com/RhubarbVR/RhubarbVR/issues/new?assignees=&labels=&template=bug_report.md&title=Report%20Bug%20Title">Report Bug</a>
     ·
     <a href="https://github.com/RhubarbVR/RhubarbVR/issues/new?assignees=&labels=&template=feature_request.md&title=Feature%20Request%20Title">Make Feature Request</a>
   </p>
