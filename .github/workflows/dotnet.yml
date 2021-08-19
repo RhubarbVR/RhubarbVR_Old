@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore "RhubarbVR"
     - name: Build
       run: dotnet build "RhubarbVR" --no-restore /p:Platform=x64
     - name: Test
