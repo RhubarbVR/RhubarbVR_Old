@@ -17,7 +17,7 @@
   <p align="center">
     A Networked VR Engine
     <br />
-    <a href="https://github.com/RhubarbVR/RhubarbVR/Docs"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/RhubarbVR/RhubarbVR/tree/main/Docs"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://rhubarbvr.net/">Web Site</a>
