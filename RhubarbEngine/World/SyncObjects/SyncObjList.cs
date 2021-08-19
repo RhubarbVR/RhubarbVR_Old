@@ -36,6 +36,11 @@ namespace RhubarbEngine.World
             addDisposable(value);
         }
 
+        public int GetIndexOf(T val)
+        {
+           return _synclist.IndexOf(val);
+        }
+
         private void Value_onDispose(Worker worker)
         {
             try

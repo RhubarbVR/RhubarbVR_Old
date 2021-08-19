@@ -34,6 +34,7 @@ namespace RhubarbEngine.Components.Audio
             get
             {
                 if (audioSource.target == null) return false;
+                if (!audioSource.target.IsActive) return false;
                 if (audioSource.target.ChannelCount != 1) return false;
                 float e = entity.globalPos().Distance(world.headTrans.Translation);
                 return (e <= cullingDistance.value);
