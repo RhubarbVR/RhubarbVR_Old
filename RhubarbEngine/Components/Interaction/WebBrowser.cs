@@ -306,7 +306,7 @@ namespace RhubarbEngine.Components.Interaction
 
         public bool IsActive => loaded;
 
-        public int ChannelCount => 1;
+        public int ChannelCount => (int)audioType.value;
 
         RollBuffer frameInputBuffer;
 
@@ -319,6 +319,7 @@ namespace RhubarbEngine.Components.Interaction
         public Driver<string> title;
         public Sync<bool> globalAudio;
         public Sync<bool> noKeyboard;
+        public Sync<AudioType> audioType;
 
         private bool loaded;
         private bool updateUrl = false;
@@ -421,6 +422,9 @@ namespace RhubarbEngine.Components.Interaction
             scale.Changed += onScaleChange;
             path = new Sync<string>(this, newRefIds);
             globalAudio = new Sync<bool>(this, newRefIds);
+            audioType = new Sync<AudioType>(this, newRefIds);
+            audioType.value = AudioType.LayoutMono;
+            audioType.Changed += AudioType_Changed;
             globalAudio.Changed += GlobalAudio_Changed;
             path.Changed += Path_Changed;
             //path.value = "https://google.com/";
@@ -430,6 +434,13 @@ namespace RhubarbEngine.Components.Interaction
             title = new Driver<string>(this, newRefIds);
             noKeyboard = new Sync<bool>(this, newRefIds);
 
+        }
+
+        private void AudioType_Changed(IChangeable obj)
+        {
+            loaded = false;
+            browser.Dispose();
+            onLoaded();
         }
 
         private void GlobalAudio_Changed(IChangeable obj)
@@ -654,7 +665,24 @@ namespace RhubarbEngine.Components.Interaction
         }
         public bool GetAudioParameters(IWebBrowser chromiumWebBrowser, IBrowser browser, ref AudioParameters parameters)
         {
-            parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutMono;
+            switch (audioType.value)
+            {
+                case AudioType.LayoutUnsupported:
+                    parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutUnsupported;
+                    break;
+                case AudioType.LayoutMono:
+                    parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutMono;
+                    break;
+                case AudioType.LayoutStereo:
+                    parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutStereo;
+                    break;
+                case AudioType.LayoutSurround:
+                    parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutSurround;
+                    break;
+                default:
+                    parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutUnsupported;
+                    break;
+            }
             parameters.FramesPerBuffer = engine.audioManager.AudioFrameSize;
             parameters.SampleRate = engine.audioManager.SamplingRate;
             return true;
@@ -670,7 +698,7 @@ namespace RhubarbEngine.Components.Interaction
             unsafe
             {
                 float** channelData = (float**)data.ToPointer();
-                int chan = 1;
+                int chan = ChannelCount;
                 int size = noOfFrames*sizeof(float) * chan;
                 byte[] samples = new byte[size];
                 fixed (byte* pDestByte = samples)

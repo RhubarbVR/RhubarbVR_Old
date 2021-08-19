@@ -33,6 +33,8 @@ namespace RhubarbEngine.Components.Audio
         public bool isNotCulled {
             get
             {
+                if (audioSource.target == null) return false;
+                if (audioSource.target.ChannelCount != 1) return false;
                 float e = entity.globalPos().Distance(world.headTrans.Translation);
                 return (e <= cullingDistance.value);
             }
@@ -89,14 +91,14 @@ namespace RhubarbEngine.Components.Audio
         public unsafe void AudioUpdate()
         {
             if (iplBinauralEffect == default) return;
-            if (audioSource.target == null) return;
             if (!audioSource.target.IsActive) return;
-            if (audioSource.target.FrameInputBuffer == null) return;
-            if (audioSource.target.FrameInputBuffer.Length < engine.audioManager.AudioFrameSizeInBytes) return;
+            var data = audioSource.target.FrameInputBuffer;
+            if (data == null) return;
+            if (data.Length < engine.audioManager.AudioFrameSizeInBytes) return;
             Matrix4x4.Decompose(world.headTrans, out Vector3 sc, out Quaternion ret, out Vector3 trans);
             var position = Vector3.Transform((entity.globalPos().ToSystemNumrics() - trans), Quaternion.Inverse(ret));
             var e = new IPL.Vector3(position.X, position.Y, position.Z);
-            fixed (byte* ptr = audioSource.target.FrameInputBuffer)
+            fixed (byte* ptr = data)
             {
                 var prams = new IPL.BinauralEffectParams { direction = e, interpolation = IPL.HRTFInterpolation.Nearest, spatialBlend = spatialBlend.value,hrtf = engine.audioManager.hrtf};
                 IPL.AudioBufferDeinterleave(engine.audioManager.iplContext, (IntPtr)ptr, ref iplInputBuffer);
