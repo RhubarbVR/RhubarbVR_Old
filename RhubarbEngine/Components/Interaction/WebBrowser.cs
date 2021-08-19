@@ -334,7 +334,7 @@ namespace RhubarbEngine.Components.Interaction
         public override void onLoaded()
         {
             base.onLoaded();
-            frameInputBuffer = new RollBuffer(engine.audioManager.AudioFrameSizeInBytes);
+            frameInputBuffer = new RollBuffer(engine.audioManager.AudioFrameSizeInBytes*ChannelCount);
             if (!Cef.IsInitialized) // Check before init
             {
                 Console.WriteLine("Init Cef");

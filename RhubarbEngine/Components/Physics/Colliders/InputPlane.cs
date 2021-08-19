@@ -51,6 +51,12 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         public void updatePos(Vector2 pos, InteractionSource sourc)
         {
+            if (!_focused && !input.isKeyboardinuse)
+            {
+                Setfocused();
+                val = sourc;
+                StopMousePos = false;
+            }
             if (StopMousePos) return;
             if (sourc != val) return;
             mousePosition = pos;
@@ -72,12 +78,12 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         private bool _focused = false;
 
-        public bool isNotTakingInput => (!focused || (hover>3));
+        public bool isNotTakingInput => (!_focused || (hover>3));
 
 
         private byte hover = 0;
 
-        public bool focused => _focused;
+        public bool focused => (input.isKeyboardinuse) ? _focused:isNotTakingInput;
 
         public bool StopMousePos = false;
 

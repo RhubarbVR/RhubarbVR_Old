@@ -129,6 +129,10 @@ namespace RhubarbEngine.Components.Interaction
                         {
                             meshDriver.Drivevalue = (source.value == InteractionSource.HeadLaser) ? desklength : distances.value;
                         }
+                        if (!input.isKeyboardinuse)
+                        {
+                            input.RemoveFocus();
+                        }
                     }
                 }
 
