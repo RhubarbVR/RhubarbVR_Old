@@ -33,6 +33,9 @@ namespace RhubarbEngine.Components.Interaction
         public SyncRef<GrabbableHolder> grabbableHolder;
 
         public bool Grabbed => (grabbableHolder.target != null)&&(grabbingUser.target != null);
+        
+        Vector3f lastValue;
+        Vector3f volas;
 
         public override void buildSyncObjs(bool newRefIds)
         {
@@ -41,6 +44,14 @@ namespace RhubarbEngine.Components.Interaction
             grabbableHolder.Changed += GrabbableHolder_Changed;
             grabbingUser = new SyncRef<User>(this, newRefIds);
             lastParent = new SyncRef<Entity>(this, newRefIds);
+        }
+
+        public override void CommonUpdate(DateTime startTime, DateTime Frame)
+        {
+            base.CommonUpdate(startTime, Frame);
+            if (grabbingUser.target != world.localUser) return;
+            volas = (((lastValue - entity.globalPos()) *(1/(float)engine.platformInfo.deltaSeconds)) + volas)/2;
+            lastValue = entity.globalPos();
         }
 
         private void GrabbableHolder_Changed(IChangeable obj)
@@ -69,6 +80,15 @@ namespace RhubarbEngine.Components.Interaction
             entity.SetParent(lastParent.target);
             entity.SendDrop(grabbableHolder.target, true);
             grabbableHolder.target = null;
+            foreach (var item in entity.getAllComponents<Collider>())
+            {
+                if (item.NoneStaticBody.value && (item.collisionObject != null))
+                {
+                    Console.WriteLine("Droped V" + volas);
+                    item.collisionObject.LinearVelocity = new BulletSharp.Math.Vector3(-volas.x, -volas.y, -volas.z);
+                    item.collisionObject.AngularVelocity = new BulletSharp.Math.Vector3(volas.x/10, volas.y/10, volas.z/10);
+                }
+            }
         }
 
 

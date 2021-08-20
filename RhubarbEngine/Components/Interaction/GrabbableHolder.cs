@@ -45,6 +45,7 @@ namespace RhubarbEngine.Components.Interaction
                 gripping = !gripping;
                 if (!gripping)
                 {
+
                     foreach (var child in holder.target._children.getCopy())
                     {
                         foreach (var grab in child.getAllComponents<Grabbable>())
