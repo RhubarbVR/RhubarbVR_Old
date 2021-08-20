@@ -12,6 +12,9 @@ namespace RhubarbEngine.Settings
         [SettingsField("Render Settings")]
         public RenderSettings RenderSettings = new RenderSettings();
 
+        [SettingsField("Physics Settings")]
+        public PhysicsSettings PhysicsSettings = new PhysicsSettings();
+
         [SettingsField("UI Settings")]
         public UISettings UISettings = new UISettings();
 

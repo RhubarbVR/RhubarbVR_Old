@@ -36,11 +36,16 @@ namespace RhubarbEngine.Managers
 
         public double deltaSeconds;
 
+        public int ThreadCount;
+
         public IManager initialize(Engine _engine)
         {
             engine = _engine;
             sw = new Stopwatch();
             sw.Start();
+
+            ThreadCount = Environment.ProcessorCount;
+
             if (OperatingSystem.IsOSPlatform("Linux"))
             {
                 platform = Platform.Linux;

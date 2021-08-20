@@ -442,12 +442,22 @@ namespace RhubarbEngine.World
 
         public NetModule netModule { get; private set; }
 
+        private ConstraintSolverPoolMultiThreaded _constraintSolver;
+
         public World(WorldManager _worldManager)
         {
             worldManager = _worldManager;
             collisionConfiguration = new DefaultCollisionConfiguration();
             dispatcher = new CollisionDispatcher(collisionConfiguration);
             broadphase = new DbvtBroadphase();
+            if(worldManager.engine.settingsObject.PhysicsSettings.ThreadCount == -1)
+            {
+                _constraintSolver = new ConstraintSolverPoolMultiThreaded(worldManager.engine.platformInfo.ThreadCount-1);
+            }
+            else
+            {
+                _constraintSolver = new ConstraintSolverPoolMultiThreaded(worldManager.engine.settingsObject.PhysicsSettings.ThreadCount);
+            }
             physicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, null, collisionConfiguration);
             staticAssets = new StaticAssets(this);
         }
