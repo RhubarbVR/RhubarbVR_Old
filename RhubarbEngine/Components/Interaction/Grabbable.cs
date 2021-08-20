@@ -84,7 +84,6 @@ namespace RhubarbEngine.Components.Interaction
             {
                 if (item.NoneStaticBody.value && (item.collisionObject != null))
                 {
-                    Console.WriteLine("Droped V" + volas);
                     item.collisionObject.LinearVelocity = new BulletSharp.Math.Vector3(-volas.x, -volas.y, -volas.z);
                     item.collisionObject.AngularVelocity = new BulletSharp.Math.Vector3(volas.x/10, volas.y/10, volas.z/10);
                 }
