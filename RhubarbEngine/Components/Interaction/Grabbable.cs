@@ -24,7 +24,7 @@ using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.Components.Interaction
 {
-    public class Grabbable:Component
+    public class Grabbable:Component,PhysicsDisableder
     {
         public SyncRef<Entity> lastParent;
 
@@ -38,9 +38,48 @@ namespace RhubarbEngine.Components.Interaction
         {
             base.buildSyncObjs(newRefIds);
             grabbableHolder = new SyncRef<GrabbableHolder>(this, newRefIds);
+            grabbableHolder.Changed += GrabbableHolder_Changed;
             grabbingUser = new SyncRef<User>(this, newRefIds);
             lastParent = new SyncRef<Entity>(this, newRefIds);
+        }
 
+        private void GrabbableHolder_Changed(IChangeable obj)
+        {
+            if (grabbableHolder.target == null)
+            {
+                try
+                {
+                    entity.physicsDisableder.Remove(this);
+                }
+                catch
+                {
+
+                }
+            }
+            else
+            {
+                try
+                {
+                    entity.physicsDisableder.Add(this);
+                }
+                catch 
+                {
+
+                }
+            }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            try
+            {
+                entity.physicsDisableder.Remove(this);
+            }
+            catch
+            {
+
+            }
         }
 
         public void Drop()

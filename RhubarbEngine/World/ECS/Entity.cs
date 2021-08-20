@@ -22,6 +22,10 @@ namespace RhubarbEngine.World.ECS
 
         [NoSave]
         [NoSync]
+        public User CreatingUser => world.users[(int)referenceID.getOwnerID()];
+
+        [NoSave]
+        [NoSync]
         public User manager { 
             get {
                 User retur;
@@ -74,6 +78,14 @@ namespace RhubarbEngine.World.ECS
         private Entity internalParent;
 
         public SyncRef<Entity> parent;
+
+        [NoSave]
+        [NoSync]
+        public List<PhysicsDisableder> physicsDisableder = new List<PhysicsDisableder>();
+
+        [NoSave]
+        [NoSync]
+        public bool PhysicsDisabled => physicsDisableder.Count > 0;
 
         [NoSave]
         [NoSync]
@@ -223,7 +235,7 @@ namespace RhubarbEngine.World.ECS
             return cashedLocalMatrix;
         }
 
-        public void setGlobalTrans(Matrix4x4 newtrans)
+        public void setGlobalTrans(Matrix4x4 newtrans, bool SendUpdate = true)
         {
             Matrix4x4 parentMatrix = Matrix4x4.CreateScale(Vector3.One);
             if (internalParent != null)
@@ -237,10 +249,11 @@ namespace RhubarbEngine.World.ECS
             rotation.setValueNoOnChange(new Quaternionf(newrotation.X, newrotation.Y, newrotation.Z, newrotation.W));
             scale.setValueNoOnChange(new Vector3f(newscale.X, newscale.Y, newscale.Z));
             cashedGlobalTrans = newtrans;
-            updateGlobalTrans();
+            updateGlobalTrans(SendUpdate);
         }
 
         public Action<Matrix4x4> GlobalTransformChange;
+        public Action<Matrix4x4> GlobalTransformChangePhysics;
 
         public void setLocalTrans(Matrix4x4 newtrans)
         {
@@ -332,7 +345,7 @@ namespace RhubarbEngine.World.ECS
             LoadListObject();
             enabledChanged?.Invoke();
         }
-        private void updateGlobalTrans()
+        private void updateGlobalTrans(bool Sendupdate = true)
         {
             Matrix4x4 parentMatrix = Matrix4x4.CreateScale(Vector3.One);
             if (internalParent != null)
@@ -342,6 +355,7 @@ namespace RhubarbEngine.World.ECS
             Matrix4x4 localMatrix = Matrix4x4.CreateScale(scale.value.x, scale.value.y, scale.value.z) * Matrix4x4.CreateFromQuaternion(rotation.value.ToSystemNumric()) * Matrix4x4.CreateTranslation(position.value.x, position.value.y, position.value.z);
             cashedGlobalTrans = localMatrix * parentMatrix;
             cashedLocalMatrix = localMatrix;
+            if(Sendupdate)GlobalTransformChangePhysics?.Invoke(cashedGlobalTrans);
             GlobalTransformChange?.Invoke(cashedGlobalTrans);
             foreach (Entity entity in _children)
             {

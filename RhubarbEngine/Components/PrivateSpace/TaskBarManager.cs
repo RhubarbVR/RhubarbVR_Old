@@ -120,6 +120,8 @@ namespace RhubarbEngine.Components.PrivateSpace
             var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0,-1,-5));
             cube.setGlobalTrans(move*headPos);
             var col = cube.attachComponent<BoxCollider>();
+            col.mass.value = 10;
+            col.NoneStaticBody.value = true;
             cube.attachComponent<Grabbable>();
         }
 

@@ -33,6 +33,7 @@ namespace RhubarbEngine.Components.Interaction
 
         bool gripping = false;
 
+
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
             base.CommonUpdate(startTime, Frame);
@@ -44,7 +45,7 @@ namespace RhubarbEngine.Components.Interaction
                 gripping = !gripping;
                 if (!gripping)
                 {
-                    foreach (var child in holder.target._children)
+                    foreach (var child in holder.target._children.getCopy())
                     {
                         foreach (var grab in child.getAllComponents<Grabbable>())
                         {

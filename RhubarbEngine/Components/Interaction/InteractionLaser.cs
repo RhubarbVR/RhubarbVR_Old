@@ -37,6 +37,7 @@ namespace RhubarbEngine.Components.Interaction
         public SyncRef<GrabbableHolder> grabholder;
 
         public Driver<Vector3d> meshDriver;
+        public Driver<Vector3d> meshHandleDriver;
 
         public override void OnAttach()
         {
@@ -45,6 +46,7 @@ namespace RhubarbEngine.Components.Interaction
             if (world.userspace) return;
             var (e, m) = MeshHelper.AddMesh<CurvedTubeMesh>(entity);
             e.rotation.value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
+            meshHandleDriver.setDriveTarget(m.EndHandle);
             rotation.setDriveTarget(entity.rotation);
             meshDriver.target = m.Endpoint;
             m.Radius.value = 0.005f;
@@ -68,6 +70,7 @@ namespace RhubarbEngine.Components.Interaction
             mesh = new SyncRef<CurvedTubeMesh>(this, newRefIds);
             grabholder = new SyncRef<GrabbableHolder>(this, newRefIds);
             rotation = new Driver<Quaternionf>(this, newRefIds);
+            meshHandleDriver = new Driver<Vector3d>(this, newRefIds);
         }
 
         private static float desklength = 0.1f;
@@ -126,11 +129,11 @@ namespace RhubarbEngine.Components.Interaction
                     {
                         if (meshDriver.target != null)
                         {
-                            meshDriver.Drivevalue = new Vector3d((source.value == InteractionSource.HeadLaser) ? desklength : distances.value,0,0);
+                            meshDriver.Drivevalue = new Vector3d(0,(source.value == InteractionSource.HeadLaser) ? desklength : distances.value,0)*entity.globalScale()*2.3;
                         }
-                        if (!input.isKeyboardinuse)
+                        if (meshHandleDriver.Linked)
                         {
-                            input.RemoveFocus();
+                            meshHandleDriver.Drivevalue = Vector3d.Zero;
                         }
                     }
                 }
@@ -152,7 +155,12 @@ namespace RhubarbEngine.Components.Interaction
                 {
                     if (meshDriver.target != null)
                     {
-                        meshDriver.Drivevalue = new Vector3d((source.value == InteractionSource.HeadLaser) ? desklength : distances.value, 0, 0);
+                        meshDriver.Drivevalue = new Vector3d(0, (source.value == InteractionSource.HeadLaser) ? desklength : Vector3.Distance(cb.HitPointWorld, sourcse),0)*entity.globalScale()*2.3;
+                    }
+                    if (meshHandleDriver.Linked)
+                    {
+                        var normal = new Vector3d(cb.HitNormalWorld.X, cb.HitNormalWorld.Y, cb.HitNormalWorld.Z);
+                        meshHandleDriver.Drivevalue = mesh.target.entity.globalRot() * normal * 0.1f;
                     }
                     Type type = cb.CollisionObject.UserObject.GetType();
                     if (type == typeof(InputPlane))
@@ -204,9 +212,9 @@ namespace RhubarbEngine.Components.Interaction
                     case InteractionSource.RightFinger:
                         break;
                     case InteractionSource.HeadLaser:
-                        ent.SendSecondary(input.mainWindows.GetMouseButtonDown(MouseButton.Middle));
-                        ent.SendPrimary(input.mainWindows.GetMouseButtonDown(MouseButton.Left));
-                        ent.SendGrip(grabholder.target, input.mainWindows.GetMouseButtonDown(MouseButton.Right));
+                        ent.SendSecondary(input.mainWindows.GetMouseButton(MouseButton.Middle));
+                        ent.SendPrimary(input.mainWindows.GetMouseButton(MouseButton.Left));
+                        ent.SendGrip(grabholder.target, input.mainWindows.GetMouseButton(MouseButton.Right));
                         break;
                     case InteractionSource.HeadFinger:
                         break;
@@ -360,7 +368,7 @@ namespace RhubarbEngine.Components.Interaction
         private void RightLaser()
         {
             var e = Input.Creality.Right;
-            if (input.SecondaryPress(e))
+            if (input.GrabPress(e))
             {
                 input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Right);
             }
@@ -372,7 +380,7 @@ namespace RhubarbEngine.Components.Interaction
         private void LeftLaser()
         {
             var e = Input.Creality.Left;
-            if (input.SecondaryPress(e))
+            if (input.GrabPress(e))
             {
                 input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Right);
             }
@@ -399,7 +407,7 @@ namespace RhubarbEngine.Components.Interaction
                 case InteractionSource.RightFinger:
                     break;
                 case InteractionSource.HeadLaser:
-                    return (engine.inputManager.mainWindows.GetMouseButtonDown(MouseButton.Right))| engine.inputManager.mainWindows.GetMouseButtonDown(MouseButton.Left) | engine.inputManager.mainWindows.GetMouseButtonDown(MouseButton.Middle);
+                    return (engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right))| engine.inputManager.mainWindows.GetMouseButton(MouseButton.Left) | engine.inputManager.mainWindows.GetMouseButton(MouseButton.Middle);
                     break;
                 case InteractionSource.HeadFinger:
                     break;

@@ -396,6 +396,7 @@ namespace RhubarbEngine.World
 
         public void Update(DateTime startTime, DateTime Frame)
         {
+            
             physicsWorld.UpdateAabbs();
             physicsWorld.UpdateVehicles(worldManager.engine.platformInfo.deltaSeconds);
             physicsWorld.StepSimulation(worldManager.engine.platformInfo.deltaSeconds);
@@ -448,6 +449,8 @@ namespace RhubarbEngine.World
             dispatcher = new CollisionDispatcher(collisionConfiguration);
             broadphase = new DbvtBroadphase();
             physicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, null, collisionConfiguration);
+            var e = new BulletSharp.Math.Vector3(0, -10, 0);
+            physicsWorld.SetGravity(ref e);
             staticAssets = new StaticAssets(this);
         }
 

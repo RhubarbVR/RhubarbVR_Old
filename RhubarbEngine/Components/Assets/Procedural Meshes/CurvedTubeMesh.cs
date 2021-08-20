@@ -30,11 +30,11 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
         public override void buildSyncObjs(bool newRefIds)
         {
             Endpoint = new Sync<Vector3d>(this, newRefIds);
-            Endpoint.value = new Vector3d(0, 0, 1);
+            Endpoint.value = new Vector3d(0, 1, 0);
             EndHandle = new Sync<Vector3d>(this, newRefIds);
-            EndHandle.value = new Vector3d(0, 1, 0);
+            EndHandle.value = new Vector3d(0, -0.1, 0);
             StartHandle = new Sync<Vector3d>(this, newRefIds);
-            StartHandle.value = new Vector3d(0, -1, 0);
+            StartHandle.value = new Vector3d(0, 0.1, 0);
             CurveSteps = new Sync<int>(this, newRefIds);
             CurveSteps.value = 10;
             Radius = new Sync<double>(this, newRefIds);

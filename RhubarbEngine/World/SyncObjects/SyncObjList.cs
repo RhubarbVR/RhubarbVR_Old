@@ -24,6 +24,12 @@ namespace RhubarbEngine.World
         {
             return _synclist.GetEnumerator();
         }
+
+        public List<T> getCopy()
+        {
+            return new List<T>(_synclist);
+        }
+
         public int Count()
         {
             return _synclist.Count;
