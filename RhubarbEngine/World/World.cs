@@ -458,7 +458,7 @@ namespace RhubarbEngine.World
             {
                 _constraintSolver = new ConstraintSolverPoolMultiThreaded(worldManager.engine.settingsObject.PhysicsSettings.ThreadCount);
             }
-            physicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, null, collisionConfiguration);
+            physicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, _constraintSolver, collisionConfiguration);
             staticAssets = new StaticAssets(this);
         }
 
