@@ -296,7 +296,7 @@ namespace RhubarbEngine.Components.Interaction
     }
 
     [Category(new string[] { "Interaction" })]
-    public class WebBrowser : AssetProvider<RTexture2D>, IRenderObject, KeyboardStealer, IAudioHandler,IAudioSource
+    public class WebBrowser : AssetProvider<RTexture2D>, IRenderObject, IKeyboardStealer, IAudioHandler,IAudioSource
     {
         private Size popupSize;
         private Point popupPosition;

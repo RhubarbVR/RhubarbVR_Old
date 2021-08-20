@@ -73,13 +73,13 @@ namespace RhubarbEngine.Managers
             engine.logger.Log("Platform: " + platform.ToString() + "/" + os.Platform + " CPU: " + CPU + " RamBytes: " + memoryBytes + " GPU: " + GPU + " VRAMBytes: " + vRAM_Bytes, true);
             return this;
         }
+        long currentFrameTicks;
         public void Update()
         {
-            long currentFrameTicks = sw.ElapsedTicks;
-            deltaSeconds = (currentFrameTicks - previousFrameTicks) / (double)Stopwatch.Frequency;
             previousFrameTicks = currentFrameTicks;
+            currentFrameTicks = sw.ElapsedTicks;
+            deltaSeconds = (currentFrameTicks - previousFrameTicks) / (double)Stopwatch.Frequency;
             FrameRate = 1f / (float)deltaSeconds;
-
         }
     }
 }

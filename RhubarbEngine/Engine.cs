@@ -177,12 +177,12 @@ namespace RhubarbEngine
 
         public void Loop(DateTime startTime, DateTime Frame)
         {
+            platformInfo.Update();
             discordRpcClient.Invoke();
             renderManager.Update();
             inputManager.Update();
             windowManager.Update();
             worldManager.Update(startTime, Frame);
-            platformInfo.Update();
         }
 
         public void cleanUP()

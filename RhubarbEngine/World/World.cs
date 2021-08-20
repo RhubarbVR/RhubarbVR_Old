@@ -449,8 +449,6 @@ namespace RhubarbEngine.World
             dispatcher = new CollisionDispatcher(collisionConfiguration);
             broadphase = new DbvtBroadphase();
             physicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, null, collisionConfiguration);
-            var e = new BulletSharp.Math.Vector3(0, -10, 0);
-            physicsWorld.SetGravity(ref e);
             staticAssets = new StaticAssets(this);
         }
 
@@ -466,6 +464,7 @@ namespace RhubarbEngine.World
             SessionID = new Sync<string>(this, this, !networkload);
             Name = new Sync<string>(this, this, !networkload);
             Gravity = new Sync<Vector3f>(this, this, !networkload);
+            Gravity.Changed += Gravity_Changed;
             Gravity.value = new Vector3f(0, -10, 0);
             LinearDamping = new Sync<float>(this, this, !networkload);
             AngularDamping = new Sync<float>(this, this, !networkload);
@@ -482,6 +481,13 @@ namespace RhubarbEngine.World
                 item?.Invoke();
             }
         }
+
+        private void Gravity_Changed(IChangeable obj)
+        {
+            var e = new BulletSharp.Math.Vector3(Gravity.value.x, Gravity.value.y, Gravity.value.z);
+            physicsWorld.SetGravity(ref e);
+        }
+
         [NoSave]
         public Sync<SessionsType> sessionsType;
         [NoSave]

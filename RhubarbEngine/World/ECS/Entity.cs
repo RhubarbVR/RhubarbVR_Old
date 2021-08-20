@@ -79,13 +79,38 @@ namespace RhubarbEngine.World.ECS
 
         public SyncRef<Entity> parent;
 
-        [NoSave]
-        [NoSync]
-        public List<PhysicsDisableder> physicsDisableder = new List<PhysicsDisableder>();
+        public void AddPhysicsDisableder(IPhysicsDisableder physicsDisableder)
+        {
+            try
+            {
+                physicsDisableders.Add(physicsDisableder);
+                onPhysicsDisableder?.Invoke(PhysicsDisabled);
+            }
+            catch
+            {
+            }
+        }
+
+        public void RemovePhysicsDisableder(IPhysicsDisableder physicsDisableder)
+        {
+            try
+            {
+                physicsDisableders.Remove(physicsDisableder);
+                onPhysicsDisableder?.Invoke(PhysicsDisabled);
+            }
+            catch { 
+            }
+        }
+
+        public event Action<bool> onPhysicsDisableder;
 
         [NoSave]
         [NoSync]
-        public bool PhysicsDisabled => physicsDisableder.Count > 0;
+        public List<IPhysicsDisableder> physicsDisableders = new List<IPhysicsDisableder>();
+
+        [NoSave]
+        [NoSync]
+        public bool PhysicsDisabled => physicsDisableders.Count > 0;
 
         [NoSave]
         [NoSync]

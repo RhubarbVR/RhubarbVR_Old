@@ -19,7 +19,7 @@ using RhubarbEngine.Components.Interaction;
 namespace RhubarbEngine.Components.ImGUI
 {
     [Category(new string[] { "ImGUI" })]
-    public class ImGUICanvas: AssetProvider<RTexture2D> , IRenderObject, KeyboardStealer
+    public class ImGUICanvas: AssetProvider<RTexture2D> , IRenderObject, IKeyboardStealer
     {
         public Sync<Vector2u> scale;
 

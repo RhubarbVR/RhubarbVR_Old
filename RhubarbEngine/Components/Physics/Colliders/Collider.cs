@@ -53,6 +53,22 @@ namespace RhubarbEngine.Components.Physics.Colliders
             NoneStaticBody.Changed += NoneStaticBody_Changed;
             SyncLevel = new Sync<SyncLevel>(this, newRefIds);
             SyncLevel.value = Physics.SyncLevel.Local;
+            entity.onPhysicsDisableder += Entity_onPhysicsDisableder;
+        }
+
+        private void Entity_onPhysicsDisableder(bool obj)
+        {
+            if (!Added) return;
+            if (!NoneStaticBody.value) return;
+            if (obj)
+            {
+                collisionObject.ForceActivationState(ActivationState.DisableSimulation);
+            }
+            else
+            {
+                collisionObject.ForceActivationState(ActivationState.ActiveTag);
+                collisionObject.Activate(true);
+            }
         }
 
         private void NoneStaticBody_Changed(IChangeable obj)
@@ -209,7 +225,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
                 case Physics.SyncLevel.ManagingUser:
                     UserPosSync(entity.manager);
                     break;
-                case Physics.SyncLevel.CreateingUser:
+                case Physics.SyncLevel.CreatingUser:
                     UserPosSync(entity.CreatingUser);
                     break;
                 case Physics.SyncLevel.HostUser:

@@ -30,7 +30,7 @@ namespace RhubarbEngine.Components.Physics
         Local = 0,
         SyncUpdate = 1,
         ManagingUser = 2,
-        CreateingUser = 4,
+        CreatingUser = 4,
         HostUser = 5,
     }
 

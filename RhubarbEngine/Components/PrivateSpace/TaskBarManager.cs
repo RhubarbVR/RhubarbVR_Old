@@ -82,17 +82,22 @@ namespace RhubarbEngine.Components.PrivateSpace
             field.field.target = imGUICanvas;
             startcanvas.target = imGUICanvas;
             var group = e.attachComponent<ImGUIBeginGroup>();
-            var createCube = e.attachComponent<ImGUIButton>();
             var createWindow = e.attachComponent<ImGUIButton>();
+            var createCube = e.attachComponent<ImGUIButton>();
             createCube.label.value = "Create Cube";
             createCube.action.Target = CreateCube;
+
+            var createSyer = e.attachComponent<ImGUIButton>();
+            createSyer.label.value = "Create Sphere";
+            createSyer.action.Target = CreateSphere;
+
             imGUICanvas.element.target = group;
             group.children.Add().target = createCube;
 
             createWindow.label.value = "Create Window";
             createWindow.action.Target = CreateWindow;
             group.children.Add().target = createWindow;
-
+            group.children.Add().target = createSyer;
             e.enabled.value = false;
         }
 
@@ -120,11 +125,25 @@ namespace RhubarbEngine.Components.PrivateSpace
             var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0,-1,-5));
             cube.setGlobalTrans(move*headPos);
             var col = cube.attachComponent<BoxCollider>();
-            col.mass.value = 10;
+            col.mass.value = 1;
             col.NoneStaticBody.value = true;
             cube.attachComponent<Grabbable>();
         }
-
+        private void CreateSphere()
+        {
+            logger.Log("Create Sphere");
+            World.World createWorld = world.worldManager.focusedWorld ?? world;
+            Entity User = createWorld.userRoot.entity;
+            Entity par = User.parent.target;
+            var (cube, mesh) = Helpers.MeshHelper.AddMesh<SphereMesh>(par, "Sphere");
+            var headPos = createWorld.userRoot.Headpos;
+            var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, -1, -5));
+            cube.setGlobalTrans(move * headPos);
+            var col = cube.attachComponent<SphereCollider>();
+            col.mass.value = 1;
+            col.NoneStaticBody.value = true;
+            cube.attachComponent<Grabbable>();
+        }
         public override void OnAttach()
         {
             var e = entity.addChild("TaskBar");
