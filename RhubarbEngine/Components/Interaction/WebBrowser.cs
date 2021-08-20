@@ -300,8 +300,7 @@ namespace RhubarbEngine.Components.Interaction
     {
         private Size popupSize;
         private Point popupPosition;
-
-
+        
         public RenderFrequency renderFrac => renderFrequency.value;
 
         public bool IsActive => loaded;
@@ -486,7 +485,7 @@ namespace RhubarbEngine.Components.Interaction
         public void Render()
         {
             if (!loaded) return;
-            RenderTask();
+            startRenderTask();
             updateInpute();
         }
 
@@ -494,7 +493,13 @@ namespace RhubarbEngine.Components.Interaction
 
         public void startRenderTask()
         {
-            if (lastTask != null) return;
+            if (lastTask != null) 
+            {
+                if ((!(lastTask.IsFaulted))&&!lastTask.IsCompleted)
+                {
+                    return;
+                }
+            }
             lastTask = Task.Run(RenderTask);
         }
 
