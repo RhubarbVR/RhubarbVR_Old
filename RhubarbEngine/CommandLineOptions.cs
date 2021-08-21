@@ -22,7 +22,7 @@ namespace RhubarbEngine
         public IEnumerable<string> settings { get; set; }
 
         [Option('g', "graphicsbackend", Required = false, HelpText = "Change backend to Direct3D11,Vulkan,OpenGL,Metal,OpenGLES")]
-        public GraphicsBackend graphicsBackend { get; set; }
+        public GraphicsBackend graphicsBackend { get; set; } = GraphicsBackend.Vulkan;
 
         [Option('o', "outputdevice", Required = false, HelpText = "Change output device to Auto,Screen,SteamVR,OculusVR")]
         public OutputType outputType { get; set; }

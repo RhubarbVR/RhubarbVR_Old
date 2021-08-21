@@ -92,7 +92,7 @@ namespace RhubarbEngine.Managers
             vrContext.Initialize(gd);
             windowCL = gd.ResourceFactory.CreateCommandList();
             eyesCL = gd.ResourceFactory.CreateCommandList();
-            mainQueue =new RenderQueue();
+            mainQueue = new RenderQueue();
             engine.windowManager.mainWindow.window. Resized += Window_Resized;
             Window_Resized();
             var _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "nulltexture.jpg"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
@@ -209,13 +209,17 @@ namespace RhubarbEngine.Managers
             BuildMainRenderQueue();
             // Render Eyes
             HmdPoseState poses = vrContext.WaitForPoses();
-
+            eyesCL.Begin();
             if (!(engine.backend == GraphicsBackend.OpenGL|| engine.backend == GraphicsBackend.OpenGLES))
             {
                 eyesCL.PushDebugGroup("Left Eye");
             }
             Matrix4x4 leftView = poses.CreateView(VREye.Left, _userTrans, - Vector3.UnitZ, Vector3.UnitY);
+            try
+            {
                 RenderEye(eyesCL, vrContext.LeftEyeFramebuffer, poses.LeftEyeProjection, leftView);
+            }
+            catch { }
                 eyesCL.PopDebugGroup();
             if (engine.outputType != OutputType.Screen)
             {
@@ -224,7 +228,11 @@ namespace RhubarbEngine.Managers
                     eyesCL.PushDebugGroup("Right Eye");
                 }
                 Matrix4x4 rightView = poses.CreateView(VREye.Right, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
-                RenderEye(eyesCL, vrContext.RightEyeFramebuffer, poses.RightEyeProjection, rightView);
+                try
+                {
+                    RenderEye(eyesCL, vrContext.RightEyeFramebuffer, poses.RightEyeProjection, rightView);
+                }
+                catch { }
                 eyesCL.PopDebugGroup();
             }
 

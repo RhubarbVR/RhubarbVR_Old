@@ -238,6 +238,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             {
                 _deviceName = sb.ToString();
             }
+            Logger.Log("Head Set Type: " + _deviceName);
 
             uint eyeWidth = 0;
             uint eyeHeight = 0;
@@ -256,8 +257,14 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             _projRight = ToSysMatrix(_vrSystem.GetProjectionMatrix(EVREye.Eye_Right, 0.1f, 1000f));
 
 
+            try
+            {
+                UpdateControllers();
+            }
+            catch
+            {
 
-            UpdateControllers();
+            }
         }
 
 
@@ -270,20 +277,29 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             {
                 Logger.Log($"Input error {error.ToString()}");
             }
-            controllerOne?.update();
-            controllerTwo?.update();
+            try
+            {
+                controllerOne?.update();
+            }
+            catch
+            {
+
+            }
+            try
+            {
+                controllerTwo?.update();
+            }
+            catch 
+            {
+
+            }
         }
 
         public override (string[] instance, string[] device) GetRequiredVulkanExtensions()
         {
-            StringBuilder sb = new StringBuilder(1024);
-            uint ret = _compositor.GetVulkanInstanceExtensionsRequired(sb, 1024);
-            string[] instance = sb.ToString().Split(' ');
-            sb.Clear();
-            ret = _compositor.GetVulkanDeviceExtensionsRequired(IntPtr.Zero, sb, 1024);
-            string[] device = sb.ToString().Split(' ');
-            return (instance, device);
+            return (new string[] { }, new string[] { });
         }
+
         Matrix4x4 headPos;
         public override HmdPoseState WaitForPoses()
         {

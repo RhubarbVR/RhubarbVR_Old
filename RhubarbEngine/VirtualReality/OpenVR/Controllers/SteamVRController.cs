@@ -179,7 +179,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
             {
                 Logger.Log(error.ToString());
             }
-            var errorh = OVR.Input.GetPoseActionData(GeneralmPosistionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0f, ref GeneralmPosistionData, Possize, handle);
+            var errorh = OVR.Input.GetPoseActionDataRelativeToNow(GeneralmPosistionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0f, ref GeneralmPosistionData, Possize, handle);
             if (errorh != 0)
             {
                 Logger.Log(error.ToString());
