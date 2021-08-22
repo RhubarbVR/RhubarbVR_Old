@@ -52,7 +52,7 @@ namespace RhubarbEngine.Managers
 
         public TextureView rhubarbSolidview;
 
-        public MirrorTextureEyeSource eyeSource = MirrorTextureEyeSource.BothEyes;
+        public MirrorTextureEyeSource eyeSource = MirrorTextureEyeSource.LeftEye;
         public IManager initialize(Engine _engine)
         {
             engine = _engine;
@@ -198,13 +198,6 @@ namespace RhubarbEngine.Managers
                switchVRContext(OutputType.Screen);
             }
 
-            windowCL.Begin();
-            windowCL.SetFramebuffer(sc.Framebuffer);
-            windowCL.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0.2f, 1f));
-            vrContext.RenderMirrorTexture(windowCL, sc.Framebuffer, (engine.outputType != OutputType.Screen)? eyeSource : MirrorTextureEyeSource.LeftEye);
-            windowCL.End();
-            gd.SubmitCommands(windowCL);
-            gd.SwapBuffers(sc);
 
             BuildMainRenderQueue();
             // Render Eyes
@@ -241,6 +234,14 @@ namespace RhubarbEngine.Managers
             gd.SubmitCommands(eyesCL);
 
             vrContext.SubmitFrame();
+
+            windowCL.Begin();
+            windowCL.SetFramebuffer(sc.Framebuffer);
+            windowCL.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0.2f, 1f));
+            vrContext.RenderMirrorTexture(windowCL, sc.Framebuffer, (engine.outputType != OutputType.Screen) ? eyeSource : MirrorTextureEyeSource.LeftEye);
+            windowCL.End();
+            gd.SubmitCommands(windowCL);
+            gd.SwapBuffers(sc);
         }
     }
 }

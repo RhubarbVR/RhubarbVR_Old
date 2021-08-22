@@ -120,6 +120,7 @@ namespace RhubarbEngine.VirtualReality
             Texture target = fb.ColorTargets[0].Target;
             TextureView view = factory.CreateTextureView(target);
             _disposables.Add(view);
+            
             ResourceSet rs = factory.CreateResourceSet(new ResourceSetDescription(rl, view, _context.GraphicsDevice.PointSampler));
             _disposables.Add(rs);
 

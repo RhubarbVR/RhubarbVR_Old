@@ -142,14 +142,14 @@ vec3 LinearToSrgb(vec3 linear)
 void main()
 {
     vec2 uv = fsin_UV;
-    //if (InvertTexY) { uv.y = 1 - uv.y; }
-    //uv = mix(MinUV, MaxUV, uv);
+    if (InvertTexY) { uv.y = 1 - uv.y; }
+    uv = mix(MinUV, MaxUV, uv);
 
     fsout_Color0 = texture(sampler2D(Input, InputSampler), uv);
-    //if (OutputSrgb)
-    //{
-    //    fsout_Color0 = vec4(LinearToSrgb(fsout_Color0.rgb), fsout_Color0.a);
-    //}
+    if (OutputSrgb)
+    {
+        fsout_Color0 = vec4(LinearToSrgb(fsout_Color0.rgb), fsout_Color0.a);
+    }
 }
 ";
     }
