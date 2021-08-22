@@ -52,7 +52,7 @@ namespace RhubarbEngine.Managers
 
         public TextureView rhubarbSolidview;
 
-        public MirrorTextureEyeSource eyeSource = MirrorTextureEyeSource.LeftEye;
+        public MirrorTextureEyeSource eyeSource => engine.settingsObject.VRSettings.renderEye;
         public IManager initialize(Engine _engine)
         {
             engine = _engine;
@@ -134,7 +134,7 @@ namespace RhubarbEngine.Managers
         {
             VRContextOptions options = new VRContextOptions
             {
-                EyeFramebufferSampleCount = TextureSampleCount.Count4
+                EyeFramebufferSampleCount = TextureSampleCount.Count1
             };
             switch (engine.outputType)
             {
