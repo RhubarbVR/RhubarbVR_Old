@@ -93,7 +93,7 @@ namespace RhubarbEngine.Components.ImGUI
         private void onScaleChange(IChangeable val)
         {
             if (UIcommandList == null) return;
-            if(((framebuffer != null) && (igr != null) && UIloaded))
+            if (((framebuffer != null) && (igr != null) && UIloaded))
             {
                 UIloaded = false;
                 load(null);
