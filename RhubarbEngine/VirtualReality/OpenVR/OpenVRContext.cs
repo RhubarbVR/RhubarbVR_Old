@@ -350,9 +350,12 @@ namespace RhubarbEngine.VirtualReality.OpenVR
                     Dispose();
                     return;
                 }
-                if (_vrevent.eventType == 102)
+                if ((_vrevent.eventType >= 100) && (_vrevent.eventType <= 102))
                 {
-                    UpdateControllers();
+                   Task.Run(() => {
+                       Task.Delay(1500);
+                       UpdateControllers();
+                   });
                 }
             }
             if (_gd.GetOpenGLInfo(out BackendInfoOpenGL glInfo))
