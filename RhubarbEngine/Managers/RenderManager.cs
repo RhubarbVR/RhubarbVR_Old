@@ -140,16 +140,12 @@ namespace RhubarbEngine.Managers
             {
                 case OutputType.Screen:
                     return VRContext.CreateScreen(options,engine);
-                    break;
                 case OutputType.SteamVR:
                     return VRContext.CreateOpenVR(options, (engine.settingsObject.VRSettings.StartAsOverlay)?Valve.VR.EVRApplicationType.VRApplication_Scene : Valve.VR.EVRApplicationType.VRApplication_Scene);
-                    break;
                 case OutputType.OculusVR:
                     return VRContext.CreateOculus(options);
-                    break;
                 default:
                     return VRContext.CreateScreen(options, engine);
-                    break;
             }
         }
 
@@ -191,6 +187,60 @@ namespace RhubarbEngine.Managers
 
         }
 
+        private void RenderNoneThreadedRenderObjectsInWorld(World.World world)
+        {
+            try
+            {
+                foreach (var noneThreaded in world.updateLists.renderObject)
+                {
+                    try
+                    {
+                        noneThreaded.Render();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Log("Failed To Render " + noneThreaded.GetType().Name + " Error " + e.ToString(), true);
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private void RenderRenderObjectsInWorld(World.World world)
+        {
+            try
+            {
+                var noneThreadedTask = Task.Run(() => { RenderNoneThreadedRenderObjectsInWorld(world); });
+                Parallel.ForEach(world.updateLists.trenderObject, obj =>
+                {
+                    try
+                    {
+                        obj.Render();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Log("Failed To Render " + obj.GetType().Name + " Error " + e.ToString(), true);
+                    }
+                });
+                noneThreadedTask.Wait();
+            }
+            catch 
+            {
+
+            }
+        }
+
+        private void RenderRenderObjects()
+        {
+            foreach (var world in engine.worldManager.worlds)
+            {
+                if(world.Focus != World.World.FocusLevel.Background)
+                {
+                    RenderRenderObjectsInWorld(world);
+                }
+            }
+        }
+
         public void Update()
         {
             if (vrContext.Disposed)
@@ -198,43 +248,54 @@ namespace RhubarbEngine.Managers
                switchVRContext(OutputType.Screen);
             }
 
-
-            BuildMainRenderQueue();
-            // Render Eyes
-            HmdPoseState poses = vrContext.WaitForPoses();
-            eyesCL.Begin();
-            if (!(engine.backend == GraphicsBackend.OpenGL|| engine.backend == GraphicsBackend.OpenGLES))
-            {
-                eyesCL.PushDebugGroup("Left Eye");
-            }
-            Matrix4x4 leftView = poses.CreateView(VREye.Left, _userTrans, - Vector3.UnitZ, Vector3.UnitY);
             try
             {
-                RenderEye(eyesCL, vrContext.LeftEyeFramebuffer, poses.LeftEyeProjection, leftView);
-            }
-            catch { }
-                eyesCL.PopDebugGroup();
-            if (engine.outputType != OutputType.Screen)
-            {
+                RenderRenderObjects();
+                BuildMainRenderQueue();
+                // Render Eyes
+                HmdPoseState poses = vrContext.WaitForPoses();
+                eyesCL.Begin();
                 if (!(engine.backend == GraphicsBackend.OpenGL || engine.backend == GraphicsBackend.OpenGLES))
                 {
-                    eyesCL.PushDebugGroup("Right Eye");
+                    eyesCL.PushDebugGroup("Left Eye");
                 }
-                Matrix4x4 rightView = poses.CreateView(VREye.Right, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
+                Matrix4x4 leftView = poses.CreateView(VREye.Left, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
                 try
                 {
-                    RenderEye(eyesCL, vrContext.RightEyeFramebuffer, poses.RightEyeProjection, rightView);
+                    RenderEye(eyesCL, vrContext.LeftEyeFramebuffer, poses.LeftEyeProjection, leftView);
                 }
-                catch { }
+                catch (Exception e)
+                {
+                    throw new Exception("Left Eye" + e.ToString());
+                }
                 eyesCL.PopDebugGroup();
+                if (engine.outputType != OutputType.Screen)
+                {
+                    if (!(engine.backend == GraphicsBackend.OpenGL || engine.backend == GraphicsBackend.OpenGLES))
+                    {
+                        eyesCL.PushDebugGroup("Right Eye");
+                    }
+                    Matrix4x4 rightView = poses.CreateView(VREye.Right, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
+                    try
+                    {
+                        RenderEye(eyesCL, vrContext.RightEyeFramebuffer, poses.RightEyeProjection, rightView);
+                    }
+                    catch (Exception e){
+                        throw new Exception("Right Eye"+e.ToString());
+                    }
+                    eyesCL.PopDebugGroup();
+                }
+
+
+                eyesCL.End();
+                gd.SubmitCommands(eyesCL);
+
+                vrContext.SubmitFrame();
             }
-
-
-            eyesCL.End();
-            gd.SubmitCommands(eyesCL);
-
-            vrContext.SubmitFrame();
-
+            catch (Exception e)
+            {
+                Console.WriteLine("Render Error" + e.ToString());
+            }
             windowCL.Begin();
             windowCL.SetFramebuffer(sc.Framebuffer);
             windowCL.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0.2f, 1f));

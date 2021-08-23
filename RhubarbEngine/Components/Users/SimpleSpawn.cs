@@ -47,7 +47,8 @@ namespace RhubarbEngine.Components.Users
                 world.localUser.userroot.target = userRoot;
                 Entity head = rootent.addChild("Head");
                 head.attachComponent<Head>().userroot.target = userRoot;
-                head.addChild("Laser").attachComponent<InteractionLaser>();
+                var grabHolder = head.addChild("GrabHolder").attachComponent<GrabbableHolder>();
+                grabHolder.initializeGrabHolder(InteractionSource.HeadLaser);
                 userRoot.Head.target = head;
                 Entity left = rootent.addChild("Left hand");
                 Entity right = rootent.addChild("Right hand");
@@ -67,10 +68,10 @@ namespace RhubarbEngine.Components.Users
                 Entity obj2 = world.worldManager.AddMesh<ArrowMesh>(right);
                 Entity obj3 = world.worldManager.AddMesh<ArrowMesh>(head);
 
-                var ileft = left.attachComponent<InteractionLaser>();
-                var iright = right.attachComponent<InteractionLaser>();
-                ileft.source.value = InteractionSource.LeftLaser;
-                iright.source.value = InteractionSource.RightLaser;
+                var ileft = left.attachComponent<GrabbableHolder>();
+                var iright = right.attachComponent<GrabbableHolder>();
+                ileft.initializeGrabHolder(InteractionSource.LeftLaser);
+                iright.initializeGrabHolder(InteractionSource.RightLaser);
 
                 obj3.position.value = new Vector3f(0f, 0f, 0.5f);
                 obj.scale.value = new Vector3f(0.2f);

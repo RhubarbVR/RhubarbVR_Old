@@ -180,8 +180,8 @@ namespace RhubarbEngine
             platformInfo.Update();
             discordRpcClient.Invoke();
             renderManager.Update();
-            inputManager.Update();
             windowManager.Update();
+            inputManager.Update();
             worldManager.Update(startTime, Frame);
         }
 

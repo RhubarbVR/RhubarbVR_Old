@@ -283,9 +283,10 @@ namespace RhubarbEngine.World.ECS
         public void setLocalTrans(Matrix4x4 newtrans)
         {
             Matrix4x4.Decompose(newtrans, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
-            position.value = new Vector3f(newtranslation.X, newtranslation.Y, newtranslation.Z);
-            rotation.value = new Quaternionf(newrotation.X, newrotation.Y, newrotation.Z, newrotation.W);
-            scale.value = new Vector3f(newscale.X, newscale.Y, newscale.Z);
+            position.setValueNoOnChange(new Vector3f(newtranslation.X, newtranslation.Y, newtranslation.Z));
+            rotation.setValueNoOnChange(new Quaternionf(newrotation.X, newrotation.Y, newrotation.Z, newrotation.W));
+            scale.setValueNoOnChange(new Vector3f(newscale.X, newscale.Y, newscale.Z));
+            updateGlobalTrans();
         }
 
         public override void buildSyncObjs(bool newRefIds)

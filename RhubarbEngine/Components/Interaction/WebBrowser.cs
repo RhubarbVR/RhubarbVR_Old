@@ -300,7 +300,8 @@ namespace RhubarbEngine.Components.Interaction
     {
         private Size popupSize;
         private Point popupPosition;
-        
+        public bool Threaded => true;
+
         public RenderFrequency renderFrac => renderFrequency.value;
 
         public bool IsActive => loaded;
@@ -476,10 +477,6 @@ namespace RhubarbEngine.Components.Interaction
             }
         }
 
-        public override void CommonUpdate(DateTime startTime, DateTime Frame)
-        {
-            Render();
-        }
         TextureView view;
         Texture target;
         public void Render()
@@ -487,6 +484,23 @@ namespace RhubarbEngine.Components.Interaction
             if (!loaded) return;
             startRenderTask();
             updateInpute();
+        }
+        public override void LoadListObject()
+        {
+            try
+            {
+                world.updateLists.trenderObject.Add(this);
+            }
+            catch { }
+        }
+
+        public override void RemoveListObject()
+        {
+            try
+            {
+                world.updateLists.trenderObject.Remove(this);
+            }
+            catch { }
         }
 
         private Task lastTask;

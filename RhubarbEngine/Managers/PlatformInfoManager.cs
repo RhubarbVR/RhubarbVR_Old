@@ -30,6 +30,8 @@ namespace RhubarbEngine.Managers
 
         public float FrameRate;
 
+        public float AvrageFrameRate;
+
         public long previousFrameTicks = 0;
 
         public Stopwatch sw;
@@ -85,6 +87,7 @@ namespace RhubarbEngine.Managers
             currentFrameTicks = sw.ElapsedTicks;
             deltaSeconds = (currentFrameTicks - previousFrameTicks) / (double)Stopwatch.Frequency;
             FrameRate = 1f / (float)deltaSeconds;
+            AvrageFrameRate = (FrameRate)*0.8f + (AvrageFrameRate)*0.2f;
         }
     }
 }

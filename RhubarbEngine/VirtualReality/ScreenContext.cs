@@ -191,7 +191,7 @@ namespace RhubarbEngine.VirtualReality
             }
             else if (_mousePressed)
             {
-                mouseDelta = _mousePressedPos - _eng.inputManager.mainWindows.MousePosition;
+                mouseDelta = (_mousePressedPos - _eng.inputManager.mainWindows.MousePosition);
                 Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
             }
             if (mouseDelta != default)

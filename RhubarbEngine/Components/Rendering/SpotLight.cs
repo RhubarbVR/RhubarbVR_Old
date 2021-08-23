@@ -26,32 +26,23 @@ using RhubarbEngine.Components.Assets;
 namespace RhubarbEngine.Components.Rendering
 {
     [Category(new string[] { "Rendering" })]
-    public class SpotLight : RenderObject
+    public class SpotLight : Component, IRenderObject
     {
+        public RenderFrequency renderFrac => throw new NotImplementedException();
 
+        public bool Threaded => throw new NotImplementedException();
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-
-        }
-
-        public override void CommonUpdate(DateTime startTime, DateTime Frame)
-        {
-
-        }
-        public override void onLoaded()
-        {
-
-        }
-        public override void onChanged()
-        {
-        }
         public SpotLight(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
         {
 
         }
         public SpotLight()
         {
+        }
+
+        public void Render()
+        {
+            throw new NotImplementedException();
         }
     }
 }

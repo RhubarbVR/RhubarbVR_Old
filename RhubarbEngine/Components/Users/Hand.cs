@@ -34,7 +34,13 @@ namespace RhubarbEngine.Components.Users
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
-            if(userroot.target == null)
+            if (world.userspace)
+            {
+                Matrix4x4 val = input.GetPos(creality.value);
+                entity.setLocalTrans(val);
+                return;
+            }
+            if (userroot.target == null)
             {
                 return;
             }

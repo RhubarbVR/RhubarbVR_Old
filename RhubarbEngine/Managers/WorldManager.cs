@@ -124,14 +124,14 @@ namespace RhubarbEngine.Managers
 
         public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
         {
-            try { 
-            foreach (World.World world in worlds)
-            {
-                if (world.Focus != World.World.FocusLevel.Background)
+            try {
+                Parallel.ForEach(worlds,world =>
                 {
-                    world.addToRenderQueue(gu, layer);
-                }
-            }
+                    if (world.Focus != World.World.FocusLevel.Background)
+                    {
+                        world.addToRenderQueue(gu, layer);
+                    }
+                });
             }
             catch
             {
@@ -220,39 +220,41 @@ namespace RhubarbEngine.Managers
             worlds.Add(privateOverlay);
             privateOverlay.Focus = World.World.FocusLevel.PrivateOverlay;
 
-
-            engine.logger.Log("Starting Local World");
-            if(File.Exists(engine.dataPath + "/LocalWorld.RWorld"))
+            Task.Run(() =>
             {
-                try
+                engine.logger.Log("Starting Local World");
+                if (File.Exists(engine.dataPath + "/LocalWorld.RWorld"))
                 {
-                    DataNodeGroup node = new DataNodeGroup(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
-                    localWorld = new World.World(this, "LocalWorld", 16, false, true,node);
+                    try
+                    {
+                        DataNodeGroup node = new DataNodeGroup(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
+                        localWorld = new World.World(this, "LocalWorld", 16, false, true, node);
+                    }
+                    catch (Exception e)
+                    {
+                        dontSaveLocal = true;
+                        Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
+                        localWorld = new World.World(this, "TempLoaclWorld", 16, false, true);
+                        BuildLocalWorld(localWorld);
+                    }
                 }
-                catch (Exception e)
+                else
                 {
-                    dontSaveLocal = true;
-                    Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
-                    localWorld = new World.World(this, "TempLoaclWorld", 16, false, true);
+                    localWorld = new World.World(this, "LocalWorld", 16, false, true);
                     BuildLocalWorld(localWorld);
                 }
-            }
-            else
-            {
-                localWorld = new World.World(this, "LocalWorld", 16,false,true);
-                BuildLocalWorld(localWorld);
-            }
-            localWorld.Focus = World.World.FocusLevel.Focused;
-            worlds.Add(localWorld);
-            focusedWorld = localWorld;
-            if(engine.engineInitializer.session != null)
-            {
-                JoinSessionFromUUID(engine.engineInitializer.session, true);
-            }
-            else
-            {
-             //   createNewWorld(AccessLevel.Anyone, SessionsType.Casual, "Faolan World", "", false, 16, false, "Basic");
-            }
+                localWorld.Focus = World.World.FocusLevel.Focused;
+                worlds.Add(localWorld);
+                focusedWorld = localWorld;
+                if (engine.engineInitializer.session != null)
+                {
+                    JoinSessionFromUUID(engine.engineInitializer.session, true);
+                }
+                else
+                {
+                    //   createNewWorld(AccessLevel.Anyone, SessionsType.Casual, "Faolan World", "", false, 16, false, "Basic");
+                }
+            });
             return this;
         }
 

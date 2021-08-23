@@ -49,7 +49,28 @@ namespace RhubarbEngine.Components.ImGUI
         public SyncDelegate onHeaderGrab;
         public SyncDelegate onHeaderClick;
 
+        public override void LoadListObject()
+        {
+            try
+            {
+                world.updateLists.renderObject.Add(this);
+            }
+            catch { }
+        }
+
+        public override void RemoveListObject()
+        {
+            try
+            {
+                world.updateLists.renderObject.Remove(this);
+            }
+            catch { }
+        }
+
+
         public RenderFrequency renderFrac => renderFrequency.value;
+
+        public bool Threaded => false;
 
         public override void buildSyncObjs(bool newRefIds)
         {
@@ -240,12 +261,6 @@ namespace RhubarbEngine.Components.ImGUI
             {
                 logger.Log("Error Rendering" + e.ToString(), true);
             }
-        }
-
-        public override void CommonUpdate(DateTime startTime, DateTime Frame)
-        {
-            base.CommonUpdate(startTime, Frame);
-            Render();
         }
 
         public ImGUICanvas(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

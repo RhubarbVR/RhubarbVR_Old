@@ -17,6 +17,9 @@ namespace RhubarbEngine.Components.Rendering
     public interface IRenderObject
     {
         RenderFrequency renderFrac { get; }
+
+        bool Threaded { get; }
+
         void Render();
     }
 }

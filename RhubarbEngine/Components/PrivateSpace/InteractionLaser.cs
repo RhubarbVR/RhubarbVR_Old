@@ -15,11 +15,10 @@ using g3;
 using Veldrid;
 using RhubarbEngine.Helpers;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
+using RhubarbEngine.Components.Interaction;
 
-namespace RhubarbEngine.Components.Interaction
+namespace RhubarbEngine.Components.PrivateSpace
 {
-
-    [Category(new string[] { "Interaction" })]
     public class InteractionLaser : Component
     {
         public Sync<InteractionSource> source;
@@ -28,13 +27,9 @@ namespace RhubarbEngine.Components.Interaction
 
         public Sync<float> distances;
 
-        public SyncRef<User> user;
-
         public SyncRef<CurvedTubeMesh> mesh;
 
         public Driver<Quaternionf> rotation;
-
-        public SyncRef<GrabbableHolder> grabholder;
 
         public Driver<Vector3d> meshDriver;
         public Driver<Vector3d> meshHandleDriver;
@@ -42,8 +37,7 @@ namespace RhubarbEngine.Components.Interaction
         public override void OnAttach()
         {
             base.OnAttach();
-            user.target = world.localUser;
-            if (world.userspace) return;
+            if (!world.userspace) return;
             var (e, m) = MeshHelper.AddMesh<CurvedTubeMesh>(entity);
             e.rotation.value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
             meshHandleDriver.setDriveTarget(m.EndHandle);
@@ -52,8 +46,6 @@ namespace RhubarbEngine.Components.Interaction
             m.Radius.value = 0.005f;
             m.Radius.value = 0.01f;
             mesh.target = m;
-            grabholder.target = entity.attachComponent<GrabbableHolder>();
-            grabholder.target.laser.target = this;
         }
 
 
@@ -65,10 +57,8 @@ namespace RhubarbEngine.Components.Interaction
             rayderection.value = -Vector3f.AxisZ;
             distances = new Sync<float>(this, newRefIds);
             distances.value = 25f;
-            user = new SyncRef<User>(this, newRefIds);
             meshDriver = new Driver<Vector3d>(this, newRefIds);
             mesh = new SyncRef<CurvedTubeMesh>(this, newRefIds);
-            grabholder = new SyncRef<GrabbableHolder>(this, newRefIds);
             rotation = new Driver<Quaternionf>(this, newRefIds);
             meshHandleDriver = new Driver<Vector3d>(this, newRefIds);
         }
@@ -79,8 +69,7 @@ namespace RhubarbEngine.Components.Interaction
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
-            if (world.userspace) return;
-            if (world.localUser != user.target) return;
+            if (!world.userspace) return;
             if((engine.outputType == VirtualReality.OutputType.Screen) && source.value != InteractionSource.HeadLaser)
             {
                 if (meshDriver.target != null)
@@ -125,7 +114,15 @@ namespace RhubarbEngine.Components.Interaction
                 Vector3 destination = new Vector3(val.X, val.Y, val.Z);
                 if (!HitTest(sourcse, destination, world.worldManager.privateOverlay))
                 {
-                    if (!HitTest(sourcse, destination, world))
+                    bool hittestbool = false;
+                    foreach (var item in world.worldManager.worlds)
+                    {
+                        if((item.Focus == World.World.FocusLevel.Overlay)&&!hittestbool)
+                        {
+                            hittestbool = HitTest(sourcse, destination, item);
+                        }
+                    }
+                    if ((!HitTest(sourcse, destination, world.worldManager.focusedWorld))&&!hittestbool)
                     {
                         if (meshDriver.target != null)
                         {
@@ -148,6 +145,7 @@ namespace RhubarbEngine.Components.Interaction
 
         public bool HitTest(Vector3 sourcse, Vector3 destination, World.World eworld)
         {
+            if (eworld == null) return false;
             using (var cb = new ClosestRayResultCallback(ref sourcse, ref destination))
             {
                 eworld.physicsWorld.RayTest(sourcse, destination, cb);
@@ -199,7 +197,7 @@ namespace RhubarbEngine.Components.Interaction
                         ent.SendTriggerTouching(input.TriggerTouching(Input.Creality.Left));
                         ent.SendSecondary(input.SecondaryPress(Input.Creality.Left));
                         ent.SendPrimary(input.PrimaryPress(Input.Creality.Left));
-                        ent.SendGrip(grabholder.target, input.GrabPress(Input.Creality.Left));
+                        ent.SendGrip(col.world.LeftLaserGrabbableHolder, input.GrabPress(Input.Creality.Left));
                         break;
                     case InteractionSource.LeftFinger:
                         break;
@@ -207,14 +205,14 @@ namespace RhubarbEngine.Components.Interaction
                         ent.SendTriggerTouching(input.TriggerTouching(Input.Creality.Right));
                         ent.SendSecondary(input.SecondaryPress(Input.Creality.Right));
                         ent.SendPrimary(input.PrimaryPress(Input.Creality.Right));
-                        ent.SendGrip(grabholder.target, input.GrabPress(Input.Creality.Right));
+                        ent.SendGrip(col.world.RightLaserGrabbableHolder, input.GrabPress(Input.Creality.Right));
                         break;
                     case InteractionSource.RightFinger:
                         break;
                     case InteractionSource.HeadLaser:
                         ent.SendSecondary(input.mainWindows.GetMouseButton(MouseButton.Middle));
                         ent.SendPrimary(input.mainWindows.GetMouseButton(MouseButton.Left));
-                        ent.SendGrip(grabholder.target, input.mainWindows.GetMouseButton(MouseButton.Right));
+                        ent.SendGrip(col.world.HeadLaserGrabbableHolder, input.mainWindows.GetMouseButton(MouseButton.Right));
                         break;
                     case InteractionSource.HeadFinger:
                         break;

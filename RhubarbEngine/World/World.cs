@@ -32,6 +32,48 @@ namespace RhubarbEngine.World
         [NoSave]
         public GrabbableHolder lastHolder;
 
+        
+
+        [NoSync]
+        [NoSave]
+        public GrabbableHolder LeftLaserGrabbableHolder;
+
+        [NoSync]
+        [NoSave]
+        public GrabbableHolder RightLaserGrabbableHolder;
+
+        [NoSync]
+        [NoSave]
+        public GrabbableHolder HeadLaserGrabbableHolder;
+
+
+        [NoSync]
+        [NoSave]
+        public GrabbableHolder GetGrabbableHolder(InteractionSource interactionSource)
+        {
+            switch (interactionSource)
+            {
+                case InteractionSource.None:
+                    break;
+                case InteractionSource.LeftLaser:
+                    return LeftLaserGrabbableHolder;
+                case InteractionSource.LeftFinger:
+                    break;
+                case InteractionSource.RightLaser:
+                    return RightLaserGrabbableHolder;
+                case InteractionSource.RightFinger:
+                    break;
+                case InteractionSource.HeadLaser:
+                    return HeadLaserGrabbableHolder;
+                case InteractionSource.HeadFinger:
+                    break;
+                default:
+                    break;
+            }
+            return null;
+        }
+
+
         [NoSync]
         [NoSave]
         public Window grabedWindow;
@@ -222,14 +264,13 @@ namespace RhubarbEngine.World
                     if ((layer & RemderLayers.privateOverlay) <= 0) return;
                     break;
             }
-            foreach(Entity ent in Entitys)
+            Parallel.ForEach(Entitys, ent =>
             {
                 if (ent.enabled.value && ent.parentEnabled)
                 {
                     ent.addToRenderQueue(gu, playerTrans.Translation, layer);
                 }
-            }
-            
+            });
         }
 
         public enum FocusLevel
@@ -324,8 +365,6 @@ namespace RhubarbEngine.World
 
         private List<Entity> Entitys = new List<Entity>();
 
-        public List<RenderObject> RenderObjects = new List<RenderObject>();
-
         private Dictionary<NetPointer, IWorldObject> worldObjects = new Dictionary<NetPointer, IWorldObject>();
 
         public Dictionary<ulong,List<(DataNodeGroup,DateTime, Peer)>> unassignedValues = new Dictionary<ulong, List<(DataNodeGroup, DateTime, Peer)>>();
@@ -396,30 +435,29 @@ namespace RhubarbEngine.World
 
         public void Update(DateTime startTime, DateTime Frame)
         {
-            
             physicsWorld.UpdateAabbs();
             physicsWorld.UpdateVehicles(worldManager.engine.platformInfo.deltaSeconds);
             physicsWorld.StepSimulation(worldManager.engine.platformInfo.deltaSeconds);
             physicsWorld.ComputeOverlappingPairs();
             try
             {
-                foreach (Entity obj in Entitys)
+                Parallel.ForEach(Entitys, obj =>
                 {
                     obj.Update(startTime, Frame);
-                }
+                });
             }
             catch(Exception e)
             {
             }
             try
             {
-                foreach (IWorldObject val in worldObjects.Values)
+                Parallel.ForEach(worldObjects.Values, val =>
                 {
                     if (((Worker)val) != null)
                     {
                         ((Worker)val).onUpdate();
                     }
-                }
+                });
             }
             catch (Exception e)
             {
