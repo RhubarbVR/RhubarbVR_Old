@@ -31,7 +31,7 @@ namespace RhubarbVRLauncher
                 System.IO.File.Delete(AppDataFolder + "/RhubarbVR/LocalWorld.RWorld");
             }
             
-            Process.Start(new ProcessStartInfo("./Binaries/RhubarbVR.exe", "-o " + OutPutType.Text +" "+ textBox1.Text));
+            Process.Start(new ProcessStartInfo("./Binaries/RhubarbVR.exe", "-o " + OutPutType.Text +" "+"-g " + comboBox1.Text + " " + textBox1.Text));
             Close();
         }
 
