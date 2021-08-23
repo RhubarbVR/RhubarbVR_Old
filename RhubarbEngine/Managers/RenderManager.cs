@@ -63,7 +63,7 @@ namespace RhubarbEngine.Managers
             }
             if ((backend == GraphicsBackend.Metal && engine.platformInfo.platform != PlatformInfo.Platform.OSX) && engine.platformInfo.platform != PlatformInfo.Platform.iOS)
             {
-                backend = GraphicsBackend.Direct3D11;
+                backend = GraphicsBackend.Vulkan;
             }
             if (backend == GraphicsBackend.Direct3D11 && engine.platformInfo.platform != PlatformInfo.Platform.Windows)
             {
