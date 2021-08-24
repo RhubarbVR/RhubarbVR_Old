@@ -103,7 +103,7 @@ namespace RhubarbEngine.Managers
             }
             task.Name = "Audio";
             task.IsBackground = false;
-            task.Priority = ThreadPriority.AboveNormal;
+            task.Priority = ThreadPriority.Normal;
             task.Start();
             return this;
         }
@@ -255,7 +255,7 @@ namespace RhubarbEngine.Managers
 
             if (buffersToAdd <= 0) return;
 
-            var task = Task.Run(RunOutput);
+            RunOutput();
 
             while (buffersToAdd > 0)
             {
@@ -267,7 +267,6 @@ namespace RhubarbEngine.Managers
 
                     numProcessedBuffers--;
                 }
-                task.Wait();
                 AL.BufferData(bufferId, BufferFormatStereoFloat32, outBuff, AudioFrameSizeInBytes * 2, SamplingRate);
                 AL.SourceQueueBuffers(sourceId, 1, &bufferId);
                 CheckALErrors();
