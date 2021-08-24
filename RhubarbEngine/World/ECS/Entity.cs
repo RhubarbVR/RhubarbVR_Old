@@ -132,17 +132,17 @@ namespace RhubarbEngine.World.ECS
 
         public event Action enabledChanged;
 
-        public event Action onClick;
+        public event Action<bool> onClick;
 
-        public event Action<GrabbableHolder> onGrip;
+        public event Action<GrabbableHolder, bool> onGrip;
 
-        public event Action<GrabbableHolder> onDrop;
+        public event Action<GrabbableHolder, bool> onDrop;
 
-        public event Action onPrimary;
+        public event Action<bool> onPrimary;
 
-        public event Action onSecondary;
+        public event Action<bool> onSecondary;
 
-        public event Action onTriggerTouching;
+        public event Action<bool> onTriggerTouching;
 
         public void SetParent(Entity entity,bool preserverGlobal = true, bool resetPos = false)
         {
@@ -158,38 +158,38 @@ namespace RhubarbEngine.World.ECS
             }
         }
 
-        public void SendTriggerTouching(bool click = true)
+        public void SendTriggerTouching(bool laser,bool click = true)
         {
             if (!click) return;
-            onTriggerTouching?.Invoke();
+            onTriggerTouching?.Invoke(laser);
         }
 
-        public void SendClick(bool click = true)
+        public void SendClick(bool laser, bool click = true)
         {
             if (!click) return;
-            onClick?.Invoke();
+            onClick?.Invoke(laser);
         }
-        public void SendGrip(GrabbableHolder holder, bool click = true)
+        public void SendGrip(bool laser, GrabbableHolder holder, bool click = true)
         {
             if (!click) return;
-            onGrip?.Invoke(holder);
-        }
-
-        public void SendDrop(GrabbableHolder holder, bool click = true)
-        {
-            if (!click) return;
-            onDrop?.Invoke(holder);
+            onGrip?.Invoke(holder, laser);
         }
 
-        public void SendPrimary(bool click = true)
+        public void SendDrop(bool laser, GrabbableHolder holder, bool click = true)
         {
             if (!click) return;
-            onPrimary?.Invoke();
+            onDrop?.Invoke(holder, laser);
         }
-        public void SendSecondary(bool click = true)
+
+        public void SendPrimary(bool laser, bool click = true)
         {
             if (!click) return;
-            onSecondary?.Invoke();
+            onPrimary?.Invoke(laser);
+        }
+        public void SendSecondary(bool laser, bool click = true)
+        {
+            if (!click) return;
+            onSecondary?.Invoke(laser);
         }
         public bool isEnabled => parentEnabled && enabled.value;
 

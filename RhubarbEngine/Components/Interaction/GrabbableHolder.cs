@@ -110,17 +110,14 @@ namespace RhubarbEngine.Components.Interaction
                         break;
                     case InteractionSource.LeftLaser:
                     return input.GrabPress(Input.Creality.Left);
-                    break;
                     case InteractionSource.LeftFinger:
                         break;
                     case InteractionSource.RightLaser:
                     return input.GrabPress(Input.Creality.Right);
-                        break;
                     case InteractionSource.RightFinger:
                         break;
                     case InteractionSource.HeadLaser:
                         return engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right);
-                        break;
                     case InteractionSource.HeadFinger:
                         break;
                     default:

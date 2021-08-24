@@ -243,7 +243,7 @@ namespace RhubarbEngine.Input
             Entity ent = col.entity;
             if (HasClicked())
             {
-                ent.SendClick();
+                ent.SendClick(true);
                 var source = InteractionSource.None;
                 if ((engine.outputType == VirtualReality.OutputType.Screen) && (side == Creality.Right))
                 {
@@ -271,7 +271,7 @@ namespace RhubarbEngine.Input
                         ent.SendTriggerTouching(input.TriggerTouching(Input.Creality.Left));
                         ent.SendSecondary(input.SecondaryPress(Input.Creality.Left));
                         ent.SendPrimary(input.PrimaryPress(Input.Creality.Left));
-                        ent.SendGrip(col.world.LeftLaserGrabbableHolder, input.GrabPress(Input.Creality.Left));
+                        ent.SendGrip(true,col.world.LeftLaserGrabbableHolder, input.GrabPress(Input.Creality.Left));
                         break;
                     case InteractionSource.LeftFinger:
                         break;
@@ -279,14 +279,14 @@ namespace RhubarbEngine.Input
                         ent.SendTriggerTouching(input.TriggerTouching(Input.Creality.Right));
                         ent.SendSecondary(input.SecondaryPress(Input.Creality.Right));
                         ent.SendPrimary(input.PrimaryPress(Input.Creality.Right));
-                        ent.SendGrip(col.world.RightLaserGrabbableHolder, input.GrabPress(Input.Creality.Right));
+                        ent.SendGrip(true, col.world.RightLaserGrabbableHolder, input.GrabPress(Input.Creality.Right));
                         break;
                     case InteractionSource.RightFinger:
                         break;
                     case InteractionSource.HeadLaser:
                         ent.SendSecondary(input.mainWindows.GetMouseButton(MouseButton.Middle));
                         ent.SendPrimary(input.mainWindows.GetMouseButton(MouseButton.Left));
-                        ent.SendGrip(col.world.HeadLaserGrabbableHolder, input.mainWindows.GetMouseButton(MouseButton.Right));
+                        ent.SendGrip(true, col.world.HeadLaserGrabbableHolder, input.mainWindows.GetMouseButton(MouseButton.Right));
                         break;
                     case InteractionSource.HeadFinger:
                         break;
