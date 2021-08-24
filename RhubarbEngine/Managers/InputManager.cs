@@ -27,6 +27,10 @@ namespace RhubarbEngine.Managers
 
         public event Action removeFocus;
 
+        public InteractionLaserSource LeftLaser;
+
+        public InteractionLaserSource RightLaser;
+
         public void RemoveFocus()
         {
             removeFocus?.Invoke();
@@ -224,11 +228,17 @@ namespace RhubarbEngine.Managers
         public IManager initialize(Engine _engine)
         {
             engine = _engine;
+
+            LeftLaser = new InteractionLaserSource(Creality.Left, this, engine);
+            RightLaser = new InteractionLaserSource(Creality.Right, this, engine);
+
             return this;
         }
 
         public void Update()
         {
+            LeftLaser.Update();
+            RightLaser.Update();
             if (mainWindows.GetKeyDown(Key.F8))
             {
                 if (engine.outputType == OutputType.Screen)

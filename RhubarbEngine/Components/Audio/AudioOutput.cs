@@ -72,10 +72,7 @@ namespace RhubarbEngine.Components.Audio
             base.LoadListObject();
             try
             {
-                if (!world.updateLists.audioOutputs.Contains(this))
-                {
-                    world.updateLists.audioOutputs.Add(this);
-                }
+                world.updateLists.audioOutputs.SafeAdd(this);
             }
             catch { }
         }
