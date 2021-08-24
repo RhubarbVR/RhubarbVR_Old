@@ -401,7 +401,7 @@ namespace RhubarbEngine.World
 
         public void addWorldEntity(Entity obj)
         {
-            Entitys.Add(obj);
+            Entitys.SafeAdd(obj);
         }
 
         public void removeWorldEntity(Entity obj)

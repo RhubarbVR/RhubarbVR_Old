@@ -489,7 +489,7 @@ namespace RhubarbEngine.Components.Interaction
         {
             try
             {
-                world.updateLists.trenderObject.Add(this);
+               world.updateLists.trenderObject.SafeAdd(this);
             }
             catch { }
         }

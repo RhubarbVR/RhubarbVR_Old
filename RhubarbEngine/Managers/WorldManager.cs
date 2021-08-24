@@ -150,7 +150,7 @@ namespace RhubarbEngine.Managers
                 string sessionid = engine.netApiManager.sessionApi.SessionCreatesessionPost(new CreateSessionReq(name, worlduuid, new List<string>(new[] { "" }), "", (int)sessionsType, (int)accessLevel, isOver, maxusers, mobilefriendly, conectionkey), engine.netApiManager.token);
                 world.SessionID.value = sessionid;
                 world.loadHostUser();
-                worlds.Add(world);
+                worlds.SafeAdd(world);
                 if (focus)
                 {
                     world.Focus = World.World.FocusLevel.Focused;

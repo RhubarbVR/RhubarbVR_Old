@@ -53,7 +53,7 @@ namespace RhubarbEngine.Components.ImGUI
         {
             try
             {
-                world.updateLists.renderObject.Add(this);
+                world.updateLists.renderObject.SafeAdd(this);
             }
             catch { }
         }
