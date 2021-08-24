@@ -306,10 +306,53 @@ namespace RhubarbEngine.Input
 
         private Vector3 destination;
 
+        private float MaxDistinatains = 100;
+
+        private Vector3 lastDeriction;
+
+        private float SnapDistance = 0.2f;
+
+        private float LastDistance = 0;
+
+        public void SendRayCast(Vector3 _sourcse, Vector3 deriction)
+        {
+            var dist = MaxDistinatains;
+            deriction.Dot(ref lastDeriction, out double result);
+            if(result < SnapDistance)
+            {
+                dist = LastDistance + 0.2f;
+            }
+            ProsscesRayTestHit(_sourcse, (deriction * dist) + _sourcse, deriction);
+
+            UpdateLaserPos(_sourcse, (deriction * 20) + _sourcse);
+        }
+
         public void UpdateLaserPos(Vector3 _sourcse,Vector3 _destination)
         {
             sourcse = _sourcse;
             destination = _destination;
+        }
+        private void ProsscesRayTestHit(Vector3 _sourcse, Vector3 _destination, Vector3 deriction)
+        {
+            if (!RayTestHitTest(_sourcse, _destination, engine.worldManager.privateOverlay))
+            {
+                bool hittestbool = false;
+                foreach (var item in engine.worldManager.worlds)
+                {
+                    if ((item.Focus == World.World.FocusLevel.Overlay) && !hittestbool)
+                    {
+                        hittestbool = RayTestHitTest(_sourcse, _destination, item);
+                    }
+                }
+                if (!((!RayTestHitTest(_sourcse, _destination, engine.worldManager.focusedWorld)) && !hittestbool))
+                {
+                    lastDeriction = deriction;
+                }
+            }
+            else
+            {
+                lastDeriction = deriction;
+            }
         }
 
         private void ProsscesHit()
@@ -326,11 +369,36 @@ namespace RhubarbEngine.Input
                 }
                 if ((!HitTest(sourcse, destination, engine.worldManager.focusedWorld)) && !hittestbool)
                 {
-                    ProssecesHitPoint(Vector3d.Zero, Vector3d.Zero);
+                   // UpdateLaserPos(_sourcse, (deriction * 20) + _sourcse);
                 }
             }
         }
 
+        private bool RayTestHitTest(Vector3 sourcse, Vector3 destination, World.World eworld)
+        {
+            if (eworld == null) return false;
+            using (var cb = new ClosestRayResultCallback(ref sourcse, ref destination))
+            {
+                eworld.physicsWorld.RayTest(sourcse, destination, cb);
+                if (cb.HasHit)
+                {
+                    Type type = cb.CollisionObject.UserObject.GetType();
+                    if (type == typeof(InputPlane))
+                    {
+                        return true;
+                    }
+                    else if (type == typeof(MeshInputPlane))
+                    {
+                        return true;
+                    }
+                    else if (typeof(Collider).IsAssignableFrom(type))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
         private bool HitTest(Vector3 sourcse, Vector3 destination, World.World eworld)
         {
             if (eworld == null) return false;
@@ -360,6 +428,7 @@ namespace RhubarbEngine.Input
 
         public void Update()
         {
+            if ((sourcse == Vector3.Zero) && (destination == Vector3.Zero)) return;
             ProsscesHit();
         }
 

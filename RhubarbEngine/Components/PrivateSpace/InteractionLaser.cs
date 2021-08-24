@@ -51,11 +51,7 @@ namespace RhubarbEngine.Components.PrivateSpace
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
             if (!world.userspace) return;
-            if((engine.outputType == VirtualReality.OutputType.Screen) && source.value != InteractionSource.HeadLaser)
-            {
-                return;
-            }
-            if ((engine.outputType != VirtualReality.OutputType.Screen) && source.value == InteractionSource.HeadLaser)
+            if(((engine.outputType == VirtualReality.OutputType.Screen) && source.value != InteractionSource.HeadLaser)|| (engine.outputType != VirtualReality.OutputType.Screen) && source.value == InteractionSource.HeadLaser)
             {
                 return;
             }
@@ -73,20 +69,20 @@ namespace RhubarbEngine.Components.PrivateSpace
                     Vector3f vectup = new Vector3f(0, 1, 0);
                     entity.rotation.value = Quaternionf.LookRotation(vectforward, vectup);
                 }
-                System.Numerics.Matrix4x4.Decompose((System.Numerics.Matrix4x4.CreateTranslation((rayderection.value * distances.value).ToSystemNumrics()) * entity.globalTrans()), out System.Numerics.Vector3 vs, out System.Numerics.Quaternion vr, out System.Numerics.Vector3 val);
                 System.Numerics.Matrix4x4.Decompose(entity.globalTrans(), out System.Numerics.Vector3 vsg, out System.Numerics.Quaternion vrg, out System.Numerics.Vector3 global);
                 Vector3 sourcse = new Vector3(global.X, global.Y, global.Z);
-                Vector3 destination = new Vector3(val.X, val.Y, val.Z);
+                var val = entity.globalRot().AxisZ;
+                Vector3 destination = new Vector3(-val.x, -val.y, -val.z);
                 switch (source.value)
                 {
                     case InteractionSource.LeftLaser:
-                        input.LeftLaser.UpdateLaserPos(sourcse, destination);
+                        input.LeftLaser.SendRayCast(sourcse, destination);
                         break;
                     case InteractionSource.RightLaser:
-                        input.RightLaser.UpdateLaserPos(sourcse, destination);
+                        input.RightLaser.SendRayCast(sourcse, destination);
                         break;
                     case InteractionSource.HeadLaser:
-                        input.RightLaser.UpdateLaserPos(sourcse, destination);
+                        input.RightLaser.SendRayCast(sourcse, destination);
                         break;
                     default:
                         break;
