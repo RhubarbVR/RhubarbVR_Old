@@ -35,7 +35,7 @@ namespace RhubarbEngine.Managers
     {
         public Engine engine;
 
-        public List<World.World> worlds = new List<World.World>();
+        public SynchronizedCollection<World.World> worlds = new SynchronizedCollection<World.World>();
 
         public World.World privateOverlay;
 

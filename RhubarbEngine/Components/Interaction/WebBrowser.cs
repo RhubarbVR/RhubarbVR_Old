@@ -523,7 +523,9 @@ namespace RhubarbEngine.Components.Interaction
             {
                 if (view == null)
                 {
-                    target = (new ImageSharpTexture(ScreenshotOrNull(browser,PopupBlending.Main).ToImageSharpImage<Rgba32>(), false)).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+                    var thing = ScreenshotOrNull(browser, PopupBlending.Main);
+                    if (thing == null) return;
+                    target = (new ImageSharpTexture(thing.ToImageSharpImage<Rgba32>(), false)).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
                     view = engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
                     var e = new RTexture2D(view);
                     e.addDisposable(target);

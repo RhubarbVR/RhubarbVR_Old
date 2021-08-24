@@ -450,31 +450,36 @@ namespace Veldrid
             io.MouseWheel = snapshot.WheelDelta;
 
             IReadOnlyList<char> keyCharPresses = snapshot.KeyCharPresses;
-            for (int i = 0; i < keyCharPresses.Count; i++)
+            if(keyCharPresses != null)
             {
-                char c = keyCharPresses[i];
-                ImGui.GetIO().AddInputCharacter(c);
+                for (int i = 0; i < keyCharPresses.Count; i++)
+                {
+                    char c = keyCharPresses[i];
+                    ImGui.GetIO().AddInputCharacter(c);
+                }
             }
 
             IReadOnlyList<KeyEvent> keyEvents = snapshot.KeyEvents;
-            for (int i = 0; i < keyEvents.Count; i++)
+            if (keyEvents != null)
             {
-                KeyEvent keyEvent = keyEvents[i];
-                io.KeysDown[(int)keyEvent.Key] = keyEvent.Down;
-                if (keyEvent.Key == Key.ControlLeft)
+                for (int i = 0; i < keyEvents.Count; i++)
                 {
-                    _controlDown = keyEvent.Down;
-                }
-                if (keyEvent.Key == Key.ShiftLeft)
-                {
-                    _shiftDown = keyEvent.Down;
-                }
-                if (keyEvent.Key == Key.AltLeft)
-                {
-                    _altDown = keyEvent.Down;
+                    KeyEvent keyEvent = keyEvents[i];
+                    io.KeysDown[(int)keyEvent.Key] = keyEvent.Down;
+                    if (keyEvent.Key == Key.ControlLeft)
+                    {
+                        _controlDown = keyEvent.Down;
+                    }
+                    if (keyEvent.Key == Key.ShiftLeft)
+                    {
+                        _shiftDown = keyEvent.Down;
+                    }
+                    if (keyEvent.Key == Key.AltLeft)
+                    {
+                        _altDown = keyEvent.Down;
+                    }
                 }
             }
-
             io.KeyCtrl = _controlDown;
             io.KeyAlt = _altDown;
             io.KeyShift = _shiftDown;

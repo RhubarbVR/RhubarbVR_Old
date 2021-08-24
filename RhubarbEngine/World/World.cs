@@ -19,6 +19,7 @@ using BulletSharp;
 using BulletSharp.Math;
 using System.Net;
 using RhubarbEngine.Components.Interaction;
+using System.Collections.Concurrent;
 
 namespace RhubarbEngine.World
 {
@@ -193,7 +194,7 @@ namespace RhubarbEngine.World
                             {
                                 List<(DataNodeGroup, DateTime, Peer)> saveobjs = new List<(DataNodeGroup, DateTime, Peer)>();
                                 saveobjs.Add(((DataNodeGroup)dataNodeGroup.getValue("data"), DateTime.UtcNow, fromPeer));
-                                unassignedValues.Add(val.Value, saveobjs);
+                                unassignedValues.TryAdd(val.Value, saveobjs);
                             }
 
 
@@ -363,17 +364,17 @@ namespace RhubarbEngine.World
             }
         }
 
-        private List<Entity> Entitys = new List<Entity>();
+        private SynchronizedCollection<Entity> Entitys = new SynchronizedCollection<Entity>();
 
-        private Dictionary<NetPointer, IWorldObject> worldObjects = new Dictionary<NetPointer, IWorldObject>();
+        private ConcurrentDictionary<NetPointer, IWorldObject> worldObjects = new ConcurrentDictionary<NetPointer, IWorldObject>();
 
-        public Dictionary<ulong,List<(DataNodeGroup,DateTime, Peer)>> unassignedValues = new Dictionary<ulong, List<(DataNodeGroup, DateTime, Peer)>>();
+        public ConcurrentDictionary<ulong,List<(DataNodeGroup,DateTime, Peer)>> unassignedValues = new ConcurrentDictionary<ulong, List<(DataNodeGroup, DateTime, Peer)>>();
 
         public void addWorldObj(IWorldObject obj)
         {
             try
             {
-                worldObjects.Add(obj.ReferenceID, obj);
+                worldObjects.TryAdd(obj.ReferenceID, obj);
                 if (unassignedValues.ContainsKey(obj.ReferenceID.id))
                 {
                     try
@@ -383,7 +384,7 @@ namespace RhubarbEngine.World
                         {
                             member.ReceiveData((DataNodeGroup)(item.Item1).getValue("data"), (item.Item3));
                         }
-                        unassignedValues.Remove(obj.ReferenceID.id);
+                        unassignedValues.TryRemove(obj.ReferenceID.id,out List<(DataNodeGroup, DateTime,Peer)> var);
                     }
                     catch
                     {
@@ -417,7 +418,11 @@ namespace RhubarbEngine.World
 
         public void removeWorldObj(IWorldObject obj)
         {
-            worldObjects.Remove(obj.ReferenceID);
+            worldObjects.TryRemove(obj.ReferenceID,out IWorldObject value);
+            if (!value.IsRemoved)
+            {
+                value.Dispose();
+            }
         }
         NetPointer IWorldObject.ReferenceID => NetPointer.BuildID(1, 0);
 

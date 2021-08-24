@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,10 +11,10 @@ namespace RhubarbEngine.Render
     {
         private const int DefaultCapacity = 250;
 
-        private readonly List<RenderItemIndex> _indices = new List<RenderItemIndex>(DefaultCapacity);
-        private readonly List<Renderable> _renderables = new List<Renderable>(DefaultCapacity);
+        private readonly SynchronizedCollection<RenderItemIndex> _indices = new SynchronizedCollection<RenderItemIndex>(DefaultCapacity);
+        private readonly SynchronizedCollection<Renderable> _renderables = new SynchronizedCollection<Renderable>(DefaultCapacity);
 
-        public List<Renderable> Renderables { get { return _renderables; } }
+        public SynchronizedCollection<Renderable> Renderables { get { return _renderables; } }
         public int Count => _renderables.Count;
 
         public void Clear()
@@ -22,7 +23,7 @@ namespace RhubarbEngine.Render
             _renderables.Clear();
         }
 
-        public void AddRange(List<Renderable> Renderables, Vector3 viewPosition)
+        public void AddRange(IList<Renderable> Renderables, Vector3 viewPosition)
         {
             for (int i = 0; i < Renderables.Count; i++)
             {
@@ -63,23 +64,5 @@ namespace RhubarbEngine.Render
             _indices.Add(new RenderItemIndex(item.GetRenderOrderKey(viewPosition), index));
             _renderables.Add(item);
         }
-
-        public void Sort()
-        {
-            _indices.Sort();
-        }
-
-        public void Sort(Comparer<RenderOrderKey> keyComparer)
-        {
-            _indices.Sort(
-                (RenderItemIndex first, RenderItemIndex second)
-                    => keyComparer.Compare(first.Key, second.Key));
-        }
-
-        public void Sort(Comparer<RenderItemIndex> comparer)
-        {
-            _indices.Sort(comparer);
-        }
-
     }
 }

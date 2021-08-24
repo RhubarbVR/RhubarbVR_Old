@@ -179,10 +179,10 @@ namespace RhubarbEngine
         {
             platformInfo.Update();
             discordRpcClient.Invoke();
-            renderManager.Update();
             windowManager.Update();
             inputManager.Update();
             worldManager.Update(startTime, Frame);
+            renderManager.Update();
         }
 
         public void cleanUP()

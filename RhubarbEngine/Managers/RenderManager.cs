@@ -296,13 +296,16 @@ namespace RhubarbEngine.Managers
             {
                 Console.WriteLine("Render Error" + e.ToString());
             }
-            windowCL.Begin();
-            windowCL.SetFramebuffer(sc.Framebuffer);
-            windowCL.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0.2f, 1f));
-            vrContext.RenderMirrorTexture(windowCL, sc.Framebuffer, (engine.outputType != OutputType.Screen) ? eyeSource : MirrorTextureEyeSource.LeftEye);
-            windowCL.End();
-            gd.SubmitCommands(windowCL);
-            gd.SwapBuffers(sc);
+            if (engine.windowManager.mainWindowOpen)
+            {
+                windowCL.Begin();
+                windowCL.SetFramebuffer(sc.Framebuffer);
+                windowCL.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0.2f, 1f));
+                vrContext.RenderMirrorTexture(windowCL, sc.Framebuffer, (engine.outputType != OutputType.Screen) ? eyeSource : MirrorTextureEyeSource.LeftEye);
+                windowCL.End();
+                gd.SubmitCommands(windowCL);
+                gd.SwapBuffers(sc);
+            }
         }
     }
 }

@@ -31,6 +31,7 @@ public static class ImageSharpExtensions
 
         public static Image<TPixel> ToImageSharpImage<TPixel>(this System.Drawing.Bitmap bitmap) where TPixel : unmanaged, IPixel<TPixel>
         {
+        if (bitmap == null) throw new Exception("BitMap is null");
             using (var memoryStream = new MemoryStream())
             {
                 bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Bmp);
