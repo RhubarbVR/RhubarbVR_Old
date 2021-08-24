@@ -42,7 +42,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             source = new Sync<InteractionSource>(this, newRefIds);
             source.value = InteractionSource.HeadLaser;
             rayderection = new Sync<Vector3f>(this, newRefIds);
-            rayderection.value = -Vector3f.AxisZ;
+            rayderection.value = Vector3f.AxisZ;
             distances = new Sync<float>(this, newRefIds);
             distances.value = 25f;
             rotation = new Driver<Quaternionf>(this, newRefIds);

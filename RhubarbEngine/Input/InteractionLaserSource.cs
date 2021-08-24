@@ -299,32 +299,86 @@ namespace RhubarbEngine.Input
 
         private void ProssecesHitPoint(Vector3d pos, Vector3d normal)
         {
-
+            this.pos = pos;
+            this.normal = normal;
+            HasHit = !((pos == Vector3d.Zero) && (normal == Vector3d.Zero));
+            onHit?.Invoke(pos, normal,((pos==Vector3d.Zero)&&(normal == Vector3d.Zero)));
         }
 
-        private Vector3 sourcse;
+        public delegate void ProssecesHitPointAction(Vector3d pos, Vector3d normal, bool Hide);
 
-        private Vector3 destination;
+        public event ProssecesHitPointAction onHit;
+
+        public Vector3d pos { get; private set; }
+        public Vector3d normal { get; private set; }
+        public bool HasHit { get; private set; }
+
+        public Vector3 sourcse { get; private set; }
+
+        public Vector3 destination { get; private set; }
 
         private float MaxDistinatains = 100;
 
         private Vector3 lastDeriction;
 
-        private float SnapDistance = 0.2f;
+        private float SnapDistance => engine.settingsObject.InteractionSettings.SnapDistance/100;
+        private float Smoothing => engine.settingsObject.InteractionSettings.Smoothing;
 
         private float LastDistance = 0;
+
+        private Vector3 LastRayCastDeriction;
+        private Vector3 LastRayCastsourcse;
+
+        private Vector3 IRayCastDeriction;
+        private Vector3 IRayCastsourcse;
+
+        private Vector3 Lerp(Vector3 v1, Vector3 v2, Double pos)
+        {
+           return v1 + (v2 - v1) * pos;
+        }
+        private bool Aprogamtly(double v1, double v2, double pos)
+        {
+            return (Math.Abs(v1 - v2) <= pos);
+        }
+        private bool Aprogamtly(Vector3 v1, Vector3 v2, double pos)
+        {
+            return ((Aprogamtly(v1.X,v2.X,pos)&& Aprogamtly(v1.Y, v2.Y, pos) && Aprogamtly(v1.Z, v2.Z, pos)));
+        }
+        private bool Snaping;
 
         public void SendRayCast(Vector3 _sourcse, Vector3 deriction)
         {
             var dist = MaxDistinatains;
-            deriction.Dot(ref lastDeriction, out double result);
-            if(result < SnapDistance)
-            {
-                dist = LastDistance + 0.2f;
-            }
-            ProsscesRayTestHit(_sourcse, (deriction * dist) + _sourcse, deriction);
 
-            UpdateLaserPos(_sourcse, (deriction * 20) + _sourcse);
+            Vector3 smoothedDeriction;
+            Vector3 smoothedSourcse;
+
+            if (Smoothing != 0)
+            {
+                var poser = (engine.platformInfo.deltaSeconds*2 * Smoothing);
+                IRayCastDeriction = Lerp(IRayCastDeriction, deriction, poser);
+                IRayCastsourcse = Lerp(IRayCastsourcse, _sourcse, poser);
+                smoothedDeriction = Lerp(LastRayCastDeriction, IRayCastDeriction, poser);
+                smoothedSourcse = Lerp(LastRayCastsourcse, IRayCastsourcse, poser);
+            }
+            else
+            {
+                smoothedDeriction = deriction;
+                smoothedSourcse = _sourcse;
+            }
+
+            LastRayCastDeriction = smoothedDeriction;
+            LastRayCastsourcse = smoothedSourcse;
+            var result = Math.Sqrt(Math.Pow(smoothedDeriction.X - lastDeriction.X, 2) + Math.Pow(smoothedDeriction.Y - lastDeriction.Y, 2) + Math.Pow(smoothedDeriction.Z - lastDeriction.Z, 2));
+            if (Aprogamtly(smoothedDeriction,lastDeriction,0.003))
+            {
+                result = 0f;
+            }
+            if ((result < SnapDistance) && Snaping)
+            {
+                dist = LastDistance + 0.5f;
+            }
+            ProsscesRayTestHit(smoothedSourcse, (smoothedDeriction * dist) + smoothedSourcse, smoothedDeriction);
         }
 
         public void UpdateLaserPos(Vector3 _sourcse,Vector3 _destination)
@@ -369,7 +423,8 @@ namespace RhubarbEngine.Input
                 }
                 if ((!HitTest(sourcse, destination, engine.worldManager.focusedWorld)) && !hittestbool)
                 {
-                   // UpdateLaserPos(_sourcse, (deriction * 20) + _sourcse);
+                    Snaping = false;
+                    ProssecesHitPoint(Vector3d.Zero, Vector3d.Zero);
                 }
             }
         }
@@ -382,6 +437,9 @@ namespace RhubarbEngine.Input
                 eworld.physicsWorld.RayTest(sourcse, destination, cb);
                 if (cb.HasHit)
                 {
+                    UpdateLaserPos(cb.HitPointWorld + (cb.HitNormalWorld * 0.001f), cb.HitPointWorld + (cb.HitNormalWorld * -0.002f));
+                    var result = Math.Sqrt(Math.Pow(cb.HitPointWorld.X - sourcse.X, 2) + Math.Pow(cb.HitPointWorld.Y - sourcse.Y, 2) + Math.Pow(cb.HitPointWorld.Z - sourcse.Z, 2));
+                    LastDistance = (float)result;
                     Type type = cb.CollisionObject.UserObject.GetType();
                     if (type == typeof(InputPlane))
                     {
@@ -411,17 +469,21 @@ namespace RhubarbEngine.Input
                     Type type = cb.CollisionObject.UserObject.GetType();
                     if (type == typeof(InputPlane))
                     {
+                        Snaping = true;
                         return ProossesInputPlane(cb);
                     }
                     else if (type == typeof(MeshInputPlane))
                     {
+                        Snaping = true;
                         return ProossesMeshInputPlane(cb);
                     }
                     else if (typeof(Collider).IsAssignableFrom(type))
                     {
+                        Snaping = false;
                         return ProssesCollider(cb);
                     }
                 }
+                Snaping = false;
                 return false;
             }
         }

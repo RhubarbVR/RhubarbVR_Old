@@ -129,8 +129,12 @@ namespace RhubarbEngine.Components.PrivateSpace
             rightcomp.creality.value = Input.Creality.Right;
             rightcomp.userroot.target = userRoot;
 
-            left.addChild("Left Laser").attachComponent<InteractionLaser>().source.value = InteractionSource.LeftLaser;
-            right.addChild("Right Laser").attachComponent<InteractionLaser>().source.value = InteractionSource.RightLaser;
+            var LeftLaser = right.addChild("Left Laser");
+            LeftLaser.attachComponent<InteractionLaser>().source.value = InteractionSource.LeftLaser;
+            LeftLaser.attachComponent<LaserVisual>().source.value = InteractionSource.LeftLaser;
+            var RightLaser = right.addChild("Right Laser");
+            RightLaser.attachComponent<InteractionLaser>().source.value = InteractionSource.RightLaser;
+            RightLaser.attachComponent<LaserVisual>().source.value = InteractionSource.RightLaser;
 
             logger.Log("Spawned User PersonalSpace");
         }

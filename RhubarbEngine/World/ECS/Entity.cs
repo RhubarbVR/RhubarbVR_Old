@@ -241,6 +241,23 @@ namespace RhubarbEngine.World.ECS
             return new Vector3f(scale.X, scale.Y, scale.Z);
         }
 
+        public void SetGlobalPos(Vector3f pos)
+        {
+            Matrix4x4.Decompose(cashedGlobalTrans, out Vector3 scale, out Quaternion rotation, out Vector3 translation);
+            setGlobalTrans(Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(pos.ToSystemNumrics()));
+        }
+
+        public void SetGlobalRot(Quaternionf rot)
+        {
+            Matrix4x4.Decompose(cashedGlobalTrans, out Vector3 scale, out Quaternion rotation, out Vector3 translation);
+            setGlobalTrans(Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(rot.ToSystemNumric()) * Matrix4x4.CreateTranslation(translation));
+        }
+
+        public void SetGlobalScale(Vector3f pos)
+        {
+            Matrix4x4.Decompose(cashedGlobalTrans, out Vector3 scale, out Quaternion rotation, out Vector3 translation);
+            setGlobalTrans(Matrix4x4.CreateScale(pos.ToSystemNumrics()) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(translation));
+        }
         public Matrix4x4 globalTrans()
         {
             return cashedGlobalTrans;
