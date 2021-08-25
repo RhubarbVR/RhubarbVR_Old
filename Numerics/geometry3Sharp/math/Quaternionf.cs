@@ -19,11 +19,23 @@ namespace g3
         public float z;
         [Key(3)]
         public float w;
-
-        public Quaternion ToSystemNumric()
+        public unsafe Quaternion ToSystemNumric()
         {
-            return new Quaternion(x, y, z, w);
+            fixed (Quaternionf* vector3f = &this)
+            {
+                return *(Quaternion*)vector3f;
+            }
         }
+        public static unsafe Quaternionf ToRhuNumrics(ref Quaternion value)
+        {
+            fixed (Quaternion* vector3f = &value)
+            {
+                return *(Quaternionf*)vector3f;
+            }
+        }
+        public static explicit operator Quaternion(Quaternionf b) => b.ToSystemNumric();
+
+        public static explicit operator Quaternionf(Quaternion b) => ToRhuNumrics(ref b);
 
         public Quaternionf(float x, float y, float z, float w) { this.x = x; this.y = y; this.z = z; this.w = w; }
         public Quaternionf(float[] v2) { x = v2[0]; y = v2[1]; z = v2[2]; w = v2[3]; }

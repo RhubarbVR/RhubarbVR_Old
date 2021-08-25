@@ -12,7 +12,7 @@ namespace RhubarbEngine.World
 {
     public class SyncAbstractObjList<T> : Worker, IWorldObject, ISyncMember where T : Worker
     {
-        private List<T> _synclist = new List<T>();
+        private SynchronizedCollection<T> _synclist = new SynchronizedCollection<T>(25);
 
         public T this[int i]
         {
@@ -57,7 +57,7 @@ namespace RhubarbEngine.World
 
         public void AddInternal(T value)
         {
-            _synclist.Add(value);
+            _synclist.SafeAdd(value);
             value.onDispose += Value_onDispose;
             addDisposable(value);
         }
@@ -143,7 +143,7 @@ namespace RhubarbEngine.World
                         val.initialize(this.world, this, false);
                         List<Action> actions = new List<Action>();
                         val.deSerialize((DataNodeGroup)((DataNodeGroup)data.getValue("Data")).getValue("Value"), actions, false);
-                        _synclist.Add(val);
+                        _synclist.SafeAdd(val);
                         foreach (var item in actions)
                         {
                             item?.Invoke();

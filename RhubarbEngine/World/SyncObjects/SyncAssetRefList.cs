@@ -13,7 +13,7 @@ namespace RhubarbEngine.World
 {
     public class SyncAssetRefList<T> : Worker, IWorldObject, ISyncMember where T : IAsset
     {
-        private List<AssetRef<T>> _syncreflist = new List<AssetRef<T>>();
+        private SynchronizedCollection<AssetRef<T>> _syncreflist = new SynchronizedCollection<AssetRef<T>>(5);
 
         AssetRef<T> this[int i]
         {
@@ -60,7 +60,7 @@ namespace RhubarbEngine.World
         {
             AssetRef<T> a = new AssetRef<T>(this, RefID);
             a.loadChange += onLoad;
-            _syncreflist.Add(a);
+            _syncreflist.SafeAdd(a);
             if (RefID)
             {
                 netAdd(a);
@@ -100,7 +100,7 @@ namespace RhubarbEngine.World
                 {
                     item?.Invoke();
                 }
-                _syncreflist.Add(a);
+                _syncreflist.SafeAdd(a);
             }
         }
 

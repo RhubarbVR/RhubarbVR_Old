@@ -129,7 +129,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             rightcomp.creality.value = Input.Creality.Right;
             rightcomp.userroot.target = userRoot;
 
-            var LeftLaser = right.addChild("Left Laser");
+            var LeftLaser = left.addChild("Left Laser");
             LeftLaser.attachComponent<InteractionLaser>().source.value = InteractionSource.LeftLaser;
             LeftLaser.attachComponent<LaserVisual>().source.value = InteractionSource.LeftLaser;
             var RightLaser = right.addChild("Right Laser");

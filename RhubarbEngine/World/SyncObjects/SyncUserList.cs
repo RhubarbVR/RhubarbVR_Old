@@ -29,7 +29,7 @@ namespace RhubarbEngine.World
 
         }
 
-        private List<User> _synclist = new List<User>();
+        private SynchronizedCollection<User> _synclist = new SynchronizedCollection<User>(5);
         [NoSave]
         [NoSync]
         public User this[int i]
@@ -56,7 +56,7 @@ namespace RhubarbEngine.World
         {
             User a = new User();
             a.initialize(this.world, this, Refid);
-            _synclist.Add(a);
+            _synclist.SafeAdd(a);
             if (Refid)
             {
                 netAdd(a);
@@ -98,7 +98,7 @@ namespace RhubarbEngine.World
                 a.initialize(this.world, this, false);
                 List<Action> actions = new List<Action>();
                 a.deSerialize(((DataNodeGroup)data.getValue("Value")), actions, false);
-                _synclist.Add(a);
+                _synclist.SafeAdd(a);
                 foreach (var item in actions)
                 {
                     item?.Invoke();

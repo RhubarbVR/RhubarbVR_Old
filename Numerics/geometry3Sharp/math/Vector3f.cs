@@ -345,12 +345,23 @@ namespace g3
         }
 
 
-        public Vector3 ToSystemNumrics()
+        public unsafe Vector3 ToSystemNumrics()
         {
-            return new Vector3(x, y, z);
+            fixed (Vector3f* vector3f = &this)
+            {
+                return *(Vector3*)vector3f;
+            }
         }
+        public static unsafe Vector3f ToRhuNumrics(ref Vector3 value)
+        {
+            fixed (Vector3* vector3f = &value)
+            {
+                return *(Vector3f*)vector3f;
+            }
+        }
+        public static explicit operator Vector3(Vector3f b) => b.ToSystemNumrics();
 
-
+        public static explicit operator Vector3f(Vector3 b) => ToRhuNumrics(ref b);
 
     }
 }

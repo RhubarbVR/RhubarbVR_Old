@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using MessagePack;
+using System.Numerics;
 
 namespace g3
 {
@@ -258,6 +259,24 @@ namespace g3
             return string.Format("{0:F8} {1:F8}", x, y);
         }
 
+        public unsafe Vector2 ToSystemNumric()
+        {
+            fixed (Vector2f* vector3f = &this)
+            {
+                return *(Vector2*)vector3f;
+            }
+        }
+        
+        public static unsafe Vector2f ToRhuNumrics(ref Vector2 value)
+        {
+            fixed (Vector2* vector3f = &value)
+            {
+                return *(Vector2f*)vector3f;
+            }
+        }
+        public static explicit operator Vector2(Vector2f b) => b.ToSystemNumric();
+
+        public static explicit operator Vector2f(Vector2 b) => ToRhuNumrics(ref b);
 
     }
 }

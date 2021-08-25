@@ -3472,7 +3472,7 @@ namespace SteamAudio
         /// <param name="src">The interleaved array to read from.</param>
         /// <param name="dst">The audio buffer to write into.</param>
         [DllImport(Library, EntryPoint = "iplAudioBufferDeinterleave", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void AudioBufferDeinterleave(IPL._IPLContext_t context, ref float src, ref IPL.AudioBuffer dst);
+        public static extern void AudioBufferDeinterleave(IPL._IPLContext_t context, float[] src, ref IPL.AudioBuffer dst);
 
         /// <summary>
         /// Writes interleaved samples from a user-provided array into an audio buffer.

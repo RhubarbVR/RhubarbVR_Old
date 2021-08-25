@@ -116,10 +116,9 @@ namespace RhubarbEngine.Input
                     var p3 = mesh.GetVertexAll(tryangle.c);
 
                     var uvpos = getUVPosOnTry(p1.v, p1.uv, p2.v, p2.uv, p3.v, p3.uv, new Vector3d(trans.X, trans.Y, trans.Z));
-
-                    var posnopixs = new Vector2f(uvpos.x, (-uvpos.y) + 1);
-                    var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
-                    var pos = new System.Numerics.Vector2(pospix.x, pospix.y);
+                    uvpos.y = (-uvpos.y) + 1;
+                    var pospix = uvpos * new Vector2f(pixsize.x, pixsize.y);
+                    var pos = (System.Numerics.Vector2)pospix;
 
                     var source = InteractionSource.None;
                     if ((engine.outputType == VirtualReality.OutputType.Screen) && (side == Creality.Right))
@@ -188,7 +187,7 @@ namespace RhubarbEngine.Input
 
                 var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
 
-                var pos = new System.Numerics.Vector2(pospix.x, pospix.y);
+                var pos = (System.Numerics.Vector2)pospix;
 
                 var source = InteractionSource.None;
                 if ((engine.outputType == VirtualReality.OutputType.Screen) && (side == Creality.Right))

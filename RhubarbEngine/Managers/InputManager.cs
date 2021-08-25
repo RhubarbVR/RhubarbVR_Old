@@ -165,15 +165,11 @@ namespace RhubarbEngine.Managers
             switch (side)
             {
                 case Creality.Left:
-                    
                     return (leftController != null)? leftController.SecondaryPress : false;
-                    break;
                 case Creality.Right:
                     return (RightController != null) ? RightController.SecondaryPress : false;
-                    break;
                 default:
                     return (RightController != null) ? RightController.SecondaryPress : false || (leftController != null) ? leftController.SecondaryPress : false;
-                    break;
             }
         }
 
@@ -183,13 +179,10 @@ namespace RhubarbEngine.Managers
             {
                 case Creality.Left:
                     return (leftController != null) ? leftController.Axis : Vector2f.Zero;
-                    break;
                 case Creality.Right:
                     return (RightController != null) ? RightController.Axis : Vector2f.Zero;
-                    break;
                 default:
                     return (((RightController != null) ? RightController.Axis : Vector2f.Zero ) +( (leftController != null) ? leftController.Axis : Vector2f.Zero)) / 2;
-                    break;
             }
         }
 
@@ -199,13 +192,10 @@ namespace RhubarbEngine.Managers
             {
                 case Creality.Left:
                     return (leftController != null) ? leftController.Posistion : Matrix4x4.CreateScale(1f);
-                    break;
                 case Creality.Right:
                     return (RightController != null) ? RightController.Posistion : Matrix4x4.CreateScale(1f);
-                    break;
                 default:
                     return Matrix4x4.CreateScale(1f);
-                    break;
             }
         }
 
@@ -215,13 +205,10 @@ namespace RhubarbEngine.Managers
             {
                 case Creality.Left:
                     return (leftController != null) ? leftController.TriggerAix : 0f;
-                    break;
                 case Creality.Right:
                     return (RightController != null) ? RightController.TriggerAix : 0f;
-                    break;
                 default:
                     return (((RightController != null) ? RightController.TriggerAix : 0f) + ((leftController != null) ? leftController.TriggerAix : 0f)) / 2;
-                    break;
             }
         }
 

@@ -11,7 +11,7 @@ namespace RhubarbEngine.World
 {
     public class SyncValueList<T>: Worker, IWorldObject, ISyncMember
     {
-        private List<Sync<T>> _synclist = new List<Sync<T>>();
+        private SynchronizedCollection<Sync<T>> _synclist = new SynchronizedCollection<Sync<T>>(5);
 
         public int Count => _synclist.Count;
 
@@ -40,7 +40,7 @@ namespace RhubarbEngine.World
         public Sync<T> Add(bool Refid = true)
         {
             var val = new Sync<T>(this.world, this, Refid);
-            _synclist.Add(val);
+            _synclist.SafeAdd(val);
             val.Changed += Val_Changed;
             if (Refid)
             {
@@ -83,7 +83,7 @@ namespace RhubarbEngine.World
                 {
                     item?.Invoke();
                 }
-                _synclist.Add(a);
+                _synclist.SafeAdd(a);
             }
         }
 

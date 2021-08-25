@@ -51,20 +51,18 @@ namespace RhubarbEngine.Components.PrivateSpace
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
             if (!world.userspace) return;
-            if(((engine.outputType == VirtualReality.OutputType.Screen) && source.value != InteractionSource.HeadLaser)|| (engine.outputType != VirtualReality.OutputType.Screen) && source.value == InteractionSource.HeadLaser)
-            {
-                return;
-            }
+            if (((engine.outputType == VirtualReality.OutputType.Screen) && (source.value != InteractionSource.HeadLaser))) return;
+            if (((engine.outputType != VirtualReality.OutputType.Screen) && (source.value == InteractionSource.HeadLaser))) return;
             try
             {
-                if(source.value == InteractionSource.HeadLaser)
+                if (source.value == InteractionSource.HeadLaser)
                 {
                     var mousepos = engine.inputManager.mainWindows.MousePosition;
                     var size = new System.Numerics.Vector2(engine.windowManager.mainWindow.width, engine.windowManager.mainWindow.height);
                     float x = 2.0f * mousepos.X / size.X - 1.0f;
                     float y = 2.0f * mousepos.Y / size.Y - 1.0f;
                     float ar = size.X / size.Y;
-                    float tan = (float)Math.Tan(engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI/ 360);
+                    float tan = (float)Math.Tan(engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
                     Vector3f vectforward = new Vector3f(-x * tan * ar, y * tan, 1);
                     Vector3f vectup = new Vector3f(0, 1, 0);
                     entity.rotation.value = Quaternionf.LookRotation(vectforward, vectup);
@@ -87,7 +85,6 @@ namespace RhubarbEngine.Components.PrivateSpace
                     default:
                         break;
                 }
-
             }
             catch (Exception e)
             {
