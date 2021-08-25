@@ -223,7 +223,7 @@ namespace RhubarbEngine.Managers
                         Logger.Log("Failed To Render " + obj.GetType().Name + " Error " + e.ToString(), true);
                     }
                 });
-                noneThreadedTask.Wait();
+                noneThreadedTask.TimeOut(100).Wait();
             }
             catch 
             {
