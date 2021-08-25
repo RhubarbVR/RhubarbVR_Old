@@ -177,12 +177,13 @@ namespace RhubarbEngine.Managers
             {
                 engine.logger.Log("Output Device Change:" + type.ToString());
                 engine.outputType = type;
-                if (!vrContext.Disposed)
-                {
-                    vrContext.Dispose();
-                }
+                var oldvrContext = vrContext;
                 vrContext = buildVRContext();
                 vrContext.Initialize(gd);
+                if (!oldvrContext.Disposed)
+                {
+                    oldvrContext.Dispose();
+                }
             }
 
         }

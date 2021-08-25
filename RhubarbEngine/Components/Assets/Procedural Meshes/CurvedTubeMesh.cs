@@ -32,11 +32,11 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             Endpoint = new Sync<Vector3d>(this, newRefIds);
             Endpoint.value = new Vector3d(0, 1, 0);
             EndHandle = new Sync<Vector3d>(this, newRefIds);
-            EndHandle.value = new Vector3d(0, -0.1, 0);
+            EndHandle.value = new Vector3d(0, 0, 0);
             StartHandle = new Sync<Vector3d>(this, newRefIds);
-            StartHandle.value = new Vector3d(0, 0.1, 0);
+            StartHandle.value = new Vector3d(0, 1, 0);
             CurveSteps = new Sync<int>(this, newRefIds);
-            CurveSteps.value = 10;
+            CurveSteps.value = 25;
             Radius = new Sync<double>(this, newRefIds);
             Radius.value = 0.01d;
             Steps = new Sync<int>(this, newRefIds);
@@ -66,8 +66,8 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             _generator.Vertices.Clear();
             for (int i = 0; i < CurveSteps.value; i++)
             {
-                float poser = (float)i / (float)CurveSteps.value;
-                _generator.Vertices.Add(Vector3d.bezier(Vector3d.Zero, StartHandle.value,Endpoint.value,EndHandle.value,poser));
+                float poser = (float)(i) / ((float)CurveSteps.value-1);
+                _generator.Vertices.Add(Vector3d.bezier(Vector3d.Zero, StartHandle.value,EndHandle.value, Endpoint.value,poser));
             }
         }
 

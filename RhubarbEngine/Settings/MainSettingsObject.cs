@@ -23,6 +23,9 @@ namespace RhubarbEngine.Settings
 
         [SettingsField("VR Settings")]
         public VRSettings VRSettings = new VRSettings();
+
+        [SettingsField("Interaction Settings")]
+        public InteractionSettings InteractionSettings = new InteractionSettings();
     }
 
 }

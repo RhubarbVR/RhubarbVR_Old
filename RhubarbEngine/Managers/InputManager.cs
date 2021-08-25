@@ -27,6 +27,10 @@ namespace RhubarbEngine.Managers
 
         public event Action removeFocus;
 
+        public InteractionLaserSource LeftLaser;
+
+        public InteractionLaserSource RightLaser;
+
         public void RemoveFocus()
         {
             removeFocus?.Invoke();
@@ -161,15 +165,11 @@ namespace RhubarbEngine.Managers
             switch (side)
             {
                 case Creality.Left:
-                    
                     return (leftController != null)? leftController.SecondaryPress : false;
-                    break;
                 case Creality.Right:
                     return (RightController != null) ? RightController.SecondaryPress : false;
-                    break;
                 default:
                     return (RightController != null) ? RightController.SecondaryPress : false || (leftController != null) ? leftController.SecondaryPress : false;
-                    break;
             }
         }
 
@@ -179,13 +179,10 @@ namespace RhubarbEngine.Managers
             {
                 case Creality.Left:
                     return (leftController != null) ? leftController.Axis : Vector2f.Zero;
-                    break;
                 case Creality.Right:
                     return (RightController != null) ? RightController.Axis : Vector2f.Zero;
-                    break;
                 default:
                     return (((RightController != null) ? RightController.Axis : Vector2f.Zero ) +( (leftController != null) ? leftController.Axis : Vector2f.Zero)) / 2;
-                    break;
             }
         }
 
@@ -195,13 +192,10 @@ namespace RhubarbEngine.Managers
             {
                 case Creality.Left:
                     return (leftController != null) ? leftController.Posistion : Matrix4x4.CreateScale(1f);
-                    break;
                 case Creality.Right:
                     return (RightController != null) ? RightController.Posistion : Matrix4x4.CreateScale(1f);
-                    break;
                 default:
                     return Matrix4x4.CreateScale(1f);
-                    break;
             }
         }
 
@@ -211,24 +205,27 @@ namespace RhubarbEngine.Managers
             {
                 case Creality.Left:
                     return (leftController != null) ? leftController.TriggerAix : 0f;
-                    break;
                 case Creality.Right:
                     return (RightController != null) ? RightController.TriggerAix : 0f;
-                    break;
                 default:
                     return (((RightController != null) ? RightController.TriggerAix : 0f) + ((leftController != null) ? leftController.TriggerAix : 0f)) / 2;
-                    break;
             }
         }
 
         public IManager initialize(Engine _engine)
         {
             engine = _engine;
+
+            LeftLaser = new InteractionLaserSource(Creality.Left, this, engine);
+            RightLaser = new InteractionLaserSource(Creality.Right, this, engine);
+
             return this;
         }
 
         public void Update()
         {
+            LeftLaser.Update();
+            RightLaser.Update();
             if (mainWindows.GetKeyDown(Key.F8))
             {
                 if (engine.outputType == OutputType.Screen)

@@ -290,7 +290,7 @@ namespace RhubarbEngine.Components.Interaction
             entity.onDrop += Entity_onDrop;
         }
 
-        private void Entity_onDrop(GrabbableHolder obj)
+        private void Entity_onDrop(GrabbableHolder obj,bool laser)
         {
             world.grabedWindow = null;
         }

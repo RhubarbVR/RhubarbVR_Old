@@ -102,8 +102,8 @@ namespace RhubarbEngine.Managers
                 task = new Thread(NaudioUpdater);
             }
             task.Name = "Audio";
-            task.IsBackground = false;
-            task.Priority = ThreadPriority.Normal;
+            task.IsBackground = true;
+            task.Priority = ThreadPriority.Highest;
             task.Start();
             return this;
         }
@@ -212,23 +212,23 @@ namespace RhubarbEngine.Managers
 
         public unsafe void RunOutput()
         {
-            IPL.AudioBufferDeinterleave(iplContext, ref ee[0], ref iplOutputBuffer);
-            foreach (var world in engine.worldManager.worlds)
-            {
-                if(world.Focus != World.World.FocusLevel.Background)
+                IPL.AudioBufferDeinterleave(iplContext, ee, ref iplOutputBuffer);
+                foreach (var world in engine.worldManager.worlds)
                 {
-                    foreach (var comp in world.updateLists.audioOutputs)
+                    if (world.Focus != World.World.FocusLevel.Background)
                     {
-                        if (comp.isNotCulled)
+                        foreach (var comp in world.updateLists.audioOutputs)
                         {
-                            comp.AudioUpdate();
-                            IPL.AudioBufferMix(iplContext, ref comp.iplOutputBuffer, ref iplOutputBuffer);
+                            if (comp.isNotCulled)
+                            {
+                                comp.AudioUpdate();
+                                IPL.AudioBufferMix(iplContext, ref comp.iplOutputBuffer, ref iplOutputBuffer);
+                            }
                         }
-                    }
 
+                    }
                 }
-            }
-            IPL.AudioBufferInterleave(iplContext, ref iplOutputBuffer, outBuff);
+                IPL.AudioBufferInterleave(iplContext, ref iplOutputBuffer, outBuff);
         }
         byte[] managedArray;
         public unsafe void NaudioUpdate()
@@ -267,6 +267,7 @@ namespace RhubarbEngine.Managers
 
                     numProcessedBuffers--;
                 }
+
                 AL.BufferData(bufferId, BufferFormatStereoFloat32, outBuff, AudioFrameSizeInBytes * 2, SamplingRate);
                 AL.SourceQueueBuffers(sourceId, 1, &bufferId);
                 CheckALErrors();
