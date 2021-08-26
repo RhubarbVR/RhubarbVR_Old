@@ -90,11 +90,9 @@ namespace RhubarbEngine.Components.PrivateSpace
             var mesh = LaserMesh.target;
             mesh.Endpoint.value = Laser.target.GlobalPointToLocal(newpos);
             var val = entity.globalPos().Distance(new Vector3f(pos.x, pos.y, pos.z));
-            mesh.StartHandle.value = Vector3d.AxisY * (val/2);
-            var step1 = Laser.target.globalPos() - hitvector;
-            var step2 = Laser.target.GlobalPointToLocal(new Vector3f(step1.x, step1.y, step1.z));
-            step2.Normalize();
-            mesh.EndHandle.value = new Vector3d(-step2.x/4, -step2.y/4, -step2.z/4) * (val / 2);
+            mesh.StartHandle.value = Vector3d.AxisY * (val/4);
+            var e = Laser.target.globalRot().Inverse() * new Vector3f(hitvector.x, hitvector.y, hitvector.z);
+            mesh.EndHandle.value = e * (val / 6);
         }
 
         public LaserVisual(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
