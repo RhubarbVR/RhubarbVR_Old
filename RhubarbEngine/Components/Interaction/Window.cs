@@ -19,6 +19,7 @@ using RhubarbEngine.Components.Color;
 using RhubarbEngine.Components.Users;
 using RhubarbEngine.Components.ImGUI;
 using RhubarbEngine.Components.Physics.Colliders;
+using RhubarbEngine.Components.Physics;
 using RhubarbEngine.Components.PrivateSpace;
 using RhubarbEngine.Components.Interaction;
 using Veldrid;

@@ -199,8 +199,10 @@ namespace RhubarbEngine.Components.Interaction
         /// <param name="customCursorInfo">custom cursor Information</param>
         public virtual void OnCursorChange(IntPtr cursor, CursorType type, CursorInfo customCursorInfo)
         {
-
+            cursorChange?.Invoke(type);
         }
+
+        public event Action<CursorType> cursorChange;
 
         /// <summary>
         /// Called when the user starts dragging content in the web view. Contextual information about the dragged content is
@@ -351,12 +353,19 @@ namespace RhubarbEngine.Components.Interaction
             browser.AddressChanged += Browser_AddressChanged;
             browser.TitleChanged += Browser_TitleChanged;
             var hander = new RenderHandler(browser);
-            hander.keyboard += Hander_keyboard; 
+            hander.keyboard += Hander_keyboard;
+            hander.cursorChange += Hander_cursorChange;
             browser.RenderHandler = hander;
             GlobalAudio_Changed(null);
             browser.CreateBrowser();
             browser.Size = new System.Drawing.Size { Width = (int)scale.value.x, Height = (int)scale.value.y };            
             loaded = true;
+        }
+
+        private void Hander_cursorChange(CursorType obj)
+        {
+            if (imputPlane.target == null) return;
+            imputPlane.target.SetCursor(Input.CursorsEnumCaster.CursorType(obj));
         }
 
         private void Hander_keyboard(TextInputMode obj)

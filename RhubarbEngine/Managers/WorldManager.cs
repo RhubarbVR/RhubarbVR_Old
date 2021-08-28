@@ -21,6 +21,7 @@ using RhubarbEngine.Components.ImGUI;
 using RhubarbEngine.Components.Physics.Colliders;
 using RhubarbEngine.Components.PrivateSpace;
 using RhubarbEngine.Components.Audio;
+using RhubarbEngine.Components.Physics;
 
 using Org.OpenAPITools.Model;
 using BulletSharp;

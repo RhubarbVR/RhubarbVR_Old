@@ -419,7 +419,7 @@ namespace RhubarbEngine.World
         public void removeWorldObj(IWorldObject obj)
         {
             worldObjects.TryRemove(obj.ReferenceID,out IWorldObject value);
-            if (!value.IsRemoved)
+            if (!value?.IsRemoved??false)
             {
                 value.Dispose();
             }

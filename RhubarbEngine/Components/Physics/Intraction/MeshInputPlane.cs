@@ -14,22 +14,24 @@ using BulletSharp;
 using BulletSharp.Math;
 using Veldrid;
 using RhubarbEngine.Components.Interaction;
+using RhubarbEngine.World.Asset;
+using RhubarbEngine.Components.Physics.Colliders;
+using RhubarbEngine.Input;
 
-namespace RhubarbEngine.Components.Physics.Colliders
+namespace RhubarbEngine.Components.Physics
 {
 
-    [Category(new string[] { "Physics/Colliders" })]
-    public class InputPlane : Collider, IinputPlane
+    [Category(new string[] { "Physics/Intraction" })]
+    public class MeshInputPlane : Collider, IinputPlane
     {
-        public Sync<Vector2f> size;
+        public AssetRef<RMesh> mesh;
 
         public Sync<Vector2u> pixelSize;
-
-        public Sync<float> depth;
 
         public Sync<bool> FocusedOverride;
 
         public SyncDelegate onFocusLost;
+
         public IReadOnlyList<KeyEvent> KeyEvents { get { if (!focused) return new List<KeyEvent>(); return input.mainWindows.FrameSnapshot.KeyEvents; } }
 
         public IReadOnlyList<MouseEvent> MouseEvents { get { if (isNotTakingInput) return new List<MouseEvent>(); return input.mainWindows.FrameSnapshot.MouseEvents; } }
@@ -40,7 +42,26 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
         public Vector2 MousePosition => mousePosition;
 
-
+        public void SetCursor(Cursors cursor)
+        {
+            if (!isNotTakingInput)
+            {
+                switch (source)
+                {
+                    case InteractionSource.LeftLaser:
+                        input.LeftLaser.cursor = cursor;
+                        break;
+                    case InteractionSource.RightLaser:
+                        input.RightLaser.cursor = cursor;
+                        break;
+                    case InteractionSource.HeadLaser:
+                        input.RightLaser.cursor = cursor;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
         public void Click(Vector2 pos, InteractionSource sourc)
         {
             Setfocused();
@@ -71,18 +92,17 @@ namespace RhubarbEngine.Components.Physics.Colliders
             }
         }
 
-        private InteractionSource val = InteractionSource.None;
+        private InteractionSource val = InteractionSource.RightLaser;
 
         public InteractionSource source => val;
 
-        private bool _focused = false;
-
-        public bool isNotTakingInput => (!_focused || (hover>3));
-
+        public bool isNotTakingInput => (!_focused || (hover > 3));
 
         private byte hover = 0;
 
-        public bool focused => (input.isKeyboardinuse) ? _focused:isNotTakingInput;
+        private bool _focused = false;
+
+        public bool focused => (input.isKeyboardinuse) ? _focused : !isNotTakingInput;
 
         public bool StopMousePos = false;
 
@@ -91,49 +111,74 @@ namespace RhubarbEngine.Components.Physics.Colliders
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
-            size = new Sync<Vector2f>(this, newRefIds);
-            size.value = new Vector2f(0.5f);
-            depth = new Sync<float>(this, newRefIds);
-            depth.value = 0.01f;
             pixelSize = new Sync<Vector2u>(this, newRefIds);
             pixelSize.value = new Vector2u(600, 600);
             FocusedOverride = new Sync<bool>(this, newRefIds);
             onFocusLost = new SyncDelegate(this, newRefIds);
-            size.Changed += UpdateChange;
+            mesh = new AssetRef<RMesh>(this, newRefIds);
+            mesh.loadChange += Mesh_loadChange;
+            entity.enabledChanged += Entity_enabledChanged;
         }
 
-        public void UpdateChange(IChangeable val)
+        private void Entity_enabledChanged()
+        {
+            if ((!entity.isEnabled) && focused)
+            {
+                Removefocused();
+            }
+        }
+
+        private void Mesh_loadChange(RMesh obj)
         {
             BuildShape();
-        }
-
-        public override void CommonUpdate(DateTime startTime, DateTime Frame)
-        {
-            base.CommonUpdate(startTime, Frame);
-            if (hover > 3) return;
-            hover++;
         }
 
         public override void onLoaded()
         {
             base.onLoaded();
             BuildShape();
-            entity.enabledChanged += Entity_enabledChanged;
         }
-
-        private void Entity_enabledChanged()
+        private void goNull()
         {
-            if ((!entity.isEnabled)&&focused)
+            buildCollissionObject(null);
+        }
+        public int[] index = new int[] { };
+        public BulletSharp.Math.Vector3[] vertices = new BulletSharp.Math.Vector3[] { };
+
+
+        public unsafe override void BuildShape()
+        {
+            if (mesh.Asset == null) { goNull(); return; };
+            if (!mesh.target?.loaded ?? false) { goNull(); return; };
+
+            // Initialize TriangleIndexVertexArray with Vector3 array
+            vertices = new BulletSharp.Math.Vector3[mesh.Asset.meshes[0].VertexCount];
+            for (int i = 0; i < vertices.Length; i++)
             {
-                Removefocused();
+                vertices[i] = new BulletSharp.Math.Vector3(
+                    mesh.Asset.meshes[0].GetVertex(i).x,
+                    mesh.Asset.meshes[0].GetVertex(i).y,
+                    mesh.Asset.meshes[0].GetVertex(i).z);
             }
-        }
+            var e = mesh.Asset.meshes[0].RenderIndices().ToArray();
 
-        public override void BuildShape()
+            // Initialize TriangleIndexIndexArray with int array
+            index = new int[e.Length];
+            for (int i = 0; i < index.Length; i++)
+            {
+                index[i] = e[i];
+            }
+            if (index.Length < 3) return;
+            var indexVertexArray2 = new TriangleIndexVertexArray(index, vertices);
+            BvhTriangleMeshShape trys = new BvhTriangleMeshShape(indexVertexArray2, false);
+            startShape(trys);
+        }
+        public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
-            startShape(new BoxShape(new BulletSharp.Math.Vector3(size.value.x, depth.value, size.value.y)));
+            base.CommonUpdate(startTime, Frame);
+            if (hover > 3) return;
+            hover++;
         }
-
         public bool IsMouseDown(MouseButton button)
         {
             if (StopMousePos) return false;
@@ -249,11 +294,11 @@ namespace RhubarbEngine.Components.Physics.Colliders
             _focused = false;
         }
 
-        public InputPlane(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public MeshInputPlane(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public InputPlane()
+        public MeshInputPlane()
         {
         }
     }

@@ -21,6 +21,7 @@ using RhubarbEngine.Components.ImGUI;
 using RhubarbEngine.Components.Physics.Colliders;
 using RhubarbEngine.Components.PrivateSpace;
 using RhubarbEngine.Components.Interaction;
+using RhubarbEngine.Components.Physics;
 
 namespace RhubarbEngine.Components.PrivateSpace
 {

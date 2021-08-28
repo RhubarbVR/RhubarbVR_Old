@@ -28,5 +28,7 @@ namespace RhubarbEngine.Components.Interaction
 
         public void Removefocused();
 
+        public void SetCursor(Input.Cursors cursor);
+
     }
 }

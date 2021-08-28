@@ -69,7 +69,7 @@ namespace RhubarbEngine.Input
             return (Cursors)(int)b;
         }
 
-        public static Cursors CursorType(ImGuiMouseCursor b)
+        public static Cursors ImGuiMouse(ImGuiMouseCursor b)
         {
             switch (b)
             {

@@ -34,7 +34,7 @@ namespace RhubarbEngine.Components.PrivateSpace
         public SyncRef<Render.Material.Fields.ColorField> colorField;
         public SyncRef<Render.Material.Fields.ColorField> planeColorField;
 
-        private Input.Cursors lastCursor;
+        private bool bind;
 
         public override void OnAttach()
         {
@@ -64,7 +64,6 @@ namespace RhubarbEngine.Components.PrivateSpace
 
         public override void buildSyncObjs(bool newRefIds)
         {
-            lastCursor = (Input.Cursors)(-1);
             source = new Sync<InteractionSource>(this, newRefIds);
             source.value = InteractionSource.HeadLaser;
             Currsor = new SyncRef<Entity>(this, newRefIds);
@@ -79,25 +78,33 @@ namespace RhubarbEngine.Components.PrivateSpace
             base.CommonUpdate(startTime, Frame);
             if (Currsor.target == null) return;
             Vector3d pos = Vector3d.Zero;
-            Input.Cursors cursor = lastCursor;
+            bool left = false;
             switch (source.value)
             {
                 case InteractionSource.LeftLaser:
                     pos = input.LeftLaser.pos;
-                    cursor = input.LeftLaser.cursor;
+                    left = true;
                     break;
                 case InteractionSource.RightLaser:
                     pos = input.RightLaser.pos;
-                    cursor = input.RightLaser.cursor;
                     break;
                 case InteractionSource.HeadLaser:
                     pos = input.RightLaser.pos;
-                    cursor = input.RightLaser.cursor;
                     break;
                 default:
                     break;
             }
-            UpdateCursor(cursor);
+            if (!bind)
+            {
+                if (left)
+                {
+                    input.LeftLaser.cursorChange += UpdateCursor;
+                }
+                else
+                {
+                    input.RightLaser.cursorChange += UpdateCursor;
+                }
+            }
             Vector3d hitvector = Vector3d.Zero;
             switch (source.value)
             {
@@ -127,7 +134,6 @@ namespace RhubarbEngine.Components.PrivateSpace
 
         private void UpdateCursor(Input.Cursors newcursor)
         {
-            if (newcursor == lastCursor) return;
             Colorf color = new Colorf(1f, 0.94f, 1f, 0.8f);
             switch (newcursor)
             {
@@ -137,10 +143,17 @@ namespace RhubarbEngine.Components.PrivateSpace
                 default:
                     break;
             }
-            colorField.target.field.value = color;
-            planeColorField.target.field.value = color;
+            if(colorField.target != null)
+                colorField.target.field.value = color;
+            if (planeColorField.target != null)
+                planeColorField.target.field.value = color;
             load(new RTexture2D(engine.renderManager.cursors[(int)newcursor]));
-            lastCursor = newcursor;
+        }
+
+        public override void onLoaded()
+        {
+            base.onLoaded();
+            UpdateCursor(Input.Cursors.None);
         }
 
         public LaserVisual(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

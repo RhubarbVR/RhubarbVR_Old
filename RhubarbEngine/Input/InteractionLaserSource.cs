@@ -11,6 +11,7 @@ using RhubarbEngine.Components.Physics.Colliders;
 using RhubarbEngine.Managers;
 using RhubarbEngine.World.ECS;
 using Veldrid;
+using RhubarbEngine.Components.Physics;
 
 namespace RhubarbEngine.Input
 {
@@ -35,7 +36,7 @@ namespace RhubarbEngine.Input
 
         public event Action<Cursors> cursorChange;
 
-        public Cursors cursor { get { return _cursor; } set { if (_cursor == value) return; _cursor = value; cursorChange.Invoke(value); } }
+        public Cursors cursor { get { return _cursor; } set { if (_cursor == value) return; _cursor = value; cursorChange?.Invoke(value); } }
 
 
 
@@ -432,6 +433,7 @@ namespace RhubarbEngine.Input
                 if ((!HitTest(sourcse, destination, engine.worldManager.focusedWorld)) && !hittestbool)
                 {
                     Snaping = false;
+                    cursor = Input.Cursors.None;
                     ProssecesHitPoint(Vector3d.Zero, Vector3d.Zero);
                 }
             }
