@@ -14,6 +14,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System.IO;
 using Veldrid.ImageSharp;
+using SixLabors.ImageSharp;
 
 namespace RhubarbEngine.Managers
 {
@@ -49,6 +50,8 @@ namespace RhubarbEngine.Managers
         public TextureView gridview;
 
         public TextureView rhubarbview;
+
+        public TextureView solidview;
 
         public TextureView rhubarbSolidview;
 
@@ -105,6 +108,8 @@ namespace RhubarbEngine.Managers
 
             var rhubatextures = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR.png"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
             rhubarbSolidview = engine.renderManager.gd.ResourceFactory.CreateTextureView(rhubatextures);
+            var solidTexture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, g3.Colorf.White),false).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+            solidview = engine.renderManager.gd.ResourceFactory.CreateTextureView(solidTexture);
 
             skybox = new Skybox(
     Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_ft.png")),

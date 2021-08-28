@@ -31,8 +31,8 @@ namespace RhubarbEngine.Components.PrivateSpace
         public override void OnAttach()
         {
             base.OnAttach();
-            var (curs,mesh) = MeshHelper.AddMesh<SphereMesh>(entity, "Currsor");
-            var (Lasere, lmesh) = MeshHelper.AddMesh<CurvedTubeMesh>(entity, "Laser");
+            var (curs, mesh, cmit) = MeshHelper.AddMesh<SphereMesh>(entity, world.staticAssets.basicUnlitShader, "Currsor");
+            var (Lasere, lmesh, mit) = MeshHelper.AddMesh<CurvedTubeMesh>(entity, world.staticAssets.basicUnlitShader,"Laser");
             Laser.target = Lasere;
             Lasere.rotation.value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
             LaserMesh.target = lmesh;

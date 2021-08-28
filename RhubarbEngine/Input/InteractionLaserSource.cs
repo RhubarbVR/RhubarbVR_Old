@@ -30,6 +30,9 @@ namespace RhubarbEngine.Input
             inputManager = _inputManager;
             engine = _engine;
         }
+
+
+
         private bool HasClicked()
         {
             if((engine.outputType == VirtualReality.OutputType.Screen)&&(side == Creality.Right))

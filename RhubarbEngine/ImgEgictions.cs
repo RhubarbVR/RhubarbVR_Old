@@ -13,6 +13,7 @@ using Veldrid;
 using Veldrid.ImageSharp;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using g3;
 
 public static class ImageSharpExtensions
     {
@@ -165,4 +166,33 @@ public static class ImageSharpExtensions
         cl.Dispose();
 
     }
+
+    public static Image<Rgba32> CreateTextureColor(int Width, int Height, Colorf color)
+    {
+        var from = new Rgba32(color.r, color.g, color.b, color.a);
+        var img = new Image<Rgba32>(Width, Height);
+        for (int i = 0; i < img.Height; i++)
+        {
+            for (int wi = 0; wi < img.Width; wi++)
+            {
+                img[i, wi] = from;
+            }
+        }
+        return img;
+    }
+
+    public unsafe static void UpdateTextureColor(this Texture tex, Colorf color, GraphicsDevice gd, ResourceFactory factory)
+    {
+        var from = new Color(new Rgba32(color.r, color.g, color.b, color.a));
+        var img = new Image<Rgba32>((int)tex.Width,(int)tex.Height);
+        for (int i = 0; i < img.Height; i++)
+        {
+            foreach (var item in img.GetPixelRowSpan(i))
+            {
+                item.FromRgba32(from);
+            }
+        }
+        tex.UpdateTexture(new ImageSharpTexture(img, false), gd, factory);
+    }
+
 }

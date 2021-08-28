@@ -36,6 +36,7 @@ namespace RhubarbEngine.Components.Assets
             shader.addUniform("Texture", Render.Shader.ShaderValueType.Val_texture2D, Render.Shader.ShaderType.MainFrag);
             //shader.addUniform("rambow", Render.Shader.ShaderValueType.Val_color, Render.Shader.ShaderType.MainFrag);
             shader.addUniform("Tile", Render.Shader.ShaderValueType.Val_vec2, Render.Shader.ShaderType.MainFrag);
+            shader.addUniform("TintColor", Render.Shader.ShaderValueType.Val_color, Render.Shader.ShaderType.MainFrag);
 
             shader.mainFragCode.userCode = @"
 
@@ -50,7 +51,7 @@ void main()
     vec2 uv = fsin_UV;
     uv.y = 1 - uv.y;
 
-    fsout_Color0 = texture(sampler2D(Texture, Sampler), uv*Tile);
+    fsout_Color0 = texture(sampler2D(Texture, Sampler), uv*Tile)*TintColor;
 }
 "; ;
             shader.LoadShader(engine.renderManager.gd, logger);

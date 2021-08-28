@@ -12,6 +12,10 @@ namespace RhubarbEngine.Render.Material.Fields
 {
     public class ColorField : GenericField<Colorf>
     {
+        public override void SetDefault()
+        {
+            field.value = Colorf.White;
+        }
 
         public override void createDeviceResource(ResourceFactory fact)
         {

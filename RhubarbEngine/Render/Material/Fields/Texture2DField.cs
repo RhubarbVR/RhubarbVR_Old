@@ -56,25 +56,21 @@ namespace RhubarbEngine.Render.Material.Fields
                 {
                     if (field.Asset.view != null)
                     {
-                        logger.Log("View Is There");
                         SetResource(field.Asset.view, forceR);
                     }
                     else
                     {
-                        logger.Log("Asset Is There");
                         SetResource(engine.renderManager.nulview);
                     }
                 }
                 else
                 {
-                    logger.Log("Target is there");
                     SetResource(engine.renderManager.nulview);
                 }
             }
             else
             {
-                logger.Log("No Target is there");
-                SetResource(engine.renderManager.nulview);
+                SetResource(engine.renderManager.solidview);
             }
 
         }

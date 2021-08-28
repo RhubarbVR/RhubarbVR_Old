@@ -34,6 +34,7 @@ namespace RhubarbEngine.Components.Assets
             logger.Log("Loadded Shader");
             RShader shader = new RShader();
             shader.addUniform("Texture", Render.Shader.ShaderValueType.Val_texture2D, Render.Shader.ShaderType.MainFrag);
+            shader.addUniform("TintColor", Render.Shader.ShaderValueType.Val_color, Render.Shader.ShaderType.MainFrag);
             shader.mainFragCode.userCode = @"
 
 layout(location = 0) in vec2 fsin_UV;
@@ -47,7 +48,7 @@ void main()
     vec2 uv = fsin_UV;
     uv.y = 1 - uv.y;
 
-    fsout_Color0 = texture(sampler2D(Texture, Sampler), uv);
+    fsout_Color0 = texture(sampler2D(Texture, Sampler), uv)*TintColor;
 }
 ";
             shader.LoadShader(engine.renderManager.gd, logger);

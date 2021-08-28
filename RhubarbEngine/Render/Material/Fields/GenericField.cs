@@ -15,11 +15,17 @@ namespace RhubarbEngine.Render.Material.Fields
         public override void buildSyncObjs(bool newRefIds)
         {
             field = new Sync<T>(this, newRefIds);
+            SetDefault();
             field.Changed += valueUpdate;
         }
         public override void setValue(Object val)
         {
             field.value = (T)val;
+        }
+
+        public virtual void SetDefault()
+        {
+            field.value = default;
         }
 
         private void valueUpdate(IChangeable e)
