@@ -44,7 +44,26 @@ namespace RhubarbEngine.World
                 return _basicUnlitShader;
             }
         }
-        
+
+
+        private OverLayedUnlitShader _overLayedUnlitShader;
+        public OverLayedUnlitShader overLayedUnlitShader
+        {
+            get
+            {
+                if (_overLayedUnlitShader == null)
+                {
+                    var comp = _world.RootEntity.getFirstComponent<OverLayedUnlitShader>();
+                    if (comp == null)
+                    {
+                        comp = _world.RootEntity.attachComponent<OverLayedUnlitShader>();
+                    }
+                    _overLayedUnlitShader = comp;
+                }
+                return _overLayedUnlitShader;
+            }
+        }
+
         public StaticAssets(World world)
         {
             _world = world;

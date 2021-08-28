@@ -16,6 +16,7 @@ using Veldrid;
 using RhubarbEngine.Helpers;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using RhubarbEngine.Components.Interaction;
+using RhubarbEngine.Components.Transform;
 
 namespace RhubarbEngine.Components.PrivateSpace
 {
@@ -31,13 +32,22 @@ namespace RhubarbEngine.Components.PrivateSpace
         public override void OnAttach()
         {
             base.OnAttach();
-            var (curs, mesh, cmit) = MeshHelper.AddMesh<SphereMesh>(entity, world.staticAssets.basicUnlitShader, "Currsor");
-            var (Lasere, lmesh, mit) = MeshHelper.AddMesh<CurvedTubeMesh>(entity, world.staticAssets.basicUnlitShader,"Laser");
+            var (curs, mesh, cmit) = MeshHelper.AddMesh<PlaneMesh>(entity, world.staticAssets.overLayedUnlitShader, "Currsor");
+            var (Lasere, lmesh, mit) = MeshHelper.AddMesh<CurvedTubeMesh>(entity, world.staticAssets.overLayedUnlitShader,"Laser");
             Laser.target = Lasere;
             Lasere.rotation.value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
             LaserMesh.target = lmesh;
             Currsor.target = curs;
-            mesh.Radius.value = 0.05f;
+            var look = curs.attachComponent<LookAtUser>();
+            look.offset.value = Quaternionf.CreateFromEuler(0f, 90f, 0f);
+            var scaler = curs.attachComponent<DistanceScaler>();
+            scaler.scale.value = 0.025f;
+            scaler.pow.value = 0.5;
+            scaler.offset.value = new Vector3f(-0.1);
+            var pos = cmit.getField<Render.Material.Fields.FloatField>("Zpos", Render.Shader.ShaderType.MainFrag);
+            var pos2 = mit.getField<Render.Material.Fields.FloatField>("Zpos", Render.Shader.ShaderType.MainFrag);
+            pos.field.value = 0.3f;
+            pos2.field.value = 0.6f;
         }
 
         public override void buildSyncObjs(bool newRefIds)

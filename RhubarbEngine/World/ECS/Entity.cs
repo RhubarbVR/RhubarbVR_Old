@@ -91,15 +91,58 @@ namespace RhubarbEngine.World.ECS
             }
         }
 
-        public Vector3f GlobalPointToLocal(Vector3f point)
+        public Vector3f GlobalPointToLocal(Vector3f point,bool Child = true)
         {
             Matrix4x4 newtrans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromYawPitchRoll(0f, 0f, 0f) * Matrix4x4.CreateTranslation(point.ToSystemNumrics());
-            Matrix4x4 parentMatrix = cashedGlobalTrans;
+            Matrix4x4 parentMatrix;
+            if (Child)
+            {
+                parentMatrix = cashedGlobalTrans;
+            }
+            else
+            {
+                parentMatrix = parent.target.cashedGlobalTrans;
+            }
             Matrix4x4.Invert(parentMatrix, out Matrix4x4 invparentMatrix);
             Matrix4x4 newlocal = newtrans * invparentMatrix;
             Matrix4x4.Decompose(newlocal, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
             return (Vector3f)newtranslation;
         }
+        public Vector3f GlobalScaleToLocal(Vector3f Scale, bool Child = true)
+        {
+            Matrix4x4 newtrans = Matrix4x4.CreateScale((Vector3)Scale) * Matrix4x4.CreateFromYawPitchRoll(0f, 0f, 0f) * Matrix4x4.CreateTranslation(0,0,0);
+            Matrix4x4 parentMatrix;
+            if (Child)
+            {
+                parentMatrix = cashedGlobalTrans;
+            }
+            else
+            {
+                parentMatrix = parent.target.cashedGlobalTrans;
+            }
+            Matrix4x4.Invert(parentMatrix, out Matrix4x4 invparentMatrix);
+            Matrix4x4 newlocal = newtrans * invparentMatrix;
+            Matrix4x4.Decompose(newlocal, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
+            return (Vector3f)newscale;
+        }
+        public Quaternionf GlobalRotToLocal(Quaternionf Rot, bool Child = true)
+        {
+            Matrix4x4 newtrans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion((Quaternion)Rot) * Matrix4x4.CreateTranslation(0,0,0);
+            Matrix4x4 parentMatrix;
+            if (Child)
+            {
+                parentMatrix = cashedGlobalTrans;
+            }
+            else
+            {
+                parentMatrix = parent.target.cashedGlobalTrans;
+            }
+            Matrix4x4.Invert(parentMatrix, out Matrix4x4 invparentMatrix);
+            Matrix4x4 newlocal = newtrans * invparentMatrix;
+            Matrix4x4.Decompose(newlocal, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
+            return (Quaternionf)newrotation;
+        }
+
 
         public void RemovePhysicsDisableder(IPhysicsDisableder physicsDisableder)
         {
@@ -322,6 +365,7 @@ namespace RhubarbEngine.World.ECS
             scale = new Sync<Vector3f>(this, newRefIds);
             scale.value = Vector3f.One;
             rotation = new Sync<Quaternionf>(this, newRefIds);
+            rotation.value = Quaternionf.Identity;
             name = new Sync<string>(this, newRefIds);
             enabled = new Sync<bool>(this, newRefIds);
             persistence = new Sync<bool>(this, newRefIds);
