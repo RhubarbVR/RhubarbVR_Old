@@ -32,6 +32,8 @@ namespace RhubarbEngine.Components.Rendering
         public AssetRef<RMesh> Mesh;
         public SyncAssetRefList<RMaterial> Materials;
 
+        public Sync<uint> RenderOrderOffset;
+
         public override BoundingBox BoundingBox => Mesh.Asset.boundingBox;
 
 
@@ -41,6 +43,8 @@ namespace RhubarbEngine.Components.Rendering
             Materials = new SyncAssetRefList<RMaterial>(this, newRefIds);
             Mesh.loadChange += loadMesh;
             Materials.loadChange += loadMaterial;
+            RenderOrderOffset = new Sync<uint>(this, newRefIds);
+            RenderOrderOffset.value = int.MaxValue;
         }
 
         private void loadMesh(RMesh mesh)
@@ -100,7 +104,7 @@ namespace RhubarbEngine.Components.Rendering
                             {
 
                                 Pipeline mainPipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
-                BlendStateDescription.SingleOverrideBlend,
+                BlendStateDescription.SingleAlphaBlend,
                 DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerStateDescription.CullNone,
                 PrimitiveTopology.TriangleList,
@@ -112,7 +116,7 @@ namespace RhubarbEngine.Components.Rendering
 
 
                                 Pipeline shadowPipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
-                BlendStateDescription.SingleOverrideBlend,
+                BlendStateDescription.SingleAlphaBlend,
                 DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerStateDescription.CullNone,
                 PrimitiveTopology.TriangleList,
@@ -266,7 +270,7 @@ namespace RhubarbEngine.Components.Rendering
         public override void DestroyDeviceObjects() {
         }
         public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition) {
-            return RenderOrderKey.Create(0, 1);
+            return RenderOrderKey.Create(RenderOrderOffset.value, Vector3.Distance(cameraPosition, (Vector3)entity.globalPos()));
         }
 
 

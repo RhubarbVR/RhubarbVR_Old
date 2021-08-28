@@ -69,6 +69,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             //InputPlane bmeshcol = e.attachComponent<InputPlane>();
             RMaterial mit = e.attachComponent<RMaterial>();
             MeshRender meshRender = e.attachComponent<MeshRender>();
+            meshRender.RenderOrderOffset.value = 20;
             ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
             e.position.value = new Vector3f(-0.5, 0.05, 0.25);
             imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(150, 150);
@@ -164,6 +165,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             RMaterial mit = e.attachComponent<RMaterial>();
             var TaskBar = e.addChild("TaskBarUI");
             MeshRender meshRender = TaskBar.attachComponent<MeshRender>();
+            meshRender.RenderOrderOffset.value = 20;
             ImGUICanvas imGUICanvas = TaskBar.attachComponent<ImGUICanvas>();
             imGUICanvas.scale.value = bmeshcol.pixelSize.value = new Vector2u(((uint)(7.69 * engine.settingsObject.UISettings.TaskBarCurve)) * 2, 76 * 2);
             imGUICanvas.imputPlane.target = bmeshcol;

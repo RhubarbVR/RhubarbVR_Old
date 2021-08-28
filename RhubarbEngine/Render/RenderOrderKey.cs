@@ -17,16 +17,12 @@ namespace RhubarbEngine.Render
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RenderOrderKey Create(int materialID, float cameraDistance)
-            => Create((uint)materialID, cameraDistance);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RenderOrderKey Create(uint materialID, float cameraDistance)
+        public static RenderOrderKey Create(uint RenderOffsetint, float cameraDistance)
         {
             uint cameraDistanceInt = (uint)Math.Min(uint.MaxValue, (cameraDistance * 1000f));
 
             return new RenderOrderKey(
-                ((ulong)materialID << 32) +
+                ((ulong)RenderOffsetint << 32) +
                 cameraDistanceInt);
         }
 

@@ -52,7 +52,7 @@ void main()
     vec2 uv = fsin_UV;
     uv.y = 1 - uv.y;
 
-    fsout_Color0 = texture(sampler2D(Texture, Sampler), uv)*TintColor;
+    fsout_Color0 = texture(sampler2D(Texture, Sampler), uv) * TintColor;
 }
 ";
             shader.LoadShader(engine.renderManager.gd, logger);

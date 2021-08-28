@@ -22,7 +22,7 @@ using RhubarbEngine.World.Asset;
 
 namespace RhubarbEngine.Components.PrivateSpace
 {
-    public class LaserVisual : Component
+    public class LaserVisual : AssetProvider<RTexture2D>
     {
 
         public Sync<InteractionSource> source;
@@ -33,12 +33,14 @@ namespace RhubarbEngine.Components.PrivateSpace
 
         public SyncRef<Render.Material.Fields.ColorField> colorField;
         public SyncRef<Render.Material.Fields.ColorField> planeColorField;
-        public SyncRef<AssetMultiplexer<RTexture2D>> textureMulti;
+
+        private Input.Cursors lastCursor;
+
         public override void OnAttach()
         {
             base.OnAttach();
-            var (curs, mesh, cmit) = MeshHelper.AddMesh<PlaneMesh>(entity, world.staticAssets.overLayedUnlitShader, "Currsor");
-            var (Lasere, lmesh, mit) = MeshHelper.AddMesh<CurvedTubeMesh>(entity, world.staticAssets.overLayedUnlitShader,"Laser");
+            var (curs, mesh, cmit) = MeshHelper.AddMesh<PlaneMesh>(entity, world.staticAssets.overLayedUnlitShader, "Currsor", 0);
+            var (Lasere, lmesh, mit) = MeshHelper.AddMesh<CurvedTubeMesh>(entity, world.staticAssets.overLayedUnlitShader,"Laser", 3);
             Laser.target = Lasere;
             Lasere.rotation.value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
             LaserMesh.target = lmesh;
@@ -57,13 +59,12 @@ namespace RhubarbEngine.Components.PrivateSpace
             colorField.target = mit.getField<Render.Material.Fields.ColorField>("TintColor", Render.Shader.ShaderType.MainFrag);
             planeColorField.target = cmit.getField<Render.Material.Fields.ColorField>("TintColor", Render.Shader.ShaderType.MainFrag);
             var textureField = cmit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-            var texturemult = curs.attachComponent<AssetMultiplexer<RTexture2D>>();
-            textureField.field.target = texturemult;
-            textureMulti.target = texturemult;
+            textureField.field.target = this;
         }
 
         public override void buildSyncObjs(bool newRefIds)
         {
+            lastCursor = (Input.Cursors)(-1);
             source = new Sync<InteractionSource>(this, newRefIds);
             source.value = InteractionSource.HeadLaser;
             Currsor = new SyncRef<Entity>(this, newRefIds);
@@ -71,7 +72,6 @@ namespace RhubarbEngine.Components.PrivateSpace
             LaserMesh = new SyncRef<CurvedTubeMesh>(this, newRefIds);
             colorField = new SyncRef<Render.Material.Fields.ColorField>(this, newRefIds);
             planeColorField = new SyncRef<Render.Material.Fields.ColorField>(this, newRefIds);
-            textureMulti = new SyncRef<AssetMultiplexer<RTexture2D>>(this, newRefIds);
         }
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
@@ -79,20 +79,25 @@ namespace RhubarbEngine.Components.PrivateSpace
             base.CommonUpdate(startTime, Frame);
             if (Currsor.target == null) return;
             Vector3d pos = Vector3d.Zero;
+            Input.Cursors cursor = lastCursor;
             switch (source.value)
             {
                 case InteractionSource.LeftLaser:
                     pos = input.LeftLaser.pos;
+                    cursor = input.LeftLaser.cursor;
                     break;
                 case InteractionSource.RightLaser:
                     pos = input.RightLaser.pos;
+                    cursor = input.RightLaser.cursor;
                     break;
                 case InteractionSource.HeadLaser:
                     pos = input.RightLaser.pos;
+                    cursor = input.RightLaser.cursor;
                     break;
                 default:
                     break;
             }
+            UpdateCursor(cursor);
             Vector3d hitvector = Vector3d.Zero;
             switch (source.value)
             {
@@ -118,6 +123,24 @@ namespace RhubarbEngine.Components.PrivateSpace
             mesh.StartHandle.value = Vector3d.AxisY * (val/4);
             var e = Laser.target.globalRot().Inverse() * new Vector3f(hitvector.x, hitvector.y, hitvector.z);
             mesh.EndHandle.value = e * (val / 6);
+        }
+
+        private void UpdateCursor(Input.Cursors newcursor)
+        {
+            if (newcursor == lastCursor) return;
+            Colorf color = new Colorf(1f, 0.94f, 1f, 0.8f);
+            switch (newcursor)
+            {
+                case Input.Cursors.Grabbing:
+                    color = new Colorf(0.94f, 0.94f, 1f, 0.8f);
+                    break;
+                default:
+                    break;
+            }
+            colorField.target.field.value = color;
+            planeColorField.target.field.value = color;
+            load(new RTexture2D(engine.renderManager.cursors[(int)newcursor]));
+            lastCursor = newcursor;
         }
 
         public LaserVisual(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

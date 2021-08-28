@@ -55,6 +55,8 @@ namespace RhubarbEngine.Managers
 
         public TextureView rhubarbSolidview;
 
+        public TextureView[] cursors = new TextureView[50];
+
         public MirrorTextureEyeSource eyeSource => engine.settingsObject.VRSettings.renderEye;
         public IManager initialize(Engine _engine)
         {
@@ -98,18 +100,25 @@ namespace RhubarbEngine.Managers
             mainQueue = new RenderQueue();
             engine.windowManager.mainWindow.window. Resized += Window_Resized;
             Window_Resized();
-            var _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "nulltexture.jpg"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+            var _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "nulltexture.jpg"), false, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
             nulview = engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture);
             var gridtexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Grid.jpg"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
             gridview = engine.renderManager.gd.ResourceFactory.CreateTextureView(gridtexture);
 
-            var rhubatexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR2.png"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+            var rhubatexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR2.png"), false, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
             rhubarbview = engine.renderManager.gd.ResourceFactory.CreateTextureView(rhubatexture);
 
-            var rhubatextures = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR.png"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+            var rhubatextures = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR.png"), false, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
             rhubarbSolidview = engine.renderManager.gd.ResourceFactory.CreateTextureView(rhubatextures);
             var solidTexture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, g3.Colorf.White),false).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
             solidview = engine.renderManager.gd.ResourceFactory.CreateTextureView(solidTexture);
+            int index = 0;
+            foreach (Input.Cursors item in Enum.GetValues(typeof(RhubarbEngine.Input.Cursors)))
+            {
+                var tempTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Cursors", item + ".png"), false, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+                cursors[index] = engine.renderManager.gd.ResourceFactory.CreateTextureView(tempTexture);
+                index++;
+            }
 
             skybox = new Skybox(
     Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_ft.png")),
@@ -158,6 +167,7 @@ namespace RhubarbEngine.Managers
         {
             mainQueue.Clear();
             engine.worldManager.addToRenderQueue(mainQueue, RemderLayers.normal_overlay_privateOverlay);
+            mainQueue.Order();
         }
 
         private void RenderEye(CommandList cl, Framebuffer fb,  Matrix4x4 proj, Matrix4x4 view)
@@ -165,6 +175,7 @@ namespace RhubarbEngine.Managers
             cl.SetFramebuffer(fb);
             cl.ClearDepthStencil(1f);
             cl.ClearColorTarget(0, RgbaFloat.CornflowerBlue);
+            skybox.Render(cl, fb, proj, view);
             foreach (Renderable renderObj in mainQueue.Renderables)
             {
                 renderObj.Render(gd, cl, new UBO(
@@ -172,7 +183,6 @@ namespace RhubarbEngine.Managers
                 view,
                 renderObj.entity.globalTrans()));
             }
-            skybox.Render(cl, fb, proj, view);
         }
 
 

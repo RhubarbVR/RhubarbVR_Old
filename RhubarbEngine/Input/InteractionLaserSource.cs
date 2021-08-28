@@ -31,6 +31,12 @@ namespace RhubarbEngine.Input
             engine = _engine;
         }
 
+        private Cursors _cursor = Cursors.None;
+
+        public event Action<Cursors> cursorChange;
+
+        public Cursors cursor { get { return _cursor; } set { if (_cursor == value) return; _cursor = value; cursorChange.Invoke(value); } }
+
 
 
         private bool HasClicked()
