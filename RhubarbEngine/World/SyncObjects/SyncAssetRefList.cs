@@ -15,7 +15,7 @@ namespace RhubarbEngine.World
     {
         private SynchronizedCollection<AssetRef<T>> _syncreflist = new SynchronizedCollection<AssetRef<T>>(5);
 
-        AssetRef<T> this[int i]
+        public AssetRef<T> this[int i]
         {
             get
             {

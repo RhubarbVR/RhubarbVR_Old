@@ -31,43 +31,24 @@ using System.Net.Http;
 namespace RhubarbEngine.Components.Assets
 {
     [Category(new string[] { "Assets" })]
-    public class RhubarbTextue2D : AssetProvider<RTexture2D>, IAsset
+    public class CursorsTextue2D : AssetProvider<RTexture2D>, IAsset
     {
-        public Sync<bool> solid;
 
         public override void onLoaded()
         {
-            LoadRhubarbTexture();
-        }
-
-        private void LoadRhubarbTexture()
-        {
-            if (solid.value)
-            {
-                load(new RTexture2D(engine.renderManager.rhubarbSolidview));
-            }
-            else
-            {
-                load(new RTexture2D(engine.renderManager.rhubarbview));
-            }
-
+            load(new RTexture2D(engine.renderManager.nulview));
         }
 
         public override void buildSyncObjs(bool newRefIds)
         {
-            solid = new Sync<bool>(this,newRefIds);
-        }
-        public override void onChanged()
-        {
-            base.onChanged();
-            LoadRhubarbTexture();
+
         }
 
-        public RhubarbTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public CursorsTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public RhubarbTextue2D()
+        public CursorsTextue2D()
         {
         }
     }

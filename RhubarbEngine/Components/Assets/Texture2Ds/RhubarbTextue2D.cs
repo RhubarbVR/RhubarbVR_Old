@@ -30,25 +30,44 @@ using System.Net.Http;
 
 namespace RhubarbEngine.Components.Assets
 {
-    [Category(new string[] { "Assets" })]
-    public class NullTextue2D : AssetProvider<RTexture2D>, IAsset
+    [Category(new string[] { "Assets/Texture2Ds" })]
+    public class RhubarbTextue2D : AssetProvider<RTexture2D>, IAsset
     {
+        public Sync<bool> solid;
 
         public override void onLoaded()
         {
-            load(new RTexture2D(engine.renderManager.nulview));
+            LoadRhubarbTexture();
+        }
+
+        private void LoadRhubarbTexture()
+        {
+            if (solid.value)
+            {
+                load(new RTexture2D(engine.renderManager.rhubarbSolidview));
+            }
+            else
+            {
+                load(new RTexture2D(engine.renderManager.rhubarbview));
+            }
+
         }
 
         public override void buildSyncObjs(bool newRefIds)
         {
-
+            solid = new Sync<bool>(this,newRefIds);
+        }
+        public override void onChanged()
+        {
+            base.onChanged();
+            LoadRhubarbTexture();
         }
 
-        public NullTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public RhubarbTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public NullTextue2D()
+        public RhubarbTextue2D()
         {
         }
     }

@@ -17,6 +17,8 @@ using RhubarbEngine.Helpers;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using RhubarbEngine.Components.Interaction;
 using RhubarbEngine.Components.Transform;
+using RhubarbEngine.Components.Assets;
+using RhubarbEngine.World.Asset;
 
 namespace RhubarbEngine.Components.PrivateSpace
 {
@@ -29,6 +31,9 @@ namespace RhubarbEngine.Components.PrivateSpace
         public SyncRef<Entity> Laser;
         public SyncRef<CurvedTubeMesh> LaserMesh;
 
+        public SyncRef<Render.Material.Fields.ColorField> colorField;
+        public SyncRef<Render.Material.Fields.ColorField> planeColorField;
+        public SyncRef<AssetMultiplexer<RTexture2D>> textureMulti;
         public override void OnAttach()
         {
             base.OnAttach();
@@ -48,6 +53,13 @@ namespace RhubarbEngine.Components.PrivateSpace
             var pos2 = mit.getField<Render.Material.Fields.FloatField>("Zpos", Render.Shader.ShaderType.MainFrag);
             pos.field.value = 0.3f;
             pos2.field.value = 0.6f;
+
+            colorField.target = mit.getField<Render.Material.Fields.ColorField>("TintColor", Render.Shader.ShaderType.MainFrag);
+            planeColorField.target = cmit.getField<Render.Material.Fields.ColorField>("TintColor", Render.Shader.ShaderType.MainFrag);
+            var textureField = cmit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+            var texturemult = curs.attachComponent<AssetMultiplexer<RTexture2D>>();
+            textureField.field.target = texturemult;
+            textureMulti.target = texturemult;
         }
 
         public override void buildSyncObjs(bool newRefIds)
@@ -57,6 +69,9 @@ namespace RhubarbEngine.Components.PrivateSpace
             Currsor = new SyncRef<Entity>(this, newRefIds);
             Laser = new SyncRef<Entity>(this, newRefIds);
             LaserMesh = new SyncRef<CurvedTubeMesh>(this, newRefIds);
+            colorField = new SyncRef<Render.Material.Fields.ColorField>(this, newRefIds);
+            planeColorField = new SyncRef<Render.Material.Fields.ColorField>(this, newRefIds);
+            textureMulti = new SyncRef<AssetMultiplexer<RTexture2D>>(this, newRefIds);
         }
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)

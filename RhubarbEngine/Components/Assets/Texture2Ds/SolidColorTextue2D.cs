@@ -30,7 +30,7 @@ using System.Net.Http;
 
 namespace RhubarbEngine.Components.Assets
 {
-    [Category(new string[] { "Assets" })]
+    [Category(new string[] { "Assets/Texture2Ds" })]
     public class SolidColorTextue2D : AssetProvider<RTexture2D>, IAsset
     {
         public Sync<Colorf> color;

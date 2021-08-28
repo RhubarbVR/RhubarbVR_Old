@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="StaticAssets\" />
+    <Folder Include="StaticAssets\Cursors\" />
   </ItemGroup>
 
 </Project>

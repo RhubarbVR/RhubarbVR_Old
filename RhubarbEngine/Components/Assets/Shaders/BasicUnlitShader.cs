@@ -25,7 +25,7 @@ using RhubarbEngine.Components.Assets;
 
 namespace RhubarbEngine.Components.Assets
 {
-    [Category(new string[] { "Assets" })]
+    [Category(new string[] { "Assets/Shaders" })]
     public class BasicUnlitShader : AssetProvider<RShader>,IAsset
     {
 

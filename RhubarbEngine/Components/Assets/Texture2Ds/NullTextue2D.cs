@@ -30,13 +30,12 @@ using System.Net.Http;
 
 namespace RhubarbEngine.Components.Assets
 {
-    [Category(new string[] { "Assets" })]
-    public class GridTextue2D : AssetProvider<RTexture2D>, IAsset
+    [Category(new string[] { "Assets/Texture2Ds" })]
+    public class NullTextue2D : AssetProvider<RTexture2D>, IAsset
     {
-
         public override void onLoaded()
         {
-            load(new RTexture2D(engine.renderManager.gridview));
+            load(new RTexture2D(engine.renderManager.nulview));
         }
 
         public override void buildSyncObjs(bool newRefIds)
@@ -44,11 +43,11 @@ namespace RhubarbEngine.Components.Assets
 
         }
 
-        public GridTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public NullTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public GridTextue2D()
+        public NullTextue2D()
         {
         }
     }
