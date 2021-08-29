@@ -40,13 +40,13 @@ namespace RhubarbEngine.Components.Assets
 
         public void ReloadBindableResources()
         {
-            Logger.Log("Reload");
+            //Logger.Log("Reload");
             BindableResourcesReload?.Invoke(this);
         }
 
         public override void onLoaded()
         {
-            Logger.Log("Loaded Material");
+            //Logger.Log("Loaded Material");
             load(this);
         }
 

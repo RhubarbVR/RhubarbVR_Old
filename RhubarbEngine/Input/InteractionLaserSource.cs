@@ -131,12 +131,6 @@ namespace RhubarbEngine.Input
                     var pos = (System.Numerics.Vector2)pospix;
 
                     var source = InteractionSource.None;
-                    if ((engine.outputType == VirtualReality.OutputType.Screen) && (side == Creality.Right))
-                    {
-                        source = InteractionSource.HeadLaser;
-                    }
-                    else
-                    {
                         switch (side)
                         {
                             case Creality.Left:
@@ -148,7 +142,6 @@ namespace RhubarbEngine.Input
                             default:
                                 break;
                         }
-                    }
                     inputPlane.updatePos(pos, source);
 
                     if (HasClicked())
@@ -200,12 +193,6 @@ namespace RhubarbEngine.Input
                 var pos = (System.Numerics.Vector2)pospix;
 
                 var source = InteractionSource.None;
-                if ((engine.outputType == VirtualReality.OutputType.Screen) && (side == Creality.Right))
-                {
-                    source = InteractionSource.HeadLaser;
-                }
-                else
-                {
                     switch (side)
                     {
                         case Creality.Left:
@@ -217,7 +204,6 @@ namespace RhubarbEngine.Input
                         default:
                             break;
                     }
-                }
                 inputPlane.updatePos(pos, source);
                 if (HasClicked())
                 {
@@ -254,12 +240,6 @@ namespace RhubarbEngine.Input
             {
                 ent.SendClick(true);
                 var source = InteractionSource.None;
-                if ((engine.outputType == VirtualReality.OutputType.Screen) && (side == Creality.Right))
-                {
-                    source = InteractionSource.HeadLaser;
-                }
-                else
-                {
                     switch (side)
                     {
                         case Creality.Left:
@@ -271,7 +251,6 @@ namespace RhubarbEngine.Input
                         default:
                             break;
                     }
-                }
                 switch (source)
                 {
                     case InteractionSource.None:
