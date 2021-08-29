@@ -24,6 +24,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         public SyncRef<Entity> target;
 
+        [NoShow]
         [NoSave]
         [NoSync]
         private Entity last;
@@ -145,7 +146,8 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void Clicked()
         {
-            logger.Log("Clicked");
+            if(world.lastEntityObserver != null)
+                world.lastEntityObserver.target.target = target.target;
         }
         private void Grabbed()
         {

@@ -70,6 +70,15 @@ namespace RhubarbEngine.Components.ImGUI
             }
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            if (world.lastEntityObserver == this)
+            {
+                world.lastEntityObserver = null;
+            }
+        }
+
         public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
             if (ImGui.BeginChild($"{target.target?.name.value??"null"}##{referenceID.id}",ImGui.GetWindowContentRegionMax(),false,ImGuiWindowFlags.NoCollapse| ImGuiWindowFlags.NoResize))
@@ -81,7 +90,10 @@ namespace RhubarbEngine.Components.ImGUI
                 }
                 ImGui.EndChild();
             }
-            
+            if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+            {
+                world.lastEntityObserver = this;
+            }
         }
     }
 }

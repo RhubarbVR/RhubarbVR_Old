@@ -251,6 +251,11 @@ namespace RhubarbEngine.World
         [NoSave]
         public UserRoot userRoot => localUser?.userroot.target;
 
+        [NoShow]
+        [NoSync]
+        [NoSave]
+        public RhubarbEngine.Components.ImGUI.EntityObserver lastEntityObserver;
+
         public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
         {
             switch (focus)

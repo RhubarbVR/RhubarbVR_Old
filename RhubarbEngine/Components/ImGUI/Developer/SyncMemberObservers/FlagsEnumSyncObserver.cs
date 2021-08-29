@@ -39,7 +39,7 @@ namespace RhubarbEngine.Components.ImGUI
     }
 
     [Category("ImGUI/Developer/SyncMemberObservers")]
-    public class FlagsEnumSyncObserver<T>: FlagsEnumSyncObserver, IObserver where T : System.Enum
+    public class FlagsEnumSyncObserver<T>: FlagsEnumSyncObserver, IObserver where T : struct, System.Enum
     {
 
         public FlagsEnumSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -50,14 +50,15 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
+        string[] ve = Enum.GetNames(typeof(T));
+
         public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
-            int c = (int)(object)(((Sync<T>)target.target).value);
-            var e = Enum.GetNames(typeof(T)).ToList();
-            ImGui.Combo((fieldName.value ?? "null") + $"##{referenceID.id}", ref c, e.ToArray(), e.Count);
+            int c = Array.IndexOf(ve, Enum.GetName(typeof(T), (((Sync<T>)target.target).value)));
+            ImGui.Combo((fieldName.value ?? "null") + $"##{referenceID.id}", ref c, ve, ve.Length);
             if (c != (int)(object)(((Sync<T>)target.target).value))
             {
-                ((Sync<T>)target.target).value = (T)(object)c;
+                ((Sync<T>)target.target).value = Enum.GetValues<T>()[c];
             }
         }
     }
