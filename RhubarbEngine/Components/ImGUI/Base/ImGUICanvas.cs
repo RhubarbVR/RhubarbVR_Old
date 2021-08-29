@@ -164,8 +164,6 @@ namespace RhubarbEngine.Components.ImGUI
             }
         }
 
-        private ImGuiMouseCursor last = ImGuiMouseCursor.None;
-
         private void ImGuiUpdate()
         {
             var ui = ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize;
@@ -229,14 +227,10 @@ namespace RhubarbEngine.Components.ImGUI
                         imputPlane.target.StopMouse = false;
                     }
                 }
-                if (ImGui.GetMouseCursor() != last)
-                {
                     if (imputPlane.target != null)
                     {
-                        last = ImGui.GetMouseCursor();
-                        imputPlane.target.SetCursor(Input.CursorsEnumCaster.ImGuiMouse(last));
+                        imputPlane.target.SetCursor(Input.CursorsEnumCaster.ImGuiMouse(ImGui.GetMouseCursor()));
                     }
-                }
                 ImGui.End();
             }
             if (!e)

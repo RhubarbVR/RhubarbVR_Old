@@ -310,7 +310,7 @@ namespace RhubarbEngine.Managers
             }
             catch (Exception e)
             {
-                Console.WriteLine("Render Error" + e.ToString());
+                Console.WriteLine("Render Error " + e.ToString());
             }
             if (engine.windowManager.mainWindowOpen)
             {
@@ -322,6 +322,7 @@ namespace RhubarbEngine.Managers
                 gd.SubmitCommands(windowCL);
                 gd.SwapBuffers(sc);
             }
+            gd.WaitForIdle();
         }
     }
 }
