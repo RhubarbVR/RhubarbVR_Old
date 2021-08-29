@@ -39,7 +39,7 @@ namespace RhubarbEngine.Components.Users
             if(world.localUser.userroot.target == null)
             {
                 Entity rootent = world.RootEntity.addChild();
-                rootent.name.value = $"{world.localUser.username} (ID:{ToHexString(world.localUser.referenceID.id)})";
+                rootent.name.value = $"{world.localUser.username.value} (ID:{ToHexString(world.localUser.referenceID.id)})";
                 rootent.persistence.value = false;
                 rootent.manager = world.localUser;
                 UserRoot userRoot = rootent.attachComponent<UserRoot>();

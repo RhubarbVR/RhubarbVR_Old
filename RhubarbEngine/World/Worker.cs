@@ -35,11 +35,11 @@ namespace RhubarbEngine.World
         }
 
         public event Action<IChangeable> Changed;
-
+        [NoShow]
         [NoSync]
         [NoSave]
         public World world { get; protected set; }
-
+        [NoShow]
         [NoSync]
         [NoSave]
         public IWorldObject parent;
@@ -57,11 +57,11 @@ namespace RhubarbEngine.World
         public bool Persistent = true;
 
         NetPointer IWorldObject.ReferenceID => referenceID;
-
+        [NoShow]
         [NoSync]
         [NoSave]
         World IWorldObject.World => world;
-
+        [NoShow]
         [NoSync]
         [NoSave]
         IWorldObject IWorldObject.Parent => parent;

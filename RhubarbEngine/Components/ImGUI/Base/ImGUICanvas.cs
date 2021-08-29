@@ -37,6 +37,8 @@ namespace RhubarbEngine.Components.ImGUI
 
         public Sync<bool> noBackground;
 
+        public Sync<Colorf> backGroundColor;
+
         private ImGuiRenderer igr;
 
         private CommandList UIcommandList;
@@ -88,6 +90,8 @@ namespace RhubarbEngine.Components.ImGUI
             onClose = new SyncDelegate(this, newRefIds);
             onHeaderClick = new SyncDelegate(this, newRefIds);
             onHeaderGrab = new SyncDelegate(this, newRefIds);
+            backGroundColor = new Sync<Colorf>(this, newRefIds);
+            backGroundColor.value = Colorf.Black;
         }
 
         private void onScaleChange(IChangeable val)
@@ -258,7 +262,7 @@ namespace RhubarbEngine.Components.ImGUI
                 ImGuiUpdate();
                 UIcommandList.Begin();
                 UIcommandList.SetFramebuffer(framebuffer);
-                UIcommandList.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0f, 0f));
+                UIcommandList.ClearColorTarget(0, new RgbaFloat((Vector4)backGroundColor.value.ToRGBA()));
                 igr.Render(engine.renderManager.gd, UIcommandList);
                 UIcommandList.End();
                 engine.renderManager.gd.SubmitCommands(UIcommandList);

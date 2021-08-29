@@ -74,7 +74,7 @@ namespace RhubarbEngine.World
             return null;
         }
 
-
+        [NoShow]
         [NoSync]
         [NoSave]
         public Window grabedWindow;
@@ -82,9 +82,11 @@ namespace RhubarbEngine.World
         [NoSave]
         public SyncUserList users;
 
+        [NoShow]
         [NoSync]
         [NoSave]
         public User localUser => getLocalUser();
+        [NoShow]
         [NoSync]
         [NoSave]
         private User getLocalUser()
@@ -99,10 +101,11 @@ namespace RhubarbEngine.World
             }
             return null;
         }
-
+        [NoShow]
         [NoSync]
         [NoSave]
         public User hostUser => getHostUser();
+        [NoShow]
         [NoSync]
         [NoSave]
         private User getHostUser()
@@ -243,7 +246,7 @@ namespace RhubarbEngine.World
         }
         public Matrix4x4 playerTrans => (userRoot != null)? userRoot.Viewpos : Matrix4x4.CreateScale(1f);
         public Matrix4x4 headTrans => (userRoot != null) ? userRoot.Headpos : Matrix4x4.CreateScale(1f);
-
+        [NoShow]
         [NoSync]
         [NoSave]
         public UserRoot userRoot => localUser?.userroot.target;
@@ -408,6 +411,7 @@ namespace RhubarbEngine.World
         {
             Entitys.Remove(obj);
         }
+        [NoShow]
         [NoSync]
         [NoSave]
         public IWorldObject getWorldObj(NetPointer refid)
@@ -427,6 +431,7 @@ namespace RhubarbEngine.World
         NetPointer IWorldObject.ReferenceID => NetPointer.BuildID(1, 0);
 
         World IWorldObject.World => this;
+        [NoShow]
         [NoSync]
         [NoSave]
         IWorldObject IWorldObject.Parent => null;

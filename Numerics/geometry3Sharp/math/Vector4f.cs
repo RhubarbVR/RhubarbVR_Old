@@ -260,7 +260,25 @@ namespace g3
             return string.Format("{0} {1} {2} {3}", x.ToString(fmt), y.ToString(fmt), z.ToString(fmt), w.ToString(fmt));
         }
 
+        public static unsafe Vector4f ToRhuNumrics(ref Vector4 value)
+        {
+            fixed (Vector4* vector3f = &value)
+            {
+                return *(Vector4f*)vector3f;
+            }
+        }
 
+        public static unsafe explicit operator Vector4f(Vector4 v) => ToRhuNumrics(ref v);
+
+        public static unsafe explicit operator Vector4(Vector4f v)=> v.ToSystemNumrics();
+
+        public unsafe Vector4 ToSystemNumrics()
+        {
+            fixed (Vector4f* vector3f = &this)
+            {
+                return *(Vector4*)vector3f;
+            }
+        }
 
 
 #if G3_USING_UNITY

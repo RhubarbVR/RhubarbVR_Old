@@ -37,7 +37,7 @@ namespace RhubarbEngine.Components.Interaction
             Right
         }
 
-        public SyncRef<UIWidget> element;
+        public SyncRef<IUIElement> element;
 
         public SyncRef<ImGUICanvas> canvas;
 
@@ -349,7 +349,7 @@ namespace RhubarbEngine.Components.Interaction
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
-            element = new SyncRef<UIWidget>(this, newRefIds);
+            element = new SyncRef<IUIElement>(this, newRefIds);
             canvas = new SyncRef<ImGUICanvas>(this, newRefIds);
             size = new Sync<Vector2f>(this, newRefIds);
             size.value = new Vector2f(1, 1.5);

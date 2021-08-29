@@ -81,7 +81,7 @@ namespace Veldrid
 
             ImGui.GetIO().Fonts.AddFontDefault();
             ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.ViewportsEnable;
-
+            ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.IsTouchScreen;
             CreateDeviceResources(gd, outputDescription);
             SetOpenTKKeyMappings();
 

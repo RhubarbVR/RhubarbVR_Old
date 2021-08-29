@@ -19,11 +19,11 @@ namespace RhubarbEngine.World.ECS
 
         [NoSave]
         public SyncRef<User> _manager;
-
+        [NoShow]
         [NoSave]
         [NoSync]
         public User CreatingUser => world.users[(int)referenceID.getOwnerID()];
-
+        [NoShow]
         [NoSave]
         [NoSync]
         public User manager { 
@@ -39,13 +39,13 @@ namespace RhubarbEngine.World.ECS
                 }
                 if(retur == null)
                 {
-                    retur = world.users[(int)referenceID.getOwnerID()];
+                    retur = world.hostUser;
                 }
                 return retur;
             }
             set { _manager.target = value; }
         }
-
+        [NoShow]
         [NoSave]
         [NoSync]
         public User nullableManager
@@ -72,7 +72,7 @@ namespace RhubarbEngine.World.ECS
         private Matrix4x4 cashedGlobalTrans = Matrix4x4.CreateScale(Vector3.One);
 
         private Matrix4x4 cashedLocalMatrix = Matrix4x4.CreateScale(Vector3.One);
-
+        [NoShow]
         [NoSave]
         [NoSync]
         private Entity internalParent;
@@ -156,15 +156,15 @@ namespace RhubarbEngine.World.ECS
         }
 
         public event Action<bool> onPhysicsDisableder;
-
+        [NoShow]
         [NoSave]
         [NoSync]
         public List<IPhysicsDisableder> physicsDisableders = new List<IPhysicsDisableder>();
-
+        [NoShow]
         [NoSave]
         [NoSync]
         public bool PhysicsDisabled => physicsDisableders.Count > 0;
-
+        [NoShow]
         [NoSave]
         [NoSync]
         IWorldObject IWorldObject.Parent => internalParent?._children??(IWorldObject)world;
@@ -179,7 +179,7 @@ namespace RhubarbEngine.World.ECS
 
         public SyncAbstractObjList<Component> _components;
 
-        public Sync<int> remderlayer;
+        public Sync<RemderLayers> remderlayer;
 
         public bool parentEnabled = true;
 
@@ -376,8 +376,8 @@ namespace RhubarbEngine.World.ECS
             enabled.value = true;
             parent = new SyncRef<Entity>(this, newRefIds);
             parent.Changed += Parent_Changed;
-            remderlayer = new Sync<int>(this, newRefIds);
-            remderlayer.value = (int)RemderLayers.normal;
+            remderlayer = new Sync<RemderLayers>(this, newRefIds);
+            remderlayer.value = RemderLayers.normal;
             position.Changed += onTransChange;
             rotation.Changed += onTransChange;
             scale.Changed += onTransChange;
@@ -435,6 +435,7 @@ namespace RhubarbEngine.World.ECS
 
         private void onEnableChange(IChangeable newValue)
         {
+            if (!enabled.value && (world.RootEntity == this)) { enabled.value = true; };
             foreach (Entity item in _children)
             {
                 item.parentEnabledChange(enabled.value);
@@ -459,6 +460,7 @@ namespace RhubarbEngine.World.ECS
                 entity.updateGlobalTrans();
             }
         }
+        [NoShow]
         [NoSync]
         [NoSave]
         public Entity addChild(string name = "Entity")
@@ -468,6 +470,7 @@ namespace RhubarbEngine.World.ECS
             val.name.value = name;
             return val;
         }
+        [NoShow]
         [NoSync]
         [NoSave]
         public T attachComponent<T>() where T: Component
@@ -485,11 +488,32 @@ namespace RhubarbEngine.World.ECS
             newcomp.onLoaded();
             return newcomp;
         }
+
+        [NoShow]
+        [NoSync]
+        [NoSave]
+        public Component attachComponent(Type type)
+        {
+            Component newcomp = (Component)Activator.CreateInstance(type);
+            _components.Add(newcomp);
+            try
+            {
+                newcomp.OnAttach();
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Failed To run Attach On Component" + type.Name + " Error:" + e.ToString());
+            }
+            newcomp.onLoaded();
+            return newcomp;
+        }
+
         public override void onLoaded()
         {
             base.onLoaded();
             updateGlobalTrans();
         }
+        [NoShow]
         [NoSync]
         [NoSave]
         public T getFirstComponent<T>() where T : Component
@@ -503,6 +527,7 @@ namespace RhubarbEngine.World.ECS
             }
             return null;
         }
+        [NoShow]
         [NoSync]
         [NoSave]
         public IEnumerable<T> getAllComponents<T>() where T : Component
@@ -518,7 +543,7 @@ namespace RhubarbEngine.World.ECS
 
         public void addToRenderQueue(RenderQueue gu, Vector3 playpos, RemderLayers layer)
         {
-            if (((int)layer & remderlayer.value) <= 0)
+            if (((int)layer & (int)remderlayer.value) <= 0)
             {
                 return;
             }

@@ -31,7 +31,7 @@ namespace RhubarbEngine.Helpers
 {
     public static class MeshHelper
     {
-        public static (Entity, Window,T) attachWindow<T>(Entity ea, string name = "Window")where T:UIWidget
+        public static (Entity, Window,T) attachWindow<T>(Entity ea, string name = "Window")where T:Component, IUIElement
         {
             if(name == "Window")
             {

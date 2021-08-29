@@ -79,6 +79,7 @@ namespace RhubarbEngine.World
             tags = new SyncValueList<string>(this, newRefIds);
             userStreams = new SyncAbstractObjList<UserStream>(this, newRefIds);
         }
+        [NoShow]
         [NoSync]
         [NoSave]
         public T FindUserStream<T>(string name) where T:UserStream
@@ -97,6 +98,7 @@ namespace RhubarbEngine.World
             }
             return null;
         }
+        [NoShow]
         [NoSync]
         [NoSave]
         public T FindOrCreateUserStream<T>(string name) where T : UserStream

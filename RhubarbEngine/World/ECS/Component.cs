@@ -9,11 +9,11 @@ namespace RhubarbEngine.World.ECS
     public abstract class Component : Worker
     {
         public Sync<bool> enabled;
-
+        [NoShow]
         [NoSync]
         [NoSave]
         private Entity _entity;
-
+        [NoShow]
         [NoSync]
         [NoSave]
         public Entity entity { get { return _entity; } }

@@ -85,6 +85,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             startcanvas.target = imGUICanvas;
             var group = e.attachComponent<ImGUIBeginGroup>();
             var createWindow = e.attachComponent<ImGUIButton>();
+            var createWindow2 = e.attachComponent<ImGUIButton>();
             var createCube = e.attachComponent<ImGUIButton>();
             createCube.label.value = "Create Cube";
             createCube.action.Target = CreateCube;
@@ -98,7 +99,10 @@ namespace RhubarbEngine.Components.PrivateSpace
 
             createWindow.label.value = "Create Window";
             createWindow.action.Target = CreateWindow;
+            createWindow2.label.value = "Create Window2";
+            createWindow2.action.Target = CreateWindow2;
             group.children.Add().target = createWindow;
+            group.children.Add().target = createWindow2;
             group.children.Add().target = createSyer;
             e.enabled.value = false;
         }
@@ -109,10 +113,25 @@ namespace RhubarbEngine.Components.PrivateSpace
             World.World createWorld = world.worldManager.focusedWorld ?? world;
             Entity User = createWorld.userRoot.entity;
             Entity par = User.parent.target;
-            var (cube, win,comp) = Helpers.MeshHelper.attachWindow<ImGUIInputText>(par);
+            var (cube, win,comp) = Helpers.MeshHelper.attachWindow<HierarchyRoot>(par);
             var headPos = createWorld.userRoot.Headpos;
             var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 2, 0.5f))*Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f,-90f,0f).ToSystemNumric());
             cube.setGlobalTrans(move * headPos);
+            comp.Initialize(world.worldManager.focusedWorld.RootEntity);
+
+        }
+
+        private void CreateWindow2()
+        {
+            logger.Log("Create Window2");
+            World.World createWorld = world.worldManager.focusedWorld ?? world;
+            Entity User = createWorld.userRoot.entity;
+            Entity par = User.parent.target;
+            var (cube, win, comp) = Helpers.MeshHelper.attachWindow<EntityObserver>(par);
+            var headPos = createWorld.userRoot.Headpos;
+            var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 2, 0.5f)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric());
+            cube.setGlobalTrans(move * headPos);
+            comp.target.target = world.worldManager.focusedWorld.RootEntity;
 
         }
 

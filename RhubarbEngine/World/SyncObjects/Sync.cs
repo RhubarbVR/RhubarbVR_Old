@@ -9,7 +9,7 @@ using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
-    public class Sync<T> : Worker, DriveMember<T>, IWorldObject, ISyncMember
+    public class Sync<T> : Worker, DriveMember<T>, IPrimitiveEditable
     {
         public IDriver drivenFromobj;
         public NetPointer drivenFrom { get { return drivenFromobj.ReferenceID; } }
@@ -80,6 +80,21 @@ namespace RhubarbEngine.World
                 }
                 UpdatedValue();
                 onChangeInternal(this);
+            }
+        }
+
+        public string primitiveString { get { return value.ToString(); } set { SetValueAsString(value); } }
+
+        public void SetValueAsString(string svalue)
+        {
+            try
+            {
+                T timvalue = (T)Convert.ChangeType(svalue, typeof(T));
+                value = timvalue;
+            } 
+            catch
+            {
+
             }
         }
 

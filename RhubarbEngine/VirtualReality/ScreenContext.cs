@@ -170,7 +170,7 @@ namespace RhubarbEngine.VirtualReality
         public void updateInput()
         {
             Vector2 mouseDelta = default;
-            if (_eng.inputManager.mainWindows.GetKeyDown(Key.Tab))
+            if (_eng.inputManager.mainWindows.GetKeyDown(Key.R))
             {
                 if (!_mousePressed)
                 {

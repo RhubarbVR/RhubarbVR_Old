@@ -80,7 +80,18 @@ namespace RhubarbEngine.World
 
         public void Clear()
         {
-            _synclist.Clear();
+            try
+            {
+                foreach (var item in _synclist.Reverse())
+                {
+                    try
+                    {
+                        item.Dispose();
+                    }
+                    catch { }
+                }
+            }
+            catch { }
             netClear();
         }
 
@@ -104,7 +115,18 @@ namespace RhubarbEngine.World
         {
             if (((DataNode<byte>)data.getValue("Type")).Value == 1)
             {
-                _synclist.Clear();
+                try
+                {
+                    foreach (var item in _synclist.Reverse())
+                    {
+                        try
+                        {
+                            item.Dispose();
+                        }
+                        catch { }
+                    }
+                }
+                catch { }
             }
             else
             {

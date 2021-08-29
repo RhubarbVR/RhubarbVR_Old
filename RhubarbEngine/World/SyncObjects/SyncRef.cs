@@ -19,7 +19,7 @@ namespace RhubarbEngine.World
         {
             get
             {
-                if (this._target == null || this._target.IsRemoved)
+                if (this._target == null || this._target.IsRemoved || this._target.World != world)
                 {
                     return null;
                 }

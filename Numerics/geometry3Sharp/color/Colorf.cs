@@ -184,9 +184,9 @@ namespace g3
         static public readonly Colorf TransparentBlack = new Colorf(0, 0, 0, 0);
 
         [IgnoreMember]
-        static public readonly Colorf White = new Colorf(255, 255, 255, 255);
+        static public readonly Colorf White = new Colorf(1f, 1f, 1f, 1f);
         [IgnoreMember]
-        static public readonly Colorf Black = new Colorf(0, 0, 0, 255);
+        static public readonly Colorf Black = new Colorf(0f, 0f, 0f, 1f);
         [IgnoreMember]
         static public readonly Colorf Blue = new Colorf(0, 0, 255, 255);
         [IgnoreMember]
