@@ -35,6 +35,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void Target_Changed(IChangeable obj)
         {
+            if (entity.manager != world.localUser) return;
             BuildView();
         }
         private void ClearOld()
@@ -81,15 +82,12 @@ namespace RhubarbEngine.Components.ImGUI
 
         public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
-            if (ImGui.BeginChild($"{target.target?.name.value??"null"}##{referenceID.id}",ImGui.GetWindowContentRegionMax(),false,ImGuiWindowFlags.NoCollapse| ImGuiWindowFlags.NoResize))
+            ImGui.Text($"{target.target?.name.value ?? "null"} ID:({target.target?.referenceID.id.ToString() ?? "null"})");
+            foreach (var item in children)
             {
-                ImGui.Text($"{target.target?.name.value ?? "null"} ID:({target.target?.referenceID.id.ToString() ?? "null"})");
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer);
-                }
-                ImGui.EndChild();
+                item.target?.ImguiRender(imGuiRenderer);
             }
+            ImGui.EndChild();
             if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
             {
                 world.lastEntityObserver = this;

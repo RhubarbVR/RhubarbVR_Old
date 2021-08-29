@@ -27,8 +27,6 @@ namespace RhubarbEngine.Components.ImGUI
 
         public SyncRefList<IObserver> children;
 
-        private bool PassThrough => children.Count() <= 0;
-
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
@@ -40,23 +38,34 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void Target_Changed(IChangeable obj)
         {
+            if (entity.manager != world.localUser) return;
             BuildView();
         }
 
         private void ClearOld()
         {
-
+            foreach (var item in children)
+            {
+                item.target?.Dispose();
+            }
+            children.Clear();
         }
 
         private void BuildView()
         {
             ClearOld();
-            BuildWorker();
-        }
-
-        private void BuildWorker()
-        {
-
+            if (target.target == null) return;
+            FieldInfo[] fields = target.target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            foreach (var field in fields)
+            {
+                if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
+                {
+                    var obs = entity.attachComponent<WorkerObserver>();
+                    obs.fieldName.value = field.Name;
+                    obs.target.target = ((Worker)field.GetValue(target.target));
+                    children.Add().target = obs;
+                }
+            }
         }
 
 
@@ -70,7 +79,13 @@ namespace RhubarbEngine.Components.ImGUI
 
         public override void ImguiRender(ImGuiRenderer imGuiRenderer)
         {
-
+            if (ImGui.CollapsingHeader($"{target.target?.GetType().Name ?? "null"} ID:({target.target?.referenceID.id.ToString() ?? "null"}) ##{referenceID.id}"))
+            {
+                foreach (var item in children)
+                {
+                    item.target?.ImguiRender(imGuiRenderer);
+                }
+            }
         }
     }
 }

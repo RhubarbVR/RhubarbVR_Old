@@ -33,6 +33,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void Target_Changed(IChangeable obj)
         {
+            if (entity.manager != world.localUser) return;
             BuildView();
         }
 
@@ -120,6 +121,26 @@ namespace RhubarbEngine.Components.ImGUI
             }
         }
 
+        private void BuildSyncAbstractObjListMember(Type type)
+        {
+            Type gType = type.GetGenericArguments()[0];
+            if (gType == typeof(Component))
+            {
+                SyncComponentListObserver obs = entity.attachComponent<SyncComponentListObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((ISyncList)target.target);
+                root.target = obs;
+            }
+            else
+            {
+                //Type a = typeof(EnumSyncObserver<>).MakeGenericType(gType);
+                //EnumSyncObserver obs = (EnumSyncObserver)entity.attachComponent(a);
+                //obs.fieldName.value = fieldName.value;
+                //obs.target.target = ((IPrimitiveEditable)target.target);
+                //root.target = obs;
+            }
+        }
+
         private void BuildSyncMember(Type type)
         {
             Type typeg = type.GetGenericTypeDefinition();
@@ -129,7 +150,7 @@ namespace RhubarbEngine.Components.ImGUI
             }
             else if ((typeof(SyncAbstractObjList<>).IsAssignableFrom(typeg)))
             {
-
+                BuildSyncAbstractObjListMember(type);
             }
             else if ((typeof(SyncAssetRefList<>).IsAssignableFrom(typeg)))
             {

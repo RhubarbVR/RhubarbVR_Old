@@ -7,10 +7,11 @@ using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
 using RhubarbEngine.World.ECS;
 using RhubarbEngine.World.Net;
+using System.Collections;
 
 namespace RhubarbEngine.World
 {
-    public class SyncAbstractObjList<T> : Worker, IWorldObject, ISyncMember where T : Worker
+    public class SyncAbstractObjList<T> : Worker,ISyncList ,IWorldObject, ISyncMember where T : Worker
     {
         private SynchronizedCollection<T> _synclist = new SynchronizedCollection<T>(25);
 
@@ -254,6 +255,19 @@ namespace RhubarbEngine.World
                     }
                 }
             }
+        }
+
+        IEnumerator<IWorldObject> IEnumerable<IWorldObject>.GetEnumerator()
+        {
+            for (int i = 0; i < _synclist.Count; i++)
+            {
+                yield return this[i];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<IWorldObject>)this).GetEnumerator();
         }
     }
 }
