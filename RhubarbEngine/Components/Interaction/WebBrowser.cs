@@ -435,9 +435,9 @@ namespace RhubarbEngine.Components.Interaction
             audioType.value = AudioType.LayoutMono;
             audioType.Changed += AudioType_Changed;
             globalAudio.Changed += GlobalAudio_Changed;
+            path.value = "https://www.youtube.com/watch?v=Rp6ehxZvvM4";
             path.Changed += Path_Changed;
             //path.value = "https://google.com/";
-            path.value = "https://www.youtube.com/watch?v=Rp6ehxZvvM4";
             //path.value = "https://g.co/arts/xoCTBcR4S3MD8QPE6";
             //path.value = "https://www.vsynctester.com/testing/mouse.html";
             title = new Driver<string>(this, newRefIds);
@@ -478,7 +478,7 @@ namespace RhubarbEngine.Components.Interaction
             if (browser.IsBrowserInitialized)
             {
                 if(path.value != browser.Address)
-                      browser.LoadUrlAsync(path.value).Start();
+                      browser.LoadUrlAsync(path.value);
             }
             else
             {
