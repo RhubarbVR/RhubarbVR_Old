@@ -15,27 +15,15 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-
-    [Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
-    public class PrimitiveSyncObserver : UIWidget, IObserver
+    [Category("ImGUI/Developer/SyncMemberObservers")]
+    public class SyncRefObserver<T> : SyncRefObserver, IObserver
     {
-        public Sync<string> fieldName;
 
-        public SyncRef<IPrimitiveEditable> target;
-
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            target = new SyncRef<IPrimitiveEditable>(this, newRefIds);
-            fieldName = new Sync<string>(this, newRefIds);
-        }
-
-
-        public PrimitiveSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public SyncRefObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public PrimitiveSyncObserver()
+        public SyncRefObserver()
         {
         }
 
@@ -46,7 +34,7 @@ namespace RhubarbEngine.Components.ImGUI
             {
                 var e = ImGui.GetStyleColorVec4(ImGuiCol.FrameBg);
                 var vec = (Vector4f)(*e);
-                ImGui.PushStyleColor(ImGuiCol.FrameBg,(vec - new Vector4f(0,1f,0,0)).ToSystem());
+                ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 1f, 0, 0)).ToSystem());
             }
             Interaction.GrabbableHolder source = null;
             switch (canvas.imputPlane.target?.source ?? Interaction.InteractionSource.None)
@@ -65,26 +53,39 @@ namespace RhubarbEngine.Components.ImGUI
             }
             if (source != null)
             {
-                    var type = source.Referencer.target?.GetType();
-                    if (typeof(IPrimitiveEditable).IsAssignableFrom(type))
-                    {
-                        Changeboarder = true;
-                    }
+                //check if is type
+                var type = source.Referencer.target?.GetType();
+                if (typeof(T).IsAssignableFrom(type))
+                {
+                    Changeboarder = true;
+                }
             }
             if (Changeboarder)
             {
                 ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 3);
                 ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
             }
-            string val = target.target?.primitiveString??"null";
-            if(ImGui.InputText((fieldName.value ?? "null") + $"##{referenceID.id}", ref val, (uint)val.Length + 255,ImGuiInputTextFlags.EnterReturnsTrue))
+            string val =  "null";
+            if(target.target != null)
+            {
+                val = $"{target.target?.targetIWorldObject.getNameString()??""} ID:({target.target?.targetIWorldObject?.ReferenceID.id.ToHexString()??"null"})";
+            }
+            if (ImGui.Button("^##" + referenceID.id.ToString()))
+            {
+                target.target.targetIWorldObject?.openWindow();
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("X##" + referenceID.id.ToString()))
             {
                 if(target.target != null)
-                    target.target.primitiveString = val;
+                    target.target.value = default(NetPointer);
             }
+            ImGui.SameLine();
+            ImGui.SetNextItemWidth(ImGui.CalcItemWidth()-45);
+            ImGui.InputText((fieldName.value ?? "null") + $"##{referenceID.id}", ref val, (uint)val.Length + 255, ImGuiInputTextFlags.ReadOnly);
             if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
             {
-                if(source != null)
+                if (source != null)
                 {
                     source.Referencer.target = target.target;
                 }
@@ -97,14 +98,36 @@ namespace RhubarbEngine.Components.ImGUI
             {
                 if (ImGui.IsItemHovered() && source.DropedRef)
                 {
-                    IPrimitiveEditable e = (IPrimitiveEditable)source.Referencer.target;
-                    if (target.target != null)
-                        target.target.primitiveString = e.primitiveString;
-                    source.Referencer.target = null;
+                    //OnDrop
                 }
                 ImGui.PopStyleVar();
                 ImGui.PopStyleColor();
             }
+        }
+    }
+
+
+
+    public class SyncRefObserver : UIWidget, IObserver
+    {
+        public Sync<string> fieldName;
+
+        public SyncRef<ISyncRef> target;
+
+        public override void buildSyncObjs(bool newRefIds)
+        {
+            base.buildSyncObjs(newRefIds);
+            target = new SyncRef<ISyncRef>(this, newRefIds);
+            fieldName = new Sync<string>(this, newRefIds);
+        }
+
+
+        public SyncRefObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        {
+
+        }
+        public SyncRefObserver()
+        {
         }
     }
 }

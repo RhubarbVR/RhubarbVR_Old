@@ -217,15 +217,17 @@ namespace RhubarbEngine.Components.ImGUI
             }
             else if ((typeof(AssetRef<>).IsAssignableFrom(typeg)))
             {
-
+                Type a = typeof(World.Asset.AssetProvider<>).MakeGenericType(type.GetGenericArguments()[0]);
+                BuildSyncRef(a);
             }
             else if ((typeof(Driver<>).IsAssignableFrom(typeg)))
             {
-
+                Type a = typeof(DriveMember<>).MakeGenericType(type.GetGenericArguments()[0]);
+                BuildSyncRef(a);
             }
             else if ((typeof(SyncRef<>).IsAssignableFrom(typeg)))
             {
-
+                BuildSyncRef(type.GetGenericArguments()[0]);
             }
             else if ((typeof(SyncUserList).IsAssignableFrom(typeg)))
             {
@@ -235,6 +237,15 @@ namespace RhubarbEngine.Components.ImGUI
             {
                 Console.WriteLine("Unknown Sync Type" + typeg.FullName);
             }
+        }
+
+        private void BuildSyncRef(Type type)
+        {
+            Type a = typeof(SyncRefObserver<>).MakeGenericType(type);
+            SyncRefObserver obs = (SyncRefObserver)entity.attachComponent(a);
+            obs.fieldName.value = fieldName.value;
+            obs.target.target = ((ISyncRef)target.target);
+            root.target = obs;
         }
 
         public WorkerObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

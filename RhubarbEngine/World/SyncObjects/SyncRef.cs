@@ -9,11 +9,28 @@ using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
-    public class SyncRef<T> : Worker, DriveMember<NetPointer> ,IWorldObject, ISyncMember where T : class,IWorldObject
+    public interface ISyncRef: IWorldObject
     {
+        public bool Driven { get; }
+
+        public NetPointer value
+        {
+            get;
+            set;
+        }
+
+        public IWorldObject targetIWorldObject { get; }
+    }
+
+    public class SyncRef<T> : Worker, ISyncRef, DriveMember<NetPointer> ,IWorldObject, ISyncMember where T : class,IWorldObject
+    {
+        public bool Driven => isDriven;
+
         private NetPointer targetRefID;
 
         private T _target;
+
+        public IWorldObject targetIWorldObject => target;
 
         public virtual T target
         {

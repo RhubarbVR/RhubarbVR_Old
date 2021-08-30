@@ -355,7 +355,7 @@ namespace RhubarbEngine.Components.Interaction
             size.value = new Vector2f(1, 1.5);
             size.Changed += Size_Changed;
             pixelDensity = new Sync<uint>(this, newRefIds);
-            pixelDensity.value = 300;
+            pixelDensity.value = 450;
             meshWidth = new Driver<float>(this, newRefIds);
             meshHeight = new Driver<float>(this, newRefIds);
             colDriver = new Driver<Vector2f>(this, newRefIds);

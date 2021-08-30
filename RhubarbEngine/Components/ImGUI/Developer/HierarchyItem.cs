@@ -133,14 +133,35 @@ namespace RhubarbEngine.Components.ImGUI
                         dropedDown.value = false;
                     }
                 }
-
+            Interaction.GrabbableHolder source = null;
+            switch (canvas.imputPlane.target?.source ?? Interaction.InteractionSource.None)
+            {
+                case Interaction.InteractionSource.LeftLaser:
+                    source = world.LeftLaserGrabbableHolder;
+                    break;
+                case Interaction.InteractionSource.RightLaser:
+                    source = world.RightLaserGrabbableHolder;
+                    break;
+                case Interaction.InteractionSource.HeadLaser:
+                    source = world.HeadLaserGrabbableHolder;
+                    break;
+                default:
+                    break;
+            }
             if (ImGui.IsItemHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
             {
                 Clicked();
             }
             if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
             {
-                Grabbed();
+                Grabbed(source,canvas);
+            }
+            if (ImGui.IsItemHovered() && source.DropedRef)
+            {
+                if(typeof(Entity) == source.Referencer.target.GetType())
+                {
+                    ((Entity)source.Referencer.target).parent.target = target.target;
+                }
             }
         }
 
@@ -149,9 +170,15 @@ namespace RhubarbEngine.Components.ImGUI
             if(world.lastEntityObserver != null)
                 world.lastEntityObserver.target.target = target.target;
         }
-        private void Grabbed()
+        private void Grabbed(Interaction.GrabbableHolder source,ImGUICanvas canvas)
         {
-            logger.Log("Grabed");
+            if (source != null)
+            {
+                if(source.Referencer.target == null)
+                {
+                    source.Referencer.target = target.target;
+                }
+            }
         }
         public HierarchyItem(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
