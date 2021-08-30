@@ -19,6 +19,8 @@ namespace RhubarbEngine.Components.ImGUI
 
         public SyncRefList<IObserver> children;
 
+        public Sync<bool> removeChildrenOnDispose;
+
         private bool PassThrough => children.Count() <= 0;
 
         public override void buildSyncObjs(bool newRefIds)
@@ -29,6 +31,8 @@ namespace RhubarbEngine.Components.ImGUI
             root = new SyncRef<IObserver>(this, newRefIds);
             children = new SyncRefList<IObserver>(this, newRefIds);
             fieldName = new Sync<string>(this, newRefIds);
+            removeChildrenOnDispose = new Sync<bool>(this, newRefIds);
+            removeChildrenOnDispose.value = true;
         }
 
         private void Target_Changed(IChangeable obj)
@@ -71,6 +75,19 @@ namespace RhubarbEngine.Components.ImGUI
             else
             {
                 BuildWorker();
+            }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            if (removeChildrenOnDispose.value)
+            {
+                root.target?.Dispose();
+                foreach (var item in children)
+                {
+                    item.target?.Dispose();
+                }
             }
         }
 
@@ -143,7 +160,11 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void BuildSyncMember(Type type)
         {
-            Type typeg = type.GetGenericTypeDefinition();
+            Type typeg = type;
+            if (type.IsGenericType)
+            {
+                typeg = type.GetGenericTypeDefinition();
+            }
             if ((typeof(Sync<>).IsAssignableFrom(typeg)))
             {
                 BuildBasicSyncMember(type);
@@ -175,6 +196,10 @@ namespace RhubarbEngine.Components.ImGUI
             else if ((typeof(SyncValueList<>).IsAssignableFrom(typeg)))
             {
 
+            }
+            else
+            {
+                Console.WriteLine("Unknown Sync Type" + typeg.FullName);
             }
         }
 

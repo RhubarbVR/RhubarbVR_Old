@@ -23,6 +23,8 @@ namespace RhubarbEngine.Components.ImGUI
 
         public SyncRefList<WorkerObserver> children;
 
+        public SyncRef<Entity> childrenHolder;
+
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
@@ -30,6 +32,13 @@ namespace RhubarbEngine.Components.ImGUI
             target.Changed += Target_Changed;
             fieldName = new Sync<string>(this, newRefIds);
             children = new SyncRefList<WorkerObserver>(this, newRefIds);
+            childrenHolder = new SyncRef<Entity>(this, newRefIds);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            childrenHolder.target?.Dispose();
         }
 
         private void Target_Changed(IChangeable obj)
@@ -41,12 +50,16 @@ namespace RhubarbEngine.Components.ImGUI
             }
             children.Clear();
             if (target.target == null) return;
+            if (childrenHolder.target == null)
+            {
+                childrenHolder.target = entity.addChild(fieldName.value + "Holder");
+            }
             int index = 0;
             foreach (var item in target.target)
             {
                 if (typeof(Worker).IsAssignableFrom(item.GetType()))
                 {
-                    var obs = entity.attachComponent<WorkerObserver>();
+                    var obs = childrenHolder.target.attachComponent<WorkerObserver>();
                     obs.fieldName.value = index.ToString();
                     obs.target.target = ((Worker)item);
                     children.Add().target = obs;

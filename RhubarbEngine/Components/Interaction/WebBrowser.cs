@@ -457,6 +457,7 @@ namespace RhubarbEngine.Components.Interaction
             if (browser == null) return;
             if (globalAudio.value) 
             {
+                frameInputBuffer.Push(new byte[engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
                 browser.AudioHandler = null;
             }
             else
@@ -477,7 +478,7 @@ namespace RhubarbEngine.Components.Interaction
             if (browser.IsBrowserInitialized)
             {
                 if(path.value != browser.Address)
-                      browser.LoadUrlAsync(path.value);
+                      browser.LoadUrlAsync(path.value).Start();
             }
             else
             {

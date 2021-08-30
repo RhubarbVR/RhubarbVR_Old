@@ -36,11 +36,11 @@ namespace RhubarbEngine.Components.ImGUI
             root = new SyncRef<HierarchyItem>(this, newRefIds);
         }
 
-        public void Initialize(Entity entity)
+        public void Initialize(Entity tentity)
         {
             var e =  entity.attachComponent<HierarchyItem>();
             root.target = e;
-            e.target.target = entity;
+            e.target.target = tentity;
         }
 
         public HierarchyRoot(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
