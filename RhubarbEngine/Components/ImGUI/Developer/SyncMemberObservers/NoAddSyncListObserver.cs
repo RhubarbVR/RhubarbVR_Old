@@ -15,34 +15,29 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
-
-    [Category("ImGUI/Begin")]
-    public class ImGUIBeginRow : UIWidgetList
+    [Category("ImGUI/Developer/SyncMemberObservers")]
+    public class NoAddSyncListObserver : SyncListBaseObserver, IObserver
     {
 
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-        }
-
-        public ImGUIBeginRow(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public NoAddSyncListObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public ImGUIBeginRow()
+        public NoAddSyncListObserver()
         {
         }
 
         public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
-            ImGui.Columns(children.Count());
-            foreach (var item in children)
+            ImGui.Text(fieldName.value ?? "NUll");
+            if (ImGui.BeginChild(referenceID.id.ToString()))
             {
-                item.target?.ImguiRender(imGuiRenderer,canvas);
-                ImGui.NextColumn();
+                RenderChildren(imGuiRenderer,canvas);
+                ImGui.EndChild();
             }
         }
+
     }
+
 }

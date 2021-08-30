@@ -139,10 +139,10 @@ namespace RhubarbEngine.Components.ImGUI
                 if (scale.value.x < 2 || scale.value.y < 2) throw new Exception("UI too Small");
                 framebuffer = CreateFramebuffer(scale.value.x, scale.value.y);
                 igr = new ImGuiRenderer(engine.renderManager.gd, framebuffer.OutputDescription, (int)scale.value.x, (int)scale.value.y, ColorSpaceHandling.Linear);
-                UIloaded = true;
                 Texture target = framebuffer.ColorTargets[0].Target;
                 TextureView view = engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
                 load(new RTexture2D(view));
+                UIloaded = true;
             }
             catch (Exception e)
             {
@@ -191,7 +191,7 @@ namespace RhubarbEngine.Components.ImGUI
                 ImGui.SetWindowSize(new Vector2(scale.value.x, scale.value.y));
                 if (element.target != null)
                 {
-                  element.target.ImguiRender(igr);
+                  element.target.ImguiRender(igr,this);
                 }
                 else
                 {

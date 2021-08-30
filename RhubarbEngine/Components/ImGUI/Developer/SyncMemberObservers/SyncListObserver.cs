@@ -16,34 +16,31 @@ using Veldrid;
 namespace RhubarbEngine.Components.ImGUI
 {
     [Category("ImGUI/Developer/SyncMemberObservers")]
-    public class SyncComponentListObserver : SyncListBaseObserver, IObserver
+    public class SyncListObserver : SyncListBaseObserver, IObserver
     {
 
 
-        public SyncComponentListObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public SyncListObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public SyncComponentListObserver()
+        public SyncListObserver()
         {
         }
 
         public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             ImGui.Text(fieldName.value ?? "NUll");
-            if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
-            {
-                Console.WriteLine("Trains1");
-            }
             if (ImGui.BeginChild(referenceID.id.ToString()))
             {
                 RenderChildren(imGuiRenderer,canvas);
                 ImGui.EndChild();
             }
-            if (ImGui.Button($"Attach Component##{referenceID.id}"))
+            if (ImGui.Button($"Add##{referenceID.id}"))
             {
-
+                target.target?.TryToAddToSyncList();
             }
+            
         }
 
     }

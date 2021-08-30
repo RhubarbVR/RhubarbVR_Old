@@ -29,6 +29,8 @@ namespace RhubarbEngine.Components.Interaction
     {
         public SyncRef<Entity> holder;
 
+        public SyncRef<IWorldObject> Referencer;
+
         public SyncRef<User> user;
 
         public Sync<InteractionSource> source;
@@ -63,6 +65,9 @@ namespace RhubarbEngine.Components.Interaction
             }
         }
 
+        public bool DropedRef => (timeout <= 16)&& (timeout != 0) && !gripping;
+
+        byte timeout = 0;
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
             base.CommonUpdate(startTime, Frame);
@@ -100,11 +105,24 @@ namespace RhubarbEngine.Components.Interaction
                     world.lastHolder = this;
                 }
             }
+            if (Referencer.target == null) return;
+            if (!gripping)
+            {
+                timeout++;
+                if(timeout > 16)
+                {
+                    Referencer.target = null;
+                }
+            }
         }
 
         private bool onGriping()
         {
-                switch (source.value)
+            if((engine.outputType == VirtualReality.OutputType.Screen)&&(source.value == InteractionSource.RightLaser))
+            {
+                return engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right);
+            }
+            switch (source.value)
                 {
                     case InteractionSource.None:
                         break;
@@ -138,6 +156,14 @@ namespace RhubarbEngine.Components.Interaction
             holder = new SyncRef<Entity>(this, newRefIds);
             user = new SyncRef<User>(this, newRefIds);
             source = new Sync<InteractionSource>(this, newRefIds);
+            Referencer = new SyncRef<IWorldObject>(this, newRefIds);
+            Referencer.Changed += Referencer_Changed;
+        }
+
+        private void Referencer_Changed(IChangeable obj)
+        {
+            timeout = 0;
+            Console.WriteLine("Changed To " + Referencer.target?.ReferenceID.id.ToHexString());
         }
 
         public GrabbableHolder(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

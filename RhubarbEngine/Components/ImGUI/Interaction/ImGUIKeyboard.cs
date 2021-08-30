@@ -41,14 +41,14 @@ namespace RhubarbEngine.Components.ImGUI
 
         public Sync<bool> caps;
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             ImGui.Dummy(new Vector2(0, 10));
             if (ImGui.BeginChild(id.value ?? "", new Vector2(size.value.x, size.value.y), border.value, windowflag.value))
             {
                 foreach (var item in children)
                 {
-                    item.target?.ImguiRender(imGuiRenderer);
+                    item.target?.ImguiRender(imGuiRenderer,canvas);
                 }
                 ImGui.EndChild();
             }

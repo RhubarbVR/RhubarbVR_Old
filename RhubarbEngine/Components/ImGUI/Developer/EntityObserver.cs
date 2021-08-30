@@ -80,15 +80,15 @@ namespace RhubarbEngine.Components.ImGUI
             }
         }
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
-            ImGui.Text($"{target.target?.name.value ?? "null"} ID:({target.target?.referenceID.id.ToString() ?? "null"})");
+            ImGui.Text($"{target.target?.name.value ?? "null"} ID:({target.target?.referenceID.id.ToHexString() ?? "null"})");
             foreach (var item in children)
             {
-                item.target?.ImguiRender(imGuiRenderer);
+                item.target?.ImguiRender(imGuiRenderer,canvas);
             }
             ImGui.EndChild();
-            if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+            if (ImGui.IsMouseClicked(ImGuiMouseButton.COUNT))
             {
                 world.lastEntityObserver = this;
             }

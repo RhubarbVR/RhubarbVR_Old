@@ -26,7 +26,7 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public virtual void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public virtual void ImguiRender(ImGuiRenderer imGuiRenderer,ImGUICanvas canvas)
         {
         }
     }

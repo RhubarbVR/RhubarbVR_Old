@@ -40,7 +40,7 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             ImGui.TextColored(color.value.ToRGBA().ToSystem(), text.value ?? "");
         }

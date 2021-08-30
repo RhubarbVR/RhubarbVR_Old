@@ -39,7 +39,7 @@ namespace RhubarbEngine.Components.ImGUI
 
     }
 
-    [Category("ImGUI/Developer/SyncMemberObservers")]
+    [Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
     public class EnumSyncObserver<T> : EnumSyncObserver, IObserver where T : struct,System.Enum
     {
 
@@ -53,13 +53,23 @@ namespace RhubarbEngine.Components.ImGUI
 
         string[] ve = Enum.GetNames(typeof(T));
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
+            if (target.target?.Driven ?? false)
+            {
+                var e = ImGui.GetStyleColorVec4(ImGuiCol.FrameBg);
+                var vec = (Vector4f)(*e);
+                ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 0.5f, 0, 0)).ToSystem());
+            }
             int c = Array.IndexOf(ve, Enum.GetName(typeof(T), (((Sync<T>)target.target).value)));
             ImGui.Combo((fieldName.value ?? "null") + $"##{referenceID.id}", ref c, ve, ve.Length);
             if (c != (int)(object)(((Sync<T>)target.target).value))
             {
                 ((Sync<T>)target.target).value = Enum.GetValues<T>()[c];
+            }
+            if (target.target?.Driven ?? false)
+            {
+                ImGui.PopStyleColor();
             }
         }
     }

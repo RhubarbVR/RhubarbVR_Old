@@ -14,22 +14,18 @@ using RhubarbEngine.Input;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using RhubarbEngine.Components.Interaction;
 
+namespace RhubarbEngine
+{
+
+}
+
 namespace RhubarbEngine.Components.Users
 {
+
     [Category(new string[] { "Users" })]
     public class SimpleSpawn : Component
     {
-        public static string ToHexString(ulong ouid)
-        {
-            string temp = BitConverter.ToString(BitConverter.GetBytes(ouid).Reverse().ToArray()).Replace("-", "");
 
-            while (temp.Substring(0, 1) == "0")
-            {
-                temp = temp.Substring(1);
-            }
-
-            return temp;
-        }
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
             if(!world.userLoaded)
@@ -39,7 +35,7 @@ namespace RhubarbEngine.Components.Users
             if(world.localUser.userroot.target == null)
             {
                 Entity rootent = world.RootEntity.addChild();
-                rootent.name.value = $"{world.localUser.username.value} (ID:{ToHexString(world.localUser.referenceID.id)})";
+                rootent.name.value = $"{world.localUser.username.value} (ID:{world.localUser.referenceID.id.ToHexString()})";
                 rootent.persistence.value = false;
                 rootent.manager = world.localUser;
                 UserRoot userRoot = rootent.attachComponent<UserRoot>();

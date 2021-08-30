@@ -36,13 +36,13 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             if (ImGui.BeginPopupContextVoid())
             {
                 foreach (var item in children)
                 {
-                    item.target?.ImguiRender(imGuiRenderer);
+                    item.target?.ImguiRender(imGuiRenderer, canvas);
                 }
                 ImGui.EndPopup();
             }

@@ -60,6 +60,8 @@ namespace Veldrid
         public ImGuiRenderer(GraphicsDevice gd, OutputDescription outputDescription, int width, int height)
             : this(gd, outputDescription, width, height, ColorSpaceHandling.Legacy) { }
 
+        bool inshlized;
+
         /// <summary>
         /// Constructs a new ImGuiRenderer.
         /// </summary>
@@ -75,22 +77,9 @@ namespace Veldrid
             _colorSpaceHandling = colorSpaceHandling;
             _windowWidth = width;
             _windowHeight = height;
-
-            context = ImGui.CreateContext();
-            ImGui.SetCurrentContext(context);
-
-            ImGui.GetIO().Fonts.AddFontDefault();
-            ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.ViewportsEnable;
-            ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.IsTouchScreen;
-            CreateDeviceResources(gd, outputDescription);
-            SetOpenTKKeyMappings();
-
-            SetPerFrameImGuiData(1f / 60f);
-
-            ImGui.NewFrame();
-            _frameBegun = true;
+            _outputDescription = outputDescription;
         }
-
+        OutputDescription _outputDescription;
         public void WindowResized(int width, int height)
         {
             _windowWidth = width;
@@ -373,7 +362,26 @@ namespace Veldrid
         /// </summary>
         public void Update(float deltaSeconds, InputSnapshot snapshot)
         {
-            ImGui.SetCurrentContext(context);
+            if (!inshlized)
+            {
+                context = ImGui.CreateContext();
+                ImGui.SetCurrentContext(context);
+                ImGui.GetIO().Fonts.AddFontDefault();
+                ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.ViewportsEnable;
+                ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.IsTouchScreen;
+                CreateDeviceResources(_gd, _outputDescription);
+                SetOpenTKKeyMappings();
+
+                SetPerFrameImGuiData(1f / 60f);
+
+                ImGui.NewFrame();
+                _frameBegun = true;
+                inshlized = true;
+            }
+            else
+            {
+                ImGui.SetCurrentContext(context);
+            }
             BeginUpdate(deltaSeconds);
             UpdateImGuiInput(snapshot);
             EndUpdate();
@@ -624,21 +632,21 @@ namespace Veldrid
         /// </summary>
         public void Dispose()
         {
-            _vertexBuffer.Dispose();
-            _indexBuffer.Dispose();
-            _projMatrixBuffer.Dispose();
-            _fontTexture.Dispose();
-            _vertexShader.Dispose();
-            _fragmentShader.Dispose();
-            _layout.Dispose();
-            _textureLayout.Dispose();
-            _pipeline.Dispose();
-            _mainResourceSet.Dispose();
-            _fontTextureResourceSet.Dispose();
+            _vertexBuffer?.Dispose();
+            _indexBuffer?.Dispose();
+            _projMatrixBuffer?.Dispose();
+            _fontTexture?.Dispose();
+            _vertexShader?.Dispose();
+            _fragmentShader?.Dispose();
+            _layout?.Dispose();
+            _textureLayout?.Dispose();
+            _pipeline?.Dispose();
+            _mainResourceSet?.Dispose();
+            _fontTextureResourceSet?.Dispose();
 
             foreach (IDisposable resource in _ownedResources)
             {
-                resource.Dispose();
+                resource?.Dispose();
             }
         }
 

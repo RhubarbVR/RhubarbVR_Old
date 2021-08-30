@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace RhubarbEngine
+{
+    public static class Helper
+    {
+        public static string ToHexString(this ulong ouid)
+        {
+            string temp = BitConverter.ToString(BitConverter.GetBytes(ouid).Reverse().ToArray()).Replace("-", "");
+
+            while (temp.Substring(0, 1) == "0")
+            {
+                temp = temp.Substring(1);
+            }
+
+            return temp;
+        }
+    }
+}

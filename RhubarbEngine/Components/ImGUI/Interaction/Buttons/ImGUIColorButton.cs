@@ -44,7 +44,7 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             if (ImGui.ColorButton(id.value ?? "", color.value.ToRGBA().ToSystem(), imGuiColorEditFlags.value))
             {

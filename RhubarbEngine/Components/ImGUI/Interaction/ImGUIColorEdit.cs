@@ -40,7 +40,7 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             Vector4 vale = value.value.ToRGBA().ToSystem();
             ImGui.ColorEdit4(label.value ?? "", ref vale);

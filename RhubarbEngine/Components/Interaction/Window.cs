@@ -83,7 +83,7 @@ namespace RhubarbEngine.Components.Interaction
 
         private bool clapsed;
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             var pos = ImGui.GetCursorPos();
             if ((world.grabedWindow != this) && (world.grabedWindow != null) && (ChildDock.target == null))
@@ -113,7 +113,7 @@ namespace RhubarbEngine.Components.Interaction
             }
             if (ChildDock.target == null)
             {
-                element.target?.ImguiRender(imGuiRenderer);
+                element.target?.ImguiRender(imGuiRenderer,canvas);
             }
             else
             {
@@ -146,7 +146,7 @@ namespace RhubarbEngine.Components.Interaction
                     ImGui.SetCursorPos(pos);
                     if (ImGui.BeginChildFrame((uint)referenceID.id, parentsize))
                     {
-                        element.target?.ImguiRender(imGuiRenderer);
+                        element.target?.ImguiRender(imGuiRenderer,canvas);
                         ImGui.EndChildFrame();
                     }
                     bool e = true;
@@ -171,7 +171,7 @@ namespace RhubarbEngine.Components.Interaction
                         clapsed = false;
                         if (ImGui.BeginChildFrame((uint)referenceID.id + 1, parentsize))
                         {
-                            ChildDock.target?.ImguiRender(imGuiRenderer);
+                            ChildDock.target?.ImguiRender(imGuiRenderer,canvas);
                             ImGui.EndChildFrame();
                         }
                     }
@@ -200,7 +200,7 @@ namespace RhubarbEngine.Components.Interaction
                     }
                     if (ImGui.BeginChildFrame((uint)referenceID.id, parentsize))
                     {
-                        element.target?.ImguiRender(imGuiRenderer);
+                        element.target?.ImguiRender(imGuiRenderer,canvas);
                         ImGui.EndChildFrame();
                     }
                     ImGui.SetCursorPos(pos);
@@ -212,7 +212,7 @@ namespace RhubarbEngine.Components.Interaction
                         clapsed = false;
                         if (ImGui.BeginChildFrame((uint)referenceID.id + 1, parentsize))
                         {
-                            ChildDock.target?.ImguiRender(imGuiRenderer);
+                            ChildDock.target?.ImguiRender(imGuiRenderer,canvas);
                             ImGui.EndChildFrame();
                         }
                     }
@@ -280,7 +280,7 @@ namespace RhubarbEngine.Components.Interaction
         {
             entity.attachComponent<Grabbable>();
             var col = entity.attachComponent<BoxCollider>();
-            var (e, mesh) = Helpers.MeshHelper.AddMesh<BoxMesh>(entity, "UIBackGround");
+            var (e, mesh,mit) = Helpers.MeshHelper.AddMesh<BoxMesh>(entity,world.staticAssets.basicUnlitShader ,"UIBackGround",2147483646);
             BackGround.setDriveTarget(mesh.Extent);
             colBackGround.setDriveTarget(col.boxExtents);
         }

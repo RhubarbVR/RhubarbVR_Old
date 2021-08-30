@@ -8,6 +8,7 @@ namespace RhubarbEngine.World
 {
     public interface IPrimitiveEditable: IWorldObject, ISyncMember
     {
+        public bool Driven { get; }
        public string primitiveString { get; set; }
     }
 }

@@ -269,5 +269,10 @@ namespace RhubarbEngine.World
         {
             return ((IEnumerable<IWorldObject>)this).GetEnumerator();
         }
+
+        public bool TryToAddToSyncList()
+        {
+            throw new NotSupportedException();
+        }
     }
 }

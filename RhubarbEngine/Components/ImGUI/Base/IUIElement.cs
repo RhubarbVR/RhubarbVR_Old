@@ -10,6 +10,6 @@ namespace RhubarbEngine.Components.ImGUI
 {
     public interface IUIElement: IWorldObject
     {
-        void ImguiRender(ImGuiRenderer imGuiRenderer);
+        void ImguiRender(ImGuiRenderer imGuiRenderer,ImGUICanvas canvas);
     }
 }

@@ -119,7 +119,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         private DateTime lastClick;
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             var tintval = tint.value;
             if (TintOnClick.value & (DateTime.UtcNow - lastClick) < new TimeSpan(0, 0, 0,0,(int)(TintOnClickTime.value*1000)))

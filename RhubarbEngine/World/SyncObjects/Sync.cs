@@ -85,6 +85,8 @@ namespace RhubarbEngine.World
 
         public string primitiveString { get { return value.ToString(); } set { SetValueAsString(value); } }
 
+        public bool Driven => isDriven;
+
         public void SetValueAsString(string svalue)
         {
             try

@@ -226,7 +226,7 @@ namespace RhubarbEngine.Managers
         {
             try
             {
-                var noneThreadedTask = Task.Run(() => { RenderNoneThreadedRenderObjectsInWorld(world); });
+                RenderNoneThreadedRenderObjectsInWorld(world);
                 Parallel.ForEach(world.updateLists.trenderObject, obj =>
                 {
                     try
@@ -238,7 +238,6 @@ namespace RhubarbEngine.Managers
                         Logger.Log("Failed To Render " + obj.GetType().Name + " Error " + e.ToString(), true);
                     }
                 });
-                noneThreadedTask.TimeOut(100).Wait();
             }
             catch 
             {

@@ -13,6 +13,8 @@ using Veldrid;
 using Veldrid.Sdl2;
 using System.Runtime.InteropServices;
 using g3;
+using RhubarbEngine.Components.Interaction;
+
 namespace RhubarbEngine.Components.Users
 {
     [Category(new string[] { "Users" })]
@@ -25,6 +27,7 @@ namespace RhubarbEngine.Components.Users
 
         public SyncRef<Entity> LeftHand;
         public SyncRef<Entity> RightHand;
+
 
         public SyncRef<User> user;
 
@@ -45,7 +48,6 @@ namespace RhubarbEngine.Components.Users
             posDriver = new Driver<Vector3f>(this, newRefIds);
             rotDriver = new Driver<Quaternionf>(this, newRefIds);
             scaleDriver = new Driver<Vector3f>(this, newRefIds);
-
         }
 
         public override void onLoaded()

@@ -39,7 +39,7 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             int c = (int)(object)value.value;
             var e = Enum.GetNames(typeof(T)).ToList();

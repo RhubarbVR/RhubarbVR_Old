@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.World
 {
-    public interface ISyncList: IWorldObject, IEnumerable<IWorldObject>
+    public interface ISyncList : IWorldObject, IEnumerable<IWorldObject>
     {
         public int Count();
+
+        public bool TryToAddToSyncList();
     }
 }

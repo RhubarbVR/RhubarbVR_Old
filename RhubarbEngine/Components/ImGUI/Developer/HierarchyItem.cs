@@ -110,7 +110,7 @@ namespace RhubarbEngine.Components.ImGUI
             }
         }
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             bool val = dropedDown.value;
             ImGui.SetNextItemOpen(val);
@@ -118,7 +118,7 @@ namespace RhubarbEngine.Components.ImGUI
                 {
                 foreach (var item in children) 
                     {
-                        item.target?.ImguiRender(imGuiRenderer);
+                        item.target?.ImguiRender(imGuiRenderer,canvas);
                     }
                     if (!val)
                     {

@@ -77,15 +77,21 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
-            if (ImGui.CollapsingHeader($"{target.target?.GetType().Name ?? "null"} ID:({target.target?.referenceID.id.ToString() ?? "null"}) ##{referenceID.id}"))
+            bool open = true;
+            if (ImGui.CollapsingHeader($"{target.target?.GetType().Name ?? "null"} ID:({target.target?.referenceID.id.ToString() ?? "null"}) ##{referenceID.id}",ref open))
             {
                 foreach (var item in children)
                 {
-                    item.target?.ImguiRender(imGuiRenderer);
+                    item.target?.ImguiRender(imGuiRenderer,canvas);
                 }
             }
+            if (!open)
+            {
+                target.target?.Dispose();
+            }
+
         }
     }
 }

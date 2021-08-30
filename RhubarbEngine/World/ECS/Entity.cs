@@ -174,7 +174,7 @@ namespace RhubarbEngine.World.ECS
         public Sync<bool> enabled;
 
         public Sync<bool> persistence;
-
+        [NoShow]
         public SyncObjList<Entity> _children;
 
         public SyncAbstractObjList<Component> _components;

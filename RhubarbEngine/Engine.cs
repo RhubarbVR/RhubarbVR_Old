@@ -44,7 +44,6 @@ namespace RhubarbEngine
 
         public DiscordRpcClient discordRpcClient;
 
-
         public void initialize(string[] _args, bool _verbose = false, bool _Rendering = true)
         {
             try

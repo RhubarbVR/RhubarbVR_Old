@@ -76,16 +76,16 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public virtual void ChildRender(int index,ImGuiRenderer imGuiRenderer)
+        public virtual void ChildRender(int index,ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
-            children[index].target?.ImguiRender(imGuiRenderer);
+            children[index].target?.ImguiRender(imGuiRenderer,canvas);
         }
 
-        public virtual void RenderChildren(ImGuiRenderer imGuiRenderer)
+        public virtual void RenderChildren(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             for (int i = 0; i < children.Count(); i++)
             {
-                ChildRender(i, imGuiRenderer);
+                ChildRender(i, imGuiRenderer,canvas);
             }
         }
     }

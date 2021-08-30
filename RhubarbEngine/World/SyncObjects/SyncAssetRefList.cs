@@ -11,7 +11,7 @@ using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
-    public class SyncAssetRefList<T> : Worker, IWorldObject, ISyncMember where T : IAsset
+    public class SyncAssetRefList<T> : Worker,ISyncList, IWorldObject, ISyncMember where T : IAsset
     {
         private SynchronizedCollection<AssetRef<T>> _syncreflist = new SynchronizedCollection<AssetRef<T>>(5);
 
@@ -162,6 +162,36 @@ namespace RhubarbEngine.World
             }
         }
 
+        int ISyncList.Count()
+        {
+            return this.Count();
+        }
+
+        public bool TryToAddToSyncList()
+        {
+            try
+            {
+                Add();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        IEnumerator<IWorldObject> IEnumerable<IWorldObject>.GetEnumerator()
+        {
+            foreach (var item in _syncreflist)
+            {
+                yield return (IWorldObject)item;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<IWorldObject>)this).GetEnumerator();
+        }
 
     }
 }

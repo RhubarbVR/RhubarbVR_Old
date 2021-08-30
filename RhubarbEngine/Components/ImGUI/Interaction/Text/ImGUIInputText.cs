@@ -44,7 +44,7 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             string val = text.value?? "";
             ImGui.InputText((label.value ?? "")+$"##{referenceID.id}", ref val, (uint)val.Length + 255, flags.value);

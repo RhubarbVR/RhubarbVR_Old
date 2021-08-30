@@ -2,6 +2,8 @@
 using RhubarbEngine.World.ECS;
 using System;
 using System.Reflection;
+using System.Threading.Tasks;
+using System.Threading;
 using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
@@ -12,6 +14,11 @@ namespace RhubarbEngine.Components.ImGUI
     public class WorkerObserver : UIWidget, IObserver
     {
         public Sync<string> fieldName;
+
+        [NoSave]
+        [NoShow]
+        [NoSync]
+        private Worker lastWorker;
 
         public SyncRef<Worker> target;
 
@@ -38,7 +45,9 @@ namespace RhubarbEngine.Components.ImGUI
         private void Target_Changed(IChangeable obj)
         {
             if (entity.manager != world.localUser) return;
-            BuildView();
+            var e = new Thread(BuildView,1024);
+            e.Priority = ThreadPriority.BelowNormal;
+            e.Start();
         }
 
         private void ClearOld()
@@ -55,6 +64,12 @@ namespace RhubarbEngine.Components.ImGUI
         {
             ClearOld();
             if (target.target == null) return;
+            if(lastWorker != null)
+            {
+                lastWorker.onDispose -= Target_onDispose;
+            }
+            target.target.onDispose += Target_onDispose;
+            lastWorker = target.target;
             Type type = target.target.GetType();
             if ((typeof(Entity).IsAssignableFrom(type)))
             {
@@ -76,6 +91,11 @@ namespace RhubarbEngine.Components.ImGUI
             {
                 BuildWorker();
             }
+        }
+
+        private void Target_onDispose(Worker obj)
+        {
+            this.Dispose();
         }
 
         public override void Dispose()
@@ -150,11 +170,25 @@ namespace RhubarbEngine.Components.ImGUI
             }
             else
             {
-                //Type a = typeof(EnumSyncObserver<>).MakeGenericType(gType);
-                //EnumSyncObserver obs = (EnumSyncObserver)entity.attachComponent(a);
-                //obs.fieldName.value = fieldName.value;
-                //obs.target.target = ((IPrimitiveEditable)target.target);
-                //root.target = obs;
+                BuildSyncObjListMember(false);
+            }
+        }
+
+        private void BuildSyncObjListMember(bool withAdd)
+        {
+            if (withAdd)
+            {
+                SyncListObserver obs = entity.attachComponent<SyncListObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((ISyncList)target.target);
+                root.target = obs;
+            }
+            else
+            {
+                NoAddSyncListObserver obs = entity.attachComponent<NoAddSyncListObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((ISyncList)target.target);
+                root.target = obs;
             }
         }
 
@@ -173,15 +207,19 @@ namespace RhubarbEngine.Components.ImGUI
             {
                 BuildSyncAbstractObjListMember(type);
             }
-            else if ((typeof(SyncAssetRefList<>).IsAssignableFrom(typeg)))
+            else if ((typeof(SyncRefList<>).IsAssignableFrom(typeg)) || (typeof(SyncValueList<>).IsAssignableFrom(typeg)) || (typeof(SyncAssetRefList<>).IsAssignableFrom(typeg)) || (typeof(SyncObjList<>).IsAssignableFrom(typeg)))
+            {
+                BuildSyncObjListMember(true);
+            }
+            else if ((typeof(SyncDelegate<>).IsAssignableFrom(typeg)) || (typeg == typeof(SyncDelegate)))
             {
 
             }
-            else if ((typeof(SyncDelegate<>).IsAssignableFrom(typeg)))
+            else if ((typeof(AssetRef<>).IsAssignableFrom(typeg)))
             {
 
             }
-            else if ((typeof(SyncObjList<>).IsAssignableFrom(typeg)))
+            else if ((typeof(Driver<>).IsAssignableFrom(typeg)))
             {
 
             }
@@ -191,11 +229,7 @@ namespace RhubarbEngine.Components.ImGUI
             }
             else if ((typeof(SyncUserList).IsAssignableFrom(typeg)))
             {
-
-            }
-            else if ((typeof(SyncValueList<>).IsAssignableFrom(typeg)))
-            {
-
+                BuildSyncObjListMember(false);
             }
             else
             {
@@ -211,11 +245,11 @@ namespace RhubarbEngine.Components.ImGUI
         {
         }
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer)
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             if (PassThrough)
             {
-                root.target?.ImguiRender(imGuiRenderer);
+                root.target?.ImguiRender(imGuiRenderer,canvas);
             }
             else
             {
