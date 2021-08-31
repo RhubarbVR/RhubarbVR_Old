@@ -41,14 +41,6 @@ namespace RhubarbEngine.Components.ImGUI
 
         public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
-            if (ImGui.IsMouseDown(ImGuiMouseButton.Left))
-            {
-                Console.WriteLine("Yep");
-            }
-            else
-            {
-                Console.WriteLine("NO");
-            }
             bool Changeboarder = false;
             if (target.target?.Driven ?? false)
             {

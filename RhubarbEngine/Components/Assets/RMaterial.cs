@@ -224,7 +224,7 @@ namespace RhubarbEngine.Components.Assets
             MaterialField newField = Fields.Add(vatype, true);
             newField.fieldName.value = fieldName;
             newField.shaderType.value = shader;
-            newField.valueType.value = type;
+            newField.valueType = type;
 
         }
 
@@ -242,9 +242,9 @@ namespace RhubarbEngine.Components.Assets
                         {
                             fildvalue.shaderType.value = item.shaderType;
                         }
-                        if (fildvalue.valueType.value != item.valueType)
+                        if (fildvalue.valueType != item.valueType)
                         {
-                            fildvalue.valueType.value = item.valueType;
+                            fildvalue.valueType = item.valueType;
                         }
                         val = true;
                     }

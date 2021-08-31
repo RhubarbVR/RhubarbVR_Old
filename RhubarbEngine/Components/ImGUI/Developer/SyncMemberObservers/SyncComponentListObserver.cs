@@ -30,12 +30,13 @@ namespace RhubarbEngine.Components.ImGUI
 
         public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
-            if (ImGui.BeginChild(referenceID.id.ToString()))
+            
+            if (ImGui.BeginChild(referenceID.id.ToString(),new Vector2(ImGui.GetWindowContentRegionWidth(), ImGui.GetFrameHeightWithSpacing() - 50f)))
             {
                 RenderChildren(imGuiRenderer,canvas);
                 ImGui.EndChild();
             }
-            if (ImGui.Button($"Attach Component##{referenceID.id}"))
+            if (ImGui.Button($"Attach Component##{referenceID.id}",new Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
             {
 
             }

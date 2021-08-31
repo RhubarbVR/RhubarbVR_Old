@@ -17,25 +17,25 @@ namespace RhubarbEngine.Components.ImGUI
 {
 
     [Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
-    public class Vector4fSyncObserver : UIWidget, IObserver
+    public class FloatSyncObserver : UIWidget, IObserver
     {
         public Sync<string> fieldName;
 
-        public SyncRef<Sync<Vector4f>> target;
+        public SyncRef<Sync<float>> target;
 
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
-            target = new SyncRef<Sync<Vector4f>>(this, newRefIds);
+            target = new SyncRef<Sync<float>>(this, newRefIds);
             fieldName = new Sync<string>(this, newRefIds);
         }
 
 
-        public Vector4fSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public FloatSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public Vector4fSyncObserver()
+        public FloatSyncObserver()
         {
         }
 
@@ -66,7 +66,7 @@ namespace RhubarbEngine.Components.ImGUI
             if (source != null)
             {
                     var type = source.Referencer.target?.GetType();
-                    if (typeof(Sync<Vector4f>).IsAssignableFrom(type))
+                    if (typeof(IPrimitiveEditable).IsAssignableFrom(type))
                     {
                         Changeboarder = true;
                     }
@@ -76,11 +76,11 @@ namespace RhubarbEngine.Components.ImGUI
                 ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 3);
                 ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
             }
-            Vector4 val = target.target?.value.ToSystemNumrics()??Vector4.Zero;
-            if(ImGui.DragFloat4((fieldName.value ?? "null") + $"##{referenceID.id}", ref val,0.1f,-10000, 10000, "%.2f", ImGuiSliderFlags.NoRoundToFormat))
+            float val = target.target?.value??0;
+            if(ImGui.DragFloat((fieldName.value ?? "null") + $"##{referenceID.id}", ref val))
             {
                 if(target.target != null)
-                    target.target.value = (Vector4f)val;
+                    target.target.value = val;
             }
             if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
             {
@@ -97,9 +97,9 @@ namespace RhubarbEngine.Components.ImGUI
             {
                 if (ImGui.IsItemHovered() && source.DropedRef)
                 {
-                    Sync<Vector4f> e = (Sync<Vector4f>)source.Referencer.target;
+                    IPrimitiveEditable e = (IPrimitiveEditable)source.Referencer.target;
                     if (target.target != null)
-                        target.target.value = e.value;
+                        target.target.primitiveString = e.primitiveString;
                     source.Referencer.target = null;
                 }
                 ImGui.PopStyleVar();

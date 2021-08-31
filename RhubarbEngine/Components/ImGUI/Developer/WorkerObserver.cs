@@ -86,6 +86,12 @@ namespace RhubarbEngine.Components.ImGUI
                     comp.target.target = (Component)target.target;
                     root.target = comp;
                 }
+                else if ((typeof(Render.Material.Fields.MaterialField).IsAssignableFrom(type)))
+                {
+                    var comp = entity.attachComponent<MaterialFieldObserver>();
+                    comp.target.target = (Render.Material.Fields.MaterialField)target.target;
+                    root.target = comp;
+                }
                 else if ((typeof(ISyncMember).IsAssignableFrom(type)))
                 {
                     BuildSyncMember(type);
@@ -116,15 +122,27 @@ namespace RhubarbEngine.Components.ImGUI
             }
         }
 
+        [NoSave]
+        [NoShow]
+        [NoSync]
+        Entity e;
+
         private void BuildWorker()
         {
             Type type = target.target.GetType();
+            //This is a temp fix
+            if (e == null)
+            {
+                e = entity.addChild(type.Name + "Children");
+                e.persistence.value = false;
+            }
+            //I should remove on change update before initialized or add a on initialized check inside this function
             FieldInfo[] fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             foreach (var field in fields)
             {
                 if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute),false).Length <= 0))
                 {
-                    var obs = entity.attachComponent<WorkerObserver>();
+                    var obs = e.attachComponent<WorkerObserver>();
                     obs.fieldName.value = field.Name;
                     obs.target.target = ((Worker)field.GetValue(target.target));
                     children.Add().target = obs;
@@ -161,6 +179,27 @@ namespace RhubarbEngine.Components.ImGUI
                 obs.target.target = ((Sync<bool>)target.target);
                 root.target = obs;
             }
+            else if (gType == typeof(int))
+            {
+                var obs = entity.attachComponent<IntSyncObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((Sync<int>)target.target);
+                root.target = obs;
+            }
+            else if (gType == typeof(float))
+            {
+                var obs = entity.attachComponent<FloatSyncObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((Sync<float>)target.target);
+                root.target = obs;
+            }
+            else if (gType == typeof(double))
+            {
+                var obs = entity.attachComponent<DoubleSyncObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((Sync<double>)target.target);
+                root.target = obs;
+            }
             else if (gType == typeof(Colorf))
             {
                 var obs = entity.attachComponent <ColorfSyncObserver>();
@@ -194,6 +233,27 @@ namespace RhubarbEngine.Components.ImGUI
                 var obs = entity.attachComponent<QuaternionfSyncObserver>();
                 obs.fieldName.value = fieldName.value;
                 obs.target.target = ((Sync<Quaternionf>)target.target);
+                root.target = obs;
+            }
+            else if (gType == typeof(Vector2d))
+            {
+                var obs = entity.attachComponent<Vector2dSyncObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((Sync<Vector2d>)target.target);
+                root.target = obs;
+            }
+            else if (gType == typeof(Vector3d))
+            {
+                var obs = entity.attachComponent<Vector3dSyncObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((Sync<Vector3d>)target.target);
+                root.target = obs;
+            }
+            else if (gType == typeof(Vector4d))
+            {
+                var obs = entity.attachComponent<Vector4dSyncObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((Sync<Vector4d>)target.target);
                 root.target = obs;
             }
             else

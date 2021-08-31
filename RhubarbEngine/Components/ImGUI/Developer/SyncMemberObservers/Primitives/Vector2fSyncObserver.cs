@@ -77,7 +77,7 @@ namespace RhubarbEngine.Components.ImGUI
                 ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
             }
             Vector2 val = target.target?.value.ToSystemNumric()??Vector2.Zero;
-            if(ImGui.DragFloat2((fieldName.value ?? "null") + $"##{referenceID.id}", ref val,0.001f,-10000, 10000, "%.2f"))
+            if(ImGui.DragFloat2((fieldName.value ?? "null") + $"##{referenceID.id}", ref val,0.1f,-10000, 10000, "%.2f", ImGuiSliderFlags.NoRoundToFormat))
             {
                 if(target.target != null)
                     target.target.value = (Vector2f)val;

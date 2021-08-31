@@ -13,10 +13,11 @@ namespace RhubarbEngine.Render.Material.Fields
 {
     public abstract class MaterialField: Worker ,IWorldObject
     {
-        public Sync<ShaderValueType> valueType;
+        public ShaderValueType valueType;
 
+        [NoShow]
         public Sync<ShaderType> shaderType;
-
+        [NoShow]
         public Sync<string> fieldName;
 
         [NoShow]
@@ -43,7 +44,6 @@ namespace RhubarbEngine.Render.Material.Fields
 
         public override void inturnalSyncObjs(bool newRefIds)
         {
-            valueType = new Sync<ShaderValueType>(this, newRefIds);
             shaderType = new Sync<ShaderType>(this, newRefIds);
             fieldName = new Sync<string>(this, newRefIds);
         }

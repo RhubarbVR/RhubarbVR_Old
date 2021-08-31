@@ -17,25 +17,25 @@ namespace RhubarbEngine.Components.ImGUI
 {
 
     [Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
-    public class Vector4fSyncObserver : UIWidget, IObserver
+    public class Vector4dSyncObserver : UIWidget, IObserver
     {
         public Sync<string> fieldName;
 
-        public SyncRef<Sync<Vector4f>> target;
+        public SyncRef<Sync<Vector4d>> target;
 
         public override void buildSyncObjs(bool newRefIds)
         {
             base.buildSyncObjs(newRefIds);
-            target = new SyncRef<Sync<Vector4f>>(this, newRefIds);
+            target = new SyncRef<Sync<Vector4d>>(this, newRefIds);
             fieldName = new Sync<string>(this, newRefIds);
         }
 
 
-        public Vector4fSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public Vector4dSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
         }
-        public Vector4fSyncObserver()
+        public Vector4dSyncObserver()
         {
         }
 
@@ -66,7 +66,7 @@ namespace RhubarbEngine.Components.ImGUI
             if (source != null)
             {
                     var type = source.Referencer.target?.GetType();
-                    if (typeof(Sync<Vector4f>).IsAssignableFrom(type))
+                    if (typeof(Sync<Vector4d>).IsAssignableFrom(type))
                     {
                         Changeboarder = true;
                     }
@@ -76,12 +76,12 @@ namespace RhubarbEngine.Components.ImGUI
                 ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 3);
                 ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
             }
-            Vector4 val = target.target?.value.ToSystemNumrics()??Vector4.Zero;
-            if(ImGui.DragFloat4((fieldName.value ?? "null") + $"##{referenceID.id}", ref val,0.1f,-10000, 10000, "%.2f", ImGuiSliderFlags.NoRoundToFormat))
-            {
-                if(target.target != null)
-                    target.target.value = (Vector4f)val;
-            }
+            Vector4d val = target.target?.value ?? Vector4d.Zero;
+                if (ImGui.DragScalarN((fieldName.value ?? "null") + $"##{referenceID.id}", ImGuiDataType.Double, (IntPtr)(&val), 3, 0.1f))
+                {
+                    if (target.target != null)
+                        target.target.value = val;
+                }
             if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
             {
                 if(source != null)
@@ -97,7 +97,7 @@ namespace RhubarbEngine.Components.ImGUI
             {
                 if (ImGui.IsItemHovered() && source.DropedRef)
                 {
-                    Sync<Vector4f> e = (Sync<Vector4f>)source.Referencer.target;
+                    Sync<Vector4d> e = (Sync<Vector4d>)source.Referencer.target;
                     if (target.target != null)
                         target.target.value = e.value;
                     source.Referencer.target = null;

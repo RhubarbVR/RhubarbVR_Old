@@ -15,10 +15,7 @@ namespace RhubarbEngine.World.ECS
 {
     public class Entity : Worker,IWorldObject
     {
-        public Sync<Vector3f> position;
 
-        [NoSave]
-        public SyncRef<User> _manager;
         [NoShow]
         [NoSave]
         [NoSync]
@@ -65,6 +62,8 @@ namespace RhubarbEngine.World.ECS
             }
         }
 
+        public Sync<Vector3f> position;
+
         public Sync<Quaternionf> rotation;
 
         public Sync<Vector3f> scale;
@@ -77,7 +76,12 @@ namespace RhubarbEngine.World.ECS
         [NoSync]
         private Entity internalParent;
 
+        [NoSave]
+        public SyncRef<User> _manager;
+
         public SyncRef<Entity> parent;
+
+        public Sync<RemderLayers> remderlayer;
 
         public void AddPhysicsDisableder(IPhysicsDisableder physicsDisableder)
         {
@@ -176,10 +180,6 @@ namespace RhubarbEngine.World.ECS
         public Sync<bool> persistence;
         [NoShow]
         public SyncObjList<Entity> _children;
-
-        public SyncAbstractObjList<Component> _components;
-
-        public Sync<RemderLayers> remderlayer;
 
         public bool parentEnabled = true;
 
@@ -576,6 +576,9 @@ namespace RhubarbEngine.World.ECS
                 }
             }
         }
+
+
+        public SyncAbstractObjList<Component> _components;
 
         public Entity(IWorldObject _parent,bool newRefIds=true) : base(_parent.World, _parent, newRefIds)
         {
