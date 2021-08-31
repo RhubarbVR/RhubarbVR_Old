@@ -36,7 +36,24 @@ namespace g3
         public Colorf(Colorf copy) { r = copy.r; g = copy.g; b = copy.b; a = copy.a; }
         public Colorf(Colorf copy, float newAlpha) { r = copy.r; g = copy.g; b = copy.b; a = newAlpha; }
 
+        public static explicit operator Vector4f(Colorf color) => color.ToRGBA();
 
+        public static explicit operator Colorf(Vector4f color) => FromRGBA(ref color);
+
+        public unsafe Vector4f ToRGBA()
+        {
+            fixed(Colorf* e = &this)
+            {
+                return *(Vector4f*)e;
+            }
+        }
+        public static unsafe Colorf FromRGBA(ref Vector4f l)
+        {
+            fixed (Vector4f* e = &l)
+            {
+                return *(Colorf*)e;
+            }
+        }
         public Colorf Clone(float fAlphaMultiply = 1.0f)
         {
             return new Colorf(r, g, b, a * fAlphaMultiply);
@@ -54,10 +71,7 @@ namespace g3
             float a = (r - v2.r), b = (g - v2.g), c = (b - v2.b), d = (a - v2.a);
             return a * a + b * b + c * c + d * d;
         }
-        public Vector4f ToRGBA()
-        {
-            return new Vector4f(r, g, b,a);
-        }
+
         public Vector3f ToRGB()
         {
             return new Vector3f(r, g, b);

@@ -12,6 +12,7 @@ using g3;
 using System.Numerics;
 using ImGuiNET;
 using Veldrid;
+using System.Threading;
 
 namespace RhubarbEngine.Components.ImGUI
 {
@@ -39,7 +40,9 @@ namespace RhubarbEngine.Components.ImGUI
         private void Target_Changed(IChangeable obj)
         {
             if (entity.manager != world.localUser) return;
-            BuildView();
+            var e = new Thread(BuildView, 1024);
+            e.Priority = ThreadPriority.BelowNormal;
+            e.Start();
         }
 
         private void ClearOld()
@@ -53,19 +56,23 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void BuildView()
         {
-            ClearOld();
-            if (target.target == null) return;
-            FieldInfo[] fields = target.target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            foreach (var field in fields)
+            try
             {
-                if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
+                ClearOld();
+                if (target.target == null) return;
+                FieldInfo[] fields = target.target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                foreach (var field in fields)
                 {
-                    var obs = entity.attachComponent<WorkerObserver>();
-                    obs.fieldName.value = field.Name;
-                    obs.target.target = ((Worker)field.GetValue(target.target));
-                    children.Add().target = obs;
+                    if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
+                    {
+                        var obs = entity.attachComponent<WorkerObserver>();
+                        obs.fieldName.value = field.Name;
+                        obs.target.target = ((Worker)field.GetValue(target.target));
+                        children.Add().target = obs;
+                    }
                 }
             }
+            catch { }
         }
 
 
@@ -80,11 +87,42 @@ namespace RhubarbEngine.Components.ImGUI
         public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             bool open = true;
-            if (ImGui.CollapsingHeader($"{target.target?.GetType().Name ?? "null"} ID:({target.target?.referenceID.id.ToString() ?? "null"}) ##{referenceID.id}",ref open))
+            Vector2 max;
+            Vector2 min;
+            if (ImGui.CollapsingHeader($"{target.target?.GetType().Name ?? "null"} ID:({target.target?.referenceID.id.ToHexString() ?? "null"}) ##{referenceID.id}",ref open))
             {
+                max = ImGui.GetItemRectMax();
+                min = ImGui.GetItemRectMin();
                 foreach (var item in children)
                 {
                     item.target?.ImguiRender(imGuiRenderer,canvas);
+                }
+            }
+            else
+            {
+                max = ImGui.GetItemRectMax();
+                min = ImGui.GetItemRectMin();
+            }
+            if (ImGui.IsMouseHoveringRect(min, max)&&ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+            {
+                Interaction.GrabbableHolder source = null;
+                switch (canvas.imputPlane.target?.source ?? Interaction.InteractionSource.None)
+                {
+                    case Interaction.InteractionSource.LeftLaser:
+                        source = world.LeftLaserGrabbableHolder;
+                        break;
+                    case Interaction.InteractionSource.RightLaser:
+                        source = world.RightLaserGrabbableHolder;
+                        break;
+                    case Interaction.InteractionSource.HeadLaser:
+                        source = world.HeadLaserGrabbableHolder;
+                        break;
+                    default:
+                        break;
+                }
+                if (source != null)
+                {
+                    source.Referencer.target = target.target;
                 }
             }
             if (!open)

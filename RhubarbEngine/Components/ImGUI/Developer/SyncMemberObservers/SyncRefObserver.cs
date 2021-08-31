@@ -16,7 +16,7 @@ using Veldrid;
 namespace RhubarbEngine.Components.ImGUI
 {
     [Category("ImGUI/Developer/SyncMemberObservers")]
-    public class SyncRefObserver<T> : SyncRefObserver, IObserver
+    public class SyncRefObserver<T> : SyncRefObserver, IObserver where T: class,IWorldObject
     {
 
         public SyncRefObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -53,9 +53,12 @@ namespace RhubarbEngine.Components.ImGUI
             }
             if (source != null)
             {
-                //check if is type
                 var type = source.Referencer.target?.GetType();
                 if (typeof(T).IsAssignableFrom(type))
+                {
+                    Changeboarder = true;
+                }
+                else if (typeof(SyncRef<T>).IsAssignableFrom(type))
                 {
                     Changeboarder = true;
                 }
@@ -98,7 +101,20 @@ namespace RhubarbEngine.Components.ImGUI
             {
                 if (ImGui.IsItemHovered() && source.DropedRef)
                 {
-                    //OnDrop
+                    var type = source.Referencer.target?.GetType();
+                    if (typeof(T).IsAssignableFrom(type))
+                    {
+                        if(target.target != null)
+                            target.target.targetIWorldObject = source.Referencer.target;
+                        source.Referencer.target = null;
+                    }
+
+                    else if (typeof(SyncRef<T>).IsAssignableFrom(type))
+                    {
+                        if (target.target != null)
+                            target.target.targetIWorldObject = ((SyncRef<T>)source.Referencer.target).target;
+                        source.Referencer.target = null;
+                    }
                 }
                 ImGui.PopStyleVar();
                 ImGui.PopStyleColor();

@@ -82,6 +82,7 @@ namespace g3
                     return Vector2f.Zero;
             }
         }
+
         [IgnoreMember]
         public bool IsNormalized {
 			get { return Math.Abs( (x * x + y * y) - 1) < MathUtil.ZeroTolerancef; }

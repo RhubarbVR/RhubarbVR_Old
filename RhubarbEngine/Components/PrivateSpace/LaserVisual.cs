@@ -104,6 +104,7 @@ namespace RhubarbEngine.Components.PrivateSpace
                 {
                     input.RightLaser.cursorChange += UpdateCursor;
                 }
+                bind = true;
             }
             Vector3d hitvector = Vector3d.Zero;
             switch (source.value)

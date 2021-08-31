@@ -95,11 +95,11 @@ namespace RhubarbEngine.Managers
             running = true;
             if (OpenAl)
             {
-                task = new Thread(OpenALUpdater);
+                task = new Thread(OpenALUpdater,1024 * 4);
             }
             else
             {
-                task = new Thread(NaudioUpdater);
+                task = new Thread(NaudioUpdater, 1024 * 4);
             }
             task.Name = "Audio";
             task.IsBackground = true;

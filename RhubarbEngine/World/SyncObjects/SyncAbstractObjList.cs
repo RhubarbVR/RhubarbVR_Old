@@ -274,5 +274,10 @@ namespace RhubarbEngine.World
         {
             throw new NotSupportedException();
         }
+
+        public void Remove(int index)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -11,7 +11,7 @@ using RhubarbEngine.Components.Assets;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
-    public abstract class MaterialField:Worker
+    public abstract class MaterialField: Worker ,IWorldObject
     {
         public Sync<ShaderValueType> valueType;
 
@@ -19,8 +19,13 @@ namespace RhubarbEngine.Render.Material.Fields
 
         public Sync<string> fieldName;
 
+        [NoShow]
+        [NoSave]
+        [NoSync]
         public BindableResource resource;
 
+        [NoShow]
+        [NoSave]
         [NoSync]
         public RMaterial rMaterial => (RMaterial)parent.Parent;
 

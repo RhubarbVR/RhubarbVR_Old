@@ -32,6 +32,7 @@ namespace RhubarbEngine.World
         private SynchronizedCollection<User> _synclist = new SynchronizedCollection<User>(5);
         [NoSave]
         [NoSync]
+        [NoShow]
         public User this[int i]
         {
             get
@@ -50,6 +51,7 @@ namespace RhubarbEngine.World
         {
             return _synclist.Count;
         }
+        [NoShow]
         [NoSave]
         [NoSync]
         public User Add(bool Refid = true)

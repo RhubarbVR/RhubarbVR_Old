@@ -327,6 +327,14 @@ namespace RhubarbEngine.Components.Interaction
         private bool updateUrl = false;
 
         ChromiumWebBrowser browser;
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            load(null, true);
+            browser?.Dispose();
+        }
+
         public override void OnAttach()
         {
             base.OnAttach();
@@ -448,7 +456,13 @@ namespace RhubarbEngine.Components.Interaction
         private void AudioType_Changed(IChangeable obj)
         {
             loaded = false;
-            browser.Dispose();
+            try
+            {
+                frameInputBuffer.Push(new byte[engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
+                browser.AudioHandler = null;
+                browser.Dispose();
+            }
+            catch { }
             onLoaded();
         }
 

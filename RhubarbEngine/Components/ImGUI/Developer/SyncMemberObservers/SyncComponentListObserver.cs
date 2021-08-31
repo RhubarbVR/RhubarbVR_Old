@@ -18,7 +18,7 @@ namespace RhubarbEngine.Components.ImGUI
     [Category("ImGUI/Developer/SyncMemberObservers")]
     public class SyncComponentListObserver : SyncListBaseObserver, IObserver
     {
-
+        public override bool removeable => false;
 
         public SyncComponentListObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
@@ -30,11 +30,6 @@ namespace RhubarbEngine.Components.ImGUI
 
         public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
-            ImGui.Text(fieldName.value ?? "NUll");
-            if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
-            {
-                Console.WriteLine("Trains1");
-            }
             if (ImGui.BeginChild(referenceID.id.ToString()))
             {
                 RenderChildren(imGuiRenderer,canvas);

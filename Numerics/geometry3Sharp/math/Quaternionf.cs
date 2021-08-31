@@ -554,6 +554,8 @@ namespace g3
             return new Quaternionf(num4, num5, num6, num3);
         }
 
+        public static explicit operator Quaternionf(Vector3f v)=> CreateFromEuler(v.x,v.y,v.z);
+
         public static Quaternionf CreateFromEuler(float yaw, float pitch, float roll)
         {
             

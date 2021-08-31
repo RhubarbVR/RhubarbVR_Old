@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Threading;
 using Veldrid;
+using g3;
 
 namespace RhubarbEngine.Components.ImGUI
 {
@@ -52,45 +53,49 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void ClearOld()
         {
-            root.target?.Dispose();
-            foreach (var item in children)
-            {
-                item.target?.Dispose();
-            }
-            children.Clear();
+                root.target?.Dispose();
+                foreach (var item in children)
+                {
+                    item.target?.Dispose();
+                }
+                children.Clear();
         }
 
         private void BuildView()
         {
-            ClearOld();
-            if (target.target == null) return;
-            if(lastWorker != null)
+            try
             {
-                lastWorker.onDispose -= Target_onDispose;
+                ClearOld();
+                if (target.target == null) return;
+                if (lastWorker != null)
+                {
+                    lastWorker.onDispose -= Target_onDispose;
+                }
+                target.target.onDispose += Target_onDispose;
+                lastWorker = target.target;
+                Type type = target.target.GetType();
+                if ((typeof(Entity).IsAssignableFrom(type)))
+                {
+                    var comp = entity.attachComponent<EntityObserver>();
+                    comp.target.target = (Entity)target.target;
+                    root.target = comp;
+                }
+                else if ((typeof(Component).IsAssignableFrom(type)))
+                {
+                    var comp = entity.attachComponent<ComponentObserver>();
+                    comp.target.target = (Component)target.target;
+                    root.target = comp;
+                }
+                else if ((typeof(ISyncMember).IsAssignableFrom(type)))
+                {
+                    BuildSyncMember(type);
+                }
+                else
+                {
+                    BuildWorker();
+                }
             }
-            target.target.onDispose += Target_onDispose;
-            lastWorker = target.target;
-            Type type = target.target.GetType();
-            if ((typeof(Entity).IsAssignableFrom(type)))
-            {
-                var comp = entity.attachComponent<EntityObserver>();
-                comp.target.target = (Entity)target.target;
-                root.target = comp;
-            }
-            else if ((typeof(Component).IsAssignableFrom(type)))
-            {
-                var comp = entity.attachComponent<ComponentObserver>();
-                comp.target.target = (Component)target.target;
-                root.target = comp;
-            }
-            else if ((typeof(ISyncMember).IsAssignableFrom(type)))
-            {
-                BuildSyncMember(type);
-            }
-            else
-            {
-                BuildWorker();
-            }
+            catch { }
         }
 
         private void Target_onDispose(Worker obj)
@@ -148,6 +153,48 @@ namespace RhubarbEngine.Components.ImGUI
                     obs.target.target = ((IPrimitiveEditable)target.target);
                     root.target = obs;
                 }
+            }
+            else if (gType == typeof(bool))
+            {
+                var obs = entity.attachComponent<BoolSyncObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((Sync<bool>)target.target);
+                root.target = obs;
+            }
+            else if (gType == typeof(Colorf))
+            {
+                var obs = entity.attachComponent <ColorfSyncObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((Sync<Colorf>)target.target);
+                root.target = obs;
+            }
+            else if (gType == typeof(Vector2f))
+            {
+                var obs = entity.attachComponent<Vector2fSyncObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((Sync<Vector2f>)target.target);
+                root.target = obs;
+            }
+            else if (gType == typeof(Vector3f))
+            {
+                var obs = entity.attachComponent<Vector3fSyncObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((Sync<Vector3f>)target.target);
+                root.target = obs;
+            }
+            else if (gType == typeof(Vector4f))
+            {
+                var obs = entity.attachComponent<Vector4fSyncObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((Sync<Vector4f>)target.target);
+                root.target = obs;
+            }
+            else if (gType == typeof(Quaternionf))
+            {
+                var obs = entity.attachComponent<QuaternionfSyncObserver>();
+                obs.fieldName.value = fieldName.value;
+                obs.target.target = ((Sync<Quaternionf>)target.target);
+                root.target = obs;
             }
             else
             {

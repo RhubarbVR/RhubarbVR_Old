@@ -10,6 +10,8 @@ namespace RhubarbEngine.World
     {
         public int Count();
 
+        public void Remove(int index);
+
         public bool TryToAddToSyncList();
     }
 }

@@ -17,6 +17,8 @@ namespace RhubarbEngine.Components.ImGUI
 {
     public class SyncListBaseObserver : UIWidget, IObserver
     {
+        public virtual bool removeable => true;
+
         public Sync<string> fieldName;
 
         public SyncRef<ISyncList> target;
@@ -78,7 +80,18 @@ namespace RhubarbEngine.Components.ImGUI
 
         public virtual void ChildRender(int index,ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
-            children[index].target?.ImguiRender(imGuiRenderer,canvas);
+            if(children[index].target != null)
+            {
+                children[index].target.ImguiRender(imGuiRenderer, canvas);
+                if (removeable)
+                {
+                    ImGui.SameLine();
+                    if (ImGui.Button("X##" + referenceID.id.ToString()))
+                    {
+                        target.target?.Remove(index);
+                    }
+                }
+            }
         }
 
         public virtual void RenderChildren(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)

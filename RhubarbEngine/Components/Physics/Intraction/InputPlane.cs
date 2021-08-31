@@ -140,6 +140,10 @@ namespace RhubarbEngine.Components.Physics
         {
             if (StopMousePos) return false;
             if (isNotTakingInput) return false;
+            if(engine.outputType == VirtualReality.OutputType.Screen)
+            {
+                return engine.inputManager.mainWindows.GetMouseButton(button);
+            }
             switch (source)
             {
                 case InteractionSource.None:
@@ -186,6 +190,7 @@ namespace RhubarbEngine.Components.Physics
                     switch (button)
                     {
                         case MouseButton.Left:
+                            //Need to make not a single frame
                             return input.PrimaryPress(Input.Creality.Right);
                             break;
                         case MouseButton.Middle:
@@ -221,7 +226,7 @@ namespace RhubarbEngine.Components.Physics
                 case InteractionSource.RightFinger:
                     break;
                 case InteractionSource.HeadLaser:
-                    return engine.inputManager.mainWindows.GetMouseButtonDown(button);
+                    return engine.inputManager.mainWindows.GetMouseButton(button);
                     break;
                 case InteractionSource.HeadFinger:
                     break;

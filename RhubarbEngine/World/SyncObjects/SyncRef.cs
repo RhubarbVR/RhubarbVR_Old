@@ -19,7 +19,7 @@ namespace RhubarbEngine.World
             set;
         }
 
-        public IWorldObject targetIWorldObject { get; }
+        public IWorldObject targetIWorldObject { get; set; }
     }
 
     public class SyncRef<T> : Worker, ISyncRef, DriveMember<NetPointer> ,IWorldObject, ISyncMember where T : class,IWorldObject
@@ -30,7 +30,7 @@ namespace RhubarbEngine.World
 
         private T _target;
 
-        public IWorldObject targetIWorldObject => target;
+        public IWorldObject targetIWorldObject { get { return target; } set { if(value != null) this.value = value.ReferenceID; } }
 
         public virtual T target
         {

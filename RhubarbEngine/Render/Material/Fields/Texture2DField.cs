@@ -12,7 +12,7 @@ using System.IO;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
-    public class Texture2DField : MaterialField
+    public class Texture2DField : MaterialField, IWorldObject
     {
         public AssetRef<RTexture2D> field;
         public override void buildSyncObjs(bool newRefIds)

@@ -183,5 +183,9 @@ namespace RhubarbEngine.World
         {
             return ((IEnumerable<IWorldObject>)this).GetEnumerator();
         }
+        public void Remove(int index)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -12,6 +12,7 @@ using g3;
 using System.Numerics;
 using ImGuiNET;
 using Veldrid;
+using System.Threading;
 
 namespace RhubarbEngine.Components.ImGUI
 {
@@ -36,7 +37,9 @@ namespace RhubarbEngine.Components.ImGUI
         private void Target_Changed(IChangeable obj)
         {
             if (entity.manager != world.localUser) return;
-            BuildView();
+            var e = new Thread(BuildView, 1024);
+            e.Priority = ThreadPriority.BelowNormal;
+            e.Start();
         }
         private void ClearOld()
         {
@@ -56,19 +59,23 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void BuildView()
         {
-            ClearOld();
-            if (target.target == null) return;
-            FieldInfo[] fields = typeof(Entity).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            foreach (var field in fields)
+            try
             {
-                if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
+                ClearOld();
+                if (target.target == null) return;
+                FieldInfo[] fields = typeof(Entity).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                foreach (var field in fields)
                 {
-                    var obs = entity.attachComponent<WorkerObserver>();
-                    obs.fieldName.value = field.Name;
-                    obs.target.target = ((Worker)field.GetValue(target.target));
-                    children.Add().target = obs;
+                    if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
+                    {
+                        var obs = entity.attachComponent<WorkerObserver>();
+                        obs.fieldName.value = field.Name;
+                        obs.target.target = ((Worker)field.GetValue(target.target));
+                        children.Add().target = obs;
+                    }
                 }
             }
+            catch { }
         }
 
         public override void Dispose()
