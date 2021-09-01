@@ -123,14 +123,14 @@ namespace RhubarbEngine.Managers
             updateDiscord();
         }
 
-        public void addToRenderQueue(RenderQueue gu, RemderLayers layer, RhubarbEngine.Utilities.BoundingFrustum frustum)
+        public void addToRenderQueue(RenderQueue gu, RemderLayers layer, RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
         {
             try {
                 Parallel.ForEach(worlds,world =>
                 {
                     if (world.Focus != World.World.FocusLevel.Background)
                     {
-                        world.addToRenderQueue(gu, layer, frustum);
+                        world.addToRenderQueue(gu, layer, frustum, view);
                     }
                 });
             }

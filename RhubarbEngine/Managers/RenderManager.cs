@@ -163,12 +163,12 @@ namespace RhubarbEngine.Managers
             }
         }
 
-        private void BuildMainRenderQueue(Matrix4x4 left, Matrix4x4 right)
+        private void BuildMainRenderQueue(Matrix4x4 leftp, Matrix4x4 leftv, Matrix4x4 rightp, Matrix4x4 rightv)
         {
             mainQueue.Clear();
             //When doing only left eye it seemed to be fine this might have problems of headsets with more fov
-            RhubarbEngine.Utilities.BoundingFrustum frustum = new RhubarbEngine.Utilities.BoundingFrustum(left);
-            engine.worldManager.addToRenderQueue(mainQueue, RemderLayers.normal_overlay_privateOverlay, frustum);
+            RhubarbEngine.Utilities.BoundingFrustum frustum = new RhubarbEngine.Utilities.BoundingFrustum(leftp);
+            engine.worldManager.addToRenderQueue(mainQueue, RemderLayers.normal_overlay_privateOverlay, frustum, leftv);
             mainQueue.Order();
         }
 
@@ -275,14 +275,14 @@ namespace RhubarbEngine.Managers
                 RenderRenderObjects();
                 // Render Eyes
                 HmdPoseState poses = vrContext.WaitForPoses();
-                BuildMainRenderQueue(poses.LeftEyeProjection, poses.RightEyeProjection);
-
+                Matrix4x4 leftView = poses.CreateView(VREye.Left, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
+                Matrix4x4 rightView = poses.CreateView(VREye.Right, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
+                BuildMainRenderQueue(poses.LeftEyeProjection, leftView, poses.RightEyeProjection, rightView);
                 eyesCL.Begin();
                 if (!(engine.backend == GraphicsBackend.OpenGL || engine.backend == GraphicsBackend.OpenGLES))
                 {
                     eyesCL.PushDebugGroup("Left Eye");
                 }
-                Matrix4x4 leftView = poses.CreateView(VREye.Left, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
                 try
                 {
                     RenderEye(eyesCL, vrContext.LeftEyeFramebuffer, poses.LeftEyeProjection, leftView);
@@ -298,7 +298,6 @@ namespace RhubarbEngine.Managers
                     {
                         eyesCL.PushDebugGroup("Right Eye");
                     }
-                    Matrix4x4 rightView = poses.CreateView(VREye.Right, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
                     try
                     {
                         RenderEye(eyesCL, vrContext.RightEyeFramebuffer, poses.RightEyeProjection, rightView);

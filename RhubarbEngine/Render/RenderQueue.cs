@@ -25,44 +25,44 @@ namespace RhubarbEngine.Render
             sorted.Clear();
         }
 
-        public void AddRange(IList<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum)
+        public void AddRange(IList<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
         {
             for (int i = 0; i < Renderables.Count; i++)
             {
                 Renderable Renderable = Renderables[i];
                 if (Renderable != null)
                 {
-                    Add(Renderable, viewPosition,ref frustum);
+                    Add(Renderable, viewPosition,ref frustum,view);
                 }
             }
         }
 
-        public void AddRange(IReadOnlyList<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum)
+        public void AddRange(IReadOnlyList<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
         {
             for (int i = 0; i < Renderables.Count; i++)
             {
                 Renderable Renderable = Renderables[i];
                 if (Renderable != null)
                 {
-                    Add(Renderable, viewPosition,ref frustum);
+                    Add(Renderable, viewPosition,ref frustum, view);
                 }
             }
         }
 
-        public void AddRange(IEnumerable<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum)
+        public void AddRange(IEnumerable<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
         {
             foreach (Renderable item in Renderables)
             {
                 if (item != null)
                 {
-                    Add(item, viewPosition, ref frustum);
+                    Add(item, viewPosition, ref frustum, view);
                 }
             }
         }
 
-        public void Add(Renderable item, Vector3 viewPosition,ref RhubarbEngine.Utilities.BoundingFrustum frustum)
+        public void Add(Renderable item, Vector3 viewPosition,ref RhubarbEngine.Utilities.BoundingFrustum frustum,Matrix4x4 view)
         {
-            if (item.Cull(ref frustum))
+            if (item.Cull(ref frustum, view))
             {
                 return;
             }
