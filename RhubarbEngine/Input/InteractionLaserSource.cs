@@ -19,16 +19,13 @@ namespace RhubarbEngine.Input
     {
         public Creality side;
 
-        private InputManager inputManager;
-
         private Engine engine;
 
         private InputManager input => engine.inputManager;
 
-        public InteractionLaserSource(Creality _side, InputManager _inputManager,Engine _engine)
+        public InteractionLaserSource(Creality _side,Engine _engine)
         {
             side = _side;
-            inputManager = _inputManager;
             engine = _engine;
         }
 
@@ -251,6 +248,12 @@ namespace RhubarbEngine.Input
                         default:
                             break;
                     }
+                if(engine.outputType == VirtualReality.OutputType.Screen)
+                {
+                    ent.SendSecondary(input.mainWindows.GetMouseButton(MouseButton.Middle));
+                    ent.SendPrimary(input.mainWindows.GetMouseButton(MouseButton.Left));
+                    ent.SendGrip(true, col.world.HeadLaserGrabbableHolder, input.mainWindows.GetMouseButton(MouseButton.Right));
+                }
                 switch (source)
                 {
                     case InteractionSource.None:
@@ -289,8 +292,17 @@ namespace RhubarbEngine.Input
         {
             this.pos = pos;
             this.normal = normal;
-            HasHit = !((pos == Vector3d.Zero) && (normal == Vector3d.Zero));
             onHit?.Invoke(pos, normal,((pos==Vector3d.Zero)&&(normal == Vector3d.Zero)));
+        }
+
+        public void unLock()
+        {
+            isLocked = false;
+        }
+
+        public void Lock()
+        {
+            isLocked = true;
         }
 
         public delegate void ProssecesHitPointAction(Vector3d pos, Vector3d normal, bool Hide);
@@ -299,7 +311,12 @@ namespace RhubarbEngine.Input
 
         public Vector3d pos { get; private set; }
         public Vector3d normal { get; private set; }
+
+        public bool isLocked { get; private set; }
+
         public bool HasHit { get; private set; }
+
+        public bool isvisible => activelySnapping || HasHit || isLocked;
 
         public Vector3 sourcse { get; private set; }
 
@@ -333,6 +350,7 @@ namespace RhubarbEngine.Input
             return ((Aprogamtly(v1.X,v2.X,pos)&& Aprogamtly(v1.Y, v2.Y, pos) && Aprogamtly(v1.Z, v2.Z, pos)));
         }
         private bool Snaping;
+        private bool activelySnapping;
 
         public void SendRayCast(Vector3 _sourcse, Vector3 deriction)
         {
@@ -362,10 +380,18 @@ namespace RhubarbEngine.Input
             {
                 result = 0f;
             }
+            if (isLocked)
+            {
+                var point = smoothedSourcse + (smoothedDeriction * LastDistance);
+                ProssecesHitPoint(new Vector3d(point.X, point.Y, point.Z), -new Vector3d(smoothedDeriction.X, smoothedDeriction.Y, smoothedDeriction.Z));
+                return;
+            }
             if ((result < SnapDistance) && Snaping)
             {
                 dist = LastDistance + 0.5f;
+                activelySnapping = true;
             }
+            else { activelySnapping = false; }
             ProsscesRayTestHit(smoothedSourcse, (smoothedDeriction * dist) + smoothedSourcse, smoothedDeriction);
         }
 
@@ -388,12 +414,20 @@ namespace RhubarbEngine.Input
                 }
                 if (!((!RayTestHitTest(_sourcse, _destination, engine.worldManager.focusedWorld)) && !hittestbool))
                 {
+                    HasHit = true;
                     lastDeriction = deriction;
+                    ProsscesHit();
+                }
+                else
+                {
+                    HasHit = false;
                 }
             }
             else
             {
+                HasHit = true;
                 lastDeriction = deriction;
+                ProsscesHit();
             }
         }
 
@@ -426,7 +460,7 @@ namespace RhubarbEngine.Input
                 eworld.physicsWorld.RayTest(sourcse, destination, cb);
                 if (cb.HasHit)
                 {
-                    UpdateLaserPos(cb.HitPointWorld + (cb.HitNormalWorld * 0.001f), cb.HitPointWorld + (cb.HitNormalWorld * -0.002f));
+                    UpdateLaserPos(cb.HitPointWorld + (cb.HitNormalWorld * 0.01f), cb.HitPointWorld + (cb.HitNormalWorld * -0.02f));
                     var result = Math.Sqrt(Math.Pow(cb.HitPointWorld.X - sourcse.X, 2) + Math.Pow(cb.HitPointWorld.Y - sourcse.Y, 2) + Math.Pow(cb.HitPointWorld.Z - sourcse.Z, 2));
                     LastDistance = (float)result;
                     Type type = cb.CollisionObject.UserObject.GetType();
@@ -479,8 +513,8 @@ namespace RhubarbEngine.Input
 
         public void Update()
         {
-            if ((sourcse == Vector3.Zero) && (destination == Vector3.Zero)) return;
-            ProsscesHit();
+
+
         }
 
     }

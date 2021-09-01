@@ -99,6 +99,20 @@ namespace RhubarbEngine.Components.Interaction
                             grab.Drop();
                         }
                     }
+                    switch (source.value)
+                    {
+                        case InteractionSource.LeftLaser:
+                            input.LeftLaser.unLock();
+                            break;
+                        case InteractionSource.RightLaser:
+                            input.RightLaser.unLock();
+                            break;
+                        case InteractionSource.HeadLaser:
+                            input.RightLaser.unLock();
+                            break;
+                        default:
+                            break;
+                    }
                 }
                 else
                 {

@@ -131,6 +131,23 @@ namespace RhubarbEngine.Components.PrivateSpace
             mesh.StartHandle.value = Vector3d.AxisY * (val/4);
             var e = Laser.target.globalRot().Inverse() * new Vector3f(hitvector.x, hitvector.y, hitvector.z);
             mesh.EndHandle.value = e * (val / 6);
+            switch (source.value)
+            {
+                case InteractionSource.LeftLaser:
+                    Currsor.target.enabled.value = input.LeftLaser.isvisible;
+                    Laser.target.enabled.value = input.LeftLaser.isvisible;
+                    break;
+                case InteractionSource.RightLaser:
+                    Currsor.target.enabled.value = input.RightLaser.isvisible;
+                    Laser.target.enabled.value = input.RightLaser.isvisible;
+                    break;
+                case InteractionSource.HeadLaser:
+                    Currsor.target.enabled.value = input.RightLaser.isvisible;
+                    Laser.target.enabled.value = input.RightLaser.isvisible;
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void UpdateCursor(Input.Cursors newcursor)

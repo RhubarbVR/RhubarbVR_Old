@@ -216,8 +216,8 @@ namespace RhubarbEngine.Managers
         {
             engine = _engine;
 
-            LeftLaser = new InteractionLaserSource(Creality.Left, this, engine);
-            RightLaser = new InteractionLaserSource(Creality.Right, this, engine);
+            LeftLaser = new InteractionLaserSource(Creality.Left, engine);
+            RightLaser = new InteractionLaserSource(Creality.Right, engine);
 
             return this;
         }

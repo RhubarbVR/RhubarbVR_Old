@@ -112,6 +112,7 @@ namespace RhubarbEngine.Components.Interaction
                     item.collisionObject.AngularVelocity = new BulletSharp.Math.Vector3(volas.x/10, volas.y/10, volas.z/10);
                 }
             }
+
         }
 
 
@@ -138,12 +139,15 @@ namespace RhubarbEngine.Components.Interaction
                 {
                     case InteractionSource.LeftLaser:
                         laserpos = input.LeftLaser.pos;
+                        input.LeftLaser.Lock();
                         break;
                     case InteractionSource.RightLaser:
                         laserpos = input.RightLaser.pos;
+                        input.RightLaser.Lock();
                         break;
                     case InteractionSource.HeadLaser:
                         laserpos = input.RightLaser.pos;
+                        input.RightLaser.Lock();
                         break;
                     default:
                         break;
