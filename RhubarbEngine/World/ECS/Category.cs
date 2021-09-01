@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RhubarbEngine.World.ECS
 {
@@ -8,7 +10,15 @@ namespace RhubarbEngine.World.ECS
 
 		public Category(params string[] paths)
 		{
-			this.Paths = paths;
+			List<string> end = new List<string>();
+            foreach (var item in paths)
+            {
+				var p = from e in item.Split('/', '\\')
+						where !string.IsNullOrEmpty(e)
+						select e;
+				end.AddRange(p);
+			}
+			this.Paths = end.ToArray();
 		}
 	}
 }

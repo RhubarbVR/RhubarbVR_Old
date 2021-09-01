@@ -9,7 +9,7 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World.ECS
 {
-    [Category(new string[] { "International" })]
+    [Category(new string[] { "Internal" })]
     public class MissingComponent : Component
     {
         public Sync<string> type;
