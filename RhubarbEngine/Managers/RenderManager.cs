@@ -265,6 +265,11 @@ namespace RhubarbEngine.Managers
 
             try
             {
+                if(vrContext.GetType() == typeof(ScreenContext))
+                {
+                    ((ScreenContext)vrContext).updateInput();
+                }
+
                 RenderRenderObjects();
                 BuildMainRenderQueue();
                 // Render Eyes

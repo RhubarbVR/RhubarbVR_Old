@@ -207,7 +207,6 @@ namespace RhubarbEngine.VirtualReality
             {
                 return;
             }
-            updateInput();
             _mirrorTexture.Render(cl, fb, source);
         }
 
