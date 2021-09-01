@@ -163,10 +163,12 @@ namespace RhubarbEngine.Managers
             }
         }
 
-        private void BuildMainRenderQueue()
+        private void BuildMainRenderQueue(Matrix4x4 left, Matrix4x4 right)
         {
             mainQueue.Clear();
-            engine.worldManager.addToRenderQueue(mainQueue, RemderLayers.normal_overlay_privateOverlay);
+            //When doing only left eye it seemed to be fine this might have problems of headsets with more fov
+            RhubarbEngine.Utilities.BoundingFrustum frustum = new RhubarbEngine.Utilities.BoundingFrustum(left);
+            engine.worldManager.addToRenderQueue(mainQueue, RemderLayers.normal_overlay_privateOverlay, frustum);
             mainQueue.Order();
         }
 
@@ -271,9 +273,10 @@ namespace RhubarbEngine.Managers
                 }
 
                 RenderRenderObjects();
-                BuildMainRenderQueue();
                 // Render Eyes
                 HmdPoseState poses = vrContext.WaitForPoses();
+                BuildMainRenderQueue(poses.LeftEyeProjection, poses.RightEyeProjection);
+
                 eyesCL.Begin();
                 if (!(engine.backend == GraphicsBackend.OpenGL || engine.backend == GraphicsBackend.OpenGLES))
                 {

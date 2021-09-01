@@ -26,7 +26,7 @@ using RhubarbEngine.Components.Assets;
 namespace RhubarbEngine.Components.Rendering
 {
     [Category(new string[] { "Rendering" })]
-    public class MeshRender : CullRenderable
+    public class MeshRender : Renderable
     {
 
         public AssetRef<RMesh> Mesh;
@@ -219,9 +219,7 @@ namespace RhubarbEngine.Components.Rendering
         private List<ResourceSet> _mainRS = new List<ResourceSet>();
         private List<ResourceSet> _shadowRS = new List<ResourceSet>();
         private bool loaded;
-        public override void UpdatePerFrameResources(GraphicsDevice gd, CommandList cl)
-        {
-        }
+
         public override void Render(GraphicsDevice gd, CommandList cl, UBO ubo)
         {
             try
@@ -262,13 +260,6 @@ namespace RhubarbEngine.Components.Rendering
             }
         }
 
-
-        public override void CreateDeviceObjects(GraphicsDevice gd, CommandList cl)
-        {
-        }
-
-        public override void DestroyDeviceObjects() {
-        }
         public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
         {
            return RenderOrderKey.Create(RenderOrderOffset.value, BoundingBox.DistanceFromPoint((Vector3)entity.GlobalPointToLocal((Vector3f)cameraPosition, false)));

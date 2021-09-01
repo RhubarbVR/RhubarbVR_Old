@@ -44,12 +44,17 @@ namespace RhubarbEngine.Render
 
     public abstract class Renderable : Component, IDisposable
     {
-        public abstract void UpdatePerFrameResources(GraphicsDevice gd, CommandList cl);
         public abstract void Render(GraphicsDevice gd, CommandList cl, UBO ubo);
         public abstract void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo);
-        public abstract void CreateDeviceObjects(GraphicsDevice gd, CommandList cl);
-        public abstract void DestroyDeviceObjects();
-        public abstract RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition);        
+
+        public abstract RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition);
+
+        public bool Cull(ref RhubarbEngine.Utilities.BoundingFrustum visibleFrustum)
+        {
+            return visibleFrustum.Contains(BoundingBox) == ContainmentType.Disjoint;
+        }
+
+        public abstract BoundingBox BoundingBox { get; }
 
         public Renderable(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
@@ -65,22 +70,4 @@ namespace RhubarbEngine.Render
         }
     }
 
-    public abstract class CullRenderable : Renderable
-    {
-        public bool Cull(ref RhubarbEngine.Utilities.BoundingFrustum visibleFrustum)
-        {
-            return visibleFrustum.Contains(BoundingBox) == ContainmentType.Disjoint;
-        }
-
-        public abstract BoundingBox BoundingBox { get; }
-
-        public CullRenderable(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
-
-        }
-        public CullRenderable()
-        {
-        }
-
-    }
 }

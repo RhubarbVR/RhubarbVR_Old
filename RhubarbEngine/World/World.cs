@@ -256,7 +256,7 @@ namespace RhubarbEngine.World
         [NoSave]
         public RhubarbEngine.Components.ImGUI.EntityObserver lastEntityObserver;
 
-        public void addToRenderQueue(RenderQueue gu, RemderLayers layer)
+        public void addToRenderQueue(RenderQueue gu, RemderLayers layer, RhubarbEngine.Utilities.BoundingFrustum frustum)
         {
             switch (focus)
             {
@@ -277,7 +277,7 @@ namespace RhubarbEngine.World
             {
                 if (ent.enabled.value && ent.parentEnabled)
                 {
-                    ent.addToRenderQueue(gu, playerTrans.Translation, layer);
+                    ent.addToRenderQueue(gu, playerTrans.Translation, layer,frustum);
                 }
             });
         }

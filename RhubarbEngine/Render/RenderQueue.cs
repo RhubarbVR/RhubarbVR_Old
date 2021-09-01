@@ -25,43 +25,47 @@ namespace RhubarbEngine.Render
             sorted.Clear();
         }
 
-        public void AddRange(IList<Renderable> Renderables, Vector3 viewPosition)
+        public void AddRange(IList<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum)
         {
             for (int i = 0; i < Renderables.Count; i++)
             {
                 Renderable Renderable = Renderables[i];
                 if (Renderable != null)
                 {
-                    Add(Renderable, viewPosition);
+                    Add(Renderable, viewPosition,ref frustum);
                 }
             }
         }
 
-        public void AddRange(IReadOnlyList<Renderable> Renderables, Vector3 viewPosition)
+        public void AddRange(IReadOnlyList<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum)
         {
             for (int i = 0; i < Renderables.Count; i++)
             {
                 Renderable Renderable = Renderables[i];
                 if (Renderable != null)
                 {
-                    Add(Renderable, viewPosition);
+                    Add(Renderable, viewPosition,ref frustum);
                 }
             }
         }
 
-        public void AddRange(IEnumerable<Renderable> Renderables, Vector3 viewPosition)
+        public void AddRange(IEnumerable<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum)
         {
             foreach (Renderable item in Renderables)
             {
                 if (item != null)
                 {
-                    Add(item, viewPosition);
+                    Add(item, viewPosition, ref frustum);
                 }
             }
         }
 
-        public void Add(Renderable item, Vector3 viewPosition)
+        public void Add(Renderable item, Vector3 viewPosition,ref RhubarbEngine.Utilities.BoundingFrustum frustum)
         {
+            if (item.Cull(ref frustum))
+            {
+                return;
+            }
             _renderables.Add(item);
             _indices.Add(new RenderItemIndex(item.GetRenderOrderKey(viewPosition), _renderables.IndexOf(item)));
         }

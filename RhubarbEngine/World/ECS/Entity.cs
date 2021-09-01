@@ -541,7 +541,7 @@ namespace RhubarbEngine.World.ECS
             }
         }
 
-        public void addToRenderQueue(RenderQueue gu, Vector3 playpos, RemderLayers layer)
+        public void addToRenderQueue(RenderQueue gu, Vector3 playpos, RemderLayers layer, RhubarbEngine.Utilities.BoundingFrustum frustum)
         {
             if (((int)layer & (int)remderlayer.value) <= 0)
             {
@@ -551,7 +551,7 @@ namespace RhubarbEngine.World.ECS
             {
                 try
                 {
-                    gu.Add(((Renderable)comp), playpos);
+                    gu.Add(((Renderable)comp), playpos,ref frustum);
                 }
                 catch
                 {}
