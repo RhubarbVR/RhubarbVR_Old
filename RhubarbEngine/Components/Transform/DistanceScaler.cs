@@ -23,6 +23,10 @@ namespace RhubarbEngine.Components.Transform
 
         public Sync<float> scale;
 
+        public Sync<double> min;
+
+        public Sync<double> max;
+
         public Sync<double> pow;
 
         public Sync<Vector3f> positionOffset;
@@ -40,6 +44,10 @@ namespace RhubarbEngine.Components.Transform
             scale.value = 1f;
             pow = new Sync<double>(this, newRefIds);
             pow.value = 1;
+            min = new Sync<double>(this, newRefIds);
+            min.value = 0.25f;
+            max = new Sync<double>(this, newRefIds);
+            max.value = 2000f;
         }
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
@@ -66,7 +74,7 @@ namespace RhubarbEngine.Components.Transform
                         break;
                 }
                 var dist = Math.Pow((entity.globalPos().Distance((tagetPos ?? Vector3f.Zero) + positionOffset.value) * scale.value),pow.value);
-                driver.Drivevalue = entity.GlobalScaleToLocal((new Vector3f(dist) + offset.value),false);
+                driver.Drivevalue = entity.GlobalScaleToLocal((new Vector3f(Math.Clamp(dist,min.value,max.value)) + offset.value),false);
             }
             else
             {

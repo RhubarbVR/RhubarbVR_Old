@@ -152,11 +152,11 @@ namespace RhubarbEngine.Components.PrivateSpace
 
         private void UpdateCursor(Input.Cursors newcursor)
         {
-            Colorf color = new Colorf(1f, 0.94f, 1f, 0.8f);
+            Colorf color = new Colorf(1f, 0.7f, 1f, 0.7f);
             switch (newcursor)
             {
                 case Input.Cursors.Grabbing:
-                    color = new Colorf(0.94f, 0.94f, 1f, 0.8f);
+                    color = new Colorf(0.7f, 0.7f, 1f, 0.7f);
                     break;
                 default:
                     break;

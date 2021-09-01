@@ -298,11 +298,13 @@ namespace RhubarbEngine.Input
         public void unLock()
         {
             isLocked = false;
+            cursor = Cursors.None;
         }
 
         public void Lock()
         {
             isLocked = true;
+            cursor = Cursors.Grabbing;
         }
 
         public delegate void ProssecesHitPointAction(Vector3d pos, Vector3d normal, bool Hide);
