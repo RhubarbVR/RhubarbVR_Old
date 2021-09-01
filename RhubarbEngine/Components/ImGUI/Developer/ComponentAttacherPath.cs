@@ -50,8 +50,14 @@ namespace RhubarbEngine.Components.ImGUI
                                 temp = item;
                             }
                         }
-                        Console.WriteLine("Thing " + news);
-                        target.target.path.value = news;
+                        if (target.target.path.value.Contains("`1"))
+                        {
+                            target.target.path.value = target.target.path.value.Replace("`1", "");
+                        }
+                        else
+                        {
+                            target.target.path.value = news;
+                        }
                     }
                 }
                 else

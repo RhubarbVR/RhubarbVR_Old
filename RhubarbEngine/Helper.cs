@@ -8,6 +8,19 @@ namespace RhubarbEngine
 {
     public static class Helper
     {
+        public static string GetFormattedName(this Type type)
+        {
+            if (type.IsGenericType)
+            {
+                string genericArguments = type.GetGenericArguments()
+                                    .Select(x => x.Name)
+                                    .Aggregate((x1, x2) => $"{x1}, {x2}");
+                return $"{type.Name.Substring(0, type.Name.IndexOf("`"))}"
+                     + $"<{genericArguments}>";
+            }
+            return type.Name;
+        }
+
         public static string ToHexString(this ulong ouid)
         {
             string temp = BitConverter.ToString(BitConverter.GetBytes(ouid).Reverse().ToArray()).Replace("-", "");

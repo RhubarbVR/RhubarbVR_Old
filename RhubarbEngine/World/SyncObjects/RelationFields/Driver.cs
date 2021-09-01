@@ -8,7 +8,7 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-    public class Driver<T> : SyncRef<DriveMember<T>>, IDriver
+    public class Driver<T> : SyncRef<DriveMember<T>>, IDriver where T:IConvertible
     {
         public event Action<IChangeable> Changed;
         public T Drivevalue

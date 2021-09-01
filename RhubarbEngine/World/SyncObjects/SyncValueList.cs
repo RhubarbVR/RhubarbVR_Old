@@ -10,7 +10,7 @@ using System.Collections;
 
 namespace RhubarbEngine.World
 {
-    public class SyncValueList<T>: Worker, ISyncList,IWorldObject, ISyncMember
+    public class SyncValueList<T>: Worker, ISyncList,IWorldObject, ISyncMember where T: IConvertible
     {
         private SynchronizedCollection<Sync<T>> _synclist = new SynchronizedCollection<Sync<T>>(5);
 

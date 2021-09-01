@@ -4,7 +4,7 @@ using System;
 namespace g3
 {
     [MessagePackObject]
-    public struct Vector2u : IComparable<Vector2u>, IEquatable<Vector2u>
+    public struct Vector2u : IComparable<Vector2u>, IEquatable<Vector2u>, IConvertible
     {
         [Key(0)]
         public uint x;
@@ -133,6 +133,91 @@ namespace g3
         public override string ToString()
         {
             return string.Format("{0} {1}", x, y);
+        }
+
+        public TypeCode GetTypeCode()
+        {
+            return TypeCode.Object;
+        }
+
+        public bool ToBoolean(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte ToByte(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public char ToChar(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DateTime ToDateTime(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public decimal ToDecimal(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public double ToDouble(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public short ToInt16(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ToInt32(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public long ToInt64(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public sbyte ToSByte(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public float ToSingle(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            return ToString();
+        }
+
+        public object ToType(Type conversionType, IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ushort ToUInt16(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint ToUInt32(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ulong ToUInt64(IFormatProvider provider)
+        {
+            throw new NotImplementedException();
         }
     }
 

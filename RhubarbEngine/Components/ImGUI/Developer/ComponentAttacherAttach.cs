@@ -8,6 +8,7 @@ using Veldrid;
 using g3;
 using ImGuiNET;
 using System.Numerics;
+using System.Linq;
 
 namespace RhubarbEngine.Components.ImGUI
 {
@@ -31,6 +32,7 @@ namespace RhubarbEngine.Components.ImGUI
             setType = Type.GetType(type.value);
         }
 
+
         public ComponentAttacherAttach(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
 
@@ -42,7 +44,7 @@ namespace RhubarbEngine.Components.ImGUI
         public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
         {
             ImGui.PushStyleColor(ImGuiCol.Button, (Vector4)Colorf.DarkBlue.ToRGBA());
-            if (ImGui.Button(setType.Name??"Null" + "##" + referenceID.id, new Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
+            if (ImGui.Button(setType.GetFormattedName()??"Null" + "##" + referenceID.id, new Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
             {
                 if ((target.target != null)&&(setType != null))
                     target.target.AttachComponent(setType);

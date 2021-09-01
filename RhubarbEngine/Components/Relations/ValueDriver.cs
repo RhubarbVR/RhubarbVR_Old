@@ -12,7 +12,7 @@ using RhubarbEngine.World;
 namespace RhubarbEngine.Components.Relations
 {
     [Category(new string[] { "Relations" })]
-    public class ValueDriver<T> : Component
+    public class ValueDriver<T> : Component where T: IConvertible
     {
         public Driver<T> driver;
 

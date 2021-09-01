@@ -8,7 +8,7 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-    public interface DriveMember<T> : ValueSource<T>,Driveable
+    public interface DriveMember<T> : ValueSource<T>,Driveable where T: IConvertible
     {
         void drive(IDriver source);
         void forceDrive(IDriver source);

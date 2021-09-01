@@ -1,123 +1,125 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using g3;
-using RhubarbEngine.World;
-using RhubarbEngine.World.Asset;
-using RhubarbEngine.World.ECS;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
+//using g3;
+//using RhubarbEngine.World;
+//using RhubarbEngine.World.Asset;
+//using RhubarbEngine.World.ECS;
 
-/*
- *  For the love of all that is sacred and holy what in the creator's green world
- *  is this and how does it differ from the Cylinder we already have?
- */
-namespace RhubarbEngine.Components.Assets.Procedural_Meshes
-{
+//Disabled because of Polygon2d is not a valid Sync
 
-    [Category(new string[] { "Assets/Procedural Meshes" })]
-    public class GenCylMesh : ProceduralMesh
-    {
-        private readonly TubeGenerator _generator = new TubeGenerator();
+///*
+// *  For the love of all that is sacred and holy what in the creator's green world
+// *  is this and how does it differ from the Cylinder we already have?
+// */
+//namespace RhubarbEngine.Components.Assets.Procedural_Meshes
+//{
 
-        public Sync<Polygon2d> Polygon;
-        public SyncValueList<Vector3d> Vertices;
-        public Sync<Vector2d> CapCenter;
-        public Sync<Frame3f> Frame;
+//    [Category(new string[] { "Assets/Procedural Meshes" })]
+//    public class GenCylMesh : ProceduralMesh
+//    {
+//        private readonly TubeGenerator _generator = new TubeGenerator();
 
-        public Sync<bool> Capped;
-        public Sync<bool> NoSharedVertices;
-        public Sync<bool> OverrideCapCenter;
-        public Sync<bool> ClosedLoop;
-        public Sync<int> startCapCenterIndex;
-        public Sync<int> endCapCenterIndex;
-        public override void OnAttach()
-        {
-            Vertices.Add(true).value = Vector3f.Zero;
-            Vertices.Add(true).value = Vector3f.One;
-            Vertices.Add(true).value = new Vector3f(10,10,10);
+//        public Sync<Polygon2d> Polygon;
+//        public SyncValueList<Vector3d> Vertices;
+//        public Sync<Vector2d> CapCenter;
+//        public Sync<Frame3f> Frame;
 
-            logger.Log("Loaded");
-        }
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            Polygon = new Sync<Polygon2d>(this, newRefIds);
-            Polygon.value = Polygon2d.MakeCircle(1f, 1);
-            Vertices = new SyncValueList<Vector3d>(this, newRefIds);
+//        public Sync<bool> Capped;
+//        public Sync<bool> NoSharedVertices;
+//        public Sync<bool> OverrideCapCenter;
+//        public Sync<bool> ClosedLoop;
+//        public Sync<int> startCapCenterIndex;
+//        public Sync<int> endCapCenterIndex;
+//        public override void OnAttach()
+//        {
+//            Vertices.Add(true).value = Vector3f.Zero;
+//            Vertices.Add(true).value = Vector3f.One;
+//            Vertices.Add(true).value = new Vector3f(10,10,10);
 
-            CapCenter = new Sync<Vector2d>(this, newRefIds);
-            CapCenter.value = Vector2d.Zero;
+//            logger.Log("Loaded");
+//        }
+//        public override void buildSyncObjs(bool newRefIds)
+//        {
+//            Polygon = new Sync<Polygon2d>(this, newRefIds);
+//            Polygon.value = Polygon2d.MakeCircle(1f, 1);
+//            Vertices = new SyncValueList<Vector3d>(this, newRefIds);
 
-            Frame = new Sync<Frame3f>(this, newRefIds);
-            Frame.value = Frame3f.Identity;
+//            CapCenter = new Sync<Vector2d>(this, newRefIds);
+//            CapCenter.value = Vector2d.Zero;
 
-            Capped = new Sync<bool>(this, newRefIds);
-            Capped.value = true;
+//            Frame = new Sync<Frame3f>(this, newRefIds);
+//            Frame.value = Frame3f.Identity;
 
-            NoSharedVertices = new Sync<bool>(this, newRefIds);
-            NoSharedVertices.value = true;
+//            Capped = new Sync<bool>(this, newRefIds);
+//            Capped.value = true;
 
-            OverrideCapCenter = new Sync<bool>(this, newRefIds);
-            OverrideCapCenter.value = false;
+//            NoSharedVertices = new Sync<bool>(this, newRefIds);
+//            NoSharedVertices.value = true;
 
-            ClosedLoop = new Sync<bool>(this, newRefIds);
-            ClosedLoop.value = false;
+//            OverrideCapCenter = new Sync<bool>(this, newRefIds);
+//            OverrideCapCenter.value = false;
 
-            startCapCenterIndex = new Sync<int>(this, newRefIds);
-            startCapCenterIndex.value = -1;
+//            ClosedLoop = new Sync<bool>(this, newRefIds);
+//            ClosedLoop.value = false;
 
-            endCapCenterIndex = new Sync<int>(this, newRefIds);
-            endCapCenterIndex.value = -1;
-        }
+//            startCapCenterIndex = new Sync<int>(this, newRefIds);
+//            startCapCenterIndex.value = -1;
 
-        public override void onChanged()
-        {
-            updateMesh();
-        }
+//            endCapCenterIndex = new Sync<int>(this, newRefIds);
+//            endCapCenterIndex.value = -1;
+//        }
 
-        private void updateMesh()
-        {
-            _generator.CapCenter = CapCenter.value;
-            _generator.Frame = Frame.value;
-            _generator.Capped = Capped.value;
-            _generator.NoSharedVertices = NoSharedVertices.value;
-            _generator.OverrideCapCenter = OverrideCapCenter.value;
-            _generator.ClosedLoop = ClosedLoop.value;
-            _generator.startCapCenterIndex = startCapCenterIndex.value;
-            _generator.endCapCenterIndex = endCapCenterIndex.value;
-            _generator.Polygon = Polygon.value;
-            List<Vector3d> temp = new List<Vector3d>();
-            if(Vertices.Count <= 1)
-            {
-                temp.Add((Vertices.Count == 0) ? Vector3d .Zero: Vertices[0].value);
-                temp.Add((Vertices.Count == 0) ? Vector3d.Zero : Vertices[0].value);
-                logger.Log("e");
-            }
-            else
-            {
-                logger.Log("o");
-                foreach (Vector3d item in Vertices)
-                {
-                    temp.Add(item);
-                }
-            }
-            _generator.Vertices = temp;
-            MeshGenerator newmesh = _generator.Generate();
-            RMesh kite = new RMesh(newmesh.MakeDMesh());
-            kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
-            load(kite, true);
-        }
-        public override void onLoaded()
-        {
-            updateMesh();
-        }
-        public GenCylMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+//        public override void onChanged()
+//        {
+//            updateMesh();
+//        }
 
-        }
-        public GenCylMesh()
-        {
-        }
+//        private void updateMesh()
+//        {
+//            _generator.CapCenter = CapCenter.value;
+//            _generator.Frame = Frame.value;
+//            _generator.Capped = Capped.value;
+//            _generator.NoSharedVertices = NoSharedVertices.value;
+//            _generator.OverrideCapCenter = OverrideCapCenter.value;
+//            _generator.ClosedLoop = ClosedLoop.value;
+//            _generator.startCapCenterIndex = startCapCenterIndex.value;
+//            _generator.endCapCenterIndex = endCapCenterIndex.value;
+//            _generator.Polygon = Polygon.value;
+//            List<Vector3d> temp = new List<Vector3d>();
+//            if(Vertices.Count <= 1)
+//            {
+//                temp.Add((Vertices.Count == 0) ? Vector3d .Zero: Vertices[0].value);
+//                temp.Add((Vertices.Count == 0) ? Vector3d.Zero : Vertices[0].value);
+//                logger.Log("e");
+//            }
+//            else
+//            {
+//                logger.Log("o");
+//                foreach (Vector3d item in Vertices)
+//                {
+//                    temp.Add(item);
+//                }
+//            }
+//            _generator.Vertices = temp;
+//            MeshGenerator newmesh = _generator.Generate();
+//            RMesh kite = new RMesh(newmesh.MakeDMesh());
+//            kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
+//            load(kite, true);
+//        }
+//        public override void onLoaded()
+//        {
+//            updateMesh();
+//        }
+//        public GenCylMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+//        {
 
-    }
-}
+//        }
+//        public GenCylMesh()
+//        {
+//        }
+
+//    }
+//}

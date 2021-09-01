@@ -70,6 +70,7 @@ namespace RhubarbEngine.Components.ImGUI
         private void LoadList()
         {
             if (world.localUser != entity.manager) return;
+            if (path.value.Contains("`1")) return;
             if(list != null)
                 list.Destroy();
             list = entity.addChild("CompList");
@@ -156,14 +157,128 @@ namespace RhubarbEngine.Components.ImGUI
             {
                 if (type.IsGenericType)
                 {
-                    if (type.IsGenericTypeDefinition)
+                    if (!type.IsConstructedGenericType)
                     {
-                        Tentity.target?.attachComponent(type);
-                        entity.Destroy();
+                        var constra = from t in type.GetGenericArguments() from l in t.GetGenericParameterConstraints() select l;
+                        if (constra.Contains(typeof(Enum)))
+                        {
+                            if (list != null)
+                                list.Destroy();
+                            list = entity.addChild("CompList");
+                            list.persistence.value = false;
+                            var assems = new Assembly[2] { Assembly.GetAssembly(typeof(Vector2f)), Assembly.GetAssembly(typeof(World.Asset.RMesh)) };
+                            var IConvertibleTypes =
+                                 from assem in assems.AsParallel()
+                                 from t in assem.GetTypes().AsParallel()
+                                 where t.IsEnum
+                                 select t;
+                            var comp = list.attachComponent<ComponentAttacherPath>();
+                            children.Add().target = comp;
+                            comp.target.target = this;
+                            comp.path.value = "../";
+                            foreach (var item in IConvertibleTypes)
+                            {
+                                var compa = list.attachComponent<ComponentAttacherAttach>();
+                                compa.target.target = this;
+                                compa.type.value = type.MakeGenericType(item).FullName;
+                                children.Add().target = compa;
+                            }
+                            path.value += "`1";
+                        }
+                        else if (constra.Contains(typeof(IAsset)))
+                        {
+                            if (list != null)
+                                list.Destroy();
+                            list = entity.addChild("CompList");
+                            list.persistence.value = false;
+                            var assems = new Assembly[2] { Assembly.GetAssembly(typeof(Vector2f)), Assembly.GetAssembly(typeof(World.Asset.RMesh)) };
+                            var IConvertibleTypes =
+                                 from assem in assems.AsParallel()
+                                 from t in assem.GetTypes().AsParallel()
+                                 where typeof(IAsset).IsAssignableFrom(t)
+                                 where !t.IsEnum
+                                 select t;
+                            var comp = list.attachComponent<ComponentAttacherPath>();
+                            children.Add().target = comp;
+                            comp.target.target = this;
+                            comp.path.value = "../";
+                            foreach (var item in IConvertibleTypes)
+                            {
+                                if (item != typeof(Enum))
+                                {
+                                    var compa = list.attachComponent<ComponentAttacherAttach>();
+                                    compa.target.target = this;
+                                    compa.type.value = type.MakeGenericType(item).FullName;
+                                    children.Add().target = compa;
+                                }
+                            }
+                            path.value += "`1";
+                        }
+                        else if (constra.Contains(typeof(IWorldObject)))
+                        {
+                            if (list != null)
+                                list.Destroy();
+                            list = entity.addChild("CompList");
+                            list.persistence.value = false;
+                            var IConvertibleTypes =
+                                 from t in Assembly.GetAssembly(typeof(IWorldObject)).GetTypes().AsParallel()
+                                 where typeof(IAsset).IsAssignableFrom(t)
+                                 where !t.IsEnum
+                                 select t;
+                            var comp = list.attachComponent<ComponentAttacherPath>();
+                            children.Add().target = comp;
+                            comp.target.target = this;
+                            comp.path.value = "../";
+                            foreach (var item in IConvertibleTypes)
+                            {
+                                if (item != typeof(Enum))
+                                {
+                                    var compa = list.attachComponent<ComponentAttacherAttach>();
+                                    compa.target.target = this;
+                                    compa.type.value = type.MakeGenericType(item).FullName;
+                                    children.Add().target = compa;
+                                }
+                            }
+                            path.value += "`1";
+                        }
+                        else if (constra.Contains(typeof(IConvertible)))
+                        {
+                            if (list != null)
+                                list.Destroy();
+                            list = entity.addChild("CompList");
+                            list.persistence.value = false;
+                            var assems = new Assembly[2]{ Assembly.GetAssembly(typeof(Vector2f)),Assembly.GetAssembly(typeof(string))};
+                            var IConvertibleTypes =
+                                 from assem in assems.AsParallel()
+                                 from t in assem.GetTypes().AsParallel()
+                                 where typeof(IConvertible).IsAssignableFrom(t)
+                                 where !t.IsEnum
+                                 select t;
+                            var comp = list.attachComponent<ComponentAttacherPath>();
+                            children.Add().target = comp;
+                            comp.target.target = this;
+                            comp.path.value = "../";
+                            foreach (var item in IConvertibleTypes)
+                            {
+                                if(item!= typeof(Enum))
+                                {
+                                    var compa = list.attachComponent<ComponentAttacherAttach>();
+                                    compa.target.target = this;
+                                    compa.type.value = type.MakeGenericType(item).FullName;
+                                    children.Add().target = compa;
+                                }
+                            }
+                            path.value += "`1";
+                        }
+                        else
+                        {
+                            throw new Exception("Generic Type not suppoted yet");
+                        }
                     }
                     else
                     {
-                        throw new Exception("Generic Type not suppoted yet");
+                        Tentity.target?.attachComponent(type);
+                        entity.Destroy();
                     }
                 }
                 else

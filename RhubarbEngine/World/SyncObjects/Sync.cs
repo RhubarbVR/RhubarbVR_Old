@@ -9,7 +9,7 @@ using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
-    public class Sync<T> : Worker, DriveMember<T>, IPrimitiveEditable
+    public class Sync<T> : Worker, DriveMember<T>, IPrimitiveEditable where T : IConvertible
     {
         public IDriver drivenFromobj;
         public NetPointer drivenFrom { get { return drivenFromobj.ReferenceID; } }

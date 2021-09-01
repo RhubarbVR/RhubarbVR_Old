@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
-    public class GenericField<T> : MaterialField ,IWorldObject where T : unmanaged
+    public class GenericField<T> : MaterialField ,IWorldObject where T : unmanaged , IConvertible
     {
         public Sync<T> field;
         public override void buildSyncObjs(bool newRefIds)

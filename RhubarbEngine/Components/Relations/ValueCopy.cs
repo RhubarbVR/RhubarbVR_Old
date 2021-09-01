@@ -12,7 +12,7 @@ using RhubarbEngine.World;
 namespace RhubarbEngine.Components.Relations
 {
     [Category(new string[] { "Relations" })]
-    public class ValueCopy<T> : Component
+    public class ValueCopy<T> : Component where T: IConvertible
     {
         public Driver<T> driver;
 
@@ -24,6 +24,7 @@ namespace RhubarbEngine.Components.Relations
         {
             driver = new Driver<T>(this, newRefIds);
             source = new SyncRef<ValueSource<T>>(this, newRefIds);
+            writeBack = new Sync<bool>(this, newRefIds);
         }
 
         private IChangeable linckedSource;

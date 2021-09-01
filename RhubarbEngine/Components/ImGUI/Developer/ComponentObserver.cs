@@ -89,7 +89,7 @@ namespace RhubarbEngine.Components.ImGUI
             bool open = true;
             Vector2 max;
             Vector2 min;
-            if (ImGui.CollapsingHeader($"{target.target?.GetType().Name ?? "null"} ID:({target.target?.referenceID.id.ToHexString() ?? "null"}) ##{referenceID.id}",ref open))
+            if (ImGui.CollapsingHeader($"{target.target?.GetType().GetFormattedName() ?? "null"} ID:({target.target?.referenceID.id.ToHexString() ?? "null"}) ##{referenceID.id}",ref open))
             {
                 max = ImGui.GetItemRectMax();
                 min = ImGui.GetItemRectMin();
