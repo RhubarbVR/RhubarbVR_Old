@@ -3,11 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Veldrid.Utilities;
+using System.Numerics;
 namespace RhubarbEngine
 {
     public static class Helper
     {
+        public static float DistanceFromPoint(this BoundingBox boundingBox,Vector3 fomLocalPos)
+        {
+            var dx = Math.Max(boundingBox.Min.X - fomLocalPos.X, fomLocalPos.X - boundingBox.Max.X);
+            var dy = Math.Max(boundingBox.Min.Y - fomLocalPos.Y, fomLocalPos.Y - boundingBox.Max.Y);
+            var dz = Math.Max(boundingBox.Min.Z - fomLocalPos.Z, fomLocalPos.Z - boundingBox.Max.Z);
+            return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
+        }
+
         public static string GetFormattedName(this Type type)
         {
             if (type.IsGenericType)

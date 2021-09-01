@@ -269,8 +269,9 @@ namespace RhubarbEngine.Components.Rendering
 
         public override void DestroyDeviceObjects() {
         }
-        public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition) {
-            return RenderOrderKey.Create(RenderOrderOffset.value, Vector3.Distance(cameraPosition, (Vector3)entity.globalPos()));
+        public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
+        {
+           return RenderOrderKey.Create(RenderOrderOffset.value, BoundingBox.DistanceFromPoint((Vector3)entity.GlobalPointToLocal((Vector3f)cameraPosition, false)));
         }
 
 

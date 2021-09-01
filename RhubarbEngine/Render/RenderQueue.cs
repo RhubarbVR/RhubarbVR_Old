@@ -68,11 +68,8 @@ namespace RhubarbEngine.Render
 
         public void Order()
         {
-            //Want to make multi Threaded
-            foreach (var item in from parer in _indices orderby parer.Key.Value descending select parer)
-            {
-                sorted.Add(_renderables[item.ItemIndex]);
-            }
+
+            sorted = new List<Renderable>(from parer in _indices.AsParallel() orderby parer.Key.Value descending select _renderables[parer.ItemIndex]);
         }
     }
 }

@@ -33,10 +33,6 @@ namespace RhubarbEngine.World.Asset
         }
 
         public BoundingBox boundingBox;
-        public void buildBoundingBox()
-        {
-        
-        }
 
 
         public void createMeshesBuffers(GraphicsDevice _gd)
@@ -57,7 +53,9 @@ namespace RhubarbEngine.World.Asset
                     Vertices.Add(e.v);
                     UV.Add(e.uv);
                 }
-                DeviceBuffer positions = CreateDeviceBuffer(_gd, Vertices.Select(v3 => new Vector3((float)v3.x, (float)v3.y, (float)v3.z)).ToArray(), BufferUsage.VertexBuffer);
+                var verts = Vertices.Select(v3 => new Vector3((float)v3.x, (float)v3.y, (float)v3.z)).ToArray();
+                boundingBox = BoundingBox.CreateFromVertices(verts);
+                DeviceBuffer positions = CreateDeviceBuffer(_gd, verts, BufferUsage.VertexBuffer);
                 DeviceBuffer texCoords = CreateDeviceBuffer(_gd,
                     UV.Select(v3 => new Vector2(v3.x, v3.y)).ToArray(),
                     BufferUsage.VertexBuffer);
