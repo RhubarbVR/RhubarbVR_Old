@@ -62,11 +62,6 @@ namespace RhubarbEngine.World.ECS
             }
         }
 
-        public Sync<Vector3f> position;
-
-        public Sync<Quaternionf> rotation;
-
-        public Sync<Vector3f> scale;
 
         private Matrix4x4 cashedGlobalTrans = Matrix4x4.CreateScale(Vector3.One);
 
@@ -174,6 +169,12 @@ namespace RhubarbEngine.World.ECS
         IWorldObject IWorldObject.Parent => internalParent?._children??(IWorldObject)world;
 
         public Sync<string> name;
+
+        public Sync<Vector3f> position;
+
+        public Sync<Quaternionf> rotation;
+
+        public Sync<Vector3f> scale;
 
         public Sync<bool> enabled;
 
