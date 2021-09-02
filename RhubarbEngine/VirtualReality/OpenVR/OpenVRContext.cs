@@ -308,6 +308,10 @@ namespace RhubarbEngine.VirtualReality.OpenVR
                 return default(HmdPoseState);
             }
             EVRCompositorError compositorError = _compositor.WaitGetPoses(_devicePoses, Array.Empty<TrackedDevicePose_t>());
+            if(compositorError != EVRCompositorError.None)
+            {
+                throw new Exception($"Failed to WaitGetPoses from OpenVR: {compositorError}");
+            }
             TrackedDevicePose_t hmdPose = _devicePoses[OVR.k_unTrackedDeviceIndex_Hmd];
             headPos = posHelp(hmdPose.mDeviceToAbsoluteTracking);
 
