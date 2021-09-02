@@ -26,6 +26,8 @@ namespace RhubarbEngine
 
         public void initializeManagers()
         {
+            //This is to make finding memory problems easier
+            //System.Runtime.GCSettings.LatencyMode = System.Runtime.GCLatencyMode.LowLatency;
             try
             {
                 engine.logger.Log("Starting Managers");

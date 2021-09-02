@@ -445,9 +445,9 @@ namespace g3
             throw new NotImplementedException();
         }
 
-        public static explicit operator Vector3(Vector3f b) => b.ToSystemNumrics();
+        public static implicit operator Vector3(Vector3f b) => b.ToSystemNumrics();
 
-        public static explicit operator Vector3f(Vector3 b) => ToRhuNumrics(ref b);
+        public static implicit operator Vector3f(Vector3 b) => ToRhuNumrics(ref b);
 
     }
 }

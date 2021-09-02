@@ -185,7 +185,7 @@ namespace g3
 
         public Vector3d FromGrid(Vector3d gridpointf)
         {
-            gridpointf *= CellSize;
+            gridpointf *= (Vector3d)CellSize;
             return (Vector3d)GridFrame.FromFrameP(ref gridpointf);
         }
     }

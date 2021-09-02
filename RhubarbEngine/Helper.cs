@@ -9,6 +9,7 @@ namespace RhubarbEngine
 {
     public static class Helper
     {
+
         public static float DistanceFromPoint(this BoundingBox boundingBox,Vector3 fomLocalPos)
         {
             var dx = Math.Max(boundingBox.Min.X - fomLocalPos.X, fomLocalPos.X - boundingBox.Max.X);

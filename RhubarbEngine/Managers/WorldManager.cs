@@ -336,12 +336,12 @@ namespace RhubarbEngine.Managers
             Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
             field.field.target = textue2DF;
 
-            Entity webBrowser = world.RootEntity.addChild("Floor");
+            Entity webBrowser = world.RootEntity.addChild("Web Browser");
             webBrowser.position.value = new Vector3f(0, 4.3, -5);
-            var browser= buildWebBrowser(webBrowser, (new Vector2u(1920, 1080))/2, new Vector2f(16 / 2, 9 / 2));
+            var browser = buildWebBrowser(webBrowser, (new Vector2u(1920, 1080)) / 2, new Vector2f(16 / 2, 9 / 2));
 
 
-            AttachSpiningCubes(world.RootEntity.addChild("Cubes"), browser);
+            AttachSpiningCubes(world.RootEntity.addChild("Cubes"), textue2DF);
 
 
 

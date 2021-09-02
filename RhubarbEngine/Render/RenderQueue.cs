@@ -13,16 +13,15 @@ namespace RhubarbEngine.Render
 
         private readonly SynchronizedCollection<RenderItemIndex> _indices = new SynchronizedCollection<RenderItemIndex>(DefaultCapacity);
         private readonly SynchronizedCollection<Renderable> _renderables = new SynchronizedCollection<Renderable>(DefaultCapacity);
-        private List<Renderable> sorted = new List<Renderable>(DefaultCapacity);
+        private IEnumerable<Renderable> sorted;
 
-        public List<Renderable> Renderables { get { return sorted; } }
+        public IEnumerable<Renderable> Renderables { get { return sorted; } }
         public int Count => _renderables.Count;
 
         public void Clear()
         {
             _indices.Clear();
             _renderables.Clear();
-            sorted.Clear();
         }
 
         public void AddRange(IList<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
@@ -72,8 +71,7 @@ namespace RhubarbEngine.Render
 
         public void Order()
         {
-
-            sorted = new List<Renderable>(from parer in _indices.AsParallel() orderby parer.Key.Value descending select _renderables[parer.ItemIndex]);
+            sorted = from parer in _indices.AsParallel() orderby parer.Key.Value descending select _renderables[parer.ItemIndex];
         }
     }
 }

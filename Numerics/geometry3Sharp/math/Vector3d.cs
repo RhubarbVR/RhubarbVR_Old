@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Numerics;
 
 namespace g3
 {
@@ -17,6 +17,11 @@ namespace g3
         public double z;
         [IgnoreMember]
         public double magnitude { get { return Math.Sqrt((x * x) + (y * y) + (z * z)); } }
+
+        public static implicit operator Vector3(Vector3d v)
+        {
+            return new Vector3((float)v.x, (float)v.y, (float)v.z);
+        }
 
         public Vector3d(double f) { x = y = z = f; }
         public Vector3d(double x, double y, double z) { this.x = x; this.y = y; this.z = z; }

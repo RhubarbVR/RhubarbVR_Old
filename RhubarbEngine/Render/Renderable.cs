@@ -12,7 +12,7 @@ using RhubarbEngine.World;
 
 namespace RhubarbEngine.Render
 {
-    public class MeshPiece
+    public class MeshPiece: IDisposable
     {
         public DeviceBuffer Positions { get; }
         public DeviceBuffer TexCoords { get; }
@@ -25,6 +25,13 @@ namespace RhubarbEngine.Render
             TexCoords = texCoords;
             Indices = indices;
             IndexCount = indices.SizeInBytes / sizeof(uint);
+        }
+
+        public void Dispose()
+        {
+            Positions.Dispose();
+            TexCoords.Dispose();
+            Indices.Dispose();
         }
     }
 

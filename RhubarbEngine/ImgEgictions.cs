@@ -14,6 +14,7 @@ using Veldrid.ImageSharp;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using g3;
+using CefSharp.OffScreen;
 
 public static class ImageSharpExtensions
     {
@@ -95,6 +96,129 @@ public static class ImageSharpExtensions
         cl.Dispose();
 
     }
+    public unsafe static Texture CreateDeviceTexture(this BitmapBuffer buf, GraphicsDevice gd, ResourceFactory factory)
+    {
+        Texture staging = factory.CreateTexture(
+            TextureDescription.Texture2D((uint)buf.Width, (uint)buf.Height, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm_SRgb, TextureUsage.Staging));
+        Texture output = factory.CreateTexture(
+            TextureDescription.Texture2D((uint)buf.Width, (uint)buf.Height, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm_SRgb, TextureUsage.Sampled));
+
+        CommandList cl = gd.ResourceFactory.CreateCommandList();
+        cl.Begin();
+
+        fixed (byte* bmpData = buf.Buffer)
+        {
+            // Get the address of the first line.
+            IntPtr ptr = (IntPtr)bmpData;
+
+            // Declare an array to hold the bytes of the bitmap.
+            int bytes = buf.Buffer.Length;
+            byte[] argbValues = new byte[bytes + 1];
+            // Copy the RGB values into the array.
+            System.Runtime.InteropServices.Marshal.Copy(ptr, argbValues, 0, bytes);
+            byte e;
+            fixed (byte* apin = argbValues)
+            {
+                for (int i = 0; i < bytes; i += 4)
+                {
+                    e = apin[i];
+                    apin[i] = apin[i + 2];
+                    apin[i + 2] = e;
+                }
+                var pin = apin;
+                MappedResource map = gd.Map(staging, MapMode.Write, 0);
+                uint rowWidth = (uint)((buf.Width) * 4);
+                if (rowWidth == map.RowPitch)
+                {
+                    Unsafe.CopyBlock(map.Data.ToPointer(), pin, (uint)((buf.Width) * (buf.Height) * 4));
+                }
+                else
+                {
+                    for (uint y = 0; y < buf.Height; y++)
+                    {
+                        byte* dstStart = (byte*)map.Data.ToPointer() + y * map.RowPitch;
+                        byte* srcStart = (byte*)pin + y * rowWidth;
+                        Unsafe.CopyBlock(dstStart, srcStart, rowWidth);
+                    }
+                }
+                gd.Unmap(staging, 0);
+
+                cl.CopyTexture(
+                   staging, 0, 0, 0, 0, 0,
+                   output, 0, 0, 0, 0, 0,
+                   (uint)buf.Width, (uint)buf.Height, 1, 1);
+            }
+            cl.End();
+            gd.SubmitCommands(cl);
+            cl.Dispose();
+            staging.Dispose();
+        }
+        return output;
+    }
+
+    public unsafe static void UpdateTextureCsfBmp(this Texture tex, BitmapBuffer update, GraphicsDevice gd, ResourceFactory factory)
+    {
+
+        if (!(update.Width == tex.Width && update.Height == tex.Height)) throw new Exception("Not Same");
+
+        Texture staging = factory.CreateTexture(
+            TextureDescription.Texture2D((uint)update.Width, (uint)update.Height, 1, 1, tex.Format, TextureUsage.Staging));
+
+        Texture ret = tex;
+
+        CommandList cl = gd.ResourceFactory.CreateCommandList();
+        cl.Begin();
+
+        fixed (byte* bmpData = update.Buffer)
+        {
+            // Get the address of the first line.
+            IntPtr ptr = (IntPtr)bmpData;
+
+            // Declare an array to hold the bytes of the bitmap.
+            int bytes = update.Buffer.Length;
+            byte[] argbValues = new byte[bytes + 1];
+            // Copy the RGB values into the array.
+            System.Runtime.InteropServices.Marshal.Copy(ptr, argbValues, 0, bytes);
+            byte e;
+            fixed (byte* apin = argbValues)
+            {
+                for (int i = 0; i < bytes; i += 4)
+                {
+                    e = apin[i];
+                    apin[i] = apin[i + 2];
+                    apin[i + 2] = e;
+                }
+                var pin = apin;
+                MappedResource map = gd.Map(staging, MapMode.Write, 0);
+                uint rowWidth = (uint)((update.Width) * 4);
+                if (rowWidth == map.RowPitch)
+                {
+                    Unsafe.CopyBlock(map.Data.ToPointer(), pin, (uint)((update.Width) * (update.Height) * 4));
+                }
+                else
+                {
+                    for (uint y = 0; y < update.Height; y++)
+                    {
+                        byte* dstStart = (byte*)map.Data.ToPointer() + y * map.RowPitch;
+                        byte* srcStart = (byte*)pin + y * rowWidth;
+                        Unsafe.CopyBlock(dstStart, srcStart, rowWidth);
+                    }
+                }
+                gd.Unmap(staging, 0);
+
+                cl.CopyTexture(
+                    staging, 0, 0, 0, 0, 0,
+                    ret, 0, 0, 0, 0, 0,
+                    (uint)update.Width, (uint)update.Height, 1, 1);
+
+            }
+            cl.End();
+            gd.SubmitCommands(cl);
+            cl.Dispose();
+            staging.Dispose();
+        }
+    }
+    [Obsolete]
     public unsafe static void UpdateTextureBmp(this Texture tex, System.Drawing.Bitmap update, GraphicsDevice gd, ResourceFactory factory)
     {
 

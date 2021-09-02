@@ -549,7 +549,7 @@ namespace RhubarbEngine.Components.Interaction
                 {
                     var thing = ScreenshotOrNull(browser, PopupBlending.Main);
                     if (thing == null) return;
-                    target = (new ImageSharpTexture(thing.ToImageSharpImage<Rgba32>(), false)).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+                    target = ((RenderHandler)browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
                     view = engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
                     var e = new RTexture2D(view);
                     e.addDisposable(target);
@@ -558,8 +558,8 @@ namespace RhubarbEngine.Components.Interaction
                 }
                 else
                 {
-                    //target.UpdateTexture((new ImageSharpTexture(ScreenshotOrNull(browser,PopupBlending.Main).ToImageSharpImage<Rgba32>(),false)), engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-                    target.UpdateTextureBmp(ScreenshotOrNull(browser,PopupBlending.Main), engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+                    // This still has memmory problems I believe it is a problem with the staging texture not geting disposed properly somewhere
+                    target.UpdateTextureCsfBmp(((RenderHandler)browser.RenderHandler).BitmapBuffer, engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
                 }
             }
             catch (Exception e)

@@ -2,6 +2,7 @@
 using RhubarbEngine.World;
 using RhubarbEngine.World.Asset;
 using RhubarbEngine.World.ECS;
+using System;
 using System.Collections.Generic;
 
 namespace RhubarbEngine.Components.Assets.Procedural_Meshes
@@ -70,6 +71,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
                 _generator.Vertices.Add(Vector3d.bezier(Vector3d.Zero, StartHandle.value,EndHandle.value, Endpoint.value,poser));
             }
         }
+        RMesh kite;
 
         private void updateMesh()
         {
@@ -82,9 +84,9 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
             _generator.Polygon = Polygon2d.MakeCircle(Radius.value, Steps.value, AngleShiftRad.value);
             loadCurve();
             MeshGenerator newmesh = _generator.Generate();
-            RMesh kite = new RMesh(newmesh.MakeDMesh());
-            kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
-            load(kite, true);
+                kite = new RMesh(newmesh.MakeSimpleMesh());
+                kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
+                load(kite,true);
         }
         public override void onLoaded()
         {
