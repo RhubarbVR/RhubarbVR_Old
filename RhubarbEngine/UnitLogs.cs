@@ -14,7 +14,7 @@ namespace RhubarbEngine
 
         public string logFile = DateTime.Now.ToString().Replace("/", "-").Replace(":", "_") + ".txt";
 
-        public string logDir = AppDomain.CurrentDomain.BaseDirectory + @"\Logs\";
+        public string logDir = AppDomain.CurrentDomain.BaseDirectory + @"Logs";
 
         public FileStream objFilestream;
 

@@ -6,8 +6,13 @@ namespace OpenAL
 	//This class contains only the most necessary functions & values that were used in the test.
 	public unsafe static class AL
 	{
+#if Windows
 		public const string Library = "Natives\\Windows64\\soft_oal.dll";
-
+#elif Linux
+		public const string Library = "Natives\\Linux64\\libopenal.so";
+#elif OSX
+		public const string Library = "Natives\\OSX64\\libopenal.dylib";
+#endif
 		public enum SourceState
 		{
 			Initial = 0x1011,

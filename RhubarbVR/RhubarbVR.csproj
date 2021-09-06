@@ -68,10 +68,10 @@
     <None Update="StaticAssets\Cursors\Grabbing.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="StaticAssets\Cursors\hand.png">
+    <None Update="StaticAssets\Cursors\Hand.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="StaticAssets\Cursors\help.png">
+    <None Update="StaticAssets\Cursors\Help.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="StaticAssets\Cursors\IBeam.png">
