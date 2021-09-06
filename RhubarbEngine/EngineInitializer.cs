@@ -79,6 +79,7 @@ namespace RhubarbEngine
                 engine.worldManager = new WorldManager();
                 engine.worldManager.initialize(engine);
                 
+                engine.audioManager.task.Start();
                 Initialised = true;
             }
             catch (Exception _e)

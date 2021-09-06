@@ -136,7 +136,7 @@ But with either of these, you need to the net5 runtime installed.
    ```
 5. Build
    ```sh
-   dotnet build "RhubarbVR" --no-restore /p:Platform=x64
+	dotnet build "RhubarbVR" --no-restore /p:Configuration=Release /p:Platform="x64"
    ```
 
 <!-- USAGE EXAMPLES -->

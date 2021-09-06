@@ -104,7 +104,6 @@ namespace RhubarbEngine.Managers
             task.Name = "Audio";
             task.IsBackground = true;
             task.Priority = ThreadPriority.Highest;
-            task.Start();
             return this;
         }
 

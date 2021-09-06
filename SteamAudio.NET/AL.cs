@@ -7,7 +7,7 @@ namespace OpenAL
 	public unsafe static class AL
 	{
 #if Windows
-		public const string Library = "Natives\\Windows64\\soft_oal.dll";
+		public const string Library =  "Natives\\Windows64\\soft_oal.dll";
 #elif Linux
 		public const string Library = "SteamAudio.NET\\Natives\\Linux64\\libopenal.so.1";
 #elif OSX
