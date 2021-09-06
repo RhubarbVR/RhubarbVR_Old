@@ -103,6 +103,12 @@ But with either of these, you need to the net5 runtime installed.
 7. Build solution
 8. Open MoveFiles.bat
 
+### Lunix Required Libraries
+1. libc6-dev
+   ```sh
+    sudo apt install libc6-dev 
+   ```
+
 ### Compiling Lunix
 
 1. Clone the repo
@@ -132,12 +138,7 @@ But with either of these, you need to the net5 runtime installed.
    ```sh
    dotnet build "RhubarbVR" --no-restore /p:Platform=x64
    ```
-### Lunix Required Libraries
-1. libc6-dev
-   ```sh
-    sudo apt install libc6-dev 
-   ```
-   
+
 <!-- USAGE EXAMPLES -->
 ## Usage
 
