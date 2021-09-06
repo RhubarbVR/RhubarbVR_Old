@@ -241,8 +241,15 @@ namespace RhubarbEngine.Managers
                 }
                 else
                 {
-                    localWorld = new World.World(this, "LocalWorld", 16, false, true);
-                    BuildLocalWorld(localWorld);
+                    try
+                    {
+                        localWorld = new World.World(this, "LocalWorld", 16, false, true);
+                        BuildLocalWorld(localWorld);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Log("Failed To start New localWorld" + e.ToString());
+                    }
                 }
                 localWorld.Focus = World.World.FocusLevel.Focused;
                 worlds.Add(localWorld);
