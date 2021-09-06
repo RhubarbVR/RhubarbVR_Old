@@ -1,0 +1,3 @@
+[submodule "veldrid"]
+	path = veldrid
+	url = https://github.com/RhubarbVR/veldrid.git

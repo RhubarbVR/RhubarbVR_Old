@@ -50,17 +50,8 @@
     <PackageReference Include="MessagePack" Version="2.3.75" />
     <PackageReference Include="NAudio.Core" Version="2.0.0" />
     <PackageReference Include="RhuSettings" Version="1.0.0" />
-    <PackageReference Include="Veldrid" Version="4.8.0" />
-    <PackageReference Include="Veldrid.ImageSharp" Version="4.8.0" />
-    <PackageReference Include="Veldrid.SDL2" Version="4.8.0" />
     <PackageReference Include="Veldrid.SPIRV" Version="1.0.14" />
-	<PackageReference Include="Veldrid.StartupUtilities" Version="4.8.0" />
-	<PackageReference Include="Veldrid.Utilities" Version="4.8.0" />
 
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\Veldrid\Vk\VkFormats.VdToVkPixelFormat.cs" Link="VkFormats.VdToVkPixelFormat.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,6 +59,11 @@
     <ProjectReference Include="..\Numerics\Numerics.csproj" />
     <ProjectReference Include="..\RhubarbCloudApi\RhubarbCloudApi.csproj" />
     <ProjectReference Include="..\SteamAudio.NET\SteamAudio.NET.csproj" />
+    <ProjectReference Include="..\veldrid\src\Veldrid.ImageSharp\Veldrid.ImageSharp.csproj" />
+    <ProjectReference Include="..\veldrid\src\Veldrid.SDL2\Veldrid.SDL2.csproj" />
+    <ProjectReference Include="..\veldrid\src\Veldrid.StartupUtilities\Veldrid.StartupUtilities.csproj" />
+    <ProjectReference Include="..\veldrid\src\Veldrid.Utilities\Veldrid.Utilities.csproj" />
+    <ProjectReference Include="..\veldrid\src\Veldrid\Veldrid.csproj" />
   </ItemGroup>
 
   <ItemGroup>
