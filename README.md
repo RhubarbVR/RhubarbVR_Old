@@ -124,8 +124,14 @@ But with either of these, you need to the net5 runtime installed.
    sudo apt-get update && \
    sudo apt-get install -y dotnet-sdk-5.0
    ```
-4.
-
+4. Restore nuget Packages
+   ```sh
+   dotnet restore "RhubarbVR"
+   ```
+5. Build
+   ```sh
+   dotnet build "RhubarbVR" --no-restore /p:Platform=x64
+   ```
 <!-- USAGE EXAMPLES -->
 ## Usage
 
