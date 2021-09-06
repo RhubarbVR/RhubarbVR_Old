@@ -83,21 +83,48 @@ You can get a compiled version of RhubarbVR through this GitHub repository or ob
 But with either of these, you need to the net5 runtime installed.
 [Net5 Runtime](https://dotnet.microsoft.com/download/dotnet/5.0/runtime)
 
-### Compiling
+### Compiling Windows
 
 1. You will need to download and install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/) .Net desktop development Component Group.
 3. Clone the repo
    ```sh
    git clone https://github.com/RhubarbVR/RhubarbVR.git
    ```
-4. Open The solution file
+4. Download Submodules
+   ```sh
+   git submodule init
+   git submodule update
+   ```
+5. Open The solution file
    ```
    RhubarbVR.sln
    ```
-5. Click build at the top
-6. Build solution
-7. Open MoveFiles.bat
+6. Click build at the top
+7. Build solution
+8. Open MoveFiles.bat
 
+### Compiling Lunix
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/RhubarbVR/RhubarbVR.git
+   ```
+2. Download Submodules
+   ```sh
+   git submodule init
+   git submodule update
+   ```
+3. Install Net5 SDK Ubuntu 21.04 for [OtherDistros](https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu)
+   ```sh
+   wget https://packages.microsoft.com/config/ubuntu/21.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+   sudo dpkg -i packages-microsoft-prod.deb
+   rm packages-microsoft-prod.deb
+   sudo apt-get update; \
+   sudo apt-get install -y apt-transport-https && \
+   sudo apt-get update && \
+   sudo apt-get install -y dotnet-sdk-5.0
+   ```
+4.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
