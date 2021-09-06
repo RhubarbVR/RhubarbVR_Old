@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-    using System.IO;
-
-    using SixLabors.ImageSharp;
-    using SixLabors.ImageSharp.Advanced;
-    using SixLabors.ImageSharp.Formats.Png;
-    using SixLabors.ImageSharp.PixelFormats;
+using System.IO;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
 using Veldrid.ImageSharp;
 using System.Runtime.CompilerServices;
@@ -17,7 +16,7 @@ using g3;
 using CefSharp.OffScreen;
 
 public static class ImageSharpExtensions
-    {
+{
         public static System.Drawing.Bitmap ToBitmap<TPixel>(this Image<TPixel> image) where TPixel : unmanaged, IPixel<TPixel>
         {
             using (var memoryStream = new MemoryStream())

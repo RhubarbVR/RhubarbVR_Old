@@ -43,7 +43,7 @@
   <ItemGroup>
     <PackageReference Include="BEPUik" Version="1.5.1" />
     <PackageReference Include="BulletSharp.x64" Version="0.12.0" />
-    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="92.0.251" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="93.1.110-pre" />
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
     <PackageReference Include="Concentus" Version="1.1.7" />
     <PackageReference Include="DiscordRichPresence" Version="1.0.175" />
@@ -125,11 +125,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="92.0.25" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="93.1.11" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="92.0.25" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="93.1.11" />
   </ItemGroup>
 
 </Project>

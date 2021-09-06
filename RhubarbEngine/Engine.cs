@@ -92,7 +92,7 @@ namespace RhubarbEngine
             engineInitializer = new EngineInitializer(this);
             logger.Log("Loading Arguments:", true);
             engineInitializer.loadArguments(_args);
-            logger.Log("Datapath: "+ dataPath);
+            logger.Log("Datapath: " + dataPath);
             //Build DataFolder
             if (!Directory.Exists(dataPath))
             {
@@ -181,7 +181,7 @@ namespace RhubarbEngine
             windowManager.Update();
             inputManager.Update();
             worldManager.Update(startTime, Frame);
-            renderManager.Update();
+            renderManager.Update().Wait();
         }
 
         public void cleanUP()

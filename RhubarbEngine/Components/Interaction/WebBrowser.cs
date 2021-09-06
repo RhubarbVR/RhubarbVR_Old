@@ -189,7 +189,10 @@ namespace RhubarbEngine.Components.Interaction
             var bitmapBuffer = isPopup ? PopupBuffer : BitmapBuffer;
 
             bitmapBuffer.UpdateBuffer(width, height, buffer, dirtyRect);
+            renderEvent.Set();
         }
+
+        public ManualResetEvent renderEvent = new ManualResetEvent(false);
 
         /// <summary>
         /// Called when the browser's cursor has changed.
@@ -559,6 +562,8 @@ namespace RhubarbEngine.Components.Interaction
                 else
                 {
                     // This still has memmory problems I believe it is a problem with the staging texture not geting disposed properly somewhere
+                    ((RenderHandler)browser.RenderHandler).renderEvent.WaitOne();
+                    ((RenderHandler)browser.RenderHandler).renderEvent.Reset();
                     target.UpdateTextureCsfBmp(((RenderHandler)browser.RenderHandler).BitmapBuffer, engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
                 }
             }

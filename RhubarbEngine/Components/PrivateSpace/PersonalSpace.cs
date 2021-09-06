@@ -137,13 +137,22 @@ namespace RhubarbEngine.Components.PrivateSpace
             RightLaser.attachComponent<InteractionLaser>().source.value = InteractionSource.RightLaser;
             RightLaser.attachComponent<LaserVisual>().source.value = InteractionSource.RightLaser;
 
+            Entity leftContext = rootent.addChild("Left Context");
+            Entity rightContext = rootent.addChild("Right Context");
+
+            var leftC = leftContext.attachComponent<ContextMenu>();
+            leftC.side.value = Input.Creality.Left;
+
+            var rightC = rightContext.attachComponent<ContextMenu>();
+            rightC.side.value = Input.Creality.Right;
+
             logger.Log("Spawned User PersonalSpace");
         }
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
             if (input.isKeyboardinuse) return;
-            if (input.mainWindows.GetKeyDown(Veldrid.Key.R) || input.SecondaryPress(Input.Creality.None))
+            if ((input.mainWindows.GetKeyDown(Veldrid.Key.Tab) && (input.mainWindows.GetKey(Veldrid.Key.AltLeft) || input.mainWindows.GetKey(Veldrid.Key.AltRight))) || input.SecondaryPress(Input.Creality.None))
             {
                 SwitchWorld();
             }

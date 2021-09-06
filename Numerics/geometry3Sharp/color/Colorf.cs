@@ -267,9 +267,10 @@ namespace g3
             throw new NotImplementedException();
         }
 
-        public uint ToUInt32(IFormatProvider provider)
+        public uint ToUInt32(IFormatProvider provider = null)
         {
-            throw new NotImplementedException();
+            var bytes = ToBytes();
+            return (((uint)bytes.r) + ((uint)bytes.g << 8) + ((uint)bytes.b << 16) + ((uint)bytes.a << 24));
         }
 
         public ulong ToUInt64(IFormatProvider provider)

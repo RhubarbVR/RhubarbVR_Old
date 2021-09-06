@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RhubarbEngine;
 using RhubarbEngine.PlatformInfo;
-
+using System.Threading;
 namespace RhubarbEngine.Managers
 {
     public class PlatformInfoManager : IManager
@@ -81,6 +81,8 @@ namespace RhubarbEngine.Managers
             return this;
         }
         long currentFrameTicks;
+
+        float vsync = 0f;
         public void Update()
         {
             previousFrameTicks = currentFrameTicks;
@@ -88,6 +90,12 @@ namespace RhubarbEngine.Managers
             deltaSeconds = (currentFrameTicks - previousFrameTicks) / (double)Stopwatch.Frequency;
             FrameRate = 1f / (float)deltaSeconds;
             AvrageFrameRate = (FrameRate)*0.8f + (AvrageFrameRate)*0.2f;
+            if(vsync != 0)
+            {
+                var sleepTime = (int)(((1 / vsync) - deltaSeconds) * 1000);
+                if (sleepTime > 0)
+                    Thread.Sleep(sleepTime);
+            }
         }
     }
 }

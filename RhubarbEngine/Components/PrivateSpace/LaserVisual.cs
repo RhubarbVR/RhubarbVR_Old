@@ -53,8 +53,8 @@ namespace RhubarbEngine.Components.PrivateSpace
             scaler.offset.value = new Vector3f(-0.1);
             var pos = cmit.getField<Render.Material.Fields.FloatField>("Zpos", Render.Shader.ShaderType.MainFrag);
             var pos2 = mit.getField<Render.Material.Fields.FloatField>("Zpos", Render.Shader.ShaderType.MainFrag);
-            pos.field.value = 0.3f;
-            pos2.field.value = 0.6f;
+            pos.field.value = 0.1f;
+            pos2.field.value = 0.2f;
 
             colorField.target = mit.getField<Render.Material.Fields.ColorField>("TintColor", Render.Shader.ShaderType.MainFrag);
             planeColorField.target = cmit.getField<Render.Material.Fields.ColorField>("TintColor", Render.Shader.ShaderType.MainFrag);

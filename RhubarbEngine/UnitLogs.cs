@@ -33,11 +33,11 @@ namespace RhubarbEngine
 
         public void Log(string _log, bool _alwaysLog = false)
         {
+            Console.WriteLine(String.Format("{0}: {1}", DateTime.Now, _log));
             if (_alwaysLog || engine.verbose)
             {
                 writeLog(String.Format("{0}: {1}", DateTime.Now, _log));
             }
-            Console.WriteLine(String.Format("{0}: {1}", DateTime.Now, _log));
         }
         public bool writeLog(string strMessage)
         {

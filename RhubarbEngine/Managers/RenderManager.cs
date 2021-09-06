@@ -56,7 +56,7 @@ namespace RhubarbEngine.Managers
         public TextureView rhubarbSolidview;
 
         public TextureView[] cursors = new TextureView[50];
-
+         
         public MirrorTextureEyeSource eyeSource => engine.settingsObject.VRSettings.renderEye;
         public IManager initialize(Engine _engine)
         {
@@ -190,7 +190,7 @@ namespace RhubarbEngine.Managers
 
         public void switchVRContext(OutputType type)
         {
-            if(type != engine.outputType)
+            if((type != engine.outputType) || vrContext.Disposed)
             {
                 engine.logger.Log("Output Device Change:" + type.ToString());
                 engine.outputType = type;
@@ -258,10 +258,11 @@ namespace RhubarbEngine.Managers
             }
         }
 
-        public void Update()
+        public async Task Update()
         {
             if (vrContext.Disposed)
             {
+                Console.WriteLine("Going to screen Cuz Disposed");
                switchVRContext(OutputType.Screen);
             }
 
@@ -271,9 +272,9 @@ namespace RhubarbEngine.Managers
                 {
                     ((ScreenContext)vrContext).updateInput();
                 }
-
-                RenderRenderObjects();
-                // Render Eyes
+                if (!await Task.Run(RenderRenderObjects).TimeOut(1000))
+                    Logger.Log("Render Render Objects TimeOut", true);
+                gd.WaitForIdle();
                 HmdPoseState poses = vrContext.WaitForPoses();
                 Matrix4x4 leftView = poses.CreateView(VREye.Left, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
                 Matrix4x4 rightView = poses.CreateView(VREye.Right, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
@@ -311,6 +312,7 @@ namespace RhubarbEngine.Managers
 
                 eyesCL.End();
                 gd.SubmitCommands(eyesCL);
+                gd.WaitForIdle();
 
                 vrContext.SubmitFrame();
             }
@@ -327,8 +329,8 @@ namespace RhubarbEngine.Managers
                 windowCL.End();
                 gd.SubmitCommands(windowCL);
                 gd.SwapBuffers(sc);
+                gd.WaitForIdle();
             }
-            gd.WaitForIdle();
         }
     }
 }
