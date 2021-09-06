@@ -95,7 +95,8 @@ But with either of these, you need to the net5 runtime installed.
    RhubarbVR.sln
    ```
 5. Click build at the top
-5. Build solution
+6. Build solution
+7. Open MoveFiles.bat
 
 
 <!-- USAGE EXAMPLES -->

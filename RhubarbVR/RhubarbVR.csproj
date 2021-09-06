@@ -191,8 +191,4 @@
     <Folder Include="StaticAssets\Cursors\" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy $(TargetDir)\native\win-x64\SDL2.dll $(TargetDir)\SDL2.dll&#xD;&#xA;copy $(TargetDir)\VirtualReality\native\win-x64\openvr_api.dll $(TargetDir)\openvr_api.dll" />
-  </Target>
-
 </Project>
