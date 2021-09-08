@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -352,7 +353,7 @@ namespace RhubarbEngine.Components.Interaction
             {
                 Console.WriteLine("Init Cef");
                 var cefSettings = new CefSettings();
-                cefSettings.CachePath = engine.dataPath + @"\WebBrowser";
+                cefSettings.CachePath = Path.Combine(engine.dataPath, "WebBrowser");
                 cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
                 cefSettings.CefCommandLineArgs.Add("disable-usb-keyboard-detect", "1");
                 cefSettings.EnableAudio();
