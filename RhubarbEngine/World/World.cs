@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -638,10 +639,10 @@ namespace RhubarbEngine.World
             Mobilefriendly.value = mobilefriendly;
             if(templet != null)
             {
-                string path = AppDomain.CurrentDomain.BaseDirectory + @"\WorldTemplets\";
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WorldTemplets");
                 try
                 {
-                    var data = System.IO.File.ReadAllBytes(path + templet + ".RWorld");
+                    var data = System.IO.File.ReadAllBytes(Path.Combine(path, templet + ".RWorld"));
                     DataNodeGroup node = new DataNodeGroup(data);
                     List<Action> loadded = new List<Action>();
                     deSerialize(node, loadded, true, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());

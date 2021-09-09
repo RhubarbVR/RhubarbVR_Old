@@ -51,7 +51,7 @@ namespace RhubarbEngine.Managers
             string text = "";
             try
             {
-                text = File.ReadAllText(engine.dataPath + "\\auth.token");
+                text = File.ReadAllText(Path.Combine(engine.dataPath, "auth.token"));
             }
             catch
             {
@@ -121,14 +121,14 @@ namespace RhubarbEngine.Managers
             setToken(auth.Token, auth.User);
             if (rememberme)
             {
-                File.WriteAllText(engine.dataPath + "\\auth.token", token);
+                File.WriteAllText(Path.Combine(engine.dataPath, "auth.token"), token);
             }
         }
         public void register(string email, string password, string username,DateTime birthday)
         {
             var auth = authApi.AuthRegisterPost(new RegesterReg(username, password,email, birthday));
             setToken(auth.Token, auth.User);
-            File.WriteAllText(engine.dataPath + "\\auth.token", token);
+            File.WriteAllText(Path.Combine(engine.dataPath, "auth.token"), token);
         }
 
         public void logout()
@@ -139,7 +139,7 @@ namespace RhubarbEngine.Managers
             onlogout?.Invoke();
             try
             {
-                File.Delete(engine.dataPath + "\\auth.token");
+                File.Delete(Path.Combine(engine.dataPath, "auth.token"));
             }
             catch { }
             statusApi.StatusClearstatusGet(token);

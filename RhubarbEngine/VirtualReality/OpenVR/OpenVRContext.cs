@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -91,12 +92,12 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
             Logger.Log("Loading app.vrmanifest");
             EVRApplicationError apperro = EVRApplicationError.None;
-            apperro = OVR.Applications.AddApplicationManifest(AppDomain.CurrentDomain.BaseDirectory + @"\\app.vrmanifest", false);
+            apperro = OVR.Applications.AddApplicationManifest(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.vrmanifest"), false);
             if (apperro != EVRApplicationError.None) Logger.Log($"Failed to load Application Manifest: {Enum.GetName(typeof(EVRApplicationError), apperro)}", true);
             else Logger.Log("Application manifest loaded successfully.");
 
             _mirrorTexture = new OpenVRMirrorTexture(this);
-            EVRInputError error = OVR.Input.SetActionManifestPath(AppDomain.CurrentDomain.BaseDirectory + @"\\SteamVR\\steamvr_manifest.json");
+            EVRInputError error = OVR.Input.SetActionManifestPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SteamVR", "steamvr_manifest.json"));
             if (error != EVRInputError.None)
             {
                 Logger.Log($"Action manifest error {error.ToString()}");

@@ -36,7 +36,7 @@ namespace RhubarbEngine
 
         public UnitLogs logger;
 
-        public string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\RhubarbVR";
+        public string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RhubarbVR");
 
         public FileStream lockFile;
 
@@ -101,7 +101,7 @@ namespace RhubarbEngine
             }
             try
             {
-                lockFile = new FileStream(dataPath + "\\locker.lock", FileMode.OpenOrCreate);
+                lockFile = new FileStream(Path.Combine(dataPath, "locker.lock"), FileMode.OpenOrCreate);
             }
             catch
             {

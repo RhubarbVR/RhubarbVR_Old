@@ -27,7 +27,7 @@ namespace RhubarbEngine
             {
                 Directory.CreateDirectory(logDir);
             }
-            objFilestream = new FileStream(string.Format("{0}\\{1}", logDir, logFile), FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            objFilestream = new FileStream(Path.Combine(logDir, logFile), FileMode.OpenOrCreate, FileAccess.ReadWrite);
             objStreamWriter = new StreamWriter((Stream)objFilestream);
         }
 
