@@ -31,6 +31,7 @@ using Point = System.Drawing.Point;
 using Range = CefSharp.Structs.Range;
 using Size = System.Drawing.Size;
 using System.Drawing;
+using RhubarbEngine.Render;
 
 namespace RhubarbEngine.Components.Interaction
 {
@@ -506,7 +507,7 @@ namespace RhubarbEngine.Components.Interaction
         }
 
         TextureView view;
-        Texture target;
+        UpdateDatingTexture2D target;
         public void Render()
         {
             if (!loaded) return;
@@ -553,8 +554,8 @@ namespace RhubarbEngine.Components.Interaction
                 {
                     var thing = ScreenshotOrNull(browser, PopupBlending.Main);
                     if (thing == null) return;
-                    target = ((RenderHandler)browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-                    view = engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
+                    target = new UpdateDatingTexture2D();
+                    view = target.InitializeView(((RenderHandler)browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory), engine.renderManager.gd);
                     var e = new RTexture2D(view);
                     e.addDisposable(target);
                     e.addDisposable(view);
@@ -565,7 +566,7 @@ namespace RhubarbEngine.Components.Interaction
                     // This still has memmory problems I believe it is a problem with the staging texture not geting disposed properly somewhere
                     ((RenderHandler)browser.RenderHandler).renderEvent.WaitOne();
                     ((RenderHandler)browser.RenderHandler).renderEvent.Reset();
-                    target.UpdateTextureCsfBmp(((RenderHandler)browser.RenderHandler).BitmapBuffer, engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+                    target.UpdateBitmap(((RenderHandler)browser.RenderHandler).BitmapBuffer);
                 }
             }
             catch (Exception e)
