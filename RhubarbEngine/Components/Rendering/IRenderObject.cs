@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Components.Rendering
 {
-    public enum RenderFrequency
-    {
-        OneToOne,
-        Half,
-        Eighth,
-        Sixth
-    }
+	public enum RenderFrequency
+	{
+		OneToOne,
+		Half,
+		Eighth,
+		Sixth
+	}
 
-    public interface IRenderObject
-    {
-        RenderFrequency renderFrac { get; }
+	public interface IRenderObject
+	{
+		RenderFrequency renderFrac { get; }
 
-        bool Threaded { get; }
+		bool Threaded { get; }
 
-        void Render();
-    }
+		void Render();
+	}
 }

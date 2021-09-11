@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Render.Shader
 {
-    public enum ShaderType
-    {
-        MainVert = 1,
-        MainFrag = 2,
-        ShadowVert = 4,
-        ShadowFrag = 8,
-    }
+	public enum ShaderType
+	{
+		MainVert = 1,
+		MainFrag = 2,
+		ShadowVert = 4,
+		ShadowFrag = 8,
+	}
 }

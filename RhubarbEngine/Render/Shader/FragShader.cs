@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Render.Shader
 {
-    public abstract class FragShader : ShaderPart
-    {
-        public override string TopCode
-        {
-            get
-            {
-                return @"
+	public abstract class FragShader : ShaderPart
+	{
+		public override string TopCode
+		{
+			get
+			{
+				return @"
 #version 450
 layout(set = 0, binding = 1) uniform sampler Sampler;
 ";
-            }
-        }
+			}
+		}
 
-        public string userCode = @"
+		public string userCode = @"
 
 layout(location = 0) in vec2 fsin_UV;
 layout(location = 0) out vec4 fsout_Color0;
@@ -35,16 +35,16 @@ void main()
     fsout_Color0 = vec4(0.87,0.24,0.84,0.75);
 }
 ";
-        public override string UserCode
-        {
-            get
-            {
-                return userCode;
-            }
-            set
-            {
-                userCode = value;
-            }
-        }
-    }
+		public override string UserCode
+		{
+			get
+			{
+				return userCode;
+			}
+			set
+			{
+				userCode = value;
+			}
+		}
+	}
 }

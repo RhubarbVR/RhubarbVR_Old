@@ -8,6 +8,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+
 using Valve.VR;
 
 #if UNITY_5_3_OR_NEWER
@@ -2008,7 +2009,8 @@ namespace Valve.VR
 			}
 
 			int size = System.Text.Encoding.UTF8.GetByteCount(managedString) + 1;
-			if (buffer.Length < size) buffer = new byte[size];
+			if (buffer.Length < size)
+				buffer = new byte[size];
 			int written = System.Text.Encoding.UTF8.GetBytes(managedString, 0, managedString.Length, buffer, 0);
 			buffer[written] = 0x00; // null terminate
 			IntPtr nativeUtf8 = Marshal.AllocHGlobal(written + 1);

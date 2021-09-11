@@ -6,37 +6,37 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Render.Shader
 {
-    public abstract class ShaderPart
-    {
-        public virtual string TopCode
-        {
-            get
-            {
-                return @"
+	public abstract class ShaderPart
+	{
+		public virtual string TopCode
+		{
+			get
+			{
+				return @"
 #version 450 Error
 ";
-            } 
-        }
+			}
+		}
 
-        public string InjectedCode = "";
+		public string InjectedCode = "";
 
-        private string userCode = @"
+		private string userCode = @"
 Error
 ";
-        public virtual string UserCode
-        {
-            get
-            {
-                return userCode;
-            }
-            set
-            {
-                userCode = value;
-            }
-        }
-        public virtual string getCode()
-        {
-            return TopCode + "\n"+ InjectedCode + "\n" + UserCode;
-        }
-    }
+		public virtual string UserCode
+		{
+			get
+			{
+				return userCode;
+			}
+			set
+			{
+				userCode = value;
+			}
+		}
+		public virtual string getCode()
+		{
+			return TopCode + "\n" + InjectedCode + "\n" + UserCode;
+		}
+	}
 }

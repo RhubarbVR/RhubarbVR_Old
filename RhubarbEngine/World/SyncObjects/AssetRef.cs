@@ -9,47 +9,47 @@ using RhubarbEngine.World.Asset;
 
 namespace RhubarbEngine.World
 {
-    public class AssetRef<T> : SyncRef<AssetProvider<T>>, IWorldObject where T : IAsset
-    {
-        public T Asset
-        {
-            get
-            {
-                if(base.target == null)
-                {
-                    return default(T);
-                }
-                return base.target.value;
-            }
-        }
+	public class AssetRef<T> : SyncRef<AssetProvider<T>>, IWorldObject where T : IAsset
+	{
+		public T Asset
+		{
+			get
+			{
+				if (base.target == null)
+				{
+					return default(T);
+				}
+				return base.target.value;
+			}
+		}
 
-        public event Action<T> loadChange;
+		public event Action<T> loadChange;
 
-        public void loadedCall(T newAsset)
-        {
-            loadChange?.Invoke(newAsset);
-        }
+		public void loadedCall(T newAsset)
+		{
+			loadChange?.Invoke(newAsset);
+		}
 
-        public override void Bind()
-        {
-            base.Bind();
-            base.target.onLoadedCall += loadedCall;
-            if (base.target.loaded)
-            {
-                loadedCall(target.value);
-            }
-        }
-        public override void onLoaded()
-        {
-            base.onLoaded();
-            base.target.onLoadedCall += loadedCall;
-            if (base.target.loaded)
-            {
-                loadedCall(base.target.value);
-            }
-        }
-        public AssetRef(IWorldObject _parent,bool newrefid = true) : base(_parent, newrefid)
-        {
-        }
-    }
+		public override void Bind()
+		{
+			base.Bind();
+			base.target.onLoadedCall += loadedCall;
+			if (base.target.loaded)
+			{
+				loadedCall(target.value);
+			}
+		}
+		public override void onLoaded()
+		{
+			base.onLoaded();
+			base.target.onLoadedCall += loadedCall;
+			if (base.target.loaded)
+			{
+				loadedCall(base.target.value);
+			}
+		}
+		public AssetRef(IWorldObject _parent, bool newrefid = true) : base(_parent, newrefid)
+		{
+		}
+	}
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Helpers
 {
-    public static class UIHelper
-    {
-    }
+	public static class UIHelper
+	{
+	}
 }

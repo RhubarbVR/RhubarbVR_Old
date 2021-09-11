@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Render.Shader
 {
-    public abstract class VertShader : ShaderPart
-    {
-        public override string TopCode
-        {
-            get
-            {
-                return @"
+	public abstract class VertShader : ShaderPart
+	{
+		public override string TopCode
+		{
+			get
+			{
+				return @"
 #version 450
 layout (set = 0, binding = 0) uniform WVP
 {
@@ -25,9 +25,9 @@ layout (location = 0) in vec3 vsin_Position;
 layout (location = 1) in vec2 vsin_UV;
 
 ";
-            }
-        }
-        private string userCode = @"
+			}
+		}
+		private string userCode = @"
 layout (location = 0) out vec2 fsin_UV;
 
 void main()
@@ -36,18 +36,18 @@ void main()
     fsin_UV = vsin_UV;
 }
 ";
-        public override string UserCode
-        {
-            get
-            {
-                return userCode;
-            }
-            set
-            {
-                userCode = value;
-            }
-        }
-    }
-    }
+		public override string UserCode
+		{
+			get
+			{
+				return userCode;
+			}
+			set
+			{
+				userCode = value;
+			}
+		}
+	}
+}
 
 

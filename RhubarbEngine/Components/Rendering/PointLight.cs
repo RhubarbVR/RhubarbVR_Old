@@ -25,24 +25,24 @@ using RhubarbEngine.Components.Assets;
 
 namespace RhubarbEngine.Components.Rendering
 {
-    [Category(new string[] { "Rendering" })]
-    public class PointLight : Component, IRenderObject
-    {
-        public RenderFrequency renderFrac => throw new NotImplementedException();
+	[Category(new string[] { "Rendering" })]
+	public class PointLight : Component, IRenderObject
+	{
+		public RenderFrequency renderFrac => throw new NotImplementedException();
 
-        public bool Threaded => throw new NotImplementedException();
+		public bool Threaded => throw new NotImplementedException();
 
-        public PointLight(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
-        {
+		public PointLight(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public PointLight()
-        {
-        }
+		}
+		public PointLight()
+		{
+		}
 
-        public void Render()
-        {
-            throw new NotImplementedException();
-        }
-    }
+		public void Render()
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

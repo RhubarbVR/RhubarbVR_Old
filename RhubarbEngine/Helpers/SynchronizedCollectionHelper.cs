@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine
 {
-    public static class SynchronizedCollectionHelper
-    {
-        public static bool SafeAdd<T>(this SynchronizedCollection<T> col, T value)
-        {
-            if (!col.Contains(value))
-            {
-                col.Add(value);
-                return true;
-            }
-            return false;
-        }
-    }
+	public static class SynchronizedCollectionHelper
+	{
+		public static bool SafeAdd<T>(this SynchronizedCollection<T> col, T value)
+		{
+			if (!col.Contains(value))
+			{
+				col.Add(value);
+				return true;
+			}
+			return false;
+		}
+	}
 }

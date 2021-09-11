@@ -9,43 +9,43 @@ using System.Runtime.InteropServices;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
-    public class GenericField<T> : MaterialField ,IWorldObject where T : unmanaged , IConvertible
-    {
-        public Sync<T> field;
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            field = new Sync<T>(this, newRefIds);
-            SetDefault();
-            field.Changed += valueUpdate;
-        }
-        public override void setValue(Object val)
-        {
-            field.value = (T)val;
-        }
+	public class GenericField<T> : MaterialField, IWorldObject where T : unmanaged, IConvertible
+	{
+		public Sync<T> field;
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			field = new Sync<T>(this, newRefIds);
+			SetDefault();
+			field.Changed += valueUpdate;
+		}
+		public override void setValue(Object val)
+		{
+			field.value = (T)val;
+		}
 
-        public virtual void SetDefault()
-        {
-            field.value = default;
-        }
+		public virtual void SetDefault()
+		{
+			field.value = default;
+		}
 
-        private void valueUpdate(IChangeable e)
-        {
-            updateBuffer(engine.renderManager.gd);
-        }
+		private void valueUpdate(IChangeable e)
+		{
+			updateBuffer(engine.renderManager.gd);
+		}
 
-        unsafe public override void updateBuffer(GraphicsDevice gb)
-        {
-            IntPtr e = GCHandle.ToIntPtr(GCHandle.Alloc(field.value));
-            gb.UpdateBuffer((DeviceBuffer)resource, 0, e , (uint)sizeof(T));
-        }
+		unsafe public override void updateBuffer(GraphicsDevice gb)
+		{
+			IntPtr e = GCHandle.ToIntPtr(GCHandle.Alloc(field.value));
+			gb.UpdateBuffer((DeviceBuffer)resource, 0, e, (uint)sizeof(T));
+		}
 
-        public unsafe override void createDeviceResource(ResourceFactory fact)
-        {
-            if (resource != null)
-            {
-                return;
-            }
-            resource = fact.CreateBuffer(new BufferDescription((uint)sizeof(T), BufferUsage.UniformBuffer | BufferUsage.Dynamic));
-        }
-    }
+		public unsafe override void createDeviceResource(ResourceFactory fact)
+		{
+			if (resource != null)
+			{
+				return;
+			}
+			resource = fact.CreateBuffer(new BufferDescription((uint)sizeof(T), BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+		}
+	}
 }

@@ -15,34 +15,34 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
 
-    [Category("ImGUI/Text")]
-    public class ImGUIColoredText : UIWidget
-    {
 
-        public Sync<string> text;
-        public Sync<Colorf> color;
+	[Category("ImGUI/Text")]
+	public class ImGUIColoredText : UIWidget
+	{
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            text = new Sync<string>(this, newRefIds);
-            color = new Sync<Colorf>(this, newRefIds);
-            color.value = Colorf.Cyan;
-        }
+		public Sync<string> text;
+		public Sync<Colorf> color;
 
-        public ImGUIColoredText(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			text = new Sync<string>(this, newRefIds);
+			color = new Sync<Colorf>(this, newRefIds);
+			color.value = Colorf.Cyan;
+		}
 
-        }
-        public ImGUIColoredText()
-        {
-        }
+		public ImGUIColoredText(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            ImGui.TextColored(color.value.ToRGBA().ToSystem(), text.value ?? "");
-        }
-    }
+		}
+		public ImGUIColoredText()
+		{
+		}
+
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			ImGui.TextColored(color.value.ToRGBA().ToSystem(), text.value ?? "");
+		}
+	}
 }

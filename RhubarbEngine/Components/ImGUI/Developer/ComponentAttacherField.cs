@@ -9,27 +9,27 @@ using g3;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    public abstract class ComponentAttacherField : UIWidget
-    {
-        public SyncRef<ComponentAttacher> target;
+	public abstract class ComponentAttacherField : UIWidget
+	{
+		public SyncRef<ComponentAttacher> target;
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            target = new SyncRef<ComponentAttacher>(this, newRefIds);
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			target = new SyncRef<ComponentAttacher>(this, newRefIds);
+		}
 
 
-        public ComponentAttacherField(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public ComponentAttacherField(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public ComponentAttacherField()
-        {
-        }
+		}
+		public ComponentAttacherField()
+		{
+		}
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-        }
-    }
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+		}
+	}
 }

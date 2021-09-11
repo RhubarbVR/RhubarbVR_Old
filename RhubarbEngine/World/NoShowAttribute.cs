@@ -8,11 +8,11 @@ using System.Reflection;
 
 namespace RhubarbEngine.World
 {
-    public class NoShowAttribute : System.Attribute
-    {
-        public NoShowAttribute()
-        {
-        }
-    }
+	public class NoShowAttribute : System.Attribute
+	{
+		public NoShowAttribute()
+		{
+		}
+	}
 }
 

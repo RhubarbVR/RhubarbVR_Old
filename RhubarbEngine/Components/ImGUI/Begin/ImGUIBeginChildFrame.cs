@@ -15,42 +15,42 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
-
-    [Category("ImGUI/Begin")]
-    public class ImGUIBeginChildFrame : UIWidgetList
-    {
-        public Sync<uint> id;
-
-        public Sync<Vector2f> size;
 
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            id = new Sync<uint>(this, newRefIds);
-            size = new Sync<Vector2f>(this, newRefIds);
+	[Category("ImGUI/Begin")]
+	public class ImGUIBeginChildFrame : UIWidgetList
+	{
+		public Sync<uint> id;
 
-        }
+		public Sync<Vector2f> size;
 
-        public ImGUIBeginChildFrame(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
 
-        }
-        public ImGUIBeginChildFrame()
-        {
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			id = new Sync<uint>(this, newRefIds);
+			size = new Sync<Vector2f>(this, newRefIds);
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            if(ImGui.BeginChildFrame(id.value, new Vector2(size.value.x, size.value.y)))
-            {
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer, canvas);
-                }
-                ImGui.EndChildFrame();
-            }
-        }
-    }
+		}
+
+		public ImGUIBeginChildFrame(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
+
+		}
+		public ImGUIBeginChildFrame()
+		{
+		}
+
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			if (ImGui.BeginChildFrame(id.value, new Vector2(size.value.x, size.value.y)))
+			{
+				foreach (var item in children)
+				{
+					item.target?.ImguiRender(imGuiRenderer, canvas);
+				}
+				ImGui.EndChildFrame();
+			}
+		}
+	}
 }

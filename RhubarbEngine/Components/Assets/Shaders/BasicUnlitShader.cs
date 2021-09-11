@@ -25,17 +25,17 @@ using RhubarbEngine.Components.Assets;
 
 namespace RhubarbEngine.Components.Assets
 {
-    [Category(new string[] { "Assets/Shaders" })]
-    public class BasicUnlitShader : AssetProvider<RShader>,IAsset
-    {
+	[Category(new string[] { "Assets/Shaders" })]
+	public class BasicUnlitShader : AssetProvider<RShader>, IAsset
+	{
 
-        public override void onLoaded()
-        {
-            logger.Log("Loadded Shader");
-            RShader shader = new RShader();
-            shader.addUniform("Texture", Render.Shader.ShaderValueType.Val_texture2D, Render.Shader.ShaderType.MainFrag);
-            shader.addUniform("TintColor", Render.Shader.ShaderValueType.Val_color, Render.Shader.ShaderType.MainFrag);
-            shader.mainFragCode.userCode = @"
+		public override void onLoaded()
+		{
+			logger.Log("Loadded Shader");
+			RShader shader = new RShader();
+			shader.addUniform("Texture", Render.Shader.ShaderValueType.Val_texture2D, Render.Shader.ShaderType.MainFrag);
+			shader.addUniform("TintColor", Render.Shader.ShaderValueType.Val_color, Render.Shader.ShaderType.MainFrag);
+			shader.mainFragCode.userCode = @"
 
 layout(location = 0) in vec2 fsin_UV;
 layout(location = 0) out vec4 fsout_Color0;
@@ -51,20 +51,20 @@ void main()
     fsout_Color0 = texture(sampler2D(Texture, Sampler), uv)*TintColor;
 }
 ";
-            shader.LoadShader(engine.renderManager.gd, logger);
-            load(shader);
-        }
+			shader.LoadShader(engine.renderManager.gd, logger);
+			load(shader);
+		}
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
+		public override void buildSyncObjs(bool newRefIds)
+		{
 
-        }
-        public BasicUnlitShader(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
-        {
+		}
+		public BasicUnlitShader(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public BasicUnlitShader()
-        {
-        }
-    }
+		}
+		public BasicUnlitShader()
+		{
+		}
+	}
 }

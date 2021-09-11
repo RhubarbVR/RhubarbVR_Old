@@ -15,61 +15,61 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    public class FlagsEnumSyncObserver : UIWidget, IObserver
-    {
-        public Sync<string> fieldName;
+	public class FlagsEnumSyncObserver : UIWidget, IObserver
+	{
+		public Sync<string> fieldName;
 
-        public SyncRef<IPrimitiveEditable> target;
+		public SyncRef<IPrimitiveEditable> target;
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            target = new SyncRef<IPrimitiveEditable>(this, newRefIds);
-            fieldName = new Sync<string>(this, newRefIds);
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			target = new SyncRef<IPrimitiveEditable>(this, newRefIds);
+			fieldName = new Sync<string>(this, newRefIds);
+		}
 
 
-        public FlagsEnumSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public FlagsEnumSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public FlagsEnumSyncObserver()
-        {
-        }
-    }
+		}
+		public FlagsEnumSyncObserver()
+		{
+		}
+	}
 
-    [Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
-    public class FlagsEnumSyncObserver<T>: FlagsEnumSyncObserver, IObserver where T : struct, System.Enum
-    {
+	[Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
+	public class FlagsEnumSyncObserver<T> : FlagsEnumSyncObserver, IObserver where T : struct, System.Enum
+	{
 
-        public FlagsEnumSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public FlagsEnumSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public FlagsEnumSyncObserver()
-        {
-        }
+		}
+		public FlagsEnumSyncObserver()
+		{
+		}
 
-        string[] ve = Enum.GetNames(typeof(T));
+		string[] ve = Enum.GetNames(typeof(T));
 
-        public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            if (target.target?.Driven ?? false)
-            {
-                var e = ImGui.GetStyleColorVec4(ImGuiCol.FrameBg);
-                var vec = (Vector4f)(*e);
-                ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 0.5f, 0, 0)).ToSystem());
-            }
-            int c = Array.IndexOf(ve, Enum.GetName(typeof(T), (((Sync<T>)target.target).value)));
-            ImGui.Combo((fieldName.value ?? "null") + $"##{referenceID.id}", ref c, ve, ve.Length);
-            if (c != (int)(object)(((Sync<T>)target.target).value))
-            {
-                ((Sync<T>)target.target).value = Enum.GetValues<T>()[c];
-            }
-            if (target.target?.Driven ?? false)
-            {
-                ImGui.PopStyleColor();
-            }
-        }
-    }
+		public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			if (target.target?.Driven ?? false)
+			{
+				var e = ImGui.GetStyleColorVec4(ImGuiCol.FrameBg);
+				var vec = (Vector4f)(*e);
+				ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 0.5f, 0, 0)).ToSystem());
+			}
+			int c = Array.IndexOf(ve, Enum.GetName(typeof(T), (((Sync<T>)target.target).value)));
+			ImGui.Combo((fieldName.value ?? "null") + $"##{referenceID.id}", ref c, ve, ve.Length);
+			if (c != (int)(object)(((Sync<T>)target.target).value))
+			{
+				((Sync<T>)target.target).value = Enum.GetValues<T>()[c];
+			}
+			if (target.target?.Driven ?? false)
+			{
+				ImGui.PopStyleColor();
+			}
+		}
+	}
 }

@@ -134,7 +134,7 @@ csharp_new_line_before_members_in_anonymous_types = true
 csharp_new_line_before_members_in_object_initializers = true
 
 #NewLine Braces
-csharp_new_line_before_open_brace = true
+#csharp_new_line_before_open_brace = true
 csharp_new_line_between_query_expression_clauses = true
 
 # Indentation preferences
@@ -310,7 +310,7 @@ cpp_new_line_before_else = true
 cpp_new_line_before_finally = true
 cpp_new_line_before_members_in_anonymous_types = true
 cpp_new_line_before_members_in_object_initializers = true
-cpp_new_line_before_open_brace = true
+#cpp_new_line_before_open_brace = true
 cpp_new_line_between_query_expression_clauses = true
 
 # Indentation preferences

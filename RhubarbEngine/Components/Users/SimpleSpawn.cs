@@ -22,72 +22,72 @@ namespace RhubarbEngine
 namespace RhubarbEngine.Components.Users
 {
 
-    [Category(new string[] { "Users" })]
-    public class SimpleSpawn : Component
-    {
+	[Category(new string[] { "Users" })]
+	public class SimpleSpawn : Component
+	{
 
-        public override void CommonUpdate(DateTime startTime, DateTime Frame)
-        {
-            if(!world.userLoaded)
-            {
-                return;
-            }
-            if(world.localUser.userroot.target == null)
-            {
-                Entity rootent = world.RootEntity.addChild();
-                rootent.name.value = $"{world.localUser.username.value} (ID:{world.localUser.referenceID.id.ToHexString()})";
-                rootent.persistence.value = false;
-                rootent.manager = world.localUser;
-                UserRoot userRoot = rootent.attachComponent<UserRoot>();
-                userRoot.user.target = world.localUser;
-                world.localUser.userroot.target = userRoot;
-                Entity head = rootent.addChild("Head");
-                head.attachComponent<Head>().userroot.target = userRoot;
-                var grabHolder = head.addChild("GrabHolder").attachComponent<GrabbableHolder>();
-                grabHolder.initializeGrabHolder(InteractionSource.HeadLaser);
-                userRoot.Head.target = head;
-                Entity left = rootent.addChild("Left hand");
-                Entity right = rootent.addChild("Right hand");
-
-
-                userRoot.LeftHand.target = left;
-                userRoot.RightHand.target = right;
-                Hand leftcomp = left.attachComponent<Hand>();
-                leftcomp.userroot.target = userRoot;
-                leftcomp.creality.value = Input.Creality.Left;
-                Hand rightcomp = right.attachComponent<Hand>();
-                rightcomp.creality.value = Input.Creality.Right;
-                rightcomp.userroot.target = userRoot;
+		public override void CommonUpdate(DateTime startTime, DateTime Frame)
+		{
+			if (!world.userLoaded)
+			{
+				return;
+			}
+			if (world.localUser.userroot.target == null)
+			{
+				Entity rootent = world.RootEntity.addChild();
+				rootent.name.value = $"{world.localUser.username.value} (ID:{world.localUser.referenceID.id.ToHexString()})";
+				rootent.persistence.value = false;
+				rootent.manager = world.localUser;
+				UserRoot userRoot = rootent.attachComponent<UserRoot>();
+				userRoot.user.target = world.localUser;
+				world.localUser.userroot.target = userRoot;
+				Entity head = rootent.addChild("Head");
+				head.attachComponent<Head>().userroot.target = userRoot;
+				var grabHolder = head.addChild("GrabHolder").attachComponent<GrabbableHolder>();
+				grabHolder.initializeGrabHolder(InteractionSource.HeadLaser);
+				userRoot.Head.target = head;
+				Entity left = rootent.addChild("Left hand");
+				Entity right = rootent.addChild("Right hand");
 
 
-                Entity obj = world.worldManager.AddMesh<ArrowMesh>(left);
-                Entity obj2 = world.worldManager.AddMesh<ArrowMesh>(right);
-                Entity obj3 = world.worldManager.AddMesh<ArrowMesh>(head);
+				userRoot.LeftHand.target = left;
+				userRoot.RightHand.target = right;
+				Hand leftcomp = left.attachComponent<Hand>();
+				leftcomp.userroot.target = userRoot;
+				leftcomp.creality.value = Input.Creality.Left;
+				Hand rightcomp = right.attachComponent<Hand>();
+				rightcomp.creality.value = Input.Creality.Right;
+				rightcomp.userroot.target = userRoot;
 
-                var ileft = left.attachComponent<GrabbableHolder>();
-                var iright = right.attachComponent<GrabbableHolder>();
-                ileft.initializeGrabHolder(InteractionSource.LeftLaser);
-                iright.initializeGrabHolder(InteractionSource.RightLaser);
 
-                obj3.position.value = new Vector3f(0f, 0f, 0.5f);
-                obj.scale.value = new Vector3f(0.2f);
-                obj2.scale.value = new Vector3f(0.2f);
-                obj.rotation.value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
-                obj2.rotation.value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
-                logger.Log("SpawnedUser");
-            }
-        }
+				Entity obj = world.worldManager.AddMesh<ArrowMesh>(left);
+				Entity obj2 = world.worldManager.AddMesh<ArrowMesh>(right);
+				Entity obj3 = world.worldManager.AddMesh<ArrowMesh>(head);
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-        }
+				var ileft = left.attachComponent<GrabbableHolder>();
+				var iright = right.attachComponent<GrabbableHolder>();
+				ileft.initializeGrabHolder(InteractionSource.LeftLaser);
+				iright.initializeGrabHolder(InteractionSource.RightLaser);
 
-        public SimpleSpawn(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
-        {
+				obj3.position.value = new Vector3f(0f, 0f, 0.5f);
+				obj.scale.value = new Vector3f(0.2f);
+				obj2.scale.value = new Vector3f(0.2f);
+				obj.rotation.value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
+				obj2.rotation.value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
+				logger.Log("SpawnedUser");
+			}
+		}
 
-        }
-        public SimpleSpawn()
-        {
-        }
-    }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+		}
+
+		public SimpleSpawn(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
+
+		}
+		public SimpleSpawn()
+		{
+		}
+	}
 }

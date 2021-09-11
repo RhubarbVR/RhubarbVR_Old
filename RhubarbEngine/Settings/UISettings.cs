@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using RhuSettings;
 
 namespace RhubarbEngine.Settings
 {
-    public class UISettings : SettingsObject
-    {
-        [SettingsField("Task Bar Curve 80 default", "/VR")]
-        public float TaskBarCurve = 80;
+	public class UISettings : SettingsObject
+	{
+		[SettingsField("Task Bar Curve 80 default", "/VR")]
+		public float TaskBarCurve = 80;
 
-        [SettingsField("KeyBoard Curve 50 default", "/VR")]
-        public float KeyBoardCurve = 50;
+		[SettingsField("KeyBoard Curve 50 default", "/VR")]
+		public float KeyBoardCurve = 50;
 
-    }
+	}
 
 }

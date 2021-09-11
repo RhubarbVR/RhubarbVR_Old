@@ -14,30 +14,30 @@ using System.Numerics;
 
 namespace RhubarbEngine.Components.Users
 {
-    [Category(new string[] { "Users" })]
-    public class LocalUserPlatform : Component
-    {
-        public Driver<Platform> plat;
+	[Category(new string[] { "Users" })]
+	public class LocalUserPlatform : Component
+	{
+		public Driver<Platform> plat;
 
-        public override void CommonUpdate(DateTime startTime, DateTime Frame)
-        {
-            if (plat.Linked) 
-            {
-                plat.Drivevalue = engine.platformInfo.platform;
-            }
-        }
+		public override void CommonUpdate(DateTime startTime, DateTime Frame)
+		{
+			if (plat.Linked)
+			{
+				plat.Drivevalue = engine.platformInfo.platform;
+			}
+		}
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            plat = new Driver<Platform>(this, newRefIds);
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			plat = new Driver<Platform>(this, newRefIds);
+		}
 
-        public LocalUserPlatform(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
-        {
+		public LocalUserPlatform(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public LocalUserPlatform()
-        {
-        }
-    }
+		}
+		public LocalUserPlatform()
+		{
+		}
+	}
 }

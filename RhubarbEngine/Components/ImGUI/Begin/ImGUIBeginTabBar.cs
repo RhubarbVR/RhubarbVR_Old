@@ -15,38 +15,38 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
 
-    [Category("ImGUI/Begin")]
-    public class ImGUIBeginTooltip : UIWidgetList
-    {
-        public Sync<string> id;
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            id = new Sync<string>(this, newRefIds);
+	[Category("ImGUI/Begin")]
+	public class ImGUIBeginTooltip : UIWidgetList
+	{
+		public Sync<string> id;
 
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			id = new Sync<string>(this, newRefIds);
 
-        public ImGUIBeginTooltip(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		}
 
-        }
-        public ImGUIBeginTooltip()
-        {
-        }
+		public ImGUIBeginTooltip(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            ImGui.BeginTooltip();
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer,canvas);
-                }
-                ImGui.EndTooltip();
-            }
+		}
+		public ImGUIBeginTooltip()
+		{
+		}
 
-        }
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			ImGui.BeginTooltip();
+			foreach (var item in children)
+			{
+				item.target?.ImguiRender(imGuiRenderer, canvas);
+			}
+			ImGui.EndTooltip();
+		}
+
+	}
 }
 

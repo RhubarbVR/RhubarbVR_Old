@@ -15,34 +15,34 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    [Category("ImGUI/Developer/SyncMemberObservers")]
-    public class SyncListObserver : SyncListBaseObserver, IObserver
-    {
+	[Category("ImGUI/Developer/SyncMemberObservers")]
+	public class SyncListObserver : SyncListBaseObserver, IObserver
+	{
 
 
-        public SyncListObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public SyncListObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public SyncListObserver()
-        {
-        }
+		}
+		public SyncListObserver()
+		{
+		}
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            ImGui.Text(fieldName.value ?? "NUll");
-            if (ImGui.BeginChild(referenceID.id.ToString()))
-            {
-                RenderChildren(imGuiRenderer,canvas);
-                ImGui.EndChild();
-            }
-            if (ImGui.Button($"Add##{referenceID.id}"))
-            {
-                target.target?.TryToAddToSyncList();
-            }
-            
-        }
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			ImGui.Text(fieldName.value ?? "NUll");
+			if (ImGui.BeginChild(referenceID.id.ToString()))
+			{
+				RenderChildren(imGuiRenderer, canvas);
+				ImGui.EndChild();
+			}
+			if (ImGui.Button($"Add##{referenceID.id}"))
+			{
+				target.target?.TryToAddToSyncList();
+			}
 
-    }
+		}
+
+	}
 
 }

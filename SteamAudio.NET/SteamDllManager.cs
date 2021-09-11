@@ -16,18 +16,21 @@ namespace SteamAudio
 		//This method implements a dllmap resolver for native libraries. It expects 'AssemblyName.dll.config' to be present next to the managed library's dll.
 		internal static void PrepareResolver()
 		{
-			if(resolverReady) {
+			if (resolverReady)
+			{
 				return;
 			}
 
 			string osString = OSUtils.GetOS().ToString().ToLower();
-			string cpuString = RuntimeInformation.OSArchitecture switch {
+			string cpuString = RuntimeInformation.OSArchitecture switch
+			{
 				Architecture.Arm => "arm",
 				Architecture.Arm64 => "armv8",
 				Architecture.X86 => "x86",
 				_ => "x86-64",
 			};
-			string wordSizeString = RuntimeInformation.OSArchitecture switch {
+			string wordSizeString = RuntimeInformation.OSArchitecture switch
+			{
 				Architecture.X86 => "32",
 				Architecture.Arm => "32",
 				_ => "64",
@@ -39,10 +42,12 @@ namespace SteamAudio
 
 			Assembly wrapperAssembly = Assembly.GetExecutingAssembly();
 
-			NativeLibrary.SetDllImportResolver(wrapperAssembly, (name, assembly, path) => {
+			NativeLibrary.SetDllImportResolver(wrapperAssembly, (name, assembly, path) =>
+			{
 				string configPath = wrapperAssembly.Location + ".config";
 
-				if(!File.Exists(configPath)) {
+				if (!File.Exists(configPath))
+				{
 					return IntPtr.Zero;
 				}
 
@@ -57,7 +62,8 @@ namespace SteamAudio
 
 				var map = maps.SingleOrDefault();
 
-				if(map == null) {
+				if (map == null)
+				{
 					throw new ArgumentException($"'{Path.GetFileName(configPath)}' - Found {maps.Count()} possible mapping candidates for dll '{name}'.");
 				}
 

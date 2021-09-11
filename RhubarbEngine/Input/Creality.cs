@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Input
 {
-    public enum Creality
-    {
-        None,
-        Left,
-        Right
-    }
+	public enum Creality
+	{
+		None,
+		Left,
+		Right
+	}
 
 }

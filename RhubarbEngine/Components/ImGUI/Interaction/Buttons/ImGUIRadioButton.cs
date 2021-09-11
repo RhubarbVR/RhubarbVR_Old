@@ -15,34 +15,34 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    [Category("ImGUI/Interaction/Button")]
-    public class ImGUIRadioButton : UIWidget
-    {
-        public Sync<string> id;
-        public Sync<bool> active;
+	[Category("ImGUI/Interaction/Button")]
+	public class ImGUIRadioButton : UIWidget
+	{
+		public Sync<string> id;
+		public Sync<bool> active;
 
-        public SyncDelegate action;
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            id = new Sync<string>(this, newRefIds);
-            active = new Sync<bool>(this, newRefIds);
-            action = new SyncDelegate(this, newRefIds);
-        }
+		public SyncDelegate action;
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			id = new Sync<string>(this, newRefIds);
+			active = new Sync<bool>(this, newRefIds);
+			action = new SyncDelegate(this, newRefIds);
+		}
 
-        public ImGUIRadioButton(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
-        }
-        public ImGUIRadioButton()
-        {
-        }
+		public ImGUIRadioButton(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
+		}
+		public ImGUIRadioButton()
+		{
+		}
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            if (ImGui.RadioButton(id.value ?? "", active.value))
-            {
-                action.Target?.Invoke();
-            }
-        }
-    }
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			if (ImGui.RadioButton(id.value ?? "", active.value))
+			{
+				action.Target?.Invoke();
+			}
+		}
+	}
 }

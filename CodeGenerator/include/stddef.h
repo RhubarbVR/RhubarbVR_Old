@@ -26,14 +26,14 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
     || defined(__need_wint_t)
 
  /* Any one of these symbols __need_* means that GNU libc
-    wants us just to define one data type.  So don't define
-    the symbols that indicate this file's entire job has been done.  */
+	wants us just to define one data type.  So don't define
+	the symbols that indicate this file's entire job has been done.  */
 #if (!defined(__need_wchar_t) && !defined(__need_size_t)	\
      && !defined(__need_ptrdiff_t) && !defined(__need_NULL)	\
      && !defined(__need_wint_t))
 #define _STDDEF_H
 #define _STDDEF_H_
-    /* snaroff@next.com says the NeXT needs this.  */
+	/* snaroff@next.com says the NeXT needs this.  */
 #define _ANSI_STDDEF_H
 #endif
 
@@ -57,13 +57,13 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #define _PTRDIFF_T
 #endif
    /* On BSD/386 1.1, at least, machine/ansi.h defines _BSD_WCHAR_T_
-      instead of _WCHAR_T_. */
+	  instead of _WCHAR_T_. */
 #if !defined(_WCHAR_T_) && !defined(_BSD_WCHAR_T_)
 #ifndef _BSD_WCHAR_T_
 #define _WCHAR_T
 #endif
 #endif
-      /* Undef _FOO_T_ if we are supposed to define foo_t.  */
+	  /* Undef _FOO_T_ if we are supposed to define foo_t.  */
 #if defined (__need_ptrdiff_t) || defined (_STDDEF_H_)
 #undef _PTRDIFF_T_
 #undef _BSD_PTRDIFF_T_
@@ -85,11 +85,11 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #endif
 
    /* On VxWorks, <type/vxTypesBase.h> may have defined macros like
-      _TYPE_size_t which will typedef size_t.  fixincludes patched the
-      vxTypesBase.h so that this macro is only defined if _GCC_SIZE_T is
-      not defined, and so that defining this macro defines _GCC_SIZE_T.
-      If we find that the macros are still defined at this point, we must
-      invoke them so that the type is defined as expected.  */
+	  _TYPE_size_t which will typedef size_t.  fixincludes patched the
+	  vxTypesBase.h so that this macro is only defined if _GCC_SIZE_T is
+	  not defined, and so that defining this macro defines _GCC_SIZE_T.
+	  If we find that the macros are still defined at this point, we must
+	  invoke them so that the type is defined as expected.  */
 #if defined (_TYPE_ptrdiff_t) && (defined (__need_ptrdiff_t) || defined (_STDDEF_H_))
 _TYPE_ptrdiff_t;
 #undef _TYPE_ptrdiff_t
@@ -112,7 +112,7 @@ _TYPE_wchar_t;
    /* Signed type of difference of two pointers.  */
 
    /* Define this type if we are doing the whole job,
-      or if we want this type in particular.  */
+	  or if we want this type in particular.  */
 #if defined (_STDDEF_H) || defined (__need_ptrdiff_t)
 #ifndef _PTRDIFF_T	/* in case <sys/types.h> has defined it. */
 #ifndef _T_PTRDIFF_
@@ -233,7 +233,7 @@ typedef long ssize_t;
    and not (wchar_t) -1, for each defined multibyte character.  */
 
    /* Define this type if we are doing the whole job,
-      or if we want this type in particular.  */
+	  or if we want this type in particular.  */
 #if defined (_STDDEF_H) || defined (__need_wchar_t)
 #ifndef __wchar_t__	/* BeOS */
 #ifndef __WCHAR_T__	/* Cray Unicos/Mk */
@@ -268,16 +268,16 @@ typedef long ssize_t;
 #define _GCC_WCHAR_T
 #define _WCHAR_T_DECLARED
 
-      /* On BSD/386 1.1, at least, machine/ansi.h defines _BSD_WCHAR_T_
-         instead of _WCHAR_T_, and _BSD_RUNE_T_ (which, unlike the other
-         symbols in the _FOO_T_ family, stays defined even after its
-         corresponding type is defined).  If we define wchar_t, then we
-         must undef _WCHAR_T_; for BSD/386 1.1 (and perhaps others), if
-         we undef _WCHAR_T_, then we must also define rune_t, since
-         headers like runetype.h assume that if machine/ansi.h is included,
-         and _BSD_WCHAR_T_ is not defined, then rune_t is available.
-         machine/ansi.h says, "Note that _WCHAR_T_ and _RUNE_T_ must be of
-         the same type." */
+	  /* On BSD/386 1.1, at least, machine/ansi.h defines _BSD_WCHAR_T_
+		 instead of _WCHAR_T_, and _BSD_RUNE_T_ (which, unlike the other
+		 symbols in the _FOO_T_ family, stays defined even after its
+		 corresponding type is defined).  If we define wchar_t, then we
+		 must undef _WCHAR_T_; for BSD/386 1.1 (and perhaps others), if
+		 we undef _WCHAR_T_, then we must also define rune_t, since
+		 headers like runetype.h assume that if machine/ansi.h is included,
+		 and _BSD_WCHAR_T_ is not defined, then rune_t is available.
+		 machine/ansi.h says, "Note that _WCHAR_T_ and _RUNE_T_ must be of
+		 the same type." */
 #ifdef _BSD_WCHAR_T_
 #undef _BSD_WCHAR_T_
 #ifdef _BSD_RUNE_T_
@@ -296,8 +296,8 @@ typedef _BSD_RUNE_T_ rune_t;
 #endif
 #endif
    /* FreeBSD 5 can't be handled well using "traditional" logic above
-      since it no longer defines _BSD_RUNE_T_ yet still desires to export
-      rune_t in some cases... */
+	  since it no longer defines _BSD_RUNE_T_ yet still desires to export
+	  rune_t in some cases... */
 #if defined (__FreeBSD__) && (__FreeBSD__ >= 5)
 #if !defined (_ANSI_SOURCE) && !defined (_POSIX_SOURCE)
 #if __BSD_VISIBLE
@@ -349,7 +349,7 @@ typedef __WINT_TYPE__ wint_t;
 
 #if defined(__NetBSD__)
 /*  The references to _GCC_PTRDIFF_T_, _GCC_SIZE_T_, and _GCC_WCHAR_T_
-    are probably typos and should be removed before 2.8 is released.  */
+	are probably typos and should be removed before 2.8 is released.  */
 #ifdef _GCC_PTRDIFF_T_
 #undef _PTRDIFF_T_
 #undef _BSD_PTRDIFF_T_
@@ -362,7 +362,7 @@ typedef __WINT_TYPE__ wint_t;
 #undef _WCHAR_T_
 #undef _BSD_WCHAR_T_
 #endif
-    /*  The following ones are the real ones.  */
+	/*  The following ones are the real ones.  */
 #ifdef _GCC_PTRDIFF_T
 #undef _PTRDIFF_T_
 #undef _BSD_PTRDIFF_T_
@@ -408,15 +408,15 @@ typedef __WINT_TYPE__ wint_t;
    as great as that of any standard type not using alignment
    specifiers.  */
 typedef struct {
-    long long __max_align_ll __attribute__((__aligned__(__alignof__(long long))));
-    long double __max_align_ld __attribute__((__aligned__(__alignof__(long double))));
-    /* _Float128 is defined as a basic type, so max_align_t must be
-       sufficiently aligned for it.  This code must work in C++, so we
-       use __float128 here; that is only available on some
-       architectures, but only on i386 is extra alignment needed for
-       __float128.  */
+	long long __max_align_ll __attribute__((__aligned__(__alignof__(long long))));
+	long double __max_align_ld __attribute__((__aligned__(__alignof__(long double))));
+	/* _Float128 is defined as a basic type, so max_align_t must be
+	   sufficiently aligned for it.  This code must work in C++, so we
+	   use __float128 here; that is only available on some
+	   architectures, but only on i386 is extra alignment needed for
+	   __float128.  */
 #ifdef __i386__
-    __float128 __max_align_f128 __attribute__((__aligned__(__alignof(__float128))));
+	__float128 __max_align_f128 __attribute__((__aligned__(__alignof(__float128))));
 #endif
 } max_align_t;
 #endif
@@ -432,4 +432,4 @@ typedef decltype(nullptr) nullptr_t;
 #endif /* _STDDEF_H was defined this time */
 
 #endif /* !_STDDEF_H && !_STDDEF_H_ && !_ANSI_STDDEF_H && !__STDDEF_H__
-      || __need_XXX was not defined before */
+	  || __need_XXX was not defined before */

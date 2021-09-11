@@ -4,7 +4,8 @@
 	{
 		public static string Capitalize(string text)
 		{
-			if(text.Length > 0 && char.IsLower(text[0])) {
+			if (text.Length > 0 && char.IsLower(text[0]))
+			{
 				var chars = text.ToCharArray();
 
 				chars[0] = char.ToUpper(chars[0]);
@@ -16,7 +17,8 @@
 		}
 		public static string RemovePrefix(string text, string prefix)
 		{
-			if(text.StartsWith(prefix)) {
+			if (text.StartsWith(prefix))
+			{
 				text = text.Substring(prefix.Length);
 			}
 

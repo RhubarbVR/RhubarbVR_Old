@@ -38,10 +38,12 @@ namespace g3
 		//   d0 v0^2 + d1 v1^2 + d2 v^2 + e0 v0 + e1 v1 + e2 v2 + f = 0
 		//
 		// The characterization depends on the signs of the d_i.
-		public static double Fit(Vector2d[] points, double[] coefficients) {
+		public static double Fit(Vector2d[] points, double[] coefficients)
+		{
 			DenseMatrix A = new DenseMatrix(6, 6);
 			int numPoints = points.Length;
-			for (int i = 0; i < numPoints; ++i) {
+			for (int i = 0; i < numPoints; ++i)
+			{
 				double x = points[i].x;
 				double y = points[i].y;
 				double x2 = x * x;
@@ -81,15 +83,19 @@ namespace g3
 			A[2, 5] = A[1, 4];
 			A[5, 5] = A[3, 4];
 
-			for (int row = 0; row < 6; ++row) {
-				for (int col = 0; col < row; ++col) {
+			for (int row = 0; row < 6; ++row)
+			{
+				for (int col = 0; col < row; ++col)
+				{
 					A[row, col] = A[col, row];
 				}
 			}
 
 			double invNumPoints = 1.0 / (double)numPoints;
-			for (int row = 0; row < 6; ++row) {
-				for (int col = 0; col < 6; ++col) {
+			for (int row = 0; row < 6; ++row)
+			{
+				for (int col = 0; col < 6; ++col)
+				{
 					A[row, col] *= invNumPoints;
 				}
 			}
@@ -111,11 +117,12 @@ namespace g3
 		// function returns C = (C'[0]/C'[3],C'[1]/C'[3],C'[2]/C'[3]), so the fitted
 		// circle is C[0]+C[1]*X+C[2]*Y+X^2+Y^2.  The center is (xc,yc) =
 		// -0.5*(C[1],C[2]) and the radius is r = sqrt(xc*xc+yc*yc-C[0]).
-		public static double FitCircle2(Vector2d[] points, out Circle2d circle )
+		public static double FitCircle2(Vector2d[] points, out Circle2d circle)
 		{
 			DenseMatrix A = new DenseMatrix(4, 4);
 			int numPoints = points.Length;
-			for (int i = 0; i < numPoints; ++i) {
+			for (int i = 0; i < numPoints; ++i)
+			{
 				double x = points[i].x;
 				double y = points[i].y;
 				double x2 = x * x;
@@ -139,15 +146,19 @@ namespace g3
 
 			A[0, 0] = (double)numPoints;
 
-			for (int row = 0; row < 4; ++row) {
-				for (int col = 0; col < row; ++col) {
+			for (int row = 0; row < 4; ++row)
+			{
+				for (int col = 0; col < row; ++col)
+				{
 					A[row, col] = A[col, row];
 				}
 			}
 
 			double invNumPoints = 1.0 / (double)numPoints;
-			for (int row = 0; row < 4; ++row) {
-				for (int col = 0; col < 4; ++col) {
+			for (int row = 0; row < 4; ++row)
+			{
+				for (int col = 0; col < 4; ++col)
+				{
 					A[row, col] *= invNumPoints;
 				}
 			}
@@ -159,7 +170,8 @@ namespace g3
 
 			double inv = 1.0 / evector[3];  // TODO: Guard against zero divide?
 			Vector3d coefficients = Vector3d.Zero;
-			for (int row = 0; row < 3; ++row) {
+			for (int row = 0; row < 3; ++row)
+			{
 				coefficients[row] = inv * evector[row];
 			}
 

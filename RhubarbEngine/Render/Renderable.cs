@@ -12,68 +12,68 @@ using RhubarbEngine.World;
 
 namespace RhubarbEngine.Render
 {
-    public class MeshPiece: IDisposable
-    {
-        public DeviceBuffer Positions { get; }
-        public DeviceBuffer TexCoords { get; }
-        public DeviceBuffer Indices { get; }
-        public uint IndexCount { get; }
+	public class MeshPiece : IDisposable
+	{
+		public DeviceBuffer Positions { get; }
+		public DeviceBuffer TexCoords { get; }
+		public DeviceBuffer Indices { get; }
+		public uint IndexCount { get; }
 
-        public MeshPiece(DeviceBuffer positions, DeviceBuffer texCoords, DeviceBuffer indices)
-        {
-            Positions = positions;
-            TexCoords = texCoords;
-            Indices = indices;
-            IndexCount = indices.SizeInBytes / sizeof(uint);
-        }
+		public MeshPiece(DeviceBuffer positions, DeviceBuffer texCoords, DeviceBuffer indices)
+		{
+			Positions = positions;
+			TexCoords = texCoords;
+			Indices = indices;
+			IndexCount = indices.SizeInBytes / sizeof(uint);
+		}
 
-        public void Dispose()
-        {
-            Positions.Dispose();
-            TexCoords.Dispose();
-            Indices.Dispose();
-        }
-    }
+		public void Dispose()
+		{
+			Positions.Dispose();
+			TexCoords.Dispose();
+			Indices.Dispose();
+		}
+	}
 
-    public struct UBO
-    {
-        public Matrix4x4 Projection;
-        public Matrix4x4 View;
-        public Matrix4x4 World;
+	public struct UBO
+	{
+		public Matrix4x4 Projection;
+		public Matrix4x4 View;
+		public Matrix4x4 World;
 
-        public UBO(Matrix4x4 projection, Matrix4x4 view, Matrix4x4 world)
-        {
-            Projection = projection;
-            View = view;
-            World = world;
-        }
-    }
+		public UBO(Matrix4x4 projection, Matrix4x4 view, Matrix4x4 world)
+		{
+			Projection = projection;
+			View = view;
+			World = world;
+		}
+	}
 
-    public abstract class Renderable : Component, IDisposable
-    {
-        public abstract void Render(GraphicsDevice gd, CommandList cl, UBO ubo);
-        public abstract void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo);
+	public abstract class Renderable : Component, IDisposable
+	{
+		public abstract void Render(GraphicsDevice gd, CommandList cl, UBO ubo);
+		public abstract void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo);
 
-        public abstract RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition);
+		public abstract RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition);
 
-        public bool Cull(ref RhubarbEngine.Utilities.BoundingFrustum visibleFrustum,Matrix4x4 view)
-        {
-            return visibleFrustum.Contains(Veldrid.Utilities.BoundingBox.Transform(BoundingBox, entity.globalTrans() * view)) == ContainmentType.Disjoint;
-        }
+		public bool Cull(ref RhubarbEngine.Utilities.BoundingFrustum visibleFrustum, Matrix4x4 view)
+		{
+			return visibleFrustum.Contains(Veldrid.Utilities.BoundingBox.Transform(BoundingBox, entity.globalTrans() * view)) == ContainmentType.Disjoint;
+		}
 
-        public abstract BoundingBox BoundingBox { get; }
+		public abstract BoundingBox BoundingBox { get; }
 
-        public Renderable(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public Renderable(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public Renderable()
-        {
-        }
+		}
+		public Renderable()
+		{
+		}
 
-        public void Dispose()
-        {
-        }
-    }
+		public void Dispose()
+		{
+		}
+	}
 
 }

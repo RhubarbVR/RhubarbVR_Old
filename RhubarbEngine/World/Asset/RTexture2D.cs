@@ -17,29 +17,29 @@ using Veldrid.Utilities;
 
 namespace RhubarbEngine.World.Asset
 {
-    public class RTexture2D : IAsset
-    {
+	public class RTexture2D : IAsset
+	{
 
-        public List<IDisposable> disposables = new List<IDisposable>();
+		public List<IDisposable> disposables = new List<IDisposable>();
 
-        public TextureView view;
+		public TextureView view;
 
-        public void Dispose()
-        {
-            foreach (IDisposable dep in disposables)
-            {
-                dep.Dispose();
-            }
-        }
+		public void Dispose()
+		{
+			foreach (IDisposable dep in disposables)
+			{
+				dep.Dispose();
+			}
+		}
 
-        public void addDisposable(IDisposable val)
-        {
-            disposables.Add(val);
-        }
+		public void addDisposable(IDisposable val)
+		{
+			disposables.Add(val);
+		}
 
-        public RTexture2D(TextureView _view)
-        {
-            view = _view;
-        }
-    }
+		public RTexture2D(TextureView _view)
+		{
+			view = _view;
+		}
+	}
 }

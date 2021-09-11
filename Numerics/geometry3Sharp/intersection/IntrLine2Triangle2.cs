@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace g3 
+namespace g3
 {
 	// ported from WildMagic5 
 	public class IntrLine2Triangle2
@@ -23,7 +23,8 @@ namespace g3
 		public IntersectionResult Result = IntersectionResult.NotComputed;
 		public IntersectionType Type = IntersectionType.Empty;
 
-		public bool IsSimpleIntersection {
+		public bool IsSimpleIntersection
+		{
 			get { return Result == IntersectionResult.Intersects && Type == IntersectionType.Point; }
 		}
 
@@ -36,7 +37,8 @@ namespace g3
 
 		public IntrLine2Triangle2(Line2d l, Triangle2d t)
 		{
-			line = l; triangle = t;
+			line = l;
+			triangle = t;
 		}
 
 
@@ -54,7 +56,8 @@ namespace g3
 
 			// [RMS] if either line direction is not a normalized vector, 
 			//   results are garbage, so fail query
-			if ( line.Direction.IsNormalized == false )  {
+			if (line.Direction.IsNormalized == false)
+			{
 				Type = IntersectionType.Empty;
 				Result = IntersectionResult.InvalidQuery;
 				return false;
@@ -64,13 +67,16 @@ namespace g3
 			Vector3i sign = Vector3i.Zero;
 			int positive = 0, negative = 0, zero = 0;
 			TriangleLineRelations(line.Origin, line.Direction, triangle,
-			              ref dist, ref sign, ref positive, ref negative, ref zero);
+						  ref dist, ref sign, ref positive, ref negative, ref zero);
 
-			if (positive == 3 || negative == 3) {
+			if (positive == 3 || negative == 3)
+			{
 				// No intersections.
 				Quantity = 0;
 				Type = IntersectionType.Empty;
-			} else {
+			}
+			else
+			{
 				Vector2d param = Vector2d.Zero;
 				GetInterval(line.Origin, line.Direction, triangle, dist, sign, ref param);
 
@@ -78,19 +84,24 @@ namespace g3
 				intr.Find();
 
 				Quantity = intr.NumIntersections;
-				if (Quantity == 2) {
+				if (Quantity == 2)
+				{
 					// Segment intersection.
 					Type = IntersectionType.Segment;
 					Param0 = intr.GetIntersection(0);
-					Point0 = line.Origin + Param0*line.Direction;
+					Point0 = line.Origin + Param0 * line.Direction;
 					Param1 = intr.GetIntersection(1);
-					Point1 = line.Origin + Param1*line.Direction;
-				} else if (Quantity == 1) {
+					Point1 = line.Origin + Param1 * line.Direction;
+				}
+				else if (Quantity == 1)
+				{
 					// Point intersection.
 					Type = IntersectionType.Point;
 					Param0 = intr.GetIntersection(0);
-					Point0 = line.Origin + Param0*line.Direction;
-				} else {
+					Point0 = line.Origin + Param0 * line.Direction;
+				}
+				else
+				{
 					// No intersections.
 					Type = IntersectionType.Empty;
 				}
@@ -103,7 +114,7 @@ namespace g3
 
 
 
-		public static void TriangleLineRelations (
+		public static void TriangleLineRelations(
 			Vector2d origin, Vector2d direction,
 			Triangle2d tri, ref Vector3d dist, ref Vector3i sign,
 			ref int positive, ref int negative, ref int zero)
@@ -111,7 +122,8 @@ namespace g3
 			positive = 0;
 			negative = 0;
 			zero = 0;
-			for (int i = 0; i < 3; ++i) {
+			for (int i = 0; i < 3; ++i)
+			{
 				Vector2d diff = tri[i] - origin;
 				dist[i] = diff.DotPerp(direction);
 				if (dist[i] > MathUtil.ZeroTolerance)
@@ -135,13 +147,14 @@ namespace g3
 
 
 
-		public static void GetInterval (Vector2d origin, Vector2d direction, Triangle2d tri,
-		                  Vector3d dist, Vector3i sign, ref Vector2d param)
+		public static void GetInterval(Vector2d origin, Vector2d direction, Triangle2d tri,
+						  Vector3d dist, Vector3i sign, ref Vector2d param)
 		{
 			// Project triangle onto line.
 			Vector3d proj = Vector3d.Zero;
 			int i;
-			for (i = 0; i < 3; ++i) {
+			for (i = 0; i < 3; ++i)
+			{
 				Vector2d diff = tri[i] - origin;
 				proj[i] = direction.Dot(diff);
 			}
@@ -150,29 +163,34 @@ namespace g3
 			double numer, denom;
 			int i0, i1, i2;
 			int quantity = 0;
-			for (i0 = 2, i1 = 0; i1 < 3; i0 = i1++) {
-				if (sign[i0]*sign[i1] < 0) {
-					if ( quantity >= 2 )
+			for (i0 = 2, i1 = 0; i1 < 3; i0 = i1++)
+			{
+				if (sign[i0] * sign[i1] < 0)
+				{
+					if (quantity >= 2)
 						throw new Exception("IntrLine2Triangle2.GetInterval: too many intersections!");
-					numer = dist[i0]*proj[i1] - dist[i1]*proj[i0];
+					numer = dist[i0] * proj[i1] - dist[i1] * proj[i0];
 					denom = dist[i0] - dist[i1];
-					param[quantity++] = numer/denom;
+					param[quantity++] = numer / denom;
 				}
 			}
 
 			// Check for grazing contact.
-			if (quantity < 2) {
-				for (i0 = 1, i1 = 2, i2 = 0; i2 < 3; i0 = i1, i1 = i2++) {
-					if (sign[i2] == 0) {
-						if ( quantity >= 2 )
-							throw new Exception("IntrLine2Triangle2.GetInterval: too many intersections!");	
+			if (quantity < 2)
+			{
+				for (i0 = 1, i1 = 2, i2 = 0; i2 < 3; i0 = i1, i1 = i2++)
+				{
+					if (sign[i2] == 0)
+					{
+						if (quantity >= 2)
+							throw new Exception("IntrLine2Triangle2.GetInterval: too many intersections!");
 						param[quantity++] = proj[i2];
 					}
 				}
 			}
 
 			// Sort.
-			if ( quantity < 1 )
+			if (quantity < 1)
 				throw new Exception("IntrLine2Triangle2.GetInterval: need at least one intersection");
 			if (quantity == 2)
 			{

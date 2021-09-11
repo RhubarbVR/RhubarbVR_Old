@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+
 using CppAst;
 using CppAst.CodeGen.Common;
 using CppAst.CodeGen.CSharp;
+
 using Zio.FileSystems;
 
 namespace CodeGenerator
@@ -14,8 +16,10 @@ namespace CodeGenerator
 	{
 		internal static void Main(string[] args)
 		{
-			try {
-				if(args.Length == 0) {
+			try
+			{
+				if (args.Length == 0)
+				{
 					throw new ArgumentException("An output path must be provided in command line arguments.");
 				}
 
@@ -24,7 +28,8 @@ namespace CodeGenerator
 				Console.WriteLine("Success.");
 				Thread.Sleep(500);
 			}
-			catch(Exception e) {
+			catch (Exception e)
+			{
 				Console.WriteLine($"{e.GetType().Name}: {e.Message}");
 				Console.WriteLine();
 				Console.WriteLine("Press any key to close the application...");
@@ -39,7 +44,8 @@ namespace CodeGenerator
 			Console.WriteLine($"Processing file '{Path.GetFileName(inputFile)}'...");
 
 			//Writing
-			var converterOptions = new CSharpConverterOptions() {
+			var converterOptions = new CSharpConverterOptions()
+			{
 				DefaultNamespace = defaultNamespace,
 				DefaultClassLib = defaultClass,
 				DefaultOutputFilePath = outputFile,
@@ -207,9 +213,12 @@ namespace CodeGenerator
 
 			var compilation = CSharpConverter.Convert(new List<string> { inputFile }, converterOptions);
 
-			if(compilation.HasErrors) {
-				foreach(var message in compilation.Diagnostics.Messages) {
-					if(message.Type == CppLogMessageType.Error) {
+			if (compilation.HasErrors)
+			{
+				foreach (var message in compilation.Diagnostics.Messages)
+				{
+					if (message.Type == CppLogMessageType.Error)
+					{
 						Console.WriteLine(message);
 					}
 				}

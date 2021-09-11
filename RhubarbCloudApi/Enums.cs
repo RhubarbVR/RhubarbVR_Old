@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace Org.OpenAPITools.Model
 {
-    public enum SessionsType
-    {
-        Education,
-        Business,
-        Casual,
-        NSFW,
-    }
-    public enum AccessLevel
-    {
-        Private,
-        Friends,
-        FriendsOfFriends,
-        Anyone
-    }
+	public enum SessionsType
+	{
+		Education,
+		Business,
+		Casual,
+		NSFW,
+	}
+	public enum AccessLevel
+	{
+		Private,
+		Friends,
+		FriendsOfFriends,
+		Anyone
+	}
 }

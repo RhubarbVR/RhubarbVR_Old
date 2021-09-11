@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.VirtualReality
 {
-    public enum VREye
-    {
-        Left = 0,
-        Right = 1,
-    }
+	public enum VREye
+	{
+		Left = 0,
+		Right = 1,
+	}
 }

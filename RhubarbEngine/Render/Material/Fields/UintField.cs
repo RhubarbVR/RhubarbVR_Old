@@ -9,20 +9,20 @@ using RhubarbEngine.Render.Shader.Vals;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
-    public class UintField: GenericField<uint>
-    {
+	public class UintField : GenericField<uint>
+	{
 
-        public override void createDeviceResource(ResourceFactory fact)
-        {
-            if (resource != null)
-            {
-                return;
-            }
-            resource = fact.CreateBuffer(new BufferDescription(32, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
-        }
-        unsafe public override void updateBuffer(GraphicsDevice gb)
-        {
-            gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_uint(field.value));
-        }
-    }
+		public override void createDeviceResource(ResourceFactory fact)
+		{
+			if (resource != null)
+			{
+				return;
+			}
+			resource = fact.CreateBuffer(new BufferDescription(32, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+		}
+		unsafe public override void updateBuffer(GraphicsDevice gb)
+		{
+			gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_uint(field.value));
+		}
+	}
 }

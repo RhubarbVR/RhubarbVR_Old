@@ -8,10 +8,10 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-    public interface IDriver : IWorldObject
-    {
-        void SetDriveLocation(Driveable val);
+	public interface IDriver : IWorldObject
+	{
+		void SetDriveLocation(Driveable val);
 
-        void RemoveDriveLocation();
-    }
+		void RemoveDriveLocation();
+	}
 }

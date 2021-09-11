@@ -15,40 +15,40 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
 
-    [Category("ImGUI/Begin")]
-    public class ImGUIBeginTabBar : UIWidgetList
-    {
-        public Sync<string> id;
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            id = new Sync<string>(this, newRefIds);
+	[Category("ImGUI/Begin")]
+	public class ImGUIBeginTabBar : UIWidgetList
+	{
+		public Sync<string> id;
 
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			id = new Sync<string>(this, newRefIds);
 
-        public ImGUIBeginTabBar(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		}
 
-        }
-        public ImGUIBeginTabBar()
-        {
-        }
+		public ImGUIBeginTabBar(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            if (ImGui.BeginTabBar(id.value ?? ""))
-            {
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer,canvas);
-                }
-                ImGui.EndTabBar();
-            }
+		}
+		public ImGUIBeginTabBar()
+		{
+		}
 
-        }
-        }
-    }
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			if (ImGui.BeginTabBar(id.value ?? ""))
+			{
+				foreach (var item in children)
+				{
+					item.target?.ImguiRender(imGuiRenderer, canvas);
+				}
+				ImGui.EndTabBar();
+			}
+
+		}
+	}
+}
 

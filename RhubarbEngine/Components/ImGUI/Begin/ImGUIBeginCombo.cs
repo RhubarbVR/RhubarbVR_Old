@@ -15,45 +15,45 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
-
-    [Category("ImGUI/Begin")]
-    public class ImGUIBeginCombo : UIWidgetList
-    {
-        public Sync<string> label;
-
-        public Sync<string> preview;
-
-        public Sync<ImGuiComboFlags> comboflag;
 
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            label = new Sync<string>(this, newRefIds);
-            preview = new Sync<string>(this, newRefIds);
-            comboflag = new Sync<ImGuiComboFlags>(this, newRefIds);
-            comboflag.value = ImGuiComboFlags.None;
-        }
+	[Category("ImGUI/Begin")]
+	public class ImGUIBeginCombo : UIWidgetList
+	{
+		public Sync<string> label;
 
-        public ImGUIBeginCombo(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public Sync<string> preview;
 
-        }
-        public ImGUIBeginCombo()
-        {
-        }
+		public Sync<ImGuiComboFlags> comboflag;
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            if(ImGui.BeginCombo(label.value ?? "", preview.value ?? "", comboflag.value))
-            {
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer, canvas);
-                }
-                ImGui.EndCombo();
-            }
-        }
-    }
+
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			label = new Sync<string>(this, newRefIds);
+			preview = new Sync<string>(this, newRefIds);
+			comboflag = new Sync<ImGuiComboFlags>(this, newRefIds);
+			comboflag.value = ImGuiComboFlags.None;
+		}
+
+		public ImGUIBeginCombo(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
+
+		}
+		public ImGUIBeginCombo()
+		{
+		}
+
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			if (ImGui.BeginCombo(label.value ?? "", preview.value ?? "", comboflag.value))
+			{
+				foreach (var item in children)
+				{
+					item.target?.ImguiRender(imGuiRenderer, canvas);
+				}
+				ImGui.EndCombo();
+			}
+		}
+	}
 }

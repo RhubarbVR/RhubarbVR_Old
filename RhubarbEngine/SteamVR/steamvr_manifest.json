@@ -1,445 +1,445 @@
 {
-	"actions": [
-		{
-			"name": "/actions/General/in/System",
-			"type": "boolean",
-			"requirement": "suggested"
-		},
-		{
-			"name": "/actions/General/in/HudSensor",
-			"type": "boolean",
-			"requirement": "suggested"
-		},
-		{
-			"name": "/actions/General/in/Trigger_Touching",
-			"type": "boolean"
-		},
-		{
-			"name": "/actions/General/in/Axis_Touching",
-			"type": "boolean"
-		},
-		{
-			"name": "/actions/General/in/Primary_Pressed",
-			"type": "boolean"
-		},
-		{
-			"name": "/actions/General/in/Secondary_Pressed",
-			"type": "boolean"
-		},
-		{
-			"name": "/actions/General/in/Menu_Pressed",
-			"type": "boolean"
-		},
-		{
-			"name": "/actions/General/in/Grab_Pressed",
-			"type": "boolean"
-		},
-		{
-			"name": "/actions/General/in/Trigger_Aix",
-			"type": "vector1"
-		},
-		{
-			"name": "/actions/General/in/Axis",
-			"type": "vector2"
-		},
-		{
-			"name": "/actions/General/in/Left_Hand",
-			"type": "skeleton",
-			"skeleton": "/skeleton/hand/left"
-		},
-		{
-			"name": "/actions/General/in/Right_Hand",
-			"type": "skeleton",
-			"skeleton": "/skeleton/hand/right"
-		},
-		{
-			"name": "/actions/General/in/Pose",
-			"type": "pose"
-		},
-		{
-			"name": "/actions/General/out/Haptic",
-			"type": "vibration"
-		},
-		{
-			"name": "/actions/HTCVive/in/Touchpad_Touch",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/HTCVive/in/Touchpad_Click",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/HTCVive/in/Touchpad_Aixs",
-			"type": "vector2",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/HTCVive/in/Trigger_Hair",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/HTCVive/in/Trigger_Click",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/HTCVive/in/Trigger",
-			"type": "vector1",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/HTCVive/in/Grip",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/HTCVive/in/System",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/HTCVive/in/App",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/HTCVive/in/Pose",
-			"type": "pose",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/HTCVive/in/Left_Hand",
-			"type": "skeleton",
-			"skeleton": "/skeleton/hand/left",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/HTCVive/in/Right_Hand",
-			"type": "skeleton",
-			"skeleton": "/skeleton/hand/right",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/HTCVive/out/Haptic",
-			"type": "vibration",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/Joystick_Aixs",
-			"type": "vector2",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/Joystick_Touched",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/Joystick_Clicked",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/Trigger_Aix",
-			"type": "vector1",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/Trigger_Touched",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/Trigger_Clicked",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/Grip_Clicked",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/Menu_Pressed",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/AX_Pressed",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/BY_Pressed",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/Bumper",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/Left_Hand",
-			"type": "skeleton",
-			"skeleton": "/skeleton/hand/left",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/Right_Hand",
-			"type": "skeleton",
-			"skeleton": "/skeleton/hand/right",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/in/Pose",
-			"type": "pose",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Cosmos/out/Haptic",
-			"type": "vibration",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Grip",
-			"type": "vector1",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Grip_Touch",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/A_Pressed",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/B_Pressed",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/A_Touch",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/B_Touch",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Trigger",
-			"type": "vector1",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Trigger_Touched",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Trigger_Click",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Joystick_Clicked",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Touchpad_Aixs",
-			"type": "vector2",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Touchpad_Touched",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Youchpad_Pressed",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Joystick_Axis",
-			"type": "vector2",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Joystick_Touched",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Pose",
-			"type": "pose",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Grip_Click",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Touchpad_Force",
-			"type": "vector1",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/Knuckles/in/Left_Hand",
-			"type": "skeleton",
-			"skeleton": "/skeleton/hand/left"
-		},
-		{
-			"name": "/actions/Knuckles/in/Right_Hand",
-			"type": "skeleton",
-			"skeleton": "/skeleton/hand/right",
-			"requirement": "suggested"
-		},
-		{
-			"name": "/actions/Knuckles/out/Haptic",
-			"type": "vibration",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Start",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/YB_Pressed",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/XA_Pressed",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/YB_Touched",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/XA_Touched",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Joystick_Aixs",
-			"type": "vector2",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Joystick_Touch",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Joystick_Click",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Thumb_Rest_Touched",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Grip_Aix",
-			"type": "vector1",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Grip_Click",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Trigger",
-			"type": "vector1",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Trigger_Touch",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Trigger_Click",
-			"type": "boolean",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Pose",
-			"type": "pose",
-			"requirement": "optional"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Left_Hand",
-			"type": "skeleton",
-			"skeleton": "/skeleton/hand/left"
-		},
-		{
-			"name": "/actions/OculusTouch/in/Right_Hand",
-			"type": "skeleton",
-			"skeleton": "/skeleton/hand/right"
-		},
-		{
-			"name": "/actions/OculusTouch/out/Haptic",
-			"type": "vibration",
-			"requirement": "optional"
-		}
-	],
-	"action_sets": [
-		{
-			"name": "/actions/General",
-			"usage": "single"
-		},
-		{
-			"name": "/actions/HTCVive",
-			"usage": "single"
-		},
-		{
-			"name": "/actions/Cosmos",
-			"usage": "single"
-		},
-		{
-			"name": "/actions/Knuckles",
-			"usage": "single"
-		},
-		{
-			"name": "/actions/OculusTouch",
-			"usage": "single"
-		}
-	],
-	"default_bindings": [
-		{
-			"controller_type": "vive_controller",
-			"binding_url": "vive_controller.json"
-		},
-		{
-			"controller_type": "knuckles",
-			"binding_url": "knuckles_controller.json"
-		},
-		{
-			"controller_type": "oculus_touch",
-			"binding_url": "oculus_touch_controller.json"
-		}
-	],
-	"localization": [
-		{
-			"language_tag": "en_US"
-		}
-	]
+  "actions": [
+    {
+      "name": "/actions/General/in/System",
+      "type": "boolean",
+      "requirement": "suggested"
+    },
+    {
+      "name": "/actions/General/in/HudSensor",
+      "type": "boolean",
+      "requirement": "suggested"
+    },
+    {
+      "name": "/actions/General/in/Trigger_Touching",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/General/in/Axis_Touching",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/General/in/Primary_Pressed",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/General/in/Secondary_Pressed",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/General/in/Menu_Pressed",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/General/in/Grab_Pressed",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/General/in/Trigger_Aix",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/General/in/Axis",
+      "type": "vector2"
+    },
+    {
+      "name": "/actions/General/in/Left_Hand",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/left"
+    },
+    {
+      "name": "/actions/General/in/Right_Hand",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/right"
+    },
+    {
+      "name": "/actions/General/in/Pose",
+      "type": "pose"
+    },
+    {
+      "name": "/actions/General/out/Haptic",
+      "type": "vibration"
+    },
+    {
+      "name": "/actions/HTCVive/in/Touchpad_Touch",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/HTCVive/in/Touchpad_Click",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/HTCVive/in/Touchpad_Aixs",
+      "type": "vector2",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/HTCVive/in/Trigger_Hair",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/HTCVive/in/Trigger_Click",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/HTCVive/in/Trigger",
+      "type": "vector1",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/HTCVive/in/Grip",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/HTCVive/in/System",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/HTCVive/in/App",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/HTCVive/in/Pose",
+      "type": "pose",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/HTCVive/in/Left_Hand",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/left",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/HTCVive/in/Right_Hand",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/right",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/HTCVive/out/Haptic",
+      "type": "vibration",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/Joystick_Aixs",
+      "type": "vector2",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/Joystick_Touched",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/Joystick_Clicked",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/Trigger_Aix",
+      "type": "vector1",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/Trigger_Touched",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/Trigger_Clicked",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/Grip_Clicked",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/Menu_Pressed",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/AX_Pressed",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/BY_Pressed",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/Bumper",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/Left_Hand",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/left",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/Right_Hand",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/right",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/in/Pose",
+      "type": "pose",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Cosmos/out/Haptic",
+      "type": "vibration",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Grip",
+      "type": "vector1",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Grip_Touch",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/A_Pressed",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/B_Pressed",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/A_Touch",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/B_Touch",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Trigger",
+      "type": "vector1",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Trigger_Touched",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Trigger_Click",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Joystick_Clicked",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Touchpad_Aixs",
+      "type": "vector2",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Touchpad_Touched",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Youchpad_Pressed",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Joystick_Axis",
+      "type": "vector2",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Joystick_Touched",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Pose",
+      "type": "pose",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Grip_Click",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Touchpad_Force",
+      "type": "vector1",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/Knuckles/in/Left_Hand",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/left"
+    },
+    {
+      "name": "/actions/Knuckles/in/Right_Hand",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/right",
+      "requirement": "suggested"
+    },
+    {
+      "name": "/actions/Knuckles/out/Haptic",
+      "type": "vibration",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Start",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/YB_Pressed",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/XA_Pressed",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/YB_Touched",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/XA_Touched",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Joystick_Aixs",
+      "type": "vector2",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Joystick_Touch",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Joystick_Click",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Thumb_Rest_Touched",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Grip_Aix",
+      "type": "vector1",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Grip_Click",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Trigger",
+      "type": "vector1",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Trigger_Touch",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Trigger_Click",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Pose",
+      "type": "pose",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Left_Hand",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/left"
+    },
+    {
+      "name": "/actions/OculusTouch/in/Right_Hand",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/right"
+    },
+    {
+      "name": "/actions/OculusTouch/out/Haptic",
+      "type": "vibration",
+      "requirement": "optional"
+    }
+  ],
+  "action_sets": [
+    {
+      "name": "/actions/General",
+      "usage": "single"
+    },
+    {
+      "name": "/actions/HTCVive",
+      "usage": "single"
+    },
+    {
+      "name": "/actions/Cosmos",
+      "usage": "single"
+    },
+    {
+      "name": "/actions/Knuckles",
+      "usage": "single"
+    },
+    {
+      "name": "/actions/OculusTouch",
+      "usage": "single"
+    }
+  ],
+  "default_bindings": [
+    {
+      "controller_type": "vive_controller",
+      "binding_url": "vive_controller.json"
+    },
+    {
+      "controller_type": "knuckles",
+      "binding_url": "knuckles_controller.json"
+    },
+    {
+      "controller_type": "oculus_touch",
+      "binding_url": "oculus_touch_controller.json"
+    }
+  ],
+  "localization": [
+    {
+      "language_tag": "en_US"
+    }
+  ]
 }

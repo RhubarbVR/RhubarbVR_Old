@@ -15,39 +15,39 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
 
-    [Category("ImGUI/Begin")]
-    public class ImGUIBeginDragDropTarget : UIWidgetList
-    {
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
+	[Category("ImGUI/Begin")]
+	public class ImGUIBeginDragDropTarget : UIWidgetList
+	{
 
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
 
-        public ImGUIBeginDragDropTarget(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		}
 
-        }
-        public ImGUIBeginDragDropTarget()
-        {
-        }
+		public ImGUIBeginDragDropTarget(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            if (ImGui.BeginDragDropTarget())
-            {
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer, canvas);
-                }
-                ImGui.EndDragDropTarget();
-            }
-            
+		}
+		public ImGUIBeginDragDropTarget()
+		{
+		}
 
-            }
-        }
-    }
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			if (ImGui.BeginDragDropTarget())
+			{
+				foreach (var item in children)
+				{
+					item.target?.ImguiRender(imGuiRenderer, canvas);
+				}
+				ImGui.EndDragDropTarget();
+			}
+
+
+		}
+	}
+}
 

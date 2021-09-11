@@ -11,68 +11,68 @@ using RhubarbEngine.World;
 
 namespace RhubarbEngine.Components.Relations
 {
-    [Category(new string[] { "Relations" })]
-    public class ValueCopy<T> : Component where T: IConvertible
-    {
-        public Driver<T> driver;
+	[Category(new string[] { "Relations" })]
+	public class ValueCopy<T> : Component where T : IConvertible
+	{
+		public Driver<T> driver;
 
-        public SyncRef<ValueSource<T>> source;
+		public SyncRef<ValueSource<T>> source;
 
-        public Sync<bool> writeBack;
+		public Sync<bool> writeBack;
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            driver = new Driver<T>(this, newRefIds);
-            source = new SyncRef<ValueSource<T>>(this, newRefIds);
-            writeBack = new Sync<bool>(this, newRefIds);
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			driver = new Driver<T>(this, newRefIds);
+			source = new SyncRef<ValueSource<T>>(this, newRefIds);
+			writeBack = new Sync<bool>(this, newRefIds);
+		}
 
-        private IChangeable linckedSource;
+		private IChangeable linckedSource;
 
-        private IChangeable linckedTarget;
-        public void sourceChange(IChangeable val)
-        {
-            if (source.target != null&& driver.Linked)
-            {
-                driver.Drivevalue = source.target.value;
-            }
-        }
+		private IChangeable linckedTarget;
+		public void sourceChange(IChangeable val)
+		{
+			if (source.target != null && driver.Linked)
+			{
+				driver.Drivevalue = source.target.value;
+			}
+		}
 
-        public void targetChange(IChangeable val)
-        {
-            if (writeBack.value&& source.target != null&& driver.Linked)
-            {
-                source.target.value = driver.Drivevalue;
-            }
-        }
-        public override void onChanged()
-        {
-            if(source.target != null&& driver.Linked)
-            {
-                if (linckedSource != null)
-                {
-                    linckedTarget.Changed -= sourceChange;
-                }
-                if (linckedTarget != null)
-                {
-                    linckedTarget.Changed -= targetChange;
-                }
-                linckedSource = source.target;
-                linckedTarget = driver.target;
-                linckedTarget.Changed += targetChange;
-                linckedTarget.Changed += sourceChange;
+		public void targetChange(IChangeable val)
+		{
+			if (writeBack.value && source.target != null && driver.Linked)
+			{
+				source.target.value = driver.Drivevalue;
+			}
+		}
+		public override void onChanged()
+		{
+			if (source.target != null && driver.Linked)
+			{
+				if (linckedSource != null)
+				{
+					linckedTarget.Changed -= sourceChange;
+				}
+				if (linckedTarget != null)
+				{
+					linckedTarget.Changed -= targetChange;
+				}
+				linckedSource = source.target;
+				linckedTarget = driver.target;
+				linckedTarget.Changed += targetChange;
+				linckedTarget.Changed += sourceChange;
 
-            }
-        }
-        public override void CommonUpdate(DateTime startTime, DateTime Frame)
-        {
-        }
-        public ValueCopy(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
-        {
+			}
+		}
+		public override void CommonUpdate(DateTime startTime, DateTime Frame)
+		{
+		}
+		public ValueCopy(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public ValueCopy()
-        {
-        }
-    }
+		}
+		public ValueCopy()
+		{
+		}
+	}
 }

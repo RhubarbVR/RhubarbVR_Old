@@ -16,7 +16,8 @@ namespace g3
 														   double spacing)
 		{
 			Vector2d oshift = -element.Min;
-			double w = element.Width; double h = element.Height;
+			double w = element.Width;
+			double h = element.Height;
 
 			int nx = Math.Max(1, (int)(bounds.Width / w));
 			double spacew = (nx - 1) * spacing;
@@ -29,9 +30,11 @@ namespace g3
 				ny--;
 
 			List<Vector2d> translations = new List<Vector2d>();
-			for (int yi = 0; yi < ny; ++yi) {
+			for (int yi = 0; yi < ny; ++yi)
+			{
 				double dy = yi * h + yi * spacing;
-				for (int xi = 0; xi < nx; ++xi) {
+				for (int xi = 0; xi < nx; ++xi)
+				{
 					double dx = xi * w + xi * spacing;
 					translations.Add(new Vector2d(dx, dy) + oshift + bounds.Min);
 				}
@@ -50,10 +53,11 @@ namespace g3
 		/// Always allows at least one row and column, even if element overflows bounds in that dimension.
 		/// </summary>
 		public static List<Vector2d> BoundedCircleTiling2(AxisAlignedBox2d element, AxisAlignedBox2d bounds,
-													   	  double spacing)
+															 double spacing)
 		{
 			Vector2d oshift = -element.Min;
-			double w = element.Width; double h = element.Height;
+			double w = element.Width;
+			double h = element.Height;
 			if (MathUtil.EpsilonEqual(w, h, MathUtil.Epsilonf) == false)
 				throw new Exception("BoundedHexTiling2: input box is not square");
 
@@ -89,26 +93,30 @@ namespace g3
 			// so we may need to reduce count
 			int nx_odd = nx_even;
 			spacew = (nx_odd - 1) * spacingx;
-			if (ny > 0 && (stepx * nx_odd + spacew + stepx * 0.5) > bounds.Width) {
+			if (ny > 0 && (stepx * nx_odd + spacew + stepx * 0.5) > bounds.Width)
+			{
 				nx_odd--;
 				spacew = (nx_odd - 1) * spacingx;
 			}
 
 
 			List<Vector2d> translations = new List<Vector2d>();
-			for (int yi = 0; yi < ny; ++yi) {
-				double dy = yi*stepy + yi*spacingy;
+			for (int yi = 0; yi < ny; ++yi)
+			{
+				double dy = yi * stepy + yi * spacingy;
 
 				// x shift and count are different on odd rows
 				double shiftx = stepx * 0.5;
 				int nx = nx_odd;
-				if (yi % 2 == 0) {
+				if (yi % 2 == 0)
+				{
 					shiftx = 0;
 					nx = nx_even;
 				}
 
-				for (int xi = 0; xi < nx; ++xi) {
-					double dx = shiftx + xi * stepx + xi*spacingx;
+				for (int xi = 0; xi < nx; ++xi)
+				{
+					double dx = shiftx + xi * stepx + xi * spacingx;
 					translations.Add(new Vector2d(dx, dy) + oshift + bounds.Min);
 				}
 			}
