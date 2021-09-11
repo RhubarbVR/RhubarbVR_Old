@@ -25,131 +25,131 @@ using OpenAPIDateConverter = Org.OpenAPITools.Client.OpenAPIDateConverter;
 
 namespace Org.OpenAPITools.Model
 {
-    /// <summary>
-    /// LoginReg
-    /// </summary>
-    [DataContract(Name = "LoginReg")]
-    public partial class LoginReg : IEquatable<LoginReg>, IValidatableObject
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LoginReg" /> class.
-        /// </summary>
-        /// <param name="password">password.</param>
-        /// <param name="email">email.</param>
-        /// <param name="rememberme">rememberme.</param>
-        public LoginReg(string password = default(string), string email = default(string), bool rememberme = default(bool))
-        {
-            this.Password = password;
-            this.Email = email;
-            this.Rememberme = rememberme;
-        }
+	/// <summary>
+	/// LoginReg
+	/// </summary>
+	[DataContract(Name = "LoginReg")]
+	public partial class LoginReg : IEquatable<LoginReg>, IValidatableObject
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="LoginReg" /> class.
+		/// </summary>
+		/// <param name="password">password.</param>
+		/// <param name="email">email.</param>
+		/// <param name="rememberme">rememberme.</param>
+		public LoginReg(string password = default(string), string email = default(string), bool rememberme = default(bool))
+		{
+			this.Password = password;
+			this.Email = email;
+			this.Rememberme = rememberme;
+		}
 
-        /// <summary>
-        /// Gets or Sets Password
-        /// </summary>
-        [DataMember(Name = "password", EmitDefaultValue = true)]
-        public string Password { get; set; }
+		/// <summary>
+		/// Gets or Sets Password
+		/// </summary>
+		[DataMember(Name = "password", EmitDefaultValue = true)]
+		public string Password { get; set; }
 
-        /// <summary>
-        /// Gets or Sets Email
-        /// </summary>
-        [DataMember(Name = "email", EmitDefaultValue = true)]
-        public string Email { get; set; }
+		/// <summary>
+		/// Gets or Sets Email
+		/// </summary>
+		[DataMember(Name = "email", EmitDefaultValue = true)]
+		public string Email { get; set; }
 
-        /// <summary>
-        /// Gets or Sets Rememberme
-        /// </summary>
-        [DataMember(Name = "rememberme", EmitDefaultValue = false)]
-        public bool Rememberme { get; set; }
+		/// <summary>
+		/// Gets or Sets Rememberme
+		/// </summary>
+		[DataMember(Name = "rememberme", EmitDefaultValue = false)]
+		public bool Rememberme { get; set; }
 
-        /// <summary>
-        /// Returns the string presentation of the object
-        /// </summary>
-        /// <returns>String presentation of the object</returns>
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-            sb.Append("class LoginReg {\n");
-            sb.Append("  Password: ").Append(Password).Append("\n");
-            sb.Append("  Email: ").Append(Email).Append("\n");
-            sb.Append("  Rememberme: ").Append(Rememberme).Append("\n");
-            sb.Append("}\n");
-            return sb.ToString();
-        }
+		/// <summary>
+		/// Returns the string presentation of the object
+		/// </summary>
+		/// <returns>String presentation of the object</returns>
+		public override string ToString()
+		{
+			var sb = new StringBuilder();
+			sb.Append("class LoginReg {\n");
+			sb.Append("  Password: ").Append(Password).Append("\n");
+			sb.Append("  Email: ").Append(Email).Append("\n");
+			sb.Append("  Rememberme: ").Append(Rememberme).Append("\n");
+			sb.Append("}\n");
+			return sb.ToString();
+		}
 
-        /// <summary>
-        /// Returns the JSON string presentation of the object
-        /// </summary>
-        /// <returns>JSON string presentation of the object</returns>
-        public virtual string ToJson()
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-        }
+		/// <summary>
+		/// Returns the JSON string presentation of the object
+		/// </summary>
+		/// <returns>JSON string presentation of the object</returns>
+		public virtual string ToJson()
+		{
+			return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
+		}
 
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="input">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object input)
-        {
-            return this.Equals(input as LoginReg);
-        }
+		/// <summary>
+		/// Returns true if objects are equal
+		/// </summary>
+		/// <param name="input">Object to be compared</param>
+		/// <returns>Boolean</returns>
+		public override bool Equals(object input)
+		{
+			return this.Equals(input as LoginReg);
+		}
 
-        /// <summary>
-        /// Returns true if LoginReg instances are equal
-        /// </summary>
-        /// <param name="input">Instance of LoginReg to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(LoginReg input)
-        {
-            if (input == null)
-                return false;
+		/// <summary>
+		/// Returns true if LoginReg instances are equal
+		/// </summary>
+		/// <param name="input">Instance of LoginReg to be compared</param>
+		/// <returns>Boolean</returns>
+		public bool Equals(LoginReg input)
+		{
+			if (input == null)
+				return false;
 
-            return 
-                (
-                    this.Password == input.Password ||
-                    (this.Password != null &&
-                    this.Password.Equals(input.Password))
-                ) && 
-                (
-                    this.Email == input.Email ||
-                    (this.Email != null &&
-                    this.Email.Equals(input.Email))
-                ) && 
-                (
-                    this.Rememberme == input.Rememberme ||
-                    this.Rememberme.Equals(input.Rememberme)
-                );
-        }
+			return
+				(
+					this.Password == input.Password ||
+					(this.Password != null &&
+					this.Password.Equals(input.Password))
+				) &&
+				(
+					this.Email == input.Email ||
+					(this.Email != null &&
+					this.Email.Equals(input.Email))
+				) &&
+				(
+					this.Rememberme == input.Rememberme ||
+					this.Rememberme.Equals(input.Rememberme)
+				);
+		}
 
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                int hashCode = 41;
-                if (this.Password != null)
-                    hashCode = hashCode * 59 + this.Password.GetHashCode();
-                if (this.Email != null)
-                    hashCode = hashCode * 59 + this.Email.GetHashCode();
-                hashCode = hashCode * 59 + this.Rememberme.GetHashCode();
-                return hashCode;
-            }
-        }
+		/// <summary>
+		/// Gets the hash code
+		/// </summary>
+		/// <returns>Hash code</returns>
+		public override int GetHashCode()
+		{
+			unchecked // Overflow is fine, just wrap
+			{
+				int hashCode = 41;
+				if (this.Password != null)
+					hashCode = hashCode * 59 + this.Password.GetHashCode();
+				if (this.Email != null)
+					hashCode = hashCode * 59 + this.Email.GetHashCode();
+				hashCode = hashCode * 59 + this.Rememberme.GetHashCode();
+				return hashCode;
+			}
+		}
 
-        /// <summary>
-        /// To validate all properties of the instance
-        /// </summary>
-        /// <param name="validationContext">Validation context</param>
-        /// <returns>Validation Result</returns>
-        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
-        {
-            yield break;
-        }
-    }
+		/// <summary>
+		/// To validate all properties of the instance
+		/// </summary>
+		/// <param name="validationContext">Validation context</param>
+		/// <returns>Validation Result</returns>
+		IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+		{
+			yield break;
+		}
+	}
 
 }

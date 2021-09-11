@@ -15,44 +15,44 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
 
-    [Category("ImGUI/Begin")]
-    public class ImGUIBeginMenu : UIWidgetList
-    {
 
-        public Sync<string> label;
+	[Category("ImGUI/Begin")]
+	public class ImGUIBeginMenu : UIWidgetList
+	{
 
-        public Sync<bool> Uienabled;
+		public Sync<string> label;
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            label = new Sync<string>(this, newRefIds);
-            Uienabled = new Sync<bool>(this, newRefIds);
-        }
+		public Sync<bool> Uienabled;
 
-        public ImGUIBeginMenu(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			label = new Sync<string>(this, newRefIds);
+			Uienabled = new Sync<bool>(this, newRefIds);
+		}
 
-        }
-        public ImGUIBeginMenu()
-        {
-        }
+		public ImGUIBeginMenu(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            if(ImGui.BeginMenu(label.value ?? "", Uienabled.value))
-            {
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer, canvas);
-                }
-                ImGui.EndMenu();
-            }
-            
+		}
+		public ImGUIBeginMenu()
+		{
+		}
 
-            }
-        }
-    }
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			if (ImGui.BeginMenu(label.value ?? "", Uienabled.value))
+			{
+				foreach (var item in children)
+				{
+					item.target?.ImguiRender(imGuiRenderer, canvas);
+				}
+				ImGui.EndMenu();
+			}
+
+
+		}
+	}
+}
 

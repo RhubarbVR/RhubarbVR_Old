@@ -15,38 +15,38 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
-
-    [Category("ImGUI/Begin/Popup")]
-    public class ImGUIBeginPopupContextWindow : UIWidgetList
-    {
 
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
+	[Category("ImGUI/Begin/Popup")]
+	public class ImGUIBeginPopupContextWindow : UIWidgetList
+	{
 
-        }
 
-        public ImGUIBeginPopupContextWindow(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
 
-        }
-        public ImGUIBeginPopupContextWindow()
-        {
-        }
+		}
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            if(ImGui.BeginPopupContextWindow())
-            {
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer, canvas);
-                }
-                ImGui.EndPopup();
-            }
-            }
-        }
-    }
+		public ImGUIBeginPopupContextWindow(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
+
+		}
+		public ImGUIBeginPopupContextWindow()
+		{
+		}
+
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			if (ImGui.BeginPopupContextWindow())
+			{
+				foreach (var item in children)
+				{
+					item.target?.ImguiRender(imGuiRenderer, canvas);
+				}
+				ImGui.EndPopup();
+			}
+		}
+	}
+}
 

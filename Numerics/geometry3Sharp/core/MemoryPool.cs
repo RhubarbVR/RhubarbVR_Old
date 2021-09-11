@@ -8,44 +8,48 @@ namespace g3
 	/// </summary>
 	public class MemoryPool<T> where T : class, new()
 	{
-        DVector<T> Allocated;
-        DVector<T> Free;
+		DVector<T> Allocated;
+		DVector<T> Free;
 
 		public MemoryPool()
 		{
 			Allocated = new DVector<T>();
 			Free = new DVector<T>();
-        }
+		}
 
 		public T Allocate()
 		{
-			if ( Free.size > 0 ) {
+			if (Free.size > 0)
+			{
 				T allocated = Free[Free.size - 1];
-                Free.pop_back();
+				Free.pop_back();
 				return allocated;
-			} else {
+			}
+			else
+			{
 				T newval = new T();
-                Allocated.Add(newval);
+				Allocated.Add(newval);
 				return newval;
 			}
 		}
 
-		public void Return(T obj) {
+		public void Return(T obj)
+		{
 			Free.Add(obj);
 		}
 
 
-        public void ReturnAll()
-        {
-            Free = new DVector<T>(Allocated);
-        }
+		public void ReturnAll()
+		{
+			Free = new DVector<T>(Allocated);
+		}
 
 
-        public void FreeAll()
-        {
-            Allocated = new DVector<T>();
-            Free = new DVector<T>();
-        }
+		public void FreeAll()
+		{
+			Allocated = new DVector<T>();
+			Free = new DVector<T>();
+		}
 
 	}
 }

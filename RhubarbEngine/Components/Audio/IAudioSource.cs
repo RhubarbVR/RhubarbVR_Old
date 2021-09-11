@@ -1,4 +1,5 @@
 ﻿using RhubarbEngine.World;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Components.Audio
 {
-    public interface IAudioSource: IWorldObject
-    {
-        public bool IsActive { get; }
+	public interface IAudioSource : IWorldObject
+	{
+		public bool IsActive { get; }
 
-        public int ChannelCount { get; }
+		public int ChannelCount { get; }
 
-        public byte[] FrameInputBuffer { get; }
+		public byte[] FrameInputBuffer { get; }
 
-    }
+	}
 }

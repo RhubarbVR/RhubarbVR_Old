@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.VirtualReality
 {
-    public enum OutputType
-    {
-        Auto,
-        Screen,
-        SteamVR,
-        OculusVR
-    }
+	public enum OutputType
+	{
+		Auto,
+		Screen,
+		SteamVR,
+		OculusVR
+	}
 }

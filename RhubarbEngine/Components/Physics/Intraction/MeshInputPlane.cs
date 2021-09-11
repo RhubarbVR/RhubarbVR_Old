@@ -21,290 +21,300 @@ using RhubarbEngine.Input;
 namespace RhubarbEngine.Components.Physics
 {
 
-    [Category(new string[] { "Physics/Intraction" })]
-    public class MeshInputPlane : Collider, IinputPlane
-    {
-        public AssetRef<RMesh> mesh;
+	[Category(new string[] { "Physics/Intraction" })]
+	public class MeshInputPlane : Collider, IinputPlane
+	{
+		public AssetRef<RMesh> mesh;
 
-        public Sync<Vector2u> pixelSize;
+		public Sync<Vector2u> pixelSize;
 
-        public Sync<bool> FocusedOverride;
+		public Sync<bool> FocusedOverride;
 
-        public SyncDelegate onFocusLost;
+		public SyncDelegate onFocusLost;
 
-        public IReadOnlyList<KeyEvent> KeyEvents { get { if (!focused) return new List<KeyEvent>(); return input.mainWindows.FrameSnapshot.KeyEvents; } }
+		public IReadOnlyList<KeyEvent> KeyEvents { get { if (!focused) return new List<KeyEvent>(); return input.mainWindows.FrameSnapshot.KeyEvents; } }
 
-        public IReadOnlyList<MouseEvent> MouseEvents { get { if (isNotTakingInput) return new List<MouseEvent>(); return input.mainWindows.FrameSnapshot.MouseEvents; } }
+		public IReadOnlyList<MouseEvent> MouseEvents { get { if (isNotTakingInput) return new List<MouseEvent>(); return input.mainWindows.FrameSnapshot.MouseEvents; } }
 
-        public IReadOnlyList<char> KeyCharPresses { get { if (!focused) return new List<Char>(); return input.mainWindows.FrameSnapshot.KeyCharPresses;  } }
+		public IReadOnlyList<char> KeyCharPresses { get { if (!focused) return new List<Char>(); return input.mainWindows.FrameSnapshot.KeyCharPresses; } }
 
-        private Vector2 mousePosition = Vector2.Zero;
+		private Vector2 mousePosition = Vector2.Zero;
 
-        public Vector2 MousePosition => mousePosition;
+		public Vector2 MousePosition => mousePosition;
 
-        public void SetCursor(Cursors cursor)
-        {
-            if (!isNotTakingInput)
-            {
-                switch (source)
-                {
-                    case InteractionSource.LeftLaser:
-                        input.LeftLaser.cursor = cursor;
-                        break;
-                    case InteractionSource.RightLaser:
-                        input.RightLaser.cursor = cursor;
-                        break;
-                    case InteractionSource.HeadLaser:
-                        input.RightLaser.cursor = cursor;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-        public void Click(Vector2 pos, InteractionSource sourc)
-        {
-            Setfocused();
-            val = sourc;
-            mousePosition = pos;
-            StopMousePos = false;
-        }
+		public void SetCursor(Cursors cursor)
+		{
+			if (!isNotTakingInput)
+			{
+				switch (source)
+				{
+					case InteractionSource.LeftLaser:
+						input.LeftLaser.cursor = cursor;
+						break;
+					case InteractionSource.RightLaser:
+						input.RightLaser.cursor = cursor;
+						break;
+					case InteractionSource.HeadLaser:
+						input.RightLaser.cursor = cursor;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+		public void Click(Vector2 pos, InteractionSource sourc)
+		{
+			Setfocused();
+			val = sourc;
+			mousePosition = pos;
+			StopMousePos = false;
+		}
 
-        public void updatePos(Vector2 pos, InteractionSource sourc)
-        {
-            if (sourc != val) return;
-            if (!_focused && !input.isKeyboardinuse)
-            {
-                Setfocused();
-                StopMousePos = false;
-            }
-            if (StopMousePos) return;
-            mousePosition = pos;
-            hover = 0;
-        }
+		public void updatePos(Vector2 pos, InteractionSource sourc)
+		{
+			if (sourc != val)
+				return;
+			if (!_focused && !input.isKeyboardinuse)
+			{
+				Setfocused();
+				StopMousePos = false;
+			}
+			if (StopMousePos)
+				return;
+			mousePosition = pos;
+			hover = 0;
+		}
 
-        public float WheelDelta
-        {
-            get
-            {
-                if (isNotTakingInput) return 0f;
-                return input.mainWindows.FrameSnapshot.WheelDelta;
-            }
-        }
+		public float WheelDelta
+		{
+			get
+			{
+				if (isNotTakingInput)
+					return 0f;
+				return input.mainWindows.FrameSnapshot.WheelDelta;
+			}
+		}
 
-        private InteractionSource val = InteractionSource.RightLaser;
+		private InteractionSource val = InteractionSource.RightLaser;
 
-        public InteractionSource source => val;
+		public InteractionSource source => val;
 
-        public bool isNotTakingInput => (!_focused || (hover > 3));
+		public bool isNotTakingInput => (!_focused || (hover > 3));
 
-        private byte hover = 0;
+		private byte hover = 0;
 
-        private bool _focused = false;
+		private bool _focused = false;
 
-        public bool focused => (input.isKeyboardinuse) ? _focused : !isNotTakingInput;
+		public bool focused => (input.isKeyboardinuse) ? _focused : !isNotTakingInput;
 
-        public bool StopMousePos = false;
+		public bool StopMousePos = false;
 
-        public bool StopMouse { get { return StopMousePos; } set { StopMousePos = value; } }
+		public bool StopMouse { get { return StopMousePos; } set { StopMousePos = value; } }
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            pixelSize = new Sync<Vector2u>(this, newRefIds);
-            pixelSize.value = new Vector2u(600, 600);
-            FocusedOverride = new Sync<bool>(this, newRefIds);
-            onFocusLost = new SyncDelegate(this, newRefIds);
-            mesh = new AssetRef<RMesh>(this, newRefIds);
-            mesh.loadChange += Mesh_loadChange;
-            entity.enabledChanged += Entity_enabledChanged;
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			pixelSize = new Sync<Vector2u>(this, newRefIds);
+			pixelSize.value = new Vector2u(600, 600);
+			FocusedOverride = new Sync<bool>(this, newRefIds);
+			onFocusLost = new SyncDelegate(this, newRefIds);
+			mesh = new AssetRef<RMesh>(this, newRefIds);
+			mesh.loadChange += Mesh_loadChange;
+			entity.enabledChanged += Entity_enabledChanged;
+		}
 
-        private void Entity_enabledChanged()
-        {
-            if ((!entity.isEnabled) && focused)
-            {
-                Removefocused();
-            }
-        }
+		private void Entity_enabledChanged()
+		{
+			if ((!entity.isEnabled) && focused)
+			{
+				Removefocused();
+			}
+		}
 
-        private void Mesh_loadChange(RMesh obj)
-        {
-            BuildShape();
-        }
+		private void Mesh_loadChange(RMesh obj)
+		{
+			BuildShape();
+		}
 
-        public override void onLoaded()
-        {
-            base.onLoaded();
-            BuildShape();
-        }
-        private void goNull()
-        {
-            buildCollissionObject(null);
-        }
-        public int[] index = new int[] { };
-        public BulletSharp.Math.Vector3[] vertices = new BulletSharp.Math.Vector3[] { };
+		public override void onLoaded()
+		{
+			base.onLoaded();
+			BuildShape();
+		}
+		private void goNull()
+		{
+			buildCollissionObject(null);
+		}
+		public int[] index = new int[] { };
+		public BulletSharp.Math.Vector3[] vertices = new BulletSharp.Math.Vector3[] { };
 
 
-        public unsafe override void BuildShape()
-        {
-            if (mesh.Asset == null) { goNull(); return; };
-            if (!mesh.target?.loaded ?? false) { goNull(); return; };
+		public unsafe override void BuildShape()
+		{
+			if (mesh.Asset == null)
+			{ goNull(); return; };
+			if (!mesh.target?.loaded ?? false)
+			{ goNull(); return; };
 
-            // Initialize TriangleIndexVertexArray with Vector3 array
-            vertices = new BulletSharp.Math.Vector3[mesh.Asset.meshes[0].VertexCount];
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                vertices[i] = new BulletSharp.Math.Vector3(
-                    mesh.Asset.meshes[0].GetVertex(i).x,
-                    mesh.Asset.meshes[0].GetVertex(i).y,
-                    mesh.Asset.meshes[0].GetVertex(i).z);
-            }
-            var e = mesh.Asset.meshes[0].RenderIndices().ToArray();
+			// Initialize TriangleIndexVertexArray with Vector3 array
+			vertices = new BulletSharp.Math.Vector3[mesh.Asset.meshes[0].VertexCount];
+			for (int i = 0; i < vertices.Length; i++)
+			{
+				vertices[i] = new BulletSharp.Math.Vector3(
+					mesh.Asset.meshes[0].GetVertex(i).x,
+					mesh.Asset.meshes[0].GetVertex(i).y,
+					mesh.Asset.meshes[0].GetVertex(i).z);
+			}
+			var e = mesh.Asset.meshes[0].RenderIndices().ToArray();
 
-            // Initialize TriangleIndexIndexArray with int array
-            index = new int[e.Length];
-            for (int i = 0; i < index.Length; i++)
-            {
-                index[i] = e[i];
-            }
-            if (index.Length < 3) return;
-            var indexVertexArray2 = new TriangleIndexVertexArray(index, vertices);
-            BvhTriangleMeshShape trys = new BvhTriangleMeshShape(indexVertexArray2, false);
-            startShape(trys);
-        }
-        public override void CommonUpdate(DateTime startTime, DateTime Frame)
-        {
-            base.CommonUpdate(startTime, Frame);
-            if (hover > 3) return;
-            hover++;
-        }
-        public bool IsMouseDown(MouseButton button)
-        {
-            if (StopMousePos) return false;
-            if (isNotTakingInput) return false;
-            if (engine.outputType == VirtualReality.OutputType.Screen)
-            {
-                return engine.inputManager.mainWindows.GetMouseButton(button);
-            }
-            switch (source)
-            {
-                case InteractionSource.None:
-                    break;
-                case InteractionSource.LeftLaser:
-                    switch (button)
-                    {
-                        case MouseButton.Left:
-                            // need to make not pur frame
-                            return input.PrimaryPress(Input.Creality.Left);
-                            break;
-                        case MouseButton.Middle:
-                            return input.SecondaryPress(Input.Creality.Left);
-                            break;
-                        case MouseButton.Right:
-                            return input.GrabPress(Input.Creality.Left);
-                            break;
-                        case MouseButton.Button1:
-                            break;
-                        case MouseButton.Button2:
-                            break;
-                        case MouseButton.Button3:
-                            break;
-                        case MouseButton.Button4:
-                            break;
-                        case MouseButton.Button5:
-                            break;
-                        case MouseButton.Button6:
-                            break;
-                        case MouseButton.Button7:
-                            break;
-                        case MouseButton.Button8:
-                            break;
-                        case MouseButton.Button9:
-                            break;
-                        case MouseButton.LastButton:
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case InteractionSource.LeftFinger:
-                    break;
-                case InteractionSource.RightLaser:
-                    switch (button)
-                    {
-                        case MouseButton.Left:
-                            return input.PrimaryPress(Input.Creality.Right);
-                            break;
-                        case MouseButton.Middle:
-                            return input.SecondaryPress(Input.Creality.Right);
-                            break;
-                        case MouseButton.Right:
-                            return input.GrabPress(Input.Creality.Right);
-                            break;
-                        case MouseButton.Button1:
-                            break;
-                        case MouseButton.Button2:
-                            break;
-                        case MouseButton.Button3:
-                            break;
-                        case MouseButton.Button4:
-                            break;
-                        case MouseButton.Button5:
-                            break;
-                        case MouseButton.Button6:
-                            break;
-                        case MouseButton.Button7:
-                            break;
-                        case MouseButton.Button8:
-                            break;
-                        case MouseButton.Button9:
-                            break;
-                        case MouseButton.LastButton:
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case InteractionSource.RightFinger:
-                    break;
-                case InteractionSource.HeadLaser:
-                    return engine.inputManager.mainWindows.GetMouseButton(button);
-                    break;
-                case InteractionSource.HeadFinger:
-                    break;
-                default:
-                    break;
-            }
-            return false;
-        }
+			// Initialize TriangleIndexIndexArray with int array
+			index = new int[e.Length];
+			for (int i = 0; i < index.Length; i++)
+			{
+				index[i] = e[i];
+			}
+			if (index.Length < 3)
+				return;
+			var indexVertexArray2 = new TriangleIndexVertexArray(index, vertices);
+			BvhTriangleMeshShape trys = new BvhTriangleMeshShape(indexVertexArray2, false);
+			startShape(trys);
+		}
+		public override void CommonUpdate(DateTime startTime, DateTime Frame)
+		{
+			base.CommonUpdate(startTime, Frame);
+			if (hover > 3)
+				return;
+			hover++;
+		}
+		public bool IsMouseDown(MouseButton button)
+		{
+			if (StopMousePos)
+				return false;
+			if (isNotTakingInput)
+				return false;
+			if (engine.outputType == VirtualReality.OutputType.Screen)
+			{
+				return engine.inputManager.mainWindows.GetMouseButton(button);
+			}
+			switch (source)
+			{
+				case InteractionSource.None:
+					break;
+				case InteractionSource.LeftLaser:
+					switch (button)
+					{
+						case MouseButton.Left:
+							// need to make not pur frame
+							return input.PrimaryPress(Input.Creality.Left);
+							break;
+						case MouseButton.Middle:
+							return input.SecondaryPress(Input.Creality.Left);
+							break;
+						case MouseButton.Right:
+							return input.GrabPress(Input.Creality.Left);
+							break;
+						case MouseButton.Button1:
+							break;
+						case MouseButton.Button2:
+							break;
+						case MouseButton.Button3:
+							break;
+						case MouseButton.Button4:
+							break;
+						case MouseButton.Button5:
+							break;
+						case MouseButton.Button6:
+							break;
+						case MouseButton.Button7:
+							break;
+						case MouseButton.Button8:
+							break;
+						case MouseButton.Button9:
+							break;
+						case MouseButton.LastButton:
+							break;
+						default:
+							break;
+					}
+					break;
+				case InteractionSource.LeftFinger:
+					break;
+				case InteractionSource.RightLaser:
+					switch (button)
+					{
+						case MouseButton.Left:
+							return input.PrimaryPress(Input.Creality.Right);
+							break;
+						case MouseButton.Middle:
+							return input.SecondaryPress(Input.Creality.Right);
+							break;
+						case MouseButton.Right:
+							return input.GrabPress(Input.Creality.Right);
+							break;
+						case MouseButton.Button1:
+							break;
+						case MouseButton.Button2:
+							break;
+						case MouseButton.Button3:
+							break;
+						case MouseButton.Button4:
+							break;
+						case MouseButton.Button5:
+							break;
+						case MouseButton.Button6:
+							break;
+						case MouseButton.Button7:
+							break;
+						case MouseButton.Button8:
+							break;
+						case MouseButton.Button9:
+							break;
+						case MouseButton.LastButton:
+							break;
+						default:
+							break;
+					}
+					break;
+				case InteractionSource.RightFinger:
+					break;
+				case InteractionSource.HeadLaser:
+					return engine.inputManager.mainWindows.GetMouseButton(button);
+					break;
+				case InteractionSource.HeadFinger:
+					break;
+				default:
+					break;
+			}
+			return false;
+		}
 
-        public void Setfocused()
-        {
-            if (_focused) {
-                return;
-            }
-            _focused = true;
-            if (!FocusedOverride.value)
-            {
-                input.RemoveFocus();
-            }
-            input.removeFocus += Removefocused;
-        }
+		public void Setfocused()
+		{
+			if (_focused)
+			{
+				return;
+			}
+			_focused = true;
+			if (!FocusedOverride.value)
+			{
+				input.RemoveFocus();
+			}
+			input.removeFocus += Removefocused;
+		}
 
-        public void Removefocused()
-        {
-            onFocusLost.Target?.Invoke();
-            input.removeFocus -= Removefocused;
-            _focused = false;
-        }
+		public void Removefocused()
+		{
+			onFocusLost.Target?.Invoke();
+			input.removeFocus -= Removefocused;
+			_focused = false;
+		}
 
-        public MeshInputPlane(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public MeshInputPlane(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public MeshInputPlane()
-        {
-        }
-    }
+		}
+		public MeshInputPlane()
+		{
+		}
+	}
 }

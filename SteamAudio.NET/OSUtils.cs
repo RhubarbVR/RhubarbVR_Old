@@ -12,7 +12,8 @@ namespace SteamAudio
 			FreeBSD
 		}
 
-		public static bool IsOS(OS os) => os switch {
+		public static bool IsOS(OS os) => os switch
+		{
 			OS.Windows => RuntimeInformation.IsOSPlatform(OSPlatform.Windows),
 			OS.Linux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux),
 			OS.OSX => RuntimeInformation.IsOSPlatform(OSPlatform.OSX),
@@ -22,15 +23,18 @@ namespace SteamAudio
 
 		public static OS GetOS()
 		{
-			if(IsOS(OS.Linux)) {
+			if (IsOS(OS.Linux))
+			{
 				return OS.Linux;
 			}
 
-			if(IsOS(OS.OSX)) {
+			if (IsOS(OS.OSX))
+			{
 				return OS.OSX;
 			}
 
-			if(IsOS(OS.FreeBSD)) {
+			if (IsOS(OS.FreeBSD))
+			{
 				return OS.FreeBSD;
 			}
 

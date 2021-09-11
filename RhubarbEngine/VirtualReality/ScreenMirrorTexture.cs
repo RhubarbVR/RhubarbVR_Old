@@ -8,154 +8,154 @@ using Veldrid;
 
 namespace RhubarbEngine.VirtualReality
 {
-    internal class ScreenMirrorTexture : IDisposable
-    {
-        private readonly List<IDisposable> _disposables = new List<IDisposable>();
-        private readonly Dictionary<OutputDescription, TextureBlitter> _blitters
-            = new Dictionary<OutputDescription, TextureBlitter>();
+	internal class ScreenMirrorTexture : IDisposable
+	{
+		private readonly List<IDisposable> _disposables = new List<IDisposable>();
+		private readonly Dictionary<OutputDescription, TextureBlitter> _blitters
+			= new Dictionary<OutputDescription, TextureBlitter>();
 
-        private ScreenContext _context;
-        private ResourceSet _leftSet;
-        private ResourceSet _rightSet;
+		private ScreenContext _context;
+		private ResourceSet _leftSet;
+		private ResourceSet _rightSet;
 
-        public void clearLeftSet()
-        {
-            _leftSet?.Dispose();
-            _leftSet = null; 
-        }
+		public void clearLeftSet()
+		{
+			_leftSet?.Dispose();
+			_leftSet = null;
+		}
 
-        public ScreenMirrorTexture(ScreenContext context)
-        {
-            _context = context;
-        }
+		public ScreenMirrorTexture(ScreenContext context)
+		{
+			_context = context;
+		}
 
-        public void Render(CommandList cl, Framebuffer fb, MirrorTextureEyeSource source)
-        {
-            cl.SetFramebuffer(fb);
-            TextureBlitter blitter = GetBlitter(fb.OutputDescription);
+		public void Render(CommandList cl, Framebuffer fb, MirrorTextureEyeSource source)
+		{
+			cl.SetFramebuffer(fb);
+			TextureBlitter blitter = GetBlitter(fb.OutputDescription);
 
-            switch (source)
-            {
-                case MirrorTextureEyeSource.BothEyes:
-                    float width = fb.Width * 0.5f;
-                    cl.SetViewport(0, new Viewport(0, 0, width, fb.Height, 0, 1));
-                    BlitLeftEye(cl, blitter, width / fb.Height);
-                    break;
-                case MirrorTextureEyeSource.LeftEye:
-                    BlitLeftEye(cl, blitter, (float)fb.Width / fb.Height);
-                    break;
-                case MirrorTextureEyeSource.RightEye:
-                    BlitRightEye(cl, blitter, (float)fb.Width / fb.Height);
-                    break;
-            }
+			switch (source)
+			{
+				case MirrorTextureEyeSource.BothEyes:
+					float width = fb.Width * 0.5f;
+					cl.SetViewport(0, new Viewport(0, 0, width, fb.Height, 0, 1));
+					BlitLeftEye(cl, blitter, width / fb.Height);
+					break;
+				case MirrorTextureEyeSource.LeftEye:
+					BlitLeftEye(cl, blitter, (float)fb.Width / fb.Height);
+					break;
+				case MirrorTextureEyeSource.RightEye:
+					BlitRightEye(cl, blitter, (float)fb.Width / fb.Height);
+					break;
+			}
 
-            cl.SetFullViewports();
-        }
+			cl.SetFullViewports();
+		}
 
-        private void BlitLeftEye(CommandList cl, TextureBlitter blitter, float viewportAspect)
-        {
-            GetSampleRatio(_context.LeftEyeFramebuffer, viewportAspect, out Vector2 minUV, out Vector2 maxUV);
-            ResourceSet leftEyeSet = GetLeftEyeSet(blitter.ResourceLayout);
-            blitter.Render(cl, leftEyeSet, minUV, maxUV);
-        }
+		private void BlitLeftEye(CommandList cl, TextureBlitter blitter, float viewportAspect)
+		{
+			GetSampleRatio(_context.LeftEyeFramebuffer, viewportAspect, out Vector2 minUV, out Vector2 maxUV);
+			ResourceSet leftEyeSet = GetLeftEyeSet(blitter.ResourceLayout);
+			blitter.Render(cl, leftEyeSet, minUV, maxUV);
+		}
 
-        private void BlitRightEye(CommandList cl, TextureBlitter blitter, float viewportAspect)
-        {
-            GetSampleRatio(_context.RightEyeFramebuffer, viewportAspect, out Vector2 minUV, out Vector2 maxUV);
-            ResourceSet rightEyeSet = GetRightEyeSet(blitter.ResourceLayout);
-            blitter.Render(cl, rightEyeSet, minUV, maxUV);
-        }
+		private void BlitRightEye(CommandList cl, TextureBlitter blitter, float viewportAspect)
+		{
+			GetSampleRatio(_context.RightEyeFramebuffer, viewportAspect, out Vector2 minUV, out Vector2 maxUV);
+			ResourceSet rightEyeSet = GetRightEyeSet(blitter.ResourceLayout);
+			blitter.Render(cl, rightEyeSet, minUV, maxUV);
+		}
 
-        private void GetSampleRatio(Framebuffer eyeFB, float viewportAspect, out Vector2 minUV, out Vector2 maxUV)
-        {
-            uint eyeWidth = eyeFB.Width;
-            uint eyeHeight = eyeFB.Height;
+		private void GetSampleRatio(Framebuffer eyeFB, float viewportAspect, out Vector2 minUV, out Vector2 maxUV)
+		{
+			uint eyeWidth = eyeFB.Width;
+			uint eyeHeight = eyeFB.Height;
 
-            uint sampleWidth, sampleHeight;
-            if (viewportAspect > 1)
-            {
-                sampleWidth = eyeWidth;
-                sampleHeight = (uint)(eyeWidth / viewportAspect);
-            }
-            else
-            {
-                sampleHeight = eyeHeight;
-                sampleWidth = (uint)(eyeHeight / (1 / viewportAspect));
-            }
+			uint sampleWidth, sampleHeight;
+			if (viewportAspect > 1)
+			{
+				sampleWidth = eyeWidth;
+				sampleHeight = (uint)(eyeWidth / viewportAspect);
+			}
+			else
+			{
+				sampleHeight = eyeHeight;
+				sampleWidth = (uint)(eyeHeight / (1 / viewportAspect));
+			}
 
-            float sampleUVWidth = (float)sampleWidth / eyeWidth;
-            float sampleUVHeight = (float)sampleHeight / eyeHeight;
+			float sampleUVWidth = (float)sampleWidth / eyeWidth;
+			float sampleUVHeight = (float)sampleHeight / eyeHeight;
 
-            float max = (float)Math.Max(sampleUVWidth, sampleUVHeight);
-            sampleUVWidth /= max;
-            sampleUVHeight /= max;
+			float max = (float)Math.Max(sampleUVWidth, sampleUVHeight);
+			sampleUVWidth /= max;
+			sampleUVHeight /= max;
 
-            minUV = new Vector2(0.5f - sampleUVWidth / 2f, 0.5f - sampleUVHeight / 2f);
-            maxUV = new Vector2(0.5f + sampleUVWidth / 2f, 0.5f + sampleUVHeight / 2f);
-        }
+			minUV = new Vector2(0.5f - sampleUVWidth / 2f, 0.5f - sampleUVHeight / 2f);
+			maxUV = new Vector2(0.5f + sampleUVWidth / 2f, 0.5f + sampleUVHeight / 2f);
+		}
 
-        private ResourceSet GetLeftEyeSet(ResourceLayout rl)
-        {
-            if (_leftSet == null)
-            {
-                _leftSet = CreateColorTargetSet(rl, _context.LeftEyeFramebuffer);
-            }
+		private ResourceSet GetLeftEyeSet(ResourceLayout rl)
+		{
+			if (_leftSet == null)
+			{
+				_leftSet = CreateColorTargetSet(rl, _context.LeftEyeFramebuffer);
+			}
 
-            return _leftSet;
-        }
+			return _leftSet;
+		}
 
-        private ResourceSet GetRightEyeSet(ResourceLayout rl)
-        {
-            if (_rightSet == null)
-            {
-                _rightSet = CreateColorTargetSet(rl, _context.RightEyeFramebuffer);
-            }
+		private ResourceSet GetRightEyeSet(ResourceLayout rl)
+		{
+			if (_rightSet == null)
+			{
+				_rightSet = CreateColorTargetSet(rl, _context.RightEyeFramebuffer);
+			}
 
-            return _rightSet;
-        }
+			return _rightSet;
+		}
 
-        private ResourceSet CreateColorTargetSet(ResourceLayout rl, Framebuffer fb)
-        {
-            ResourceFactory factory = _context.GraphicsDevice.ResourceFactory;
-            Texture target = fb.ColorTargets[0].Target;
-            TextureView view = factory.CreateTextureView(target);
-            _disposables.Add(view);
-            
-            ResourceSet rs = factory.CreateResourceSet(new ResourceSetDescription(rl, view, _context.GraphicsDevice.PointSampler));
-            _disposables.Add(rs);
+		private ResourceSet CreateColorTargetSet(ResourceLayout rl, Framebuffer fb)
+		{
+			ResourceFactory factory = _context.GraphicsDevice.ResourceFactory;
+			Texture target = fb.ColorTargets[0].Target;
+			TextureView view = factory.CreateTextureView(target);
+			_disposables.Add(view);
 
-            return rs;
-        }
+			ResourceSet rs = factory.CreateResourceSet(new ResourceSetDescription(rl, view, _context.GraphicsDevice.PointSampler));
+			_disposables.Add(rs);
 
-        private TextureBlitter GetBlitter(OutputDescription outputDescription)
-        {
-            if (!_blitters.TryGetValue(outputDescription, out TextureBlitter ret))
-            {
-                ret = new TextureBlitter(
-                    _context.GraphicsDevice,
-                    _context.GraphicsDevice.ResourceFactory,
-                    outputDescription,
-                    srgbOutput: false);
+			return rs;
+		}
 
-                _blitters.Add(outputDescription, ret);
-            }
+		private TextureBlitter GetBlitter(OutputDescription outputDescription)
+		{
+			if (!_blitters.TryGetValue(outputDescription, out TextureBlitter ret))
+			{
+				ret = new TextureBlitter(
+					_context.GraphicsDevice,
+					_context.GraphicsDevice.ResourceFactory,
+					outputDescription,
+					srgbOutput: false);
 
-            return ret;
-        }
+				_blitters.Add(outputDescription, ret);
+			}
 
-        public void Dispose()
-        {
-            foreach (IDisposable disposable in _disposables)
-            {
-                disposable.Dispose();
-            }
-            foreach (KeyValuePair<OutputDescription, TextureBlitter> kvp in _blitters)
-            {
-                kvp.Value.Dispose();
-            }
+			return ret;
+		}
 
-            _leftSet?.Dispose();
-            _rightSet?.Dispose();
-        }
-    }
+		public void Dispose()
+		{
+			foreach (IDisposable disposable in _disposables)
+			{
+				disposable.Dispose();
+			}
+			foreach (KeyValuePair<OutputDescription, TextureBlitter> kvp in _blitters)
+			{
+				kvp.Value.Dispose();
+			}
+
+			_leftSet?.Dispose();
+			_rightSet?.Dispose();
+		}
+	}
 }

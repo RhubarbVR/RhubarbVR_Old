@@ -11,8 +11,8 @@ namespace RhubarbEngine.World.ECS
 		public Category(params string[] paths)
 		{
 			List<string> end = new List<string>();
-            foreach (var item in paths)
-            {
+			foreach (var item in paths)
+			{
 				var p = from e in item.Split('/', '\\')
 						where !string.IsNullOrEmpty(e)
 						select e;

@@ -14,33 +14,33 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    [Category(new string[] { "ImGUI" })]
-    public abstract class UIWidgetList : Component, IUIElement
-    {
-        public SyncRefList<IUIElement> children;
+	[Category(new string[] { "ImGUI" })]
+	public abstract class UIWidgetList : Component, IUIElement
+	{
+		public SyncRefList<IUIElement> children;
 
-        public override void inturnalSyncObjs(bool newRefIds)
-        {
-            base.inturnalSyncObjs(newRefIds);
-            children = new SyncRefList<IUIElement>(this,newRefIds);
-        }
+		public override void inturnalSyncObjs(bool newRefIds)
+		{
+			base.inturnalSyncObjs(newRefIds);
+			children = new SyncRefList<IUIElement>(this, newRefIds);
+		}
 
-        public override void CommonUpdate(DateTime startTime, DateTime Frame)
-        {
+		public override void CommonUpdate(DateTime startTime, DateTime Frame)
+		{
 
-        }
+		}
 
-        public virtual void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
+		public virtual void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
 
-        }
+		}
 
-        public UIWidgetList(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public UIWidgetList(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public UIWidgetList()
-        {
-        }
-    }
+		}
+		public UIWidgetList()
+		{
+		}
+	}
 }

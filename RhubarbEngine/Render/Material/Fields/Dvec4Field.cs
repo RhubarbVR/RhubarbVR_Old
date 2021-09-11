@@ -10,20 +10,20 @@ using g3;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
-    public class Dvec4Field : GenericField<Vector4d>
-    {
+	public class Dvec4Field : GenericField<Vector4d>
+	{
 
-        public override void createDeviceResource(ResourceFactory fact)
-        {
-            if (resource != null)
-            {
-                return;
-            }
-            resource = fact.CreateBuffer(new BufferDescription(256, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
-        }
-        unsafe public override void updateBuffer(GraphicsDevice gb)
-        {
-            gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_dvec4(field.value));
-        }
-    }
+		public override void createDeviceResource(ResourceFactory fact)
+		{
+			if (resource != null)
+			{
+				return;
+			}
+			resource = fact.CreateBuffer(new BufferDescription(256, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+		}
+		unsafe public override void updateBuffer(GraphicsDevice gb)
+		{
+			gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_dvec4(field.value));
+		}
+	}
 }

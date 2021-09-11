@@ -30,26 +30,26 @@ using System.Net.Http;
 
 namespace RhubarbEngine.Components.Assets
 {
-    [Category(new string[] { "Assets/Texture2Ds" })]
-    public class GridTextue2D : AssetProvider<RTexture2D>, IAsset
-    {
+	[Category(new string[] { "Assets/Texture2Ds" })]
+	public class GridTextue2D : AssetProvider<RTexture2D>, IAsset
+	{
 
-        public override void onLoaded()
-        {
-            load(new RTexture2D(engine.renderManager.gridview));
-        }
+		public override void onLoaded()
+		{
+			load(new RTexture2D(engine.renderManager.gridview));
+		}
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
+		public override void buildSyncObjs(bool newRefIds)
+		{
 
-        }
+		}
 
-        public GridTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public GridTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public GridTextue2D()
-        {
-        }
-    }
+		}
+		public GridTextue2D()
+		{
+		}
+	}
 }

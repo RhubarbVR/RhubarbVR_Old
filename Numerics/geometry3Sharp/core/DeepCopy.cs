@@ -11,16 +11,19 @@ namespace g3
 	public static class DeepCopy
 	{
 
-		public static List<T> List<T>(IEnumerable<T> Input) where T: IDuplicatable<T> {
+		public static List<T> List<T>(IEnumerable<T> Input) where T : IDuplicatable<T>
+		{
 			List<T> result = new List<T>();
-			foreach ( T val in Input ) {
+			foreach (T val in Input)
+			{
 				result.Add(val.Duplicate());
 			}
 			return result;
 		}
 
 
-		public static T[] Array<T>(IEnumerable<T> Input) where T: IDuplicatable<T> {
+		public static T[] Array<T>(IEnumerable<T> Input) where T : IDuplicatable<T>
+		{
 			int count = Input.Count();
 			T[] a = new T[count];
 			int i = 0;

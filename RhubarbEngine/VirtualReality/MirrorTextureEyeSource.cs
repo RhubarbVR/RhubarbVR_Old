@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.VirtualReality
 {
-    public enum MirrorTextureEyeSource
-    {
-        BothEyes,
-        LeftEye,
-        RightEye,
-    }
+	public enum MirrorTextureEyeSource
+	{
+		BothEyes,
+		LeftEye,
+		RightEye,
+	}
 }

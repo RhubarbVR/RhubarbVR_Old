@@ -8,12 +8,12 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-    public class SyncRefList<T> : SyncObjList<SyncRef<T>>, IWorldObject where T : class, IWorldObject
-    {
+	public class SyncRefList<T> : SyncObjList<SyncRef<T>>, IWorldObject where T : class, IWorldObject
+	{
 
-        public SyncRefList(IWorldObject _parent,bool newRef = true) : base( _parent, newRef)
-        {
+		public SyncRefList(IWorldObject _parent, bool newRef = true) : base(_parent, newRef)
+		{
 
-        }
-    }
+		}
+	}
 }

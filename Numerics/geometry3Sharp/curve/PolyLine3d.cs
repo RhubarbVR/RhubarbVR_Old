@@ -10,7 +10,8 @@ namespace g3
 		protected List<Vector3d> vertices;
 		public int Timestamp;
 
-		public PolyLine3d() {
+		public PolyLine3d()
+		{
 			vertices = new List<Vector3d>();
 			Timestamp = 0;
 		}
@@ -39,15 +40,18 @@ namespace g3
 			set { vertices[key] = value; Timestamp++; }
 		}
 
-		public Vector3d Start {
+		public Vector3d Start
+		{
 			get { return vertices[0]; }
 		}
-		public Vector3d End {
-			get { return vertices[vertices.Count-1]; }
+		public Vector3d End
+		{
+			get { return vertices[vertices.Count - 1]; }
 		}
 
 
-		public ReadOnlyCollection<Vector3d> Vertices {
+		public ReadOnlyCollection<Vector3d> Vertices
+		{
 			get { return vertices.AsReadOnly(); }
 		}
 
@@ -59,7 +63,7 @@ namespace g3
 		public void AppendVertex(Vector3d v)
 		{
 			vertices.Add(v);
-			Timestamp++; 
+			Timestamp++;
 		}
 
 
@@ -74,25 +78,29 @@ namespace g3
 		}
 
 
-		public AxisAlignedBox3d GetBounds() {
-			if ( vertices.Count == 0 )
+		public AxisAlignedBox3d GetBounds()
+		{
+			if (vertices.Count == 0)
 				return AxisAlignedBox3d.Empty;
 			AxisAlignedBox3d box = new AxisAlignedBox3d(vertices[0]);
-			for ( int i = 1; i < vertices.Count; ++i )
+			for (int i = 1; i < vertices.Count; ++i)
 				box.Contain(vertices[i]);
 			return box;
 		}
 
 
-		public IEnumerable<Segment3d> SegmentItr() {
-			for ( int i = 0; i < vertices.Count-1; ++i )
-				yield return new Segment3d( vertices[i], vertices[i+1] );
+		public IEnumerable<Segment3d> SegmentItr()
+		{
+			for (int i = 0; i < vertices.Count - 1; ++i)
+				yield return new Segment3d(vertices[i], vertices[i + 1]);
 		}
 
-		public IEnumerator<Vector3d> GetEnumerator() {
+		public IEnumerator<Vector3d> GetEnumerator()
+		{
 			return vertices.GetEnumerator();
 		}
-		IEnumerator IEnumerable.GetEnumerator() {
+		IEnumerator IEnumerable.GetEnumerator()
+		{
 			return vertices.GetEnumerator();
 		}
 	}

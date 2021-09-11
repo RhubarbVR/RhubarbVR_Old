@@ -4,126 +4,130 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+
 using RhubarbEngine.World.DataStructure;
+
 using RhuNet;
+
 using RhuNetShared;
 
 namespace RhubarbEngine.World.Net
 {
-    public class RhuPeer : Peer
-    {
-        public RhuNetModule rhuNetModule;
-        public IPEndPoint endPoint;
+	public class RhuPeer : Peer
+	{
+		public RhuNetModule rhuNetModule;
+		public IPEndPoint endPoint;
 
-        public ClientInfo clientInfo;
+		public ClientInfo clientInfo;
 
-        public RhuPeer(RhuNetModule _rhuNetModule,IPEndPoint _endPoint, ClientInfo _clientInfo)
-        {
-            rhuNetModule = _rhuNetModule;
-            endPoint = _endPoint;
-            clientInfo = _clientInfo;
-        }
-        public override void Send(byte[] val, ReliabilityLevel reliableOrdered)
-        {
-            switch (reliableOrdered)
-            {
-                case ReliabilityLevel.Unreliable:
-                    rhuNetModule.rhuClient.SendMessageUDP(new Data(val),endPoint);
-                    break;
-                default:
-                    rhuNetModule.rhuClient.SendMessageUDP(new Data(val), endPoint);
-                    break;
-            }
-        }
-    }
+		public RhuPeer(RhuNetModule _rhuNetModule, IPEndPoint _endPoint, ClientInfo _clientInfo)
+		{
+			rhuNetModule = _rhuNetModule;
+			endPoint = _endPoint;
+			clientInfo = _clientInfo;
+		}
+		public override void Send(byte[] val, ReliabilityLevel reliableOrdered)
+		{
+			switch (reliableOrdered)
+			{
+				case ReliabilityLevel.Unreliable:
+					rhuNetModule.rhuClient.SendMessageUDP(new Data(val), endPoint);
+					break;
+				default:
+					rhuNetModule.rhuClient.SendMessageUDP(new Data(val), endPoint);
+					break;
+			}
+		}
+	}
 
-    public class RhuNetModule : NetModule
-    {
+	public class RhuNetModule : NetModule
+	{
 
-        public override void Connect(string token)
-        {
-            rhuClient.ConnectToToken(token);
-        }
+		public override void Connect(string token)
+		{
+			rhuClient.ConnectToToken(token);
+		}
 
-        public RhuClient rhuClient;
+		public RhuClient rhuClient;
 
-        public override string token => rhuClient.Token;
-        public override IReadOnlyList<Peer> peers { get { return rhuPeers; } }
+		public override string token => rhuClient.Token;
+		public override IReadOnlyList<Peer> peers { get { return rhuPeers; } }
 
-        public List<RhuPeer> rhuPeers = new List<RhuPeer>();
+		public List<RhuPeer> rhuPeers = new List<RhuPeer>();
 
-        public RhuNetModule(World world) : base(world)
-        {
-            Console.WriteLine("Starting net");
-            rhuClient = new RhuClient("5.135.157.47", 50, _world.worldManager.engine.netApiManager.user.Uuid);
-            rhuClient.OnMessageReceived += thing;
-            rhuClient.OnClientAdded += trains;
-            rhuClient.OnResultsUpdate += RhuClient_OnResultsUpdate;
-            rhuClient.OnClientConnection += RhuClient_OnClientConnection;
-            rhuClient.dataRecived += RhuClient_dataRecived;
-            rhuClient.ConnectOrDisconnect();
-        }
+		public RhuNetModule(World world) : base(world)
+		{
+			Console.WriteLine("Starting net");
+			rhuClient = new RhuClient("5.135.157.47", 50, _world.worldManager.engine.netApiManager.user.Uuid);
+			rhuClient.OnMessageReceived += thing;
+			rhuClient.OnClientAdded += trains;
+			rhuClient.OnResultsUpdate += RhuClient_OnResultsUpdate;
+			rhuClient.OnClientConnection += RhuClient_OnClientConnection;
+			rhuClient.dataRecived += RhuClient_dataRecived;
+			rhuClient.ConnectOrDisconnect();
+		}
 
-        private void RhuClient_dataRecived(Data arg1, IPEndPoint arg2)
-        {
-            _world.NetworkReceiveEvent(arg1.data, getPeerFromEndPoint(arg2));
-        }
+		private void RhuClient_dataRecived(Data arg1, IPEndPoint arg2)
+		{
+			_world.NetworkReceiveEvent(arg1.data, getPeerFromEndPoint(arg2));
+		}
 
-        private RhuPeer getPeerFromEndPoint(IPEndPoint e)
-        {
-            foreach (var item in rhuPeers)
-            {
-                if(item.endPoint == e)
-                {
-                    return item;
-                }
-            }
-            return null;
-        }
+		private RhuPeer getPeerFromEndPoint(IPEndPoint e)
+		{
+			foreach (var item in rhuPeers)
+			{
+				if (item.endPoint == e)
+				{
+					return item;
+				}
+			}
+			return null;
+		}
 
-        private void RhuClient_OnClientConnection(object sender, System.Net.IPEndPoint e)
-        {
-            if (((ClientInfo)sender).ID == rhuClient.LocalClientInfo.ID) return;
-            var p = new RhuPeer(this,e, (ClientInfo)sender);
-            rhuPeers.Add(p);
-            _world.PeerConnectedEvent(p);
-        }
+		private void RhuClient_OnClientConnection(object sender, System.Net.IPEndPoint e)
+		{
+			if (((ClientInfo)sender).ID == rhuClient.LocalClientInfo.ID)
+				return;
+			var p = new RhuPeer(this, e, (ClientInfo)sender);
+			rhuPeers.Add(p);
+			_world.PeerConnectedEvent(p);
+		}
 
-        private void RhuClient_OnResultsUpdate(object sender, string e)
-        {
-            Console.WriteLine(e);
-        }
+		private void RhuClient_OnResultsUpdate(object sender, string e)
+		{
+			Console.WriteLine(e);
+		}
 
-        private void trains(object sender, ClientInfo e)
-        {
-            Console.WriteLine(e.Name);
-        }
+		private void trains(object sender, ClientInfo e)
+		{
+			Console.WriteLine(e.Name);
+		}
 
-        private void thing(object sender, MessageReceivedEventArgs e)
-        {
-            Console.WriteLine(e.message.Content);
-        }
+		private void thing(object sender, MessageReceivedEventArgs e)
+		{
+			Console.WriteLine(e.message.Content);
+		}
 
-        public void UdpToAll(IP2PBase p2PBase)
-        {
-            foreach (var item in rhuPeers)
-            {
-                rhuClient.SendMessageUDP(p2PBase, item.endPoint);
-            }
-        }
+		public void UdpToAll(IP2PBase p2PBase)
+		{
+			foreach (var item in rhuPeers)
+			{
+				rhuClient.SendMessageUDP(p2PBase, item.endPoint);
+			}
+		}
 
-        public override void sendData(DataNodeGroup node, NetData item)
-        {
-            switch (item.reliabilityLevel)
-            {
-                case ReliabilityLevel.Unreliable:
-                    UdpToAll(new Data(node.getByteArray()));
-                    break;
-                default:
-                    UdpToAll(new Data(node.getByteArray()));
-                    break;
-            }
-        }
+		public override void sendData(DataNodeGroup node, NetData item)
+		{
+			switch (item.reliabilityLevel)
+			{
+				case ReliabilityLevel.Unreliable:
+					UdpToAll(new Data(node.getByteArray()));
+					break;
+				default:
+					UdpToAll(new Data(node.getByteArray()));
+					break;
+			}
+		}
 
-    }
+	}
 }

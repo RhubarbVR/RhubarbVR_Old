@@ -9,88 +9,88 @@ using Veldrid;
 
 namespace RhubarbEngine.VirtualReality
 {
-    internal class TextureBlitter : IDisposable
-    {
-        private readonly GraphicsDevice _gd;
-        private readonly ResourceLayout _rl;
-        private readonly ResourceLayout _sampleRegionLayout;
-        private readonly Pipeline _pipeline;
-        private readonly DeviceBuffer _sampleRegionUB;
-        private readonly ResourceSet _sampleRegionSet;
-        private Vector4 _lastMinMaxUV;
+	internal class TextureBlitter : IDisposable
+	{
+		private readonly GraphicsDevice _gd;
+		private readonly ResourceLayout _rl;
+		private readonly ResourceLayout _sampleRegionLayout;
+		private readonly Pipeline _pipeline;
+		private readonly DeviceBuffer _sampleRegionUB;
+		private readonly ResourceSet _sampleRegionSet;
+		private Vector4 _lastMinMaxUV;
 
-        public ResourceLayout ResourceLayout => _rl;
+		public ResourceLayout ResourceLayout => _rl;
 
-        public TextureBlitter(
-            GraphicsDevice gd,
-            ResourceFactory factory,
-            OutputDescription outputDesc,
-            bool srgbOutput)
-        {
-            _gd = gd;
+		public TextureBlitter(
+			GraphicsDevice gd,
+			ResourceFactory factory,
+			OutputDescription outputDesc,
+			bool srgbOutput)
+		{
+			_gd = gd;
 
-            SpecializationConstant[] specConstants = new[]
-            {
-                new SpecializationConstant(0, srgbOutput),
-                new SpecializationConstant(1, gd.BackendType == GraphicsBackend.OpenGL || gd.BackendType == GraphicsBackend.OpenGLES)
-            };
+			SpecializationConstant[] specConstants = new[]
+			{
+				new SpecializationConstant(0, srgbOutput),
+				new SpecializationConstant(1, gd.BackendType == GraphicsBackend.OpenGL || gd.BackendType == GraphicsBackend.OpenGLES)
+			};
 
-            Shader[] shaders = factory.CreateFromSpirv(
-                new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
-                new ShaderDescription(ShaderStages.Fragment, Encoding.ASCII.GetBytes(fragmentGlsl), "main"),
-                new CrossCompileOptions(false, false, specConstants));
+			Shader[] shaders = factory.CreateFromSpirv(
+				new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
+				new ShaderDescription(ShaderStages.Fragment, Encoding.ASCII.GetBytes(fragmentGlsl), "main"),
+				new CrossCompileOptions(false, false, specConstants));
 
-            _rl = factory.CreateResourceLayout(new ResourceLayoutDescription(
-                new ResourceLayoutElementDescription("Input", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-                new ResourceLayoutElementDescription("InputSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
+			_rl = factory.CreateResourceLayout(new ResourceLayoutDescription(
+				new ResourceLayoutElementDescription("Input", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
+				new ResourceLayoutElementDescription("InputSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
 
-            _sampleRegionLayout = factory.CreateResourceLayout(new ResourceLayoutDescription(
-                new ResourceLayoutElementDescription("SampleRegionInfo", ResourceKind.UniformBuffer, ShaderStages.Fragment)));
+			_sampleRegionLayout = factory.CreateResourceLayout(new ResourceLayoutDescription(
+				new ResourceLayoutElementDescription("SampleRegionInfo", ResourceKind.UniformBuffer, ShaderStages.Fragment)));
 
-            _pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
-                BlendStateDescription.SingleOverrideBlend,
-                DepthStencilStateDescription.Disabled,
-                RasterizerStateDescription.CullNone,
-                PrimitiveTopology.TriangleStrip,
-                new ShaderSetDescription(
-                    Array.Empty<VertexLayoutDescription>(),
-                    new[] { shaders[0], shaders[1] },
-                    specConstants),
-                new[] { _rl, _sampleRegionLayout },
-                outputDesc));
+			_pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
+				BlendStateDescription.SingleOverrideBlend,
+				DepthStencilStateDescription.Disabled,
+				RasterizerStateDescription.CullNone,
+				PrimitiveTopology.TriangleStrip,
+				new ShaderSetDescription(
+					Array.Empty<VertexLayoutDescription>(),
+					new[] { shaders[0], shaders[1] },
+					specConstants),
+				new[] { _rl, _sampleRegionLayout },
+				outputDesc));
 
-            _sampleRegionUB = factory.CreateBuffer(new BufferDescription(16, BufferUsage.UniformBuffer));
-            _sampleRegionSet = factory.CreateResourceSet(new ResourceSetDescription(_sampleRegionLayout, _sampleRegionUB));
+			_sampleRegionUB = factory.CreateBuffer(new BufferDescription(16, BufferUsage.UniformBuffer));
+			_sampleRegionSet = factory.CreateResourceSet(new ResourceSetDescription(_sampleRegionLayout, _sampleRegionUB));
 
-            _lastMinMaxUV = new Vector4(0, 0, 1, 1);
-            gd.UpdateBuffer(_sampleRegionUB, 0, _lastMinMaxUV);
-        }
+			_lastMinMaxUV = new Vector4(0, 0, 1, 1);
+			gd.UpdateBuffer(_sampleRegionUB, 0, _lastMinMaxUV);
+		}
 
-        public void Render(CommandList cl, ResourceSet rs, Vector2 minUV, Vector2 maxUV)
-        {
-            Vector4 newVal = new Vector4(minUV.X, minUV.Y, maxUV.X, maxUV.Y);
-            if (_lastMinMaxUV != newVal)
-            {
-                _lastMinMaxUV = newVal;
-                cl.UpdateBuffer(_sampleRegionUB, 0, newVal);
-            }
+		public void Render(CommandList cl, ResourceSet rs, Vector2 minUV, Vector2 maxUV)
+		{
+			Vector4 newVal = new Vector4(minUV.X, minUV.Y, maxUV.X, maxUV.Y);
+			if (_lastMinMaxUV != newVal)
+			{
+				_lastMinMaxUV = newVal;
+				cl.UpdateBuffer(_sampleRegionUB, 0, newVal);
+			}
 
-            cl.SetPipeline(_pipeline);
-            cl.SetGraphicsResourceSet(0, rs);
-            cl.SetGraphicsResourceSet(1, _sampleRegionSet);
-            cl.Draw(4);
-        }
+			cl.SetPipeline(_pipeline);
+			cl.SetGraphicsResourceSet(0, rs);
+			cl.SetGraphicsResourceSet(1, _sampleRegionSet);
+			cl.Draw(4);
+		}
 
-        public void Dispose()
-        {
-            _rl.Dispose();
-            _pipeline.Dispose();
-            _sampleRegionUB.Dispose();
-            _sampleRegionSet.Dispose();
-            _sampleRegionLayout.Dispose();
-        }
+		public void Dispose()
+		{
+			_rl.Dispose();
+			_pipeline.Dispose();
+			_sampleRegionUB.Dispose();
+			_sampleRegionSet.Dispose();
+			_sampleRegionLayout.Dispose();
+		}
 
-        private const string vertexGlsl =
+		private const string vertexGlsl =
 @"
 #version 450
 #extension GL_KHR_vulkan_glsl : enable
@@ -111,7 +111,7 @@ void main()
     fsin_UV = QuadInfos[gl_VertexIndex].zw;
 }
 ";
-        private const string fragmentGlsl =
+		private const string fragmentGlsl =
 @"
 #version 450
 
@@ -152,5 +152,5 @@ void main()
     }
 }
 ";
-    }
+	}
 }

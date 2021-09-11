@@ -7,25 +7,25 @@ using g3;
 using System.Numerics;
 namespace RhubarbEngine.Input.Controllers
 {
-    public interface IViveController : IController
-    {
-        bool Touchpad_Touch { get; }
+	public interface IViveController : IController
+	{
+		bool Touchpad_Touch { get; }
 
-        bool Touchpad_Click { get; }
+		bool Touchpad_Click { get; }
 
-        Vector2f Touchpad_Aixs { get; }
+		Vector2f Touchpad_Aixs { get; }
 
-        bool Trigger_Hair { get; }
+		bool Trigger_Hair { get; }
 
-        bool Trigger_Click { get; }
+		bool Trigger_Click { get; }
 
-        float Trigger { get; }
+		float Trigger { get; }
 
-        bool Grip { get; }
+		bool Grip { get; }
 
-        bool System { get; }
+		bool System { get; }
 
-        bool App { get; }
+		bool App { get; }
 
-    }
+	}
 }

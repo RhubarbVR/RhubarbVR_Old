@@ -25,149 +25,149 @@ using OpenAPIDateConverter = Org.OpenAPITools.Client.OpenAPIDateConverter;
 
 namespace Org.OpenAPITools.Model
 {
-    /// <summary>
-    /// RegesterReg
-    /// </summary>
-    [DataContract(Name = "RegesterReg")]
-    public partial class RegesterReg : IEquatable<RegesterReg>, IValidatableObject
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RegesterReg" /> class.
-        /// </summary>
-        /// <param name="username">username.</param>
-        /// <param name="password">password.</param>
-        /// <param name="email">email.</param>
-        /// <param name="birthday">birthday.</param>
-        public RegesterReg(string username = default(string), string password = default(string), string email = default(string), DateTime birthday = default(DateTime))
-        {
-            this.Username = username;
-            this.Password = password;
-            this.Email = email;
-            this.Birthday = birthday;
-        }
+	/// <summary>
+	/// RegesterReg
+	/// </summary>
+	[DataContract(Name = "RegesterReg")]
+	public partial class RegesterReg : IEquatable<RegesterReg>, IValidatableObject
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="RegesterReg" /> class.
+		/// </summary>
+		/// <param name="username">username.</param>
+		/// <param name="password">password.</param>
+		/// <param name="email">email.</param>
+		/// <param name="birthday">birthday.</param>
+		public RegesterReg(string username = default(string), string password = default(string), string email = default(string), DateTime birthday = default(DateTime))
+		{
+			this.Username = username;
+			this.Password = password;
+			this.Email = email;
+			this.Birthday = birthday;
+		}
 
-        /// <summary>
-        /// Gets or Sets Username
-        /// </summary>
-        [DataMember(Name = "username", EmitDefaultValue = true)]
-        public string Username { get; set; }
+		/// <summary>
+		/// Gets or Sets Username
+		/// </summary>
+		[DataMember(Name = "username", EmitDefaultValue = true)]
+		public string Username { get; set; }
 
-        /// <summary>
-        /// Gets or Sets Password
-        /// </summary>
-        [DataMember(Name = "password", EmitDefaultValue = true)]
-        public string Password { get; set; }
+		/// <summary>
+		/// Gets or Sets Password
+		/// </summary>
+		[DataMember(Name = "password", EmitDefaultValue = true)]
+		public string Password { get; set; }
 
-        /// <summary>
-        /// Gets or Sets Email
-        /// </summary>
-        [DataMember(Name = "email", EmitDefaultValue = true)]
-        public string Email { get; set; }
+		/// <summary>
+		/// Gets or Sets Email
+		/// </summary>
+		[DataMember(Name = "email", EmitDefaultValue = true)]
+		public string Email { get; set; }
 
-        /// <summary>
-        /// Gets or Sets Birthday
-        /// </summary>
-        [DataMember(Name = "birthday", EmitDefaultValue = false)]
-        public DateTime Birthday { get; set; }
+		/// <summary>
+		/// Gets or Sets Birthday
+		/// </summary>
+		[DataMember(Name = "birthday", EmitDefaultValue = false)]
+		public DateTime Birthday { get; set; }
 
-        /// <summary>
-        /// Returns the string presentation of the object
-        /// </summary>
-        /// <returns>String presentation of the object</returns>
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-            sb.Append("class RegesterReg {\n");
-            sb.Append("  Username: ").Append(Username).Append("\n");
-            sb.Append("  Password: ").Append(Password).Append("\n");
-            sb.Append("  Email: ").Append(Email).Append("\n");
-            sb.Append("  Birthday: ").Append(Birthday).Append("\n");
-            sb.Append("}\n");
-            return sb.ToString();
-        }
+		/// <summary>
+		/// Returns the string presentation of the object
+		/// </summary>
+		/// <returns>String presentation of the object</returns>
+		public override string ToString()
+		{
+			var sb = new StringBuilder();
+			sb.Append("class RegesterReg {\n");
+			sb.Append("  Username: ").Append(Username).Append("\n");
+			sb.Append("  Password: ").Append(Password).Append("\n");
+			sb.Append("  Email: ").Append(Email).Append("\n");
+			sb.Append("  Birthday: ").Append(Birthday).Append("\n");
+			sb.Append("}\n");
+			return sb.ToString();
+		}
 
-        /// <summary>
-        /// Returns the JSON string presentation of the object
-        /// </summary>
-        /// <returns>JSON string presentation of the object</returns>
-        public virtual string ToJson()
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-        }
+		/// <summary>
+		/// Returns the JSON string presentation of the object
+		/// </summary>
+		/// <returns>JSON string presentation of the object</returns>
+		public virtual string ToJson()
+		{
+			return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
+		}
 
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="input">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object input)
-        {
-            return this.Equals(input as RegesterReg);
-        }
+		/// <summary>
+		/// Returns true if objects are equal
+		/// </summary>
+		/// <param name="input">Object to be compared</param>
+		/// <returns>Boolean</returns>
+		public override bool Equals(object input)
+		{
+			return this.Equals(input as RegesterReg);
+		}
 
-        /// <summary>
-        /// Returns true if RegesterReg instances are equal
-        /// </summary>
-        /// <param name="input">Instance of RegesterReg to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(RegesterReg input)
-        {
-            if (input == null)
-                return false;
+		/// <summary>
+		/// Returns true if RegesterReg instances are equal
+		/// </summary>
+		/// <param name="input">Instance of RegesterReg to be compared</param>
+		/// <returns>Boolean</returns>
+		public bool Equals(RegesterReg input)
+		{
+			if (input == null)
+				return false;
 
-            return 
-                (
-                    this.Username == input.Username ||
-                    (this.Username != null &&
-                    this.Username.Equals(input.Username))
-                ) && 
-                (
-                    this.Password == input.Password ||
-                    (this.Password != null &&
-                    this.Password.Equals(input.Password))
-                ) && 
-                (
-                    this.Email == input.Email ||
-                    (this.Email != null &&
-                    this.Email.Equals(input.Email))
-                ) && 
-                (
-                    this.Birthday == input.Birthday ||
-                    (this.Birthday != null &&
-                    this.Birthday.Equals(input.Birthday))
-                );
-        }
+			return
+				(
+					this.Username == input.Username ||
+					(this.Username != null &&
+					this.Username.Equals(input.Username))
+				) &&
+				(
+					this.Password == input.Password ||
+					(this.Password != null &&
+					this.Password.Equals(input.Password))
+				) &&
+				(
+					this.Email == input.Email ||
+					(this.Email != null &&
+					this.Email.Equals(input.Email))
+				) &&
+				(
+					this.Birthday == input.Birthday ||
+					(this.Birthday != null &&
+					this.Birthday.Equals(input.Birthday))
+				);
+		}
 
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                int hashCode = 41;
-                if (this.Username != null)
-                    hashCode = hashCode * 59 + this.Username.GetHashCode();
-                if (this.Password != null)
-                    hashCode = hashCode * 59 + this.Password.GetHashCode();
-                if (this.Email != null)
-                    hashCode = hashCode * 59 + this.Email.GetHashCode();
-                if (this.Birthday != null)
-                    hashCode = hashCode * 59 + this.Birthday.GetHashCode();
-                return hashCode;
-            }
-        }
+		/// <summary>
+		/// Gets the hash code
+		/// </summary>
+		/// <returns>Hash code</returns>
+		public override int GetHashCode()
+		{
+			unchecked // Overflow is fine, just wrap
+			{
+				int hashCode = 41;
+				if (this.Username != null)
+					hashCode = hashCode * 59 + this.Username.GetHashCode();
+				if (this.Password != null)
+					hashCode = hashCode * 59 + this.Password.GetHashCode();
+				if (this.Email != null)
+					hashCode = hashCode * 59 + this.Email.GetHashCode();
+				if (this.Birthday != null)
+					hashCode = hashCode * 59 + this.Birthday.GetHashCode();
+				return hashCode;
+			}
+		}
 
-        /// <summary>
-        /// To validate all properties of the instance
-        /// </summary>
-        /// <param name="validationContext">Validation context</param>
-        /// <returns>Validation Result</returns>
-        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
-        {
-            yield break;
-        }
-    }
+		/// <summary>
+		/// To validate all properties of the instance
+		/// </summary>
+		/// <param name="validationContext">Validation context</param>
+		/// <returns>Validation Result</returns>
+		IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+		{
+			yield break;
+		}
+	}
 
 }

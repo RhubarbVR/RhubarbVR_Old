@@ -15,47 +15,47 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
 
-    [Category("ImGUI/Begin")]
-    public class ImGUIBegin : UIWidgetList
-    {
-        public Sync<string> name;
-        public Sync<ImGuiWindowFlags> windowflag;
-        public Sync<bool> open;
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            name = new Sync<string>(this, newRefIds);
-            windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
-            windowflag.value = ImGuiWindowFlags.None;
-            open = new Sync<bool>(this, newRefIds);
-        }
+	[Category("ImGUI/Begin")]
+	public class ImGUIBegin : UIWidgetList
+	{
+		public Sync<string> name;
+		public Sync<ImGuiWindowFlags> windowflag;
+		public Sync<bool> open;
 
-        public ImGUIBegin(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			name = new Sync<string>(this, newRefIds);
+			windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
+			windowflag.value = ImGuiWindowFlags.None;
+			open = new Sync<bool>(this, newRefIds);
+		}
 
-        }
-        public ImGUIBegin()
-        {
-        }
+		public ImGUIBegin(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            bool lopen = open.value;
-            if(ImGui.Begin(name.value??"", ref lopen, windowflag.value))
-            {
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer, canvas);
-                }
-                ImGui.End();
-            }
-            if (lopen != open.value)
-            {
-                open.value = lopen;
-            }
-        }
-    }
+		}
+		public ImGUIBegin()
+		{
+		}
+
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			bool lopen = open.value;
+			if (ImGui.Begin(name.value ?? "", ref lopen, windowflag.value))
+			{
+				foreach (var item in children)
+				{
+					item.target?.ImguiRender(imGuiRenderer, canvas);
+				}
+				ImGui.End();
+			}
+			if (lopen != open.value)
+			{
+				open.value = lopen;
+			}
+		}
+	}
 }

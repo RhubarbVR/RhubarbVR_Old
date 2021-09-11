@@ -30,26 +30,26 @@ using System.Net.Http;
 
 namespace RhubarbEngine.Components.Assets
 {
-    [Category(new string[] { "Assets" })]
-    public class CursorsTextue2D : AssetProvider<RTexture2D>, IAsset
-    {
+	[Category(new string[] { "Assets" })]
+	public class CursorsTextue2D : AssetProvider<RTexture2D>, IAsset
+	{
 
-        public override void onLoaded()
-        {
-            load(new RTexture2D(engine.renderManager.nulview));
-        }
+		public override void onLoaded()
+		{
+			load(new RTexture2D(engine.renderManager.nulview));
+		}
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
+		public override void buildSyncObjs(bool newRefIds)
+		{
 
-        }
+		}
 
-        public CursorsTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public CursorsTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public CursorsTextue2D()
-        {
-        }
-    }
+		}
+		public CursorsTextue2D()
+		{
+		}
+	}
 }

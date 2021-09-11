@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Render.Shader
 {
-    public class MainFragShader : FragShader
-    {
+	public class MainFragShader : FragShader
+	{
 
-    }
+	}
 }
 

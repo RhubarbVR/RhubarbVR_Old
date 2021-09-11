@@ -30,45 +30,45 @@ using System.Net.Http;
 
 namespace RhubarbEngine.Components.Assets
 {
-    [Category(new string[] { "Assets/Texture2Ds" })]
-    public class RhubarbTextue2D : AssetProvider<RTexture2D>, IAsset
-    {
-        public Sync<bool> solid;
+	[Category(new string[] { "Assets/Texture2Ds" })]
+	public class RhubarbTextue2D : AssetProvider<RTexture2D>, IAsset
+	{
+		public Sync<bool> solid;
 
-        public override void onLoaded()
-        {
-            LoadRhubarbTexture();
-        }
+		public override void onLoaded()
+		{
+			LoadRhubarbTexture();
+		}
 
-        private void LoadRhubarbTexture()
-        {
-            if (solid.value)
-            {
-                load(new RTexture2D(engine.renderManager.rhubarbSolidview));
-            }
-            else
-            {
-                load(new RTexture2D(engine.renderManager.rhubarbview));
-            }
+		private void LoadRhubarbTexture()
+		{
+			if (solid.value)
+			{
+				load(new RTexture2D(engine.renderManager.rhubarbSolidview));
+			}
+			else
+			{
+				load(new RTexture2D(engine.renderManager.rhubarbview));
+			}
 
-        }
+		}
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            solid = new Sync<bool>(this,newRefIds);
-        }
-        public override void onChanged()
-        {
-            base.onChanged();
-            LoadRhubarbTexture();
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			solid = new Sync<bool>(this, newRefIds);
+		}
+		public override void onChanged()
+		{
+			base.onChanged();
+			LoadRhubarbTexture();
+		}
 
-        public RhubarbTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public RhubarbTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public RhubarbTextue2D()
-        {
-        }
-    }
+		}
+		public RhubarbTextue2D()
+		{
+		}
+	}
 }

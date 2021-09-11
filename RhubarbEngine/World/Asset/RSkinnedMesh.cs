@@ -12,11 +12,11 @@ using g3;
 
 namespace RhubarbEngine.World.Asset
 {
-    public class RSkinnedMesh : RMesh
-    {
+	public class RSkinnedMesh : RMesh
+	{
 
-        public RSkinnedMesh()
-        {
-        }
-    }
+		public RSkinnedMesh()
+		{
+		}
+	}
 }

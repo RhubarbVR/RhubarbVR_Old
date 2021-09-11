@@ -25,55 +25,55 @@ using RhubarbEngine.Components.Assets;
 
 namespace RhubarbEngine.Components.Assets
 {
-    [Category(new string[] { "Assets/Utility" })]
-    public class AssetMultiplexer<T> : AssetProvider<T> where T:class,IAsset
-    {
-        public Sync<int> index;
+	[Category(new string[] { "Assets/Utility" })]
+	public class AssetMultiplexer<T> : AssetProvider<T> where T : class, IAsset
+	{
+		public Sync<int> index;
 
-        public SyncAssetRefList<T> targets;
+		public SyncAssetRefList<T> targets;
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            index = new Sync<int>(this, newRefIds);
-            index.Changed += Index_Changed;
-            targets = new SyncAssetRefList<T>(this, newRefIds);
-            targets.loadChange += UpdateTargets;
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			index = new Sync<int>(this, newRefIds);
+			index.Changed += Index_Changed;
+			targets = new SyncAssetRefList<T>(this, newRefIds);
+			targets.loadChange += UpdateTargets;
+		}
 
-        private void Index_Changed(IChangeable obj)
-        {
-            UpdateProvider();
-        }
+		private void Index_Changed(IChangeable obj)
+		{
+			UpdateProvider();
+		}
 
-        private void UpdateTargets(T val)
-        {
-            UpdateProvider();
-        }
+		private void UpdateTargets(T val)
+		{
+			UpdateProvider();
+		}
 
-        public override void onLoaded()
-        {
-            base.onLoaded();
-            UpdateProvider();
-        }
+		public override void onLoaded()
+		{
+			base.onLoaded();
+			UpdateProvider();
+		}
 
-        private void UpdateProvider()
-        {
-            if(index.value >= targets.Length)
-            {
-                load(null);
-            }
-            else
-            {
-                load(targets[index.value]?.Asset);
-            }
-        }
+		private void UpdateProvider()
+		{
+			if (index.value >= targets.Length)
+			{
+				load(null);
+			}
+			else
+			{
+				load(targets[index.value]?.Asset);
+			}
+		}
 
-        public AssetMultiplexer(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
-        {
+		public AssetMultiplexer(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public AssetMultiplexer()
-        {
-        }
-    }
+		}
+		public AssetMultiplexer()
+		{
+		}
+	}
 }

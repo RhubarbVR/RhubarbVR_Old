@@ -6,32 +6,32 @@ using System.Threading.Tasks;
 
 namespace RhubarbDataTypes
 {
-    public class RollBuffer
-    {
-        public byte[] array;
+	public class RollBuffer
+	{
+		public byte[] array;
 
-        public int length => array.Length;
+		public int length => array.Length;
 
-        public int pos;
+		public int pos;
 
-        public RollBuffer(int size)
-        {
-            array = new byte[size];
-        }
+		public RollBuffer(int size)
+		{
+			array = new byte[size];
+		}
 
-        public void Push(byte e)
-        {
-            array[pos] = e;
-            pos++;
-            pos = pos % length;
-        }
+		public void Push(byte e)
+		{
+			array[pos] = e;
+			pos++;
+			pos = pos % length;
+		}
 
-        public void Push(byte[] pushed)
-        {
-            foreach (var item in pushed)
-            {
-                Push(item);
-            }
-        }
-    }
+		public void Push(byte[] pushed)
+		{
+			foreach (var item in pushed)
+			{
+				Push(item);
+			}
+		}
+	}
 }

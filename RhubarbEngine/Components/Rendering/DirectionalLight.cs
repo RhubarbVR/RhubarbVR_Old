@@ -25,28 +25,28 @@ using RhubarbEngine.Components.Assets;
 
 namespace RhubarbEngine.Components.Rendering
 {
-    [Category(new string[] { "Rendering" })]
-    public class DirectionalLight : Component,IRenderObject
-    {
-        public RenderFrequency renderFrac => throw new NotImplementedException();
+	[Category(new string[] { "Rendering" })]
+	public class DirectionalLight : Component, IRenderObject
+	{
+		public RenderFrequency renderFrac => throw new NotImplementedException();
 
-        public bool Threaded => throw new NotImplementedException();
+		public bool Threaded => throw new NotImplementedException();
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
+		public override void buildSyncObjs(bool newRefIds)
+		{
 
-        }
-        public void Render()
-        {
-            throw new NotImplementedException();
-        }
+		}
+		public void Render()
+		{
+			throw new NotImplementedException();
+		}
 
-        public DirectionalLight(IWorldObject _parent, bool newRefIds = true) : base( _parent, newRefIds)
-        {
+		public DirectionalLight(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public DirectionalLight()
-        {
-        }
-    }
+		}
+		public DirectionalLight()
+		{
+		}
+	}
 }

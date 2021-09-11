@@ -15,19 +15,19 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    [Category(new string[] { "ImGUI" })]
-    public abstract class UIWidget : Component, IUIElement
-    {
-        public UIWidget(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+	[Category(new string[] { "ImGUI" })]
+	public abstract class UIWidget : Component, IUIElement
+	{
+		public UIWidget(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public UIWidget()
-        {
-        }
+		}
+		public UIWidget()
+		{
+		}
 
-        public virtual void ImguiRender(ImGuiRenderer imGuiRenderer,ImGUICanvas canvas)
-        {
-        }
-    }
+		public virtual void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+		}
+	}
 }

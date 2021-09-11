@@ -11,128 +11,128 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 namespace RhubarbEngine
 {
-    public class EngineInitializer
-    {
-        private Engine engine;
+	public class EngineInitializer
+	{
+		private Engine engine;
 
-        public string intphase;
+		public string intphase;
 
-        public bool Initialised = false;
+		public bool Initialised = false;
 
-        public EngineInitializer(Engine _engine)
-        {
-            engine = _engine;
-        }
+		public EngineInitializer(Engine _engine)
+		{
+			engine = _engine;
+		}
 
-        public void initializeManagers()
-        {
-            //This is to make finding memory problems easier
-            //System.Runtime.GCSettings.LatencyMode = System.Runtime.GCLatencyMode.LowLatency;
-            try
-            {
-                engine.logger.Log("Starting Managers");
+		public void initializeManagers()
+		{
+			//This is to make finding memory problems easier
+			//System.Runtime.GCSettings.LatencyMode = System.Runtime.GCLatencyMode.LowLatency;
+			try
+			{
+				engine.logger.Log("Starting Managers");
 
-                intphase = "Platform Info Manager";
-                engine.logger.Log("Starting Platform Info Manager:");
-                engine.platformInfo = new PlatformInfoManager();
-                engine.platformInfo.initialize(engine);
+				intphase = "Platform Info Manager";
+				engine.logger.Log("Starting Platform Info Manager:");
+				engine.platformInfo = new PlatformInfoManager();
+				engine.platformInfo.initialize(engine);
 
-                if (engine.platformInfo.platform != Platform.Android)
-                {
-                    intphase = "Window Manager";
-                    engine.logger.Log("Starting Window Manager:");
-                    engine.windowManager = new Managers.WindowManager();
-                    engine.windowManager.initialize(engine);
-                }
-                else
-                {
+				if (engine.platformInfo.platform != Platform.Android)
+				{
+					intphase = "Window Manager";
+					engine.logger.Log("Starting Window Manager:");
+					engine.windowManager = new Managers.WindowManager();
+					engine.windowManager.initialize(engine);
+				}
+				else
+				{
 
-                }
+				}
 
-                intphase = "Input Manager";
-                engine.logger.Log("Starting Input Manager:");
-                engine.inputManager = new Managers.InputManager();
-                engine.inputManager.initialize(engine);
+				intphase = "Input Manager";
+				engine.logger.Log("Starting Input Manager:");
+				engine.inputManager = new Managers.InputManager();
+				engine.inputManager.initialize(engine);
 
-                intphase = "Render Manager";
-                engine.logger.Log("Starting Render Manager:");
-                engine.renderManager = new Managers.RenderManager();
-                engine.renderManager.initialize(engine);
+				intphase = "Render Manager";
+				engine.logger.Log("Starting Render Manager:");
+				engine.renderManager = new Managers.RenderManager();
+				engine.renderManager.initialize(engine);
 
 
-                intphase = "Audio Manager";
-                engine.logger.Log("Starting Audio Manager:");
-                engine.audioManager = new Managers.AudioManager();
-                engine.audioManager.initialize(engine);
+				intphase = "Audio Manager";
+				engine.logger.Log("Starting Audio Manager:");
+				engine.audioManager = new Managers.AudioManager();
+				engine.audioManager.initialize(engine);
 
-                intphase = "Net Api Manager";
-                engine.logger.Log("Starting Net Api Manager:");
-                engine.netApiManager = new Managers.NetApiManager();
-                if(token != null)
-                {
-                    engine.netApiManager.token = token;
-                }
-                engine.netApiManager.initialize(engine);
+				intphase = "Net Api Manager";
+				engine.logger.Log("Starting Net Api Manager:");
+				engine.netApiManager = new Managers.NetApiManager();
+				if (token != null)
+				{
+					engine.netApiManager.token = token;
+				}
+				engine.netApiManager.initialize(engine);
 
-                intphase = "World Manager";
-                engine.logger.Log("Starting World Manager:");
-                engine.worldManager = new WorldManager();
-                engine.worldManager.initialize(engine);
-                
-                engine.audioManager.task.Start();
-                Initialised = true;
-            }
-            catch (Exception _e)
-            {
-                engine.logger.Log("Failed at " + intphase + " Error: " + _e);
-            }
+				intphase = "World Manager";
+				engine.logger.Log("Starting World Manager:");
+				engine.worldManager = new WorldManager();
+				engine.worldManager.initialize(engine);
 
-        }
+				engine.audioManager.task.Start();
+				Initialised = true;
+			}
+			catch (Exception _e)
+			{
+				engine.logger.Log("Failed at " + intphase + " Error: " + _e);
+			}
 
-        public string token;
+		}
 
-        public string session;
+		public string token;
 
-        public IEnumerable<string> settings = new string[] { };
+		public string session;
 
-        public void loadArguments(string[] _args)
-        {
-            foreach(string arg in _args)
-            {
-                engine.logger.Log(arg, true);
-            }
-            Parser.Default.ParseArguments<CommandLineOptions>(_args)
-                .WithParsed<CommandLineOptions>(o =>
-                {
-                    if (o.verbose)
-                    {
-                        engine.verbose = true;
-                    }
-                    if (o.datapath != null)
-                    {
-                        engine.dataPath = o.datapath;
-                    }
-                    if (o.graphicsBackend != null)
-                    {
-                        engine.backend = o.graphicsBackend;
-                    }
-                    if (o.outputType != null)
-                    {
-                        engine.outputType = o.outputType;
-                    }
-                    if (o.settings != null)
-                    {
-                        settings = o.settings;
-                    }
-                    if (o.token != null)
-                    {
-                        token = o.token;
-                    }
-                    if (o.sessionID != null)
-                    {
-                        session = o.sessionID;
-                    }
-                });
-        }
-    }
+		public IEnumerable<string> settings = new string[] { };
+
+		public void loadArguments(string[] _args)
+		{
+			foreach (string arg in _args)
+			{
+				engine.logger.Log(arg, true);
+			}
+			Parser.Default.ParseArguments<CommandLineOptions>(_args)
+				.WithParsed<CommandLineOptions>(o =>
+				{
+					if (o.verbose)
+					{
+						engine.verbose = true;
+					}
+					if (o.datapath != null)
+					{
+						engine.dataPath = o.datapath;
+					}
+					if (o.graphicsBackend != null)
+					{
+						engine.backend = o.graphicsBackend;
+					}
+					if (o.outputType != null)
+					{
+						engine.outputType = o.outputType;
+					}
+					if (o.settings != null)
+					{
+						settings = o.settings;
+					}
+					if (o.token != null)
+					{
+						token = o.token;
+					}
+					if (o.sessionID != null)
+					{
+						session = o.sessionID;
+					}
+				});
+		}
+	}
 }

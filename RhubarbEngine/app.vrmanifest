@@ -1,17 +1,17 @@
 {
-	"applications": [
-		{
-			"app_key": "Faolan.RhubarbVR",
-			"launch_type": "binary",
-			"binary_path_windows": "RhubarbVR.exe",
-			"is_dashboard_overlay": true,
-			"action_manifest_path": "./SteamVR/steamvr_manifest.json",
-			"strings": {
-				"en_us": {
-					"name": "Rhubarb VR",
-					"description": "RhubarbVR Networked VR Engine"
-				}
-			}
-		}
-	]
+  "applications": [
+    {
+      "app_key": "Faolan.RhubarbVR",
+      "launch_type": "binary",
+      "binary_path_windows": "RhubarbVR.exe",
+      "is_dashboard_overlay": true,
+      "action_manifest_path": "./SteamVR/steamvr_manifest.json",
+      "strings": {
+        "en_us": {
+          "name": "Rhubarb VR",
+          "description": "RhubarbVR Networked VR Engine"
+        }
+      }
+    }
+  ]
 }

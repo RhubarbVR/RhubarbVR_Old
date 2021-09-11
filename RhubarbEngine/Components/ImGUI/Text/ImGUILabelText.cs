@@ -15,33 +15,33 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
 
-    [Category("ImGUI/Text")]
-    public class ImGUILabelText : UIWidget
-    {
 
-        public Sync<string> text;
-        public Sync<string> label;
+	[Category("ImGUI/Text")]
+	public class ImGUILabelText : UIWidget
+	{
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            text = new Sync<string>(this, newRefIds);
-            label = new Sync<string>(this, newRefIds);
-        }
+		public Sync<string> text;
+		public Sync<string> label;
 
-        public ImGUILabelText(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			text = new Sync<string>(this, newRefIds);
+			label = new Sync<string>(this, newRefIds);
+		}
 
-        }
-        public ImGUILabelText()
-        {
-        }
+		public ImGUILabelText(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            ImGui.LabelText(label.value ?? "", text.value ?? "");
-        }
-    }
+		}
+		public ImGUILabelText()
+		{
+		}
+
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			ImGui.LabelText(label.value ?? "", text.value ?? "");
+		}
+	}
 }

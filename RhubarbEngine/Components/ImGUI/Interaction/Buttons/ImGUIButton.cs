@@ -15,37 +15,37 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
 
-    [Category("ImGUI/Interaction/Button")]
-    public class ImGUIButton : UIWidget
-    {
 
-        public Sync<Vector2f> size;
-        public Sync<string> label;
-        public SyncDelegate action;
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            size = new Sync<Vector2f>(this, newRefIds);
-            label = new Sync<string>(this, newRefIds);
-            action = new SyncDelegate(this, newRefIds);
-        }
+	[Category("ImGUI/Interaction/Button")]
+	public class ImGUIButton : UIWidget
+	{
 
-        public ImGUIButton(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public Sync<Vector2f> size;
+		public Sync<string> label;
+		public SyncDelegate action;
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			size = new Sync<Vector2f>(this, newRefIds);
+			label = new Sync<string>(this, newRefIds);
+			action = new SyncDelegate(this, newRefIds);
+		}
 
-        }
-        public ImGUIButton()
-        {
-        }
+		public ImGUIButton(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            if (ImGui.Button(label.value ?? "", new Vector2(size.value.x, size.value.y)))
-            {
-                action.Target?.Invoke();
-            }
-        }
-    }
+		}
+		public ImGUIButton()
+		{
+		}
+
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			if (ImGui.Button(label.value ?? "", new Vector2(size.value.x, size.value.y)))
+			{
+				action.Target?.Invoke();
+			}
+		}
+	}
 }

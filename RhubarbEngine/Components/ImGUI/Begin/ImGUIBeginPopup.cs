@@ -15,44 +15,44 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
 
-    [Category("ImGUI/Begin/Popup")]
-    public class ImGUIBeginPopup : UIWidgetList
-    {
 
-        public Sync<string> id;
+	[Category("ImGUI/Begin/Popup")]
+	public class ImGUIBeginPopup : UIWidgetList
+	{
 
-        public Sync<ImGuiWindowFlags> windowflag;
+		public Sync<string> id;
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            id = new Sync<string>(this, newRefIds);
-            windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
-        }
+		public Sync<ImGuiWindowFlags> windowflag;
 
-        public ImGUIBeginPopup(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			id = new Sync<string>(this, newRefIds);
+			windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
+		}
 
-        }
-        public ImGUIBeginPopup()
-        {
-        }
+		public ImGUIBeginPopup(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            if(ImGui.BeginPopup(id.value ?? "", windowflag.value))
-            {
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer, canvas);
-                }
-                ImGui.EndPopup();
-            }
-            
+		}
+		public ImGUIBeginPopup()
+		{
+		}
 
-            }
-        }
-    }
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			if (ImGui.BeginPopup(id.value ?? "", windowflag.value))
+			{
+				foreach (var item in children)
+				{
+					item.target?.ImguiRender(imGuiRenderer, canvas);
+				}
+				ImGui.EndPopup();
+			}
+
+
+		}
+	}
+}
 

@@ -16,41 +16,41 @@ using BulletSharp.Math;
 namespace RhubarbEngine.Components.Physics.Colliders
 {
 
-    [Category(new string[] { "Physics/Colliders" })]
-    public class SphereCollider : Collider
-    {
-        public Sync<double> radius;
+	[Category(new string[] { "Physics/Colliders" })]
+	public class SphereCollider : Collider
+	{
+		public Sync<double> radius;
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            radius = new Sync<double>(this, newRefIds);
-            radius.value = 0.5;
-            radius.Changed += UpdateChange;
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			radius = new Sync<double>(this, newRefIds);
+			radius.value = 0.5;
+			radius.Changed += UpdateChange;
+		}
 
-        public void UpdateChange(IChangeable val)
-        {
-            BuildShape();
-        }
+		public void UpdateChange(IChangeable val)
+		{
+			BuildShape();
+		}
 
-        public override void onLoaded()
-        {
-            base.onLoaded();
-            BuildShape();
-        }
+		public override void onLoaded()
+		{
+			base.onLoaded();
+			BuildShape();
+		}
 
-        public override void BuildShape()
-        {
-            startShape(new SphereShape(radius.value));
-        }
+		public override void BuildShape()
+		{
+			startShape(new SphereShape(radius.value));
+		}
 
-        public SphereCollider(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public SphereCollider(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        }
-        public SphereCollider()
-        {
-        }
-    }
+		}
+		public SphereCollider()
+		{
+		}
+	}
 }

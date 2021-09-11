@@ -8,18 +8,18 @@ using System.Reflection;
 
 namespace RhubarbEngine
 {
-    public static class Logger
-    {
-        private static Engine engine;
-        public static Engine Engine { get { return engine; } }
-        public static void init(Engine _engine)
-        {
-            engine = _engine;
-        }
+	public static class Logger
+	{
+		private static Engine engine;
+		public static Engine Engine { get { return engine; } }
+		public static void init(Engine _engine)
+		{
+			engine = _engine;
+		}
 
-        public static void Log(string _log, bool _alwaysLog = false)
-        {
-            engine.logger.Log(_log, _alwaysLog);
-        }
-    }
+		public static void Log(string _log, bool _alwaysLog = false)
+		{
+			engine.logger.Log(_log, _alwaysLog);
+		}
+	}
 }

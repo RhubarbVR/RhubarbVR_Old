@@ -15,40 +15,40 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
-
-    [Category("ImGUI/Begin")]
-    public class ImGUIBeginMenuBar : UIWidgetList
-    {
 
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
+	[Category("ImGUI/Begin")]
+	public class ImGUIBeginMenuBar : UIWidgetList
+	{
 
-        }
 
-        public ImGUIBeginMenuBar(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
 
-        }
-        public ImGUIBeginMenuBar()
-        {
-        }
+		}
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            if(ImGui.BeginMenuBar())
-            {
-                foreach (var item in children)
-                {
-                    item.target?.ImguiRender(imGuiRenderer, canvas);
-                }
-                ImGui.EndMenuBar();
-            }
-            
+		public ImGUIBeginMenuBar(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-            }
-        }
-    }
+		}
+		public ImGUIBeginMenuBar()
+		{
+		}
+
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			if (ImGui.BeginMenuBar())
+			{
+				foreach (var item in children)
+				{
+					item.target?.ImguiRender(imGuiRenderer, canvas);
+				}
+				ImGui.EndMenuBar();
+			}
+
+
+		}
+	}
+}
 

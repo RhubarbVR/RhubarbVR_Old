@@ -15,34 +15,34 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
-
-    [Category("ImGUI/Begin")]
-    public class ImGUIBeginRow : UIWidgetList
-    {
 
 
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-        }
+	[Category("ImGUI/Begin")]
+	public class ImGUIBeginRow : UIWidgetList
+	{
 
-        public ImGUIBeginRow(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
 
-        }
-        public ImGUIBeginRow()
-        {
-        }
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+		}
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            ImGui.Columns(children.Count());
-            foreach (var item in children)
-            {
-                item.target?.ImguiRender(imGuiRenderer,canvas);
-                ImGui.NextColumn();
-            }
-        }
-    }
+		public ImGUIBeginRow(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
+
+		}
+		public ImGUIBeginRow()
+		{
+		}
+
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			ImGui.Columns(children.Count());
+			foreach (var item in children)
+			{
+				item.target?.ImguiRender(imGuiRenderer, canvas);
+				ImGui.NextColumn();
+			}
+		}
+	}
 }

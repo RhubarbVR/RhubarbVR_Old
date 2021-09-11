@@ -15,41 +15,41 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-    
 
-    [Category("ImGUI/Interaction/Button")]
-    public class ImGUIColorButton : UIWidget
-    {
 
-        public Sync<Colorf> color;
-        public Sync<string> id;
-        public Sync<ImGuiColorEditFlags> imGuiColorEditFlags;
+	[Category("ImGUI/Interaction/Button")]
+	public class ImGUIColorButton : UIWidget
+	{
 
-        public SyncDelegate action;
-        public override void buildSyncObjs(bool newRefIds)
-        {
-            base.buildSyncObjs(newRefIds);
-            color = new Sync<Colorf>(this, newRefIds);
-            id = new Sync<string>(this, newRefIds);
-            imGuiColorEditFlags = new Sync<ImGuiColorEditFlags>(this, newRefIds);
-            imGuiColorEditFlags.value = ImGuiColorEditFlags.None;
-            action = new SyncDelegate(this, newRefIds);
-        }
+		public Sync<Colorf> color;
+		public Sync<string> id;
+		public Sync<ImGuiColorEditFlags> imGuiColorEditFlags;
 
-        public ImGUIColorButton(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
-        {
+		public SyncDelegate action;
+		public override void buildSyncObjs(bool newRefIds)
+		{
+			base.buildSyncObjs(newRefIds);
+			color = new Sync<Colorf>(this, newRefIds);
+			id = new Sync<string>(this, newRefIds);
+			imGuiColorEditFlags = new Sync<ImGuiColorEditFlags>(this, newRefIds);
+			imGuiColorEditFlags.value = ImGuiColorEditFlags.None;
+			action = new SyncDelegate(this, newRefIds);
+		}
 
-        }
-        public ImGUIColorButton()
-        {
-        }
+		public ImGUIColorButton(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		{
 
-        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
-        {
-            if (ImGui.ColorButton(id.value ?? "", color.value.ToRGBA().ToSystem(), imGuiColorEditFlags.value))
-            {
-                action.Target?.Invoke();
-            }
-        }
-    }
+		}
+		public ImGUIColorButton()
+		{
+		}
+
+		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		{
+			if (ImGui.ColorButton(id.value ?? "", color.value.ToRGBA().ToSystem(), imGuiColorEditFlags.value))
+			{
+				action.Target?.Invoke();
+			}
+		}
+	}
 }

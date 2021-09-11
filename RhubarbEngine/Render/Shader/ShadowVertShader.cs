@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Render.Shader
 {
-    public class ShadowVertShader : VertShader
-    {
+	public class ShadowVertShader : VertShader
+	{
 
-    }
+	}
 }
