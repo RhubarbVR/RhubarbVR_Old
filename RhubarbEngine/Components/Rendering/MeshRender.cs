@@ -34,68 +34,84 @@ namespace RhubarbEngine.Components.Rendering
 
 		public Sync<uint> RenderOrderOffset;
 
-		public override BoundingBox BoundingBox => Mesh.Asset.boundingBox;
+        public override BoundingBox BoundingBox
+        {
+            get
+            {
+                return Mesh.Asset.boundingBox;
+            }
+        }
 
-
-		public override void buildSyncObjs(bool newRefIds)
+        public override void buildSyncObjs(bool newRefIds)
 		{
 			Mesh = new AssetRef<RMesh>(this, newRefIds);
 			Materials = new SyncAssetRefList<RMaterial>(this, newRefIds);
-			Mesh.loadChange += loadMesh;
-			Materials.loadChange += loadMaterial;
-			RenderOrderOffset = new Sync<uint>(this, newRefIds);
-			RenderOrderOffset.value = int.MaxValue;
-		}
+			Mesh.loadChange += LoadMesh;
+			Materials.loadChange += LoadMaterial;
+            RenderOrderOffset = new Sync<uint>(this, newRefIds)
+            {
+                Value = int.MaxValue
+            };
+        }
 
-		private void loadMesh(RMesh mesh)
+		private void LoadMesh(RMesh mesh)
 		{
 			if (_wvpBuffer == null)
-				return;
-			if (Mesh.target == null)
+            {
+                return;
+            }
+
+            if (Mesh.Target == null)
 			{
 				logger.Log("no mesh provider");
 				return;
 			}
-			if (Mesh.target.value == null)
+			if (Mesh.Target.value == null)
 			{
 				logger.Log("no mesh to load");
-				logger.Log($"{Mesh.value.getID()}");
+				logger.Log($"{Mesh.Value.getID()}");
 			}
 			else
 			{
 				_meshPieces = Mesh.Asset.meshPieces.ToArray();
 			}
-			checkIsLoaded();
+			CheckIsLoaded();
 		}
 
-		private void loadMaterial(RMaterial mit)
+		private void LoadMaterial(RMaterial mit)
 		{
 			if (_wvpBuffer == null)
-				return;
-			loadAllMaterials();
-			checkIsLoaded();
+            {
+                return;
+            }
+
+            LoadAllMaterials();
+			CheckIsLoaded();
 		}
 
-		private void loadAllMaterials()
+		private void LoadAllMaterials()
 		{
 			if (_wvpBuffer == null)
-				return;
-			logger.Log("load Materials");
-			ResourceFactory factory = _gd.ResourceFactory;
+            {
+                return;
+            }
 
-			VertexLayoutDescription positionLayoutDesc = new VertexLayoutDescription(
+            logger.Log("load Materials");
+			var factory = Gd.ResourceFactory;
+
+            var positionLayoutDesc = new VertexLayoutDescription(
 				new VertexElementDescription[]
 				  {
 					new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
 				   });
 
-			VertexLayoutDescription texCoordLayoutDesc = new VertexLayoutDescription(
+			var texCoordLayoutDesc = new VertexLayoutDescription(
 				new VertexElementDescription[]
 				{
 					new VertexElementDescription("UV", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
 				});
 
-			foreach (RMaterial mit in Materials)
+			foreach (var mit in Materials)
 			{
 				if (mit != null)
 				{
@@ -106,7 +122,7 @@ namespace RhubarbEngine.Components.Rendering
 							if (mit.Shader.Asset.shaderLoaded)
 							{
 
-								Pipeline mainPipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
+								var mainPipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
 				BlendStateDescription.SingleAlphaBlend,
 				DepthStencilStateDescription.DepthOnlyLessEqual,
 				RasterizerStateDescription.CullNone,
@@ -114,11 +130,11 @@ namespace RhubarbEngine.Components.Rendering
 				new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.mainVertShader, mit.Shader.Asset.mainFragShader }),
 				mit.Shader.Asset.mainresourceLayout,
 				engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
-								addDisposable(mainPipeline);
+								AddDisposable(mainPipeline);
 								_mainPipeline.Add(mainPipeline);
 
 
-								Pipeline shadowPipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
+								var shadowPipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
 				BlendStateDescription.SingleAlphaBlend,
 				DepthStencilStateDescription.DepthOnlyLessEqual,
 				RasterizerStateDescription.CullNone,
@@ -126,35 +142,43 @@ namespace RhubarbEngine.Components.Rendering
 				new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.shadowVertShader, mit.Shader.Asset.shadowFragShader }),
 				mit.Shader.Asset.shadowresourceLayout,
 				engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
-								addDisposable(shadowPipeline);
+								AddDisposable(shadowPipeline);
 								_shadowpipeline.Add(mainPipeline);
 
 
-								ResourceSetDescription mainResourceSetDescription = new ResourceSetDescription();
-								mainResourceSetDescription.Layout = mit.Shader.Asset.mainresourceLayout;
-								List<BindableResource> mainBoundResources = new List<BindableResource>();
-								mainBoundResources.Add(_wvpBuffer);
-								mainBoundResources.Add(_gd.Aniso4xSampler);
-								mit.getBindableResources(mainBoundResources, false);
+                                var mainResourceSetDescription = new ResourceSetDescription
+                                {
+                                    Layout = mit.Shader.Asset.mainresourceLayout
+                                };
+                                var mainBoundResources = new List<BindableResource>
+                                {
+                                    _wvpBuffer,
+                                    Gd.Aniso4xSampler
+                                };
+                                mit.GetBindableResources(mainBoundResources, false);
 
 								mainResourceSetDescription.BoundResources = mainBoundResources.ToArray();
 
-								ResourceSet mainRS = factory.CreateResourceSet(mainResourceSetDescription);
-								addDisposable(mainRS);
+								var mainRS = factory.CreateResourceSet(mainResourceSetDescription);
+								AddDisposable(mainRS);
 
 								_mainRS.Add(mainRS);
 
 
-								ResourceSetDescription shadowResourceSetDescription = new ResourceSetDescription();
-								shadowResourceSetDescription.Layout = mit.Shader.Asset.shadowresourceLayout;
-								List<BindableResource> shadowBoundResources = new List<BindableResource>();
-								shadowBoundResources.Add(_wvpBuffer);
-								shadowBoundResources.Add(_gd.Aniso4xSampler);
-								mit.getBindableResources(shadowBoundResources, true);
+                                var shadowResourceSetDescription = new ResourceSetDescription
+                                {
+                                    Layout = mit.Shader.Asset.shadowresourceLayout
+                                };
+                                var shadowBoundResources = new List<BindableResource>
+                                {
+                                    _wvpBuffer,
+                                    Gd.Aniso4xSampler
+                                };
+                                mit.GetBindableResources(shadowBoundResources, true);
 
 								shadowResourceSetDescription.BoundResources = shadowBoundResources.ToArray();
-								ResourceSet shadowRS = factory.CreateResourceSet(shadowResourceSetDescription);
-								addDisposable(shadowRS);
+								var shadowRS = factory.CreateResourceSet(shadowResourceSetDescription);
+								AddDisposable(shadowRS);
 								_shadowRS.Add(shadowRS);
 
 								mit.BindableResourcesReload += ReloadResorseSet;
@@ -163,72 +187,90 @@ namespace RhubarbEngine.Components.Rendering
 					}
 				}
 			}
-			checkIsLoaded();
+			CheckIsLoaded();
 		}
 
 		public void ReloadResorseSet(RMaterial mit)
 		{
 			if (_wvpBuffer == null)
-				return;
-			int mitindex = Materials.indexOf(mit);
+            {
+                return;
+            }
+
+            var mitindex = Materials.indexOf(mit);
 			if (mitindex == -1)
 			{
 				mit.BindableResourcesReload -= ReloadResorseSet;
 				return;
 			}
-			ResourceFactory factory = _gd.ResourceFactory;
+			var factory = Gd.ResourceFactory;
 			if (mit.Shader.Asset != null)
 			{
 				if (mit.Shader.Asset.shaderLoaded)
 				{
-					ResourceSetDescription mainResourceSetDescription = new ResourceSetDescription();
-					mainResourceSetDescription.Layout = mit.Shader.Asset.mainresourceLayout;
-					List<BindableResource> mainBoundResources = new List<BindableResource>();
-					mainBoundResources.Add(_wvpBuffer);
-					mainBoundResources.Add(_gd.Aniso4xSampler);
-					mit.getBindableResources(mainBoundResources, false);
+                    var mainResourceSetDescription = new ResourceSetDescription
+                    {
+                        Layout = mit.Shader.Asset.mainresourceLayout
+                    };
+                    var mainBoundResources = new List<BindableResource>
+                    {
+                        _wvpBuffer,
+                        Gd.Aniso4xSampler
+                    };
+                    mit.GetBindableResources(mainBoundResources, false);
 
 					mainResourceSetDescription.BoundResources = mainBoundResources.ToArray();
-					ResourceSet mainRS = factory.CreateResourceSet(mainResourceSetDescription);
-					addDisposable(mainRS);
+					var mainRS = factory.CreateResourceSet(mainResourceSetDescription);
+					AddDisposable(mainRS);
 					_mainRS[mitindex].Dispose();
 					_mainRS[mitindex] = mainRS;
 
-					ResourceSetDescription shadowResourceSetDescription = new ResourceSetDescription();
-					shadowResourceSetDescription.Layout = mit.Shader.Asset.shadowresourceLayout;
-					List<BindableResource> shadowBoundResources = new List<BindableResource>();
-					shadowBoundResources.Add(_wvpBuffer);
-					shadowBoundResources.Add(_gd.Aniso4xSampler);
-					mit.getBindableResources(shadowBoundResources, true);
+                    var shadowResourceSetDescription = new ResourceSetDescription
+                    {
+                        Layout = mit.Shader.Asset.shadowresourceLayout
+                    };
+                    var shadowBoundResources = new List<BindableResource>
+                    {
+                        _wvpBuffer,
+                        Gd.Aniso4xSampler
+                    };
+                    mit.GetBindableResources(shadowBoundResources, true);
 
 					shadowResourceSetDescription.BoundResources = shadowBoundResources.ToArray();
-					ResourceSet shadowRS = factory.CreateResourceSet(shadowResourceSetDescription);
-					addDisposable(shadowRS);
+					var shadowRS = factory.CreateResourceSet(shadowResourceSetDescription);
+					AddDisposable(shadowRS);
 					_shadowRS[mitindex].Dispose();
 					_shadowRS[mitindex] = shadowRS;
 				}
 			}
 		}
 
-		private void checkIsLoaded()
+		private void CheckIsLoaded()
 		{
-			loaded = _meshPieces.Length > 0 && _mainRS.Count > 0 && _shadowRS.Count > 0;
+			_loaded = _meshPieces.Length > 0 && _mainRS.Count > 0 && _shadowRS.Count > 0;
 		}
 
 		private MeshPiece[] _meshPieces = new MeshPiece[0];
-		private GraphicsDevice _gd => engine.renderManager.gd;
-		private List<Pipeline> _mainPipeline = new List<Pipeline>();
-		private List<Pipeline> _shadowpipeline = new List<Pipeline>();
+        private GraphicsDevice Gd
+        {
+            get
+            {
+                return engine.renderManager.gd;
+            }
+        }
+
+        private readonly List<Pipeline> _mainPipeline = new List<Pipeline>();
+		private readonly List<Pipeline> _shadowpipeline = new List<Pipeline>();
 		private DeviceBuffer _wvpBuffer;
-		private List<ResourceSet> _mainRS = new List<ResourceSet>();
-		private List<ResourceSet> _shadowRS = new List<ResourceSet>();
-		private bool loaded;
+		private readonly List<ResourceSet> _mainRS = new List<ResourceSet>();
+		private readonly List<ResourceSet> _shadowRS = new List<ResourceSet>();
+		private bool _loaded;
 
 		public override void Render(GraphicsDevice gd, CommandList cl, UBO ubo)
 		{
 			try
 			{
-				internalRender(gd, cl, ubo, false);
+				InternalRender(gd, cl, ubo, false);
 			}
 			catch { }
 		}
@@ -237,24 +279,26 @@ namespace RhubarbEngine.Components.Rendering
 		{
 			try
 			{
-				internalRender(gd, cl, ubo, true);
+				InternalRender(gd, cl, ubo, true);
 			}
 			catch { }
 		}
 
-		public void internalRender(GraphicsDevice gd, CommandList cl, UBO ubo, bool shadow = false)
-		{
-			if (!loaded)
+#pragma warning disable IDE0060 // Remove unused parameter
+        public void InternalRender(GraphicsDevice gd, CommandList cl, UBO ubo, bool shadow = false)
+#pragma warning restore IDE0060 // Remove unused parameter
+        {
+			if (!_loaded)
 			{
 				return;
 			}
 			cl.UpdateBuffer(_wvpBuffer, 0, ubo);
-			int Length = Math.Max(_meshPieces.Length, Materials.Length);
-			for (int i = 0; i < Length; i++)
+			var Length = Math.Max(_meshPieces.Length, Materials.Length);
+			for (var i = 0; i < Length; i++)
 			{
-				int a = i % _meshPieces.Length;
-				int b = i % Materials.Length;
-				MeshPiece piece = _meshPieces[a];
+				var a = i % _meshPieces.Length;
+				var b = i % Materials.Length;
+				var piece = _meshPieces[a];
 				cl.SetPipeline((shadow) ? _shadowpipeline[b] : _mainPipeline[b]);
 				cl.SetVertexBuffer(0, piece.Positions);
 				cl.SetVertexBuffer(1, piece.TexCoords);
@@ -266,7 +310,7 @@ namespace RhubarbEngine.Components.Rendering
 
 		public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
 		{
-			return RenderOrderKey.Create(RenderOrderOffset.value, BoundingBox.DistanceFromPoint((Vector3)entity.GlobalPointToLocal((Vector3f)cameraPosition, false)));
+			return RenderOrderKey.Create(RenderOrderOffset.Value, BoundingBox.DistanceFromPoint((Vector3)entity.GlobalPointToLocal((Vector3f)cameraPosition, false)));
 		}
 
 
@@ -277,10 +321,10 @@ namespace RhubarbEngine.Components.Rendering
 		public override void onLoaded()
 		{
 			_wvpBuffer = engine.renderManager.gd.ResourceFactory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
-			addDisposable(_wvpBuffer);
+			AddDisposable(_wvpBuffer);
 			Logger.Log("Loading Mesh Render");
-			loadMesh(null);
-			loadMaterial(null);
+			LoadMesh(null);
+			LoadMaterial(null);
 		}
 		public override void onChanged()
 		{

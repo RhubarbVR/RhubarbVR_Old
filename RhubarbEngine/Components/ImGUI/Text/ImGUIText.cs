@@ -38,7 +38,7 @@ namespace RhubarbEngine.Components.ImGUI
 			base.buildSyncObjs(newRefIds);
 			text = new Sync<string>(this, newRefIds);
 			textType = new Sync<TextType>(this, newRefIds);
-			textType.value = TextType.Normal;
+			textType.Value = TextType.Normal;
 		}
 
 		public ImGUIText(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -51,25 +51,25 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			switch (textType.value)
+			switch (textType.Value)
 			{
 				case TextType.Normal:
-					ImGui.Text(text.value ?? "");
+					ImGui.Text(text.Value ?? "");
 					break;
 				case TextType.Disabled:
-					ImGui.TextDisabled(text.value ?? "");
+					ImGui.TextDisabled(text.Value ?? "");
 					break;
 				case TextType.Bullet:
-					ImGui.BulletText(text.value ?? "");
+					ImGui.BulletText(text.Value ?? "");
 					break;
 				case TextType.Wrapped:
-					ImGui.TextWrapped(text.value ?? "");
+					ImGui.TextWrapped(text.Value ?? "");
 					break;
 				case TextType.LogText:
-					ImGui.LogText(text.value ?? "");
+					ImGui.LogText(text.Value ?? "");
 					break;
 				default:
-					ImGui.TextUnformatted(text.value ?? "");
+					ImGui.TextUnformatted(text.Value ?? "");
 					break;
 			}
 		}

@@ -50,17 +50,24 @@ namespace RhubarbEngine.World.Net
 
 		public RhuClient rhuClient;
 
-		public override string token => rhuClient.Token;
-		public override IReadOnlyList<Peer> peers { get { return rhuPeers; } }
+        public override string Token
+        {
+            get
+            {
+                return rhuClient.Token;
+            }
+        }
+
+        public override IReadOnlyList<Peer> Peers { get { return rhuPeers; } }
 
 		public List<RhuPeer> rhuPeers = new List<RhuPeer>();
 
 		public RhuNetModule(World world) : base(world)
 		{
 			Console.WriteLine("Starting net");
-			rhuClient = new RhuClient("5.135.157.47", 50, _world.worldManager.engine.netApiManager.user.Uuid);
-			rhuClient.OnMessageReceived += thing;
-			rhuClient.OnClientAdded += trains;
+			rhuClient = new RhuClient("5.135.157.47", 50, "User UUID");
+			rhuClient.OnMessageReceived += Thing;
+			rhuClient.OnClientAdded += Trains;
 			rhuClient.OnResultsUpdate += RhuClient_OnResultsUpdate;
 			rhuClient.OnClientConnection += RhuClient_OnClientConnection;
 			rhuClient.dataRecived += RhuClient_dataRecived;
@@ -69,10 +76,10 @@ namespace RhubarbEngine.World.Net
 
 		private void RhuClient_dataRecived(Data arg1, IPEndPoint arg2)
 		{
-			_world.NetworkReceiveEvent(arg1.data, getPeerFromEndPoint(arg2));
+			_world.NetworkReceiveEvent(arg1.data, GetPeerFromEndPoint(arg2));
 		}
 
-		private RhuPeer getPeerFromEndPoint(IPEndPoint e)
+		private RhuPeer GetPeerFromEndPoint(IPEndPoint e)
 		{
 			foreach (var item in rhuPeers)
 			{
@@ -87,8 +94,11 @@ namespace RhubarbEngine.World.Net
 		private void RhuClient_OnClientConnection(object sender, System.Net.IPEndPoint e)
 		{
 			if (((ClientInfo)sender).ID == rhuClient.LocalClientInfo.ID)
-				return;
-			var p = new RhuPeer(this, e, (ClientInfo)sender);
+            {
+                return;
+            }
+
+            var p = new RhuPeer(this, e, (ClientInfo)sender);
 			rhuPeers.Add(p);
 			_world.PeerConnectedEvent(p);
 		}
@@ -98,12 +108,12 @@ namespace RhubarbEngine.World.Net
 			Console.WriteLine(e);
 		}
 
-		private void trains(object sender, ClientInfo e)
+		private void Trains(object sender, ClientInfo e)
 		{
 			Console.WriteLine(e.Name);
 		}
 
-		private void thing(object sender, MessageReceivedEventArgs e)
+		private void Thing(object sender, MessageReceivedEventArgs e)
 		{
 			Console.WriteLine(e.message.Content);
 		}
@@ -116,7 +126,7 @@ namespace RhubarbEngine.World.Net
 			}
 		}
 
-		public override void sendData(DataNodeGroup node, NetData item)
+		public override void SendData(DataNodeGroup node, NetData item)
 		{
 			switch (item.reliabilityLevel)
 			{

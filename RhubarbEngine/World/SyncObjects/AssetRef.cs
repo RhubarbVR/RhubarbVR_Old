@@ -15,11 +15,11 @@ namespace RhubarbEngine.World
 		{
 			get
 			{
-				if (base.target == null)
+				if (base.Target == null)
 				{
 					return default(T);
 				}
-				return base.target.value;
+				return base.Target.value;
 			}
 		}
 
@@ -33,19 +33,19 @@ namespace RhubarbEngine.World
 		public override void Bind()
 		{
 			base.Bind();
-			base.target.onLoadedCall += loadedCall;
-			if (base.target.loaded)
+			base.Target.onLoadedCall += loadedCall;
+			if (base.Target.loaded)
 			{
-				loadedCall(target.value);
+				loadedCall(Target.value);
 			}
 		}
 		public override void onLoaded()
 		{
 			base.onLoaded();
-			base.target.onLoadedCall += loadedCall;
-			if (base.target.loaded)
+			base.Target.onLoadedCall += loadedCall;
+			if (base.Target.loaded)
 			{
-				loadedCall(base.target.value);
+				loadedCall(base.Target.value);
 			}
 		}
 		public AssetRef(IWorldObject _parent, bool newrefid = true) : base(_parent, newrefid)

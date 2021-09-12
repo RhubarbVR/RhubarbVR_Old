@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Org.OpenAPITools.Model;
-
 using RhubarbEngine.Components.Users;
 
 namespace RhubarbEngine.World
@@ -88,7 +85,7 @@ namespace RhubarbEngine.World
 		{
 			foreach (var item in userStreams)
 			{
-				if (item.name.value == name)
+				if (item.name.Value == name)
 				{
 					try
 					{
@@ -110,61 +107,12 @@ namespace RhubarbEngine.World
 			{
 				var stream = (UserStream)Activator.CreateInstance(typeof(T));
 				userStreams.Add(stream);
-				stream.name.value = name;
+				stream.name.Value = name;
 				return (T)stream;
 			}
 			else
 			{
 				return thing;
-			}
-		}
-
-		public void LoadFromPublicUser(PublicUser user)
-		{
-			username.value = user.Username;
-			normalizedusername.value = user.Normalizedusername;
-			profileUrl.value = user.ProfileUrl;
-			favoriteColor.value = user.FavoriteColor;
-			verified.value = user.Verified;
-			identifier.value = user.Identifier;
-			uuid.value = user.Uuid;
-			creationDate.value = user.CreationDate;
-			banDate.value = user.BanDate;
-			tempbanDate.value = user.TempbanDate;
-			isAdmin.value = user.IsAdmin;
-			isAssistant.value = user.IsAssistant;
-			isLightMode.value = user.IsLightMode;
-			tags.Clear();
-			foreach (var item in user.Tags)
-			{
-				tags.Add().value = item;
-			}
-		}
-		public void LoadFromPrivateUser(PrivateUser user)
-		{
-			if (user == default || user == null)
-				username.value = "anonymous";
-			else
-			{
-				username.value = user.Username;
-				normalizedusername.value = user.Normalizedusername;
-				profileUrl.value = user.ProfileUrl;
-				favoriteColor.value = user.FavoriteColor;
-				verified.value = user.Verified;
-				identifier.value = user.Identifier;
-				uuid.value = user.Uuid;
-				creationDate.value = user.CreationDate;
-				banDate.value = user.BanDate;
-				tempbanDate.value = user.TempbanDate;
-				isAdmin.value = user.IsAdmin;
-				isAssistant.value = user.IsAssistant;
-				isLightMode.value = user.IsLightMode;
-
-				tags.Clear();
-				foreach (var item in user.Tags)
-				{
-					tags.Add().value = item;
-				}
 			}
 		}
 	}

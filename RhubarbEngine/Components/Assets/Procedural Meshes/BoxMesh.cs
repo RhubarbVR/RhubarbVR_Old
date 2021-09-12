@@ -23,17 +23,17 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			Center = new Sync<Vector3d>(this, newRefIds);
-			Center.value = Vector3d.Zero;
+			Center.Value = Vector3d.Zero;
 			AxisX = new Sync<Vector3d>(this, newRefIds);
-			AxisX.value = Vector3d.AxisX;
+			AxisX.Value = Vector3d.AxisX;
 			AxisY = new Sync<Vector3d>(this, newRefIds);
-			AxisY.value = Vector3d.AxisY;
+			AxisY.Value = Vector3d.AxisY;
 			AxisZ = new Sync<Vector3d>(this, newRefIds);
-			AxisZ.value = Vector3d.AxisZ;
+			AxisZ.Value = Vector3d.AxisZ;
 			Extent = new Sync<Vector3d>(this, newRefIds);
-			Extent.value = new Vector3d(0.5f);
+			Extent.Value = new Vector3d(0.5f);
 			NoSharedVertices = new Sync<bool>(this, newRefIds);
-			NoSharedVertices.value = false;
+			NoSharedVertices.Value = false;
 		}
 		public override void onChanged()
 		{
@@ -42,12 +42,12 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		private void updateMesh()
 		{
-			_generator.Box.Center = Center.value;
-			_generator.Box.AxisX = AxisX.value;
-			_generator.Box.AxisY = AxisY.value;
-			_generator.Box.AxisZ = AxisZ.value;
-			_generator.Box.Extent = Extent.value;
-			_generator.NoSharedVertices = NoSharedVertices.value;
+			_generator.Box.Center = Center.Value;
+			_generator.Box.AxisX = AxisX.Value;
+			_generator.Box.AxisY = AxisY.Value;
+			_generator.Box.AxisZ = AxisZ.Value;
+			_generator.Box.Extent = Extent.Value;
+			_generator.NoSharedVertices = NoSharedVertices.Value;
 			MeshGenerator newmesh = _generator.Generate();
 			RMesh kite = new RMesh(newmesh.MakeDMesh());
 			kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

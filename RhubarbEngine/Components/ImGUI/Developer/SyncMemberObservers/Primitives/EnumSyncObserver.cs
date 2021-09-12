@@ -55,19 +55,19 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (target.target?.Driven ?? false)
+			if (target.Target?.Driven ?? false)
 			{
 				var e = ImGui.GetStyleColorVec4(ImGuiCol.FrameBg);
 				var vec = (Vector4f)(*e);
 				ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 0.5f, 0, 0)).ToSystem());
 			}
-			int c = Array.IndexOf(ve, Enum.GetName(typeof(T), (((Sync<T>)target.target).value)));
-			ImGui.Combo((fieldName.value ?? "null") + $"##{referenceID.id}", ref c, ve, ve.Length);
-			if (c != (int)(object)(((Sync<T>)target.target).value))
+			int c = Array.IndexOf(ve, Enum.GetName(typeof(T), (((Sync<T>)target.Target).Value)));
+			ImGui.Combo((fieldName.Value ?? "null") + $"##{referenceID.id}", ref c, ve, ve.Length);
+			if (c != (int)(object)(((Sync<T>)target.Target).Value))
 			{
-				((Sync<T>)target.target).value = Enum.GetValues<T>()[c];
+				((Sync<T>)target.Target).Value = Enum.GetValues<T>()[c];
 			}
-			if (target.target?.Driven ?? false)
+			if (target.Target?.Driven ?? false)
 			{
 				ImGui.PopStyleColor();
 			}

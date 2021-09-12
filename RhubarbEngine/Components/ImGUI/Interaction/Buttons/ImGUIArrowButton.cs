@@ -28,7 +28,7 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			base.buildSyncObjs(newRefIds);
 			imGuiDir = new Sync<ImGuiDir>(this, newRefIds);
-			imGuiDir.value = ImGuiDir.None;
+			imGuiDir.Value = ImGuiDir.None;
 			id = new Sync<string>(this, newRefIds);
 			action = new SyncDelegate(this, newRefIds);
 		}
@@ -43,7 +43,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (ImGui.ArrowButton(id.value ?? "", imGuiDir.value))
+			if (ImGui.ArrowButton(id.Value ?? "", imGuiDir.Value))
 			{
 				action.Target?.Invoke();
 			}

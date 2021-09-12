@@ -36,10 +36,10 @@ namespace RhubarbEngine.Components.Transform
 		{
 			driver = new Driver<Quaternionf>(this, newRefIds);
 			offset = new Sync<Quaternionf>(this, newRefIds);
-			offset.value = Quaternionf.Identity;
+			offset.Value = Quaternionf.Identity;
 			positionOffset = new Sync<Vector3f>(this, newRefIds);
 			positionSource = new Sync<LookAtPace>(this, newRefIds);
-			positionSource.value = LookAtPace.Head;
+			positionSource.Value = LookAtPace.Head;
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
@@ -47,33 +47,33 @@ namespace RhubarbEngine.Components.Transform
 			if (driver.Linked)
 			{
 				Vector3f? tagetPos;
-				switch (positionSource.value)
+				switch (positionSource.Value)
 				{
 					case LookAtPace.Root:
-						tagetPos = world.localUser.userroot.target?.entity.globalPos();
+						tagetPos = world.LocalUser.userroot.Target?.entity.GlobalPos();
 						break;
 					case LookAtPace.Head:
-						tagetPos = world.localUser.userroot.target?.Head.target?.globalPos();
+						tagetPos = world.LocalUser.userroot.Target?.Head.Target?.GlobalPos();
 						break;
 					case LookAtPace.LeftController:
-						tagetPos = world.localUser.userroot.target?.LeftHand.target?.globalPos();
+						tagetPos = world.LocalUser.userroot.Target?.LeftHand.Target?.GlobalPos();
 						break;
 					case LookAtPace.RightController:
-						tagetPos = world.localUser.userroot.target?.RightHand.target?.globalPos();
+						tagetPos = world.LocalUser.userroot.Target?.RightHand.Target?.GlobalPos();
 						break;
 					default:
 						tagetPos = null;
 						break;
 				}
-				Vector3f tangent = (((tagetPos ?? Vector3f.AxisY) + positionOffset.value) - entity.globalPos());
+				Vector3f tangent = (((tagetPos ?? Vector3f.AxisY) + positionOffset.Value) - entity.GlobalPos());
 				tangent.Normalize();
 				Vector3f normal = Vector3f.AxisY;
-				var newrot = Quaternionf.LookRotation(tangent, normal) * offset.value;
+				var newrot = Quaternionf.LookRotation(tangent, normal) * offset.Value;
 				driver.Drivevalue = entity.GlobalRotToLocal(newrot, false);
 			}
 			else
 			{
-				driver.target = entity.rotation;
+				driver.Target = entity.rotation;
 			}
 		}
 		public LookAtUser(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

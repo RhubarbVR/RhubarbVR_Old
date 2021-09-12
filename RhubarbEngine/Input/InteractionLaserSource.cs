@@ -101,8 +101,8 @@ namespace RhubarbEngine.Input
 			try
 			{
 				var inputPlane = ((MeshInputPlane)cb.CollisionObject.UserObject);
-				System.Numerics.Matrix4x4.Decompose(inputPlane.entity.globalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
-				var pixsize = inputPlane.pixelSize.value;
+				System.Numerics.Matrix4x4.Decompose(inputPlane.entity.GlobalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
+				var pixsize = inputPlane.pixelSize.Value;
 
 				var hit = cb.HitPointWorld;
 				var hitnormal = cb.HitNormalWorld;
@@ -139,7 +139,7 @@ namespace RhubarbEngine.Input
 						default:
 							break;
 					}
-					inputPlane.updatePos(pos, source);
+					inputPlane.UpdatePos(pos, source);
 
 					if (HasClicked())
 					{
@@ -170,9 +170,9 @@ namespace RhubarbEngine.Input
 			try
 			{
 				var inputPlane = ((InputPlane)cb.CollisionObject.UserObject);
-				System.Numerics.Matrix4x4.Decompose(inputPlane.entity.globalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
-				var size = inputPlane.size.value;
-				var pixsize = inputPlane.pixelSize.value;
+				System.Numerics.Matrix4x4.Decompose(inputPlane.entity.GlobalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
+				var size = inputPlane.size.Value;
+				var pixsize = inputPlane.pixelSize.Value;
 
 				var hit = cb.HitPointWorld;
 				var hitnormal = cb.HitNormalWorld;
@@ -201,7 +201,7 @@ namespace RhubarbEngine.Input
 					default:
 						break;
 				}
-				inputPlane.updatePos(pos, source);
+				inputPlane.UpdatePos(pos, source);
 				if (HasClicked())
 				{
 					switch (source)
@@ -415,7 +415,7 @@ namespace RhubarbEngine.Input
 						hittestbool = RayTestHitTest(_sourcse, _destination, item);
 					}
 				}
-				if (!((!RayTestHitTest(_sourcse, _destination, engine.worldManager.focusedWorld)) && !hittestbool))
+				if (!((!RayTestHitTest(_sourcse, _destination, engine.worldManager.FocusedWorld)) && !hittestbool))
 				{
 					HasHit = true;
 					lastDeriction = deriction;
@@ -446,7 +446,7 @@ namespace RhubarbEngine.Input
 						hittestbool = HitTest(sourcse, destination, item);
 					}
 				}
-				if ((!HitTest(sourcse, destination, engine.worldManager.focusedWorld)) && !hittestbool)
+				if ((!HitTest(sourcse, destination, engine.worldManager.FocusedWorld)) && !hittestbool)
 				{
 					Snaping = false;
 					cursor = Input.Cursors.None;
@@ -461,7 +461,7 @@ namespace RhubarbEngine.Input
 				return false;
 			using (var cb = new ClosestRayResultCallback(ref sourcse, ref destination))
 			{
-				eworld.physicsWorld.RayTest(sourcse, destination, cb);
+				eworld.PhysicsWorld.RayTest(sourcse, destination, cb);
 				if (cb.HasHit)
 				{
 					UpdateLaserPos(cb.HitPointWorld + (cb.HitNormalWorld * 0.01f), cb.HitPointWorld + (cb.HitNormalWorld * -0.02f));
@@ -490,7 +490,7 @@ namespace RhubarbEngine.Input
 				return false;
 			using (var cb = new ClosestRayResultCallback(ref sourcse, ref destination))
 			{
-				eworld.physicsWorld.RayTest(sourcse, destination, cb);
+				eworld.PhysicsWorld.RayTest(sourcse, destination, cb);
 				if (cb.HasHit)
 				{
 					ProssecesHitPoint(new Vector3d(cb.HitPointWorld.X, cb.HitPointWorld.Y, cb.HitPointWorld.Z), new Vector3d(cb.HitNormalWorld.X, cb.HitNormalWorld.Y, cb.HitNormalWorld.Z));

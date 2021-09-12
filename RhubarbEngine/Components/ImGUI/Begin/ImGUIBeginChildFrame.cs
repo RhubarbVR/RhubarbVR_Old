@@ -43,11 +43,11 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (ImGui.BeginChildFrame(id.value, new Vector2(size.value.x, size.value.y)))
+			if (ImGui.BeginChildFrame(id.Value, new Vector2(size.Value.x, size.Value.y)))
 			{
 				foreach (var item in children)
 				{
-					item.target?.ImguiRender(imGuiRenderer, canvas);
+					item.Target?.ImguiRender(imGuiRenderer, canvas);
 				}
 				ImGui.EndChildFrame();
 			}

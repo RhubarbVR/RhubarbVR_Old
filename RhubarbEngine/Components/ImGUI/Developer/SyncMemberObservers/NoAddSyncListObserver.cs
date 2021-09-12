@@ -30,7 +30,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			ImGui.Text(fieldName.value ?? "NUll");
+			ImGui.Text(fieldName.Value ?? "NUll");
 			if (ImGui.BeginChild(referenceID.id.ToString()))
 			{
 				RenderChildren(imGuiRenderer, canvas);

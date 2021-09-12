@@ -44,11 +44,11 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
 			ImGui.Dummy(new Vector2(0, 10));
-			if (ImGui.BeginChild(id.value ?? "", new Vector2(size.value.x, size.value.y), border.value, windowflag.value))
+			if (ImGui.BeginChild(id.Value ?? "", new Vector2(size.Value.x, size.Value.y), border.Value, windowflag.Value))
 			{
 				foreach (var item in children)
 				{
-					item.target?.ImguiRender(imGuiRenderer, canvas);
+					item.Target?.ImguiRender(imGuiRenderer, canvas);
 				}
 				ImGui.EndChild();
 			}
@@ -73,20 +73,20 @@ namespace RhubarbEngine.Components.ImGUI
 		private void clickKey(string key)
 		{
 			ModifierKeys mkey = ModifierKeys.None;
-			if (shift.value)
+			if (shift.Value)
 			{
 				mkey |= ModifierKeys.Shift;
-				shift.value = false;
+				shift.Value = false;
 			}
-			if (ctrl.value)
+			if (ctrl.Value)
 			{
 				mkey |= ModifierKeys.Control;
 			}
-			if (alt.value)
+			if (alt.Value)
 			{
 				mkey |= ModifierKeys.Alt;
 			}
-			if (gui.value)
+			if (gui.Value)
 			{
 				mkey |= ModifierKeys.Gui;
 			}
@@ -142,12 +142,12 @@ namespace RhubarbEngine.Components.ImGUI
 						break;
 					case "sHIFT":
 						i.PressKey(Key.ShiftLeft, mkey);
-						shift.value = false;
+						shift.Value = false;
 						ReloadKeyboard();
 						break;
 					case "Shift":
 						i.PressKey(Key.ShiftLeft, mkey);
-						shift.value = true;
+						shift.Value = true;
 						ReloadKeyboard();
 						break;
 					case "Enter":
@@ -158,16 +158,16 @@ namespace RhubarbEngine.Components.ImGUI
 						break;
 					case "Caps\nLock":
 						i.PressKey(Key.F1, mkey);
-						caps.value = !caps.value;
+						caps.Value = !caps.Value;
 						ReloadKeyboard();
 						break;
 					case "Ctrl":
 						i.PressKey(Key.ControlLeft, mkey);
-						ctrl.value = !ctrl.value;
+						ctrl.Value = !ctrl.Value;
 						break;
 					case "Alt":
 						i.PressKey(Key.AltLeft, mkey);
-						alt.value = !alt.value;
+						alt.Value = !alt.Value;
 						break;
 					case "<=":
 						i.PressKey(Key.Left, mkey);
@@ -195,37 +195,37 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			rowOne.target = entity.attachComponent<ImGUIButtonRow>();
-			rowTwo.target = entity.attachComponent<ImGUIButtonRow>();
-			rowThree.target = entity.attachComponent<ImGUIButtonRow>();
-			rowFour.target = entity.attachComponent<ImGUIButtonRow>();
-			rowFive.target = entity.attachComponent<ImGUIButtonRow>();
-			rowSix.target = entity.attachComponent<ImGUIButtonRow>();
-			rowOne.target.action.Target = clickKey;
-			rowTwo.target.action.Target = clickKey;
-			rowThree.target.action.Target = clickKey;
-			rowFour.target.action.Target = clickKey;
-			rowFive.target.action.Target = clickKey;
-			rowSix.target.action.Target = clickKey;
+			rowOne.Target = entity.AttachComponent<ImGUIButtonRow>();
+			rowTwo.Target = entity.AttachComponent<ImGUIButtonRow>();
+			rowThree.Target = entity.AttachComponent<ImGUIButtonRow>();
+			rowFour.Target = entity.AttachComponent<ImGUIButtonRow>();
+			rowFive.Target = entity.AttachComponent<ImGUIButtonRow>();
+			rowSix.Target = entity.AttachComponent<ImGUIButtonRow>();
+			rowOne.Target.action.Target = clickKey;
+			rowTwo.Target.action.Target = clickKey;
+			rowThree.Target.action.Target = clickKey;
+			rowFour.Target.action.Target = clickKey;
+			rowFive.Target.action.Target = clickKey;
+			rowSix.Target.action.Target = clickKey;
 			float val = 0.125f;
-			rowOne.target.hight.value = val;
-			rowTwo.target.hight.value = val;
-			rowThree.target.hight.value = val;
-			rowFour.target.hight.value = val;
-			rowFive.target.hight.value = val;
-			rowSix.target.hight.value = val;
-			children.Add().target = rowOne.target;
-			children.Add().target = rowTwo.target;
-			children.Add().target = rowThree.target;
-			children.Add().target = rowFour.target;
-			children.Add().target = rowFive.target;
-			children.Add().target = rowSix.target;
+			rowOne.Target.hight.Value = val;
+			rowTwo.Target.hight.Value = val;
+			rowThree.Target.hight.Value = val;
+			rowFour.Target.hight.Value = val;
+			rowFive.Target.hight.Value = val;
+			rowSix.Target.hight.Value = val;
+			children.Add().Target = rowOne.Target;
+			children.Add().Target = rowTwo.Target;
+			children.Add().Target = rowThree.Target;
+			children.Add().Target = rowFour.Target;
+			children.Add().Target = rowFive.Target;
+			children.Add().Target = rowSix.Target;
 			ReloadKeyboard();
 		}
 
 		public void ReloadKeyboard()
 		{
-			BuildRows(shift.value || caps.value);
+			BuildRows(shift.Value || caps.Value);
 		}
 
 		private void BuildRows(bool shift)
@@ -242,18 +242,18 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			foreach (var item in list)
 			{
-				row.widths.Add().value = width;
-				row.labels.Add().value = item;
+				row.widths.Add().Value = width;
+				row.labels.Add().Value = item;
 			}
 		}
 
 		private void BuildRowOne(bool shift)
 		{
-			if (rowOne.target == null)
+			if (rowOne.Target == null)
 				return;
-			rowOne.target.labels.Clear();
-			rowOne.target.widths.Clear();
-			var row = rowOne.target;
+			rowOne.Target.labels.Clear();
+			rowOne.Target.widths.Clear();
+			var row = rowOne.Target;
 			if (shift)
 			{
 				BuildBasicKey(new string[] {
@@ -293,11 +293,11 @@ namespace RhubarbEngine.Components.ImGUI
 		}
 		private void BuildRowTwo(bool shift)
 		{
-			if (rowTwo.target == null)
+			if (rowTwo.Target == null)
 				return;
-			rowTwo.target.labels.Clear();
-			rowTwo.target.widths.Clear();
-			var row = rowTwo.target;
+			rowTwo.Target.labels.Clear();
+			rowTwo.Target.widths.Clear();
+			var row = rowTwo.Target;
 			if (shift)
 			{
 				BuildBasicKey(new string[] {
@@ -315,8 +315,8 @@ namespace RhubarbEngine.Components.ImGUI
 				"_",
 				"+"
 				}, row, 0.05f);
-				row.widths.Add().value = 0.12f;
-				row.labels.Add().value = "<--";
+				row.widths.Add().Value = 0.12f;
+				row.labels.Add().Value = "<--";
 			}
 			else
 			{
@@ -335,21 +335,21 @@ namespace RhubarbEngine.Components.ImGUI
 				"-",
 				"+"
 				}, row, 0.05f);
-				row.widths.Add().value = 0.12f;
-				row.labels.Add().value = "<--";
+				row.widths.Add().Value = 0.12f;
+				row.labels.Add().Value = "<--";
 			}
 		}
 		private void BuildRowThree(bool shift)
 		{
-			if (rowThree.target == null)
+			if (rowThree.Target == null)
 				return;
-			rowThree.target.labels.Clear();
-			rowThree.target.widths.Clear();
-			var row = rowThree.target;
+			rowThree.Target.labels.Clear();
+			rowThree.Target.widths.Clear();
+			var row = rowThree.Target;
 			if (shift)
 			{
-				row.widths.Add().value = 0.075f;
-				row.labels.Add().value = "Tab";
+				row.widths.Add().Value = 0.075f;
+				row.labels.Add().Value = "Tab";
 				BuildBasicKey(new string[] {
 				"Q",
 				"W",
@@ -364,13 +364,13 @@ namespace RhubarbEngine.Components.ImGUI
 				"{",
 				"}"
 				}, row, 0.05f);
-				row.widths.Add().value = 0.075f;
-				row.labels.Add().value = "|";
+				row.widths.Add().Value = 0.075f;
+				row.labels.Add().Value = "|";
 			}
 			else
 			{
-				row.widths.Add().value = 0.075f;
-				row.labels.Add().value = "Tab";
+				row.widths.Add().Value = 0.075f;
+				row.labels.Add().Value = "Tab";
 				BuildBasicKey(new string[] {
 				"q",
 				"w",
@@ -385,21 +385,21 @@ namespace RhubarbEngine.Components.ImGUI
 				"[",
 				"]"
 				}, row, 0.05f);
-				row.widths.Add().value = 0.075f;
-				row.labels.Add().value = "\\";
+				row.widths.Add().Value = 0.075f;
+				row.labels.Add().Value = "\\";
 			}
 		}
 		private void BuildRowFour(bool shift)
 		{
-			if (rowFour.target == null)
+			if (rowFour.Target == null)
 				return;
-			rowFour.target.labels.Clear();
-			rowFour.target.widths.Clear();
-			var row = rowFour.target;
+			rowFour.Target.labels.Clear();
+			rowFour.Target.widths.Clear();
+			var row = rowFour.Target;
 			if (shift)
 			{
-				row.widths.Add().value = 0.085f;
-				row.labels.Add().value = "Caps\nLock";
+				row.widths.Add().Value = 0.085f;
+				row.labels.Add().Value = "Caps\nLock";
 				BuildBasicKey(new string[] {
 				"A",
 				"S",
@@ -413,13 +413,13 @@ namespace RhubarbEngine.Components.ImGUI
 				":",
 				"\"",
 				}, row, 0.05f);
-				row.widths.Add().value = 0.12f;
-				row.labels.Add().value = "Enter";
+				row.widths.Add().Value = 0.12f;
+				row.labels.Add().Value = "Enter";
 			}
 			else
 			{
-				row.widths.Add().value = 0.085f;
-				row.labels.Add().value = "Caps\nLock";
+				row.widths.Add().Value = 0.085f;
+				row.labels.Add().Value = "Caps\nLock";
 				BuildBasicKey(new string[] {
 				"a",
 				"s",
@@ -433,21 +433,21 @@ namespace RhubarbEngine.Components.ImGUI
 				";",
 				"'",
 				}, row, 0.05f);
-				row.widths.Add().value = 0.12f;
-				row.labels.Add().value = "Enter";
+				row.widths.Add().Value = 0.12f;
+				row.labels.Add().Value = "Enter";
 			}
 		}
 		private void BuildRowFive(bool shift)
 		{
-			if (rowFive.target == null)
+			if (rowFive.Target == null)
 				return;
-			rowFive.target.labels.Clear();
-			rowFive.target.widths.Clear();
-			var row = rowFive.target;
+			rowFive.Target.labels.Clear();
+			rowFive.Target.widths.Clear();
+			var row = rowFive.Target;
 			if (shift)
 			{
-				row.widths.Add().value = 0.12f;
-				row.labels.Add().value = "sHIFT";
+				row.widths.Add().Value = 0.12f;
+				row.labels.Add().Value = "sHIFT";
 				BuildBasicKey(new string[] {
 				"Z",
 				"X",
@@ -460,13 +460,13 @@ namespace RhubarbEngine.Components.ImGUI
 				">",
 				"?",
 				}, row, 0.05f);
-				row.widths.Add().value = 0.12f;
-				row.labels.Add().value = "/\\";
+				row.widths.Add().Value = 0.12f;
+				row.labels.Add().Value = "/\\";
 			}
 			else
 			{
-				row.widths.Add().value = 0.12f;
-				row.labels.Add().value = "Shift";
+				row.widths.Add().Value = 0.12f;
+				row.labels.Add().Value = "Shift";
 				BuildBasicKey(new string[] {
 				"z",
 				"x",
@@ -479,58 +479,58 @@ namespace RhubarbEngine.Components.ImGUI
 				".",
 				"/",
 				}, row, 0.05f);
-				row.widths.Add().value = 0.12f;
-				row.labels.Add().value = "/\\";
+				row.widths.Add().Value = 0.12f;
+				row.labels.Add().Value = "/\\";
 			}
 		}
 		private void BuildRowSix(bool shift)
 		{
-			if (rowSix.target == null)
+			if (rowSix.Target == null)
 				return;
-			rowSix.target.labels.Clear();
-			rowSix.target.widths.Clear();
-			var row = rowSix.target;
+			rowSix.Target.labels.Clear();
+			rowSix.Target.widths.Clear();
+			var row = rowSix.Target;
 			if (shift)
 			{
-				row.widths.Add().value = 0.08f;
-				row.labels.Add().value = "Ctrl";
-				row.widths.Add().value = 0.06f;
-				row.labels.Add().value = "Close";
-				row.widths.Add().value = 0.08f;
-				row.labels.Add().value = "Alt";
-				row.widths.Add().value = 0.32f;
-				row.labels.Add().value = "Space";
-				row.widths.Add().value = 0.05f;
-				row.labels.Add().value = "Ctx";
-				row.widths.Add().value = 0.08f;
-				row.labels.Add().value = "Ctrl";
-				row.widths.Add().value = 0.05f;
-				row.labels.Add().value = "<=";
-				row.widths.Add().value = 0.05f;
-				row.labels.Add().value = "\\/";
-				row.widths.Add().value = 0.05f;
-				row.labels.Add().value = "=>";
+				row.widths.Add().Value = 0.08f;
+				row.labels.Add().Value = "Ctrl";
+				row.widths.Add().Value = 0.06f;
+				row.labels.Add().Value = "Close";
+				row.widths.Add().Value = 0.08f;
+				row.labels.Add().Value = "Alt";
+				row.widths.Add().Value = 0.32f;
+				row.labels.Add().Value = "Space";
+				row.widths.Add().Value = 0.05f;
+				row.labels.Add().Value = "Ctx";
+				row.widths.Add().Value = 0.08f;
+				row.labels.Add().Value = "Ctrl";
+				row.widths.Add().Value = 0.05f;
+				row.labels.Add().Value = "<=";
+				row.widths.Add().Value = 0.05f;
+				row.labels.Add().Value = "\\/";
+				row.widths.Add().Value = 0.05f;
+				row.labels.Add().Value = "=>";
 			}
 			else
 			{
-				row.widths.Add().value = 0.08f;
-				row.labels.Add().value = "Ctrl";
-				row.widths.Add().value = 0.06f;
-				row.labels.Add().value = "Close";
-				row.widths.Add().value = 0.08f;
-				row.labels.Add().value = "Alt";
-				row.widths.Add().value = 0.32f;
-				row.labels.Add().value = "Space";
-				row.widths.Add().value = 0.05f;
-				row.labels.Add().value = "Ctx";
-				row.widths.Add().value = 0.08f;
-				row.labels.Add().value = "Ctrl";
-				row.widths.Add().value = 0.05f;
-				row.labels.Add().value = "<=";
-				row.widths.Add().value = 0.05f;
-				row.labels.Add().value = "\\/";
-				row.widths.Add().value = 0.05f;
-				row.labels.Add().value = "=>";
+				row.widths.Add().Value = 0.08f;
+				row.labels.Add().Value = "Ctrl";
+				row.widths.Add().Value = 0.06f;
+				row.labels.Add().Value = "Close";
+				row.widths.Add().Value = 0.08f;
+				row.labels.Add().Value = "Alt";
+				row.widths.Add().Value = 0.32f;
+				row.labels.Add().Value = "Space";
+				row.widths.Add().Value = 0.05f;
+				row.labels.Add().Value = "Ctx";
+				row.widths.Add().Value = 0.08f;
+				row.labels.Add().Value = "Ctrl";
+				row.widths.Add().Value = 0.05f;
+				row.labels.Add().Value = "<=";
+				row.widths.Add().Value = 0.05f;
+				row.labels.Add().Value = "\\/";
+				row.widths.Add().Value = 0.05f;
+				row.labels.Add().Value = "=>";
 			}
 		}
 		public ImGUIKeyboard(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

@@ -32,21 +32,35 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		public override void buildSyncObjs(bool newRefIds)
 		{
-			Endpoint = new Sync<Vector3d>(this, newRefIds);
-			Endpoint.value = new Vector3d(0, 1, 0);
-			EndHandle = new Sync<Vector3d>(this, newRefIds);
-			EndHandle.value = new Vector3d(0, 0, 0);
-			StartHandle = new Sync<Vector3d>(this, newRefIds);
-			StartHandle.value = new Vector3d(0, 1, 0);
-			CurveSteps = new Sync<int>(this, newRefIds);
-			CurveSteps.value = 25;
-			Radius = new Sync<double>(this, newRefIds);
-			Radius.value = 0.01d;
-			Steps = new Sync<int>(this, newRefIds);
-			Steps.value = 3;
-			AngleShiftRad = new Sync<int>(this, newRefIds);
-			AngleShiftRad.value = 0;
-			Capped = new Sync<bool>(this, newRefIds);
+            Endpoint = new Sync<Vector3d>(this, newRefIds)
+            {
+                Value = new Vector3d(0, 1, 0)
+            };
+            EndHandle = new Sync<Vector3d>(this, newRefIds)
+            {
+                Value = new Vector3d(0, 0, 0)
+            };
+            StartHandle = new Sync<Vector3d>(this, newRefIds)
+            {
+                Value = new Vector3d(0, 1, 0)
+            };
+            CurveSteps = new Sync<int>(this, newRefIds)
+            {
+                Value = 25
+            };
+            Radius = new Sync<double>(this, newRefIds)
+            {
+                Value = 0.01d
+            };
+            Steps = new Sync<int>(this, newRefIds)
+            {
+                Value = 3
+            };
+            AngleShiftRad = new Sync<int>(this, newRefIds)
+            {
+                Value = 0
+            };
+            Capped = new Sync<bool>(this, newRefIds);
 			CapCenter = new Sync<Vector2d>(this, newRefIds);
 			Clockwise = new Sync<bool>(this, newRefIds);
 			OverrideCapCenter = new Sync<bool>(this, newRefIds);
@@ -56,43 +70,43 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		public override void onChanged()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 
 
-		private void loadCurve()
+		private void LoadCurve()
 		{
 			if (_generator.Vertices == null)
 			{
 				_generator.Vertices = new List<Vector3d>();
 			}
 			_generator.Vertices.Clear();
-			for (int i = 0; i < CurveSteps.value; i++)
+			for (var i = 0; i < CurveSteps.Value; i++)
 			{
-				float poser = (float)(i) / ((float)CurveSteps.value - 1);
-				_generator.Vertices.Add(Vector3d.bezier(Vector3d.Zero, StartHandle.value, EndHandle.value, Endpoint.value, poser));
+				var poser = (float)(i) / ((float)CurveSteps.Value - 1);
+				_generator.Vertices.Add(Vector3d.bezier(Vector3d.Zero, StartHandle.Value, EndHandle.Value, Endpoint.Value, poser));
 			}
 		}
-		RMesh kite;
+		RMesh _kite;
 
-		private void updateMesh()
+		private void UpdateMesh()
 		{
-			_generator.Clockwise = Clockwise.value;
-			_generator.OverrideCapCenter = OverrideCapCenter.value;
-			_generator.CapCenter = CapCenter.value;
-			_generator.ClosedLoop = ClosedLoop.value;
-			_generator.WantUVs = WantUVs.value;
-			_generator.Capped = Capped.value;
-			_generator.Polygon = Polygon2d.MakeCircle(Radius.value, Steps.value, AngleShiftRad.value);
-			loadCurve();
-			MeshGenerator newmesh = _generator.Generate();
-			kite = new RMesh(newmesh.MakeSimpleMesh());
-			kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
-			load(kite, true);
+			_generator.Clockwise = Clockwise.Value;
+			_generator.OverrideCapCenter = OverrideCapCenter.Value;
+			_generator.CapCenter = CapCenter.Value;
+			_generator.ClosedLoop = ClosedLoop.Value;
+			_generator.WantUVs = WantUVs.Value;
+			_generator.Capped = Capped.Value;
+			_generator.Polygon = Polygon2d.MakeCircle(Radius.Value, Steps.Value, AngleShiftRad.Value);
+			LoadCurve();
+			var newmesh = _generator.Generate();
+			_kite = new RMesh(newmesh.MakeSimpleMesh());
+			_kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
+			load(_kite, true);
 		}
 		public override void onLoaded()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 		public CurvedTubeMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{

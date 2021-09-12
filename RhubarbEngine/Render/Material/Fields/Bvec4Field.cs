@@ -23,7 +23,7 @@ namespace RhubarbEngine.Render.Material.Fields
 		}
 		unsafe public override void updateBuffer(GraphicsDevice gb)
 		{
-			gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_bvec4(field.value));
+			gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_bvec4(field.Value));
 		}
 	}
 }

@@ -16,11 +16,11 @@ namespace RhubarbEngine.World
 
 		public bool isDriven { get; private set; }
 
-		private List<Driveable> driven = new List<Driveable>();
+		private readonly List<Driveable> _driven = new List<Driveable>();
 
 		public override void Removed()
 		{
-			foreach (Driveable dev in driven)
+			foreach (var dev in _driven)
 			{
 				dev.killDrive();
 			}
@@ -52,7 +52,7 @@ namespace RhubarbEngine.World
 		private T _value;
 
 
-		public T value
+		public T Value
 		{
 			get
 			{
@@ -71,7 +71,7 @@ namespace RhubarbEngine.World
 
 		private void UpdateValue()
 		{
-			DataNodeGroup obj = new DataNodeGroup();
+			var obj = new DataNodeGroup();
 			IDataNode Value;
 			if (typeof(T).IsEnum)
 			{
@@ -81,8 +81,8 @@ namespace RhubarbEngine.World
 			{
 				Value = new DataNode<T>(_value);
 			}
-			obj.setValue("Value", Value);
-			world.netModule?.addToQueue(Net.ReliabilityLevel.Unreliable, obj, referenceID.id);
+			obj.SetValue("Value", Value);
+			world.NetModule?.AddToQueue(Net.ReliabilityLevel.Unreliable, obj, referenceID.id);
 		}
 		public SyncStream()
 		{
@@ -99,11 +99,11 @@ namespace RhubarbEngine.World
 
 		}
 
-		public override DataNodeGroup serialize(bool netsync = false)
+		public override DataNodeGroup Serialize(bool netsync = false)
 		{
-			DataNodeGroup obj = new DataNodeGroup();
-			DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
-			obj.setValue("referenceID", Refid);
+			var obj = new DataNodeGroup();
+			var Refid = new DataNode<NetPointer>(referenceID);
+			obj.SetValue("referenceID", Refid);
 			IDataNode Value;
 			if (typeof(T).IsEnum)
 			{
@@ -113,24 +113,24 @@ namespace RhubarbEngine.World
 			{
 				Value = new DataNode<T>(_value);
 			}
-			obj.setValue("Value", Value);
-			obj.setValue("Name", name.serialize());
+			obj.SetValue("Value", Value);
+			obj.SetValue("Name", name.Serialize());
 			return obj;
 		}
 
-		public override void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
 		{
 			if (data == null)
 			{
-				world.worldManager.engine.logger.Log($"Node did not exsets When loading Sync Value { this.GetType().FullName}");
+				world.worldManager.engine.logger.Log($"Node did not exsets When loading Sync Value { GetType().FullName}");
 				return;
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID(), referenceID.getID());
-				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()))
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), referenceID.getID());
+				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
 				{
-					foreach (RefIDResign func in latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()])
+					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
 					{
 						func(referenceID.getID());
 					}
@@ -138,31 +138,31 @@ namespace RhubarbEngine.World
 			}
 			else
 			{
-				referenceID = ((DataNode<NetPointer>)data.getValue("referenceID")).Value;
-				world.addWorldObj(this);
+				referenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
+				world.AddWorldObj(this);
 			}
 			if (typeof(T).IsEnum)
 			{
-				_value = (T)(object)((DataNode<int>)data.getValue("Value")).Value;
+				_value = (T)(object)((DataNode<int>)data.GetValue("Value")).Value;
 			}
 			else
 			{
-				_value = ((DataNode<T>)data.getValue("Value")).Value;
+				_value = ((DataNode<T>)data.GetValue("Value")).Value;
 			}
-			DataNodeGroup dataNode = (DataNodeGroup)data.getValue("Name");
-			name.deSerialize(dataNode, onload, NewRefIDs, newRefID, latterResign);
+			var dataNode = (DataNodeGroup)data.GetValue("Name");
+			name.DeSerialize(dataNode, onload, NewRefIDs, newRefID, latterResign);
 
 		}
 
-		public void ReceiveData(DataNodeGroup data, Peer peer)
+        void ISyncMember.ReceiveData(DataNodeGroup data, Peer peer)
 		{
 			if (typeof(T).IsEnum)
 			{
-				_value = (T)(object)((DataNode<int>)data.getValue("Value")).Value;
+				_value = (T)(object)((DataNode<int>)data.GetValue("Value")).Value;
 			}
 			else
 			{
-				_value = ((DataNode<T>)data.getValue("Value")).Value;
+				_value = ((DataNode<T>)data.GetValue("Value")).Value;
 			}
 		}
 	}

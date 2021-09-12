@@ -22,22 +22,22 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			StickRadius = new Sync<float>(this, newRefIds);
-			StickRadius.value = 0.5f;
+			StickRadius.Value = 0.5f;
 
 			StickLength = new Sync<float>(this, newRefIds);
-			StickLength.value = 1.0f;
+			StickLength.Value = 1.0f;
 
 			HeadBaseRadius = new Sync<float>(this, newRefIds);
-			HeadBaseRadius.value = 1.0f;
+			HeadBaseRadius.Value = 1.0f;
 
 			TipRadius = new Sync<float>(this, newRefIds);
-			TipRadius.value = 0.0f;
+			TipRadius.Value = 0.0f;
 
 			HeadLength = new Sync<float>(this, newRefIds);
-			HeadLength.value = 0.5f;
+			HeadLength.Value = 0.5f;
 
 			DoubleSided = new Sync<bool>(this, newRefIds);
-			DoubleSided.value = false;
+			DoubleSided.Value = false;
 		}
 		public override void onChanged()
 		{
@@ -46,12 +46,12 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		private void updateMesh()
 		{
-			_generator.StickRadius = StickRadius.value;
-			_generator.StickLength = StickLength.value;
-			_generator.HeadBaseRadius = HeadBaseRadius.value;
-			_generator.TipRadius = TipRadius.value;
-			_generator.HeadLength = HeadLength.value;
-			_generator.DoubleSided = DoubleSided.value;
+			_generator.StickRadius = StickRadius.Value;
+			_generator.StickLength = StickLength.Value;
+			_generator.HeadBaseRadius = HeadBaseRadius.Value;
+			_generator.TipRadius = TipRadius.Value;
+			_generator.HeadLength = HeadLength.Value;
+			_generator.DoubleSided = DoubleSided.Value;
 			MeshGenerator newmesh = _generator.Generate();
 			RMesh kite = new RMesh(newmesh.MakeDMesh());
 			kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

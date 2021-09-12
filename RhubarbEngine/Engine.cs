@@ -44,8 +44,10 @@ namespace RhubarbEngine
 
 		public DiscordRpcClient discordRpcClient;
 
-		public void initialize(string[] _args, bool _verbose = false, bool _Rendering = true)
-		{
+#pragma warning disable IDE0060 // Remove unused parameter
+        public void Initialize(string[] _args, bool _verbose = false, bool _Rendering = true)
+#pragma warning restore IDE0060 // Remove unused parameter
+        {
 			try
 			{
 				discordRpcClient = new DiscordRpcClient("678074691738402839");
@@ -91,7 +93,7 @@ namespace RhubarbEngine
 			Logger.init(this);
 			engineInitializer = new EngineInitializer(this);
 			logger.Log("Loading Arguments:", true);
-			engineInitializer.loadArguments(_args);
+			engineInitializer.LoadArguments(_args);
 			logger.Log("Datapath: " + dataPath);
 			//Build DataFolder
 			if (!Directory.Exists(dataPath))
@@ -108,14 +110,14 @@ namespace RhubarbEngine
 				logger.Log("Another instance is running at data path " + dataPath, true);
 				throw new Exception("Another instance is running at data path ");
 			}
-			List<DataList> lists = new List<DataList>();
+			var lists = new List<DataList>();
 			if (File.Exists("settings.json"))
 			{
-				string text = File.ReadAllText("settings.json");
-				DataList liet = SettingsManager.getDataFromJson(text);
+				var text = File.ReadAllText("settings.json");
+				var liet = SettingsManager.getDataFromJson(text);
 				lists.Add(liet);
 			}
-			foreach (string item in engineInitializer.settings)
+			foreach (var item in engineInitializer.settings)
 			{
 				string text;
 				if (File.Exists(item))
@@ -128,7 +130,7 @@ namespace RhubarbEngine
 				}
 				try
 				{
-					DataList liet = SettingsManager.getDataFromJson(text);
+					var liet = SettingsManager.getDataFromJson(text);
 					lists.Add(liet);
 				}
 				catch (Exception e)
@@ -144,10 +146,10 @@ namespace RhubarbEngine
 			{
 				settingsObject = SettingsManager.loadSettingsObject<MainSettingsObject>(lists.ToArray());
 			}
-			engineInitializer.initializeManagers();
+			engineInitializer.InitializeManagers();
 		}
 
-		public void startUpdateLoop()
+		public void StartUpdateLoop()
 		{
 			if (engineInitializer.Initialised)
 			{
@@ -167,9 +169,9 @@ namespace RhubarbEngine
 
 		public double lastTimemark;
 		//For performance testing
-		public void timeMark(string mark)
+		public void TimeMark(string mark)
 		{
-			double newtime = platformInfo.sw.Elapsed.TotalSeconds;
+			var newtime = platformInfo.sw.Elapsed.TotalSeconds;
 			Console.WriteLine(mark + " : " + (newtime - lastTimemark).ToString());
 			lastTimemark = newtime;
 		}
@@ -184,12 +186,11 @@ namespace RhubarbEngine
 			renderManager.Update().Wait();
 		}
 
-		public void cleanUP()
+		public void CleanUP()
 		{
-			audioManager.unloadAll();
+			audioManager.UnloadAll();
 			worldManager.CleanUp();
-			logger.cleanUP();
-			netApiManager.Close();
+			logger.CleanUP();
 		}
 	}
 }

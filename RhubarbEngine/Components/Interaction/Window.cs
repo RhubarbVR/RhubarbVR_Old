@@ -67,18 +67,18 @@ namespace RhubarbEngine.Components.Interaction
 			{
 				world.grabedWindow = null;
 			}
-			window.ChildDock.target = this;
-			ParentDock.target = this;
-			window.ChildDocPos.value = pos;
+			window.ChildDock.Target = this;
+			ParentDock.Target = this;
+			window.ChildDocPos.Value = pos;
 			entity.SetParent(window.entity, false, true);
 			sizeUpdate();
 		}
 
 		public void unDock()
 		{
-			if (ParentDock.target == null)
+			if (ParentDock.Target == null)
 				return;
-			entity.SetParent(ParentDock.target.entity.parent.target, false, true);
+			entity.SetParent(ParentDock.Target.entity.parent.Target, false, true);
 			sizeUpdate();
 		}
 
@@ -87,7 +87,7 @@ namespace RhubarbEngine.Components.Interaction
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
 			var pos = ImGui.GetCursorPos();
-			if ((world.grabedWindow != this) && (world.grabedWindow != null) && (ChildDock.target == null))
+			if ((world.grabedWindow != this) && (world.grabedWindow != null) && (ChildDock.Target == null))
 			{
 				var size = ImGui.GetWindowSize() / 2;
 				ImGui.SetCursorPos(size + new Vector2(-20, 0));
@@ -112,9 +112,9 @@ namespace RhubarbEngine.Components.Interaction
 				}
 				ImGui.SetCursorPos(pos);
 			}
-			if (ChildDock.target == null)
+			if (ChildDock.Target == null)
 			{
-				element.target?.ImguiRender(imGuiRenderer, canvas);
+				element.Target?.ImguiRender(imGuiRenderer, canvas);
 			}
 			else
 			{
@@ -123,7 +123,7 @@ namespace RhubarbEngine.Components.Interaction
 				var size = ImGui.GetWindowSize();
 				var parentsize = new Vector2();
 				bool flip = false;
-				switch (ChildDocPos.value)
+				switch (ChildDocPos.Value)
 				{
 					case DockPos.Up:
 						parentsize = new Vector2(size.X, (clapsed) ? ((size.Y - (titleBarHeight + framePad))) : ((size.Y - (titleBarHeight + framePad)) / 2));
@@ -147,11 +147,11 @@ namespace RhubarbEngine.Components.Interaction
 					ImGui.SetCursorPos(pos);
 					if (ImGui.BeginChildFrame((uint)referenceID.id, parentsize))
 					{
-						element.target?.ImguiRender(imGuiRenderer, canvas);
+						element.Target?.ImguiRender(imGuiRenderer, canvas);
 						ImGui.EndChildFrame();
 					}
 					bool e = true;
-					if ((int)ChildDocPos.value <= 2)
+					if ((int)ChildDocPos.Value <= 2)
 					{
 						ImGui.SetCursorPos(pos + new Vector2(0f, parentsize.Y));
 					}
@@ -167,12 +167,12 @@ namespace RhubarbEngine.Components.Interaction
 						}
 						ImGui.SetNextItemWidth((size.X / 2));
 					}
-					if (ImGui.CollapsingHeader(ChildDock.target.entity.name.value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.AllowItemOverlap))
+					if (ImGui.CollapsingHeader(ChildDock.Target.entity.name.Value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.AllowItemOverlap))
 					{
 						clapsed = false;
 						if (ImGui.BeginChildFrame((uint)referenceID.id + 1, parentsize))
 						{
-							ChildDock.target?.ImguiRender(imGuiRenderer, canvas);
+							ChildDock.Target?.ImguiRender(imGuiRenderer, canvas);
 							ImGui.EndChildFrame();
 						}
 					}
@@ -182,12 +182,12 @@ namespace RhubarbEngine.Components.Interaction
 					}
 					if (!e)
 					{
-						ChildDock.target.Close();
+						ChildDock.Target.Close();
 					}
 				}
 				else
 				{
-					if ((int)ChildDocPos.value < 2)
+					if ((int)ChildDocPos.Value < 2)
 					{
 						ImGui.SetCursorPos(pos + new Vector2(0f, parentsize.Y + titleBarHeight));
 					}
@@ -201,19 +201,19 @@ namespace RhubarbEngine.Components.Interaction
 					}
 					if (ImGui.BeginChildFrame((uint)referenceID.id, parentsize))
 					{
-						element.target?.ImguiRender(imGuiRenderer, canvas);
+						element.Target?.ImguiRender(imGuiRenderer, canvas);
 						ImGui.EndChildFrame();
 					}
 					ImGui.SetCursorPos(pos);
 					bool e = true;
 					ImGui.SetNextItemWidth(parentsize.X);
-					if (ImGui.CollapsingHeader(ChildDock.target.entity.name.value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.AllowItemOverlap))
+					if (ImGui.CollapsingHeader(ChildDock.Target.entity.name.Value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.AllowItemOverlap))
 					{
 						ImGui.SetNextItemWidth(parentsize.X);
 						clapsed = false;
 						if (ImGui.BeginChildFrame((uint)referenceID.id + 1, parentsize))
 						{
-							ChildDock.target?.ImguiRender(imGuiRenderer, canvas);
+							ChildDock.Target?.ImguiRender(imGuiRenderer, canvas);
 							ImGui.EndChildFrame();
 						}
 					}
@@ -223,7 +223,7 @@ namespace RhubarbEngine.Components.Interaction
 					}
 					if (!e)
 					{
-						ChildDock.target.Close();
+						ChildDock.Target.Close();
 					}
 				}
 
@@ -235,33 +235,33 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			if (renderEnableDriver.Linked)
 			{
-				renderEnableDriver.Drivevalue = ParentDock.target == null;
+				renderEnableDriver.Drivevalue = ParentDock.Target == null;
 			}
 			if (colBackGround.Linked)
 			{
-				colBackGround.Drivevalue = new Vector3f(size.value.x / 2, 0.01f, size.value.y / 2);
+				colBackGround.Drivevalue = new Vector3f(size.Value.x / 2, 0.01f, size.Value.y / 2);
 			}
 			if (BackGround.Linked)
 			{
-				BackGround.Drivevalue = new Vector3f(size.value.x / 2, 0.01f, size.value.y / 2);
+				BackGround.Drivevalue = new Vector3f(size.Value.x / 2, 0.01f, size.Value.y / 2);
 			}
 			if (labelDriver.Linked)
 			{
-				labelDriver.Drivevalue = entity.name.value;
+				labelDriver.Drivevalue = entity.name.Value;
 			}
 			if (meshWidth.Linked)
 			{
-				meshWidth.Drivevalue = size.value.x;
+				meshWidth.Drivevalue = size.Value.x;
 			}
 			if (meshHeight.Linked)
 			{
-				meshHeight.Drivevalue = size.value.y;
+				meshHeight.Drivevalue = size.Value.y;
 			}
 			if (colDriver.Linked)
 			{
-				colDriver.Drivevalue = size.value / 2;
+				colDriver.Drivevalue = size.Value / 2;
 			}
-			Vector2u pixsize = new Vector2u((uint)(size.value.x * pixelDensity.value), (uint)(size.value.y * pixelDensity.value));
+			Vector2u pixsize = new Vector2u((uint)(size.Value.x * pixelDensity.Value), (uint)(size.Value.y * pixelDensity.Value));
 			if (colPixelsizeDriver.Linked)
 			{
 				colPixelsizeDriver.Drivevalue = pixsize;
@@ -279,17 +279,17 @@ namespace RhubarbEngine.Components.Interaction
 
 		private void AttachBackGround()
 		{
-			entity.attachComponent<Grabbable>();
-			var col = entity.attachComponent<BoxCollider>();
+			entity.AttachComponent<Grabbable>();
+			var col = entity.AttachComponent<BoxCollider>();
 			var (e, mesh, mit) = Helpers.MeshHelper.AddMesh<BoxMesh>(entity, world.staticAssets.basicUnlitShader, "UIBackGround", 2147483646);
-			BackGround.setDriveTarget(mesh.Extent);
-			colBackGround.setDriveTarget(col.boxExtents);
+			BackGround.SetDriveTarget(mesh.Extent);
+			colBackGround.SetDriveTarget(col.boxExtents);
 		}
 
 		public override void onLoaded()
 		{
 			base.onLoaded();
-			entity.onDrop += Entity_onDrop;
+			entity.OnDrop += Entity_onDrop;
 		}
 
 		private void Entity_onDrop(GrabbableHolder obj, bool laser)
@@ -299,11 +299,11 @@ namespace RhubarbEngine.Components.Interaction
 
 		private void OnGrabHeader()
 		{
-			if (ParentDock.target != null)
+			if (ParentDock.Target != null)
 			{
 				unDock();
 			}
-			foreach (var grab in entity.getAllComponents<Grabbable>())
+			foreach (var grab in entity.GetAllComponents<Grabbable>())
 			{
 				grab.RemoteGrab();
 			}
@@ -313,32 +313,32 @@ namespace RhubarbEngine.Components.Interaction
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			PlaneMesh mesh = entity.attachComponent<PlaneMesh>();
-			meshWidth.setDriveTarget(mesh.Width);
-			meshHeight.setDriveTarget(mesh.Height);
-			var UIRender = entity.addChild("UIRender");
-			renderEnableDriver.setDriveTarget(UIRender.enabled);
+			PlaneMesh mesh = entity.AttachComponent<PlaneMesh>();
+			meshWidth.SetDriveTarget(mesh.Width);
+			meshHeight.SetDriveTarget(mesh.Height);
+			var UIRender = entity.AddChild("UIRender");
+			renderEnableDriver.SetDriveTarget(UIRender.enabled);
 			AttachBackGround();
-			InputPlane col = UIRender.attachComponent<InputPlane>();
-			colDriver.setDriveTarget(col.size);
-			colPixelsizeDriver.setDriveTarget(col.pixelSize);
-			RMaterial mit = entity.attachComponent<RMaterial>();
-			MeshRender meshRender = UIRender.attachComponent<MeshRender>();
-			UIRender.position.value = new Vector3f(0f, -0.012f, 0f);
-			ImGUICanvas imGUICanvas = UIRender.attachComponent<ImGUICanvas>();
+			InputPlane col = UIRender.AttachComponent<InputPlane>();
+			colDriver.SetDriveTarget(col.size);
+			colPixelsizeDriver.SetDriveTarget(col.pixelSize);
+			RMaterial mit = entity.AttachComponent<RMaterial>();
+			MeshRender meshRender = UIRender.AttachComponent<MeshRender>();
+			UIRender.position.Value = new Vector3f(0f, -0.012f, 0f);
+			ImGUICanvas imGUICanvas = UIRender.AttachComponent<ImGUICanvas>();
 			imGUICanvas.onClose.Target = Close;
-			imGUICanvas.imputPlane.target = col;
-			imGUICanvas.scale.value = new Vector2u(300);
+			imGUICanvas.imputPlane.Target = col;
+			imGUICanvas.scale.Value = new Vector2u(300);
 			imGUICanvas.onHeaderGrab.Target = OnGrabHeader;
-			labelDriver.setDriveTarget(imGUICanvas.name);
-			imGUICanvas.element.target = this;
-			canvasPixelsizeDriver.setDriveTarget(imGUICanvas.scale);
-			mit.Shader.target = world.staticAssets.basicUnlitShader;
-			canvas.target = imGUICanvas;
-			Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-			field.field.target = imGUICanvas;
-			meshRender.Materials.Add().target = mit;
-			meshRender.Mesh.target = mesh;
+			labelDriver.SetDriveTarget(imGUICanvas.name);
+			imGUICanvas.element.Target = this;
+			canvasPixelsizeDriver.SetDriveTarget(imGUICanvas.scale);
+			mit.Shader.Target = world.staticAssets.basicUnlitShader;
+			canvas.Target = imGUICanvas;
+			Render.Material.Fields.Texture2DField field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+			field.field.Target = imGUICanvas;
+			meshRender.Materials.Add().Target = mit;
+			meshRender.Mesh.Target = mesh;
 			sizeUpdate();
 		}
 
@@ -353,10 +353,10 @@ namespace RhubarbEngine.Components.Interaction
 			element = new SyncRef<IUIElement>(this, newRefIds);
 			canvas = new SyncRef<ImGUICanvas>(this, newRefIds);
 			size = new Sync<Vector2f>(this, newRefIds);
-			size.value = new Vector2f(1, 1.5);
+			size.Value = new Vector2f(1, 1.5);
 			size.Changed += Size_Changed;
 			pixelDensity = new Sync<uint>(this, newRefIds);
-			pixelDensity.value = 450;
+			pixelDensity.Value = 450;
 			meshWidth = new Driver<float>(this, newRefIds);
 			meshHeight = new Driver<float>(this, newRefIds);
 			colDriver = new Driver<Vector2f>(this, newRefIds);

@@ -27,21 +27,21 @@ namespace RhubarbEngine.Components.Transform
 			driver = new Driver<Quaternionf>(this, newRefIds);
 			speed = new Sync<Vector3f>(this, newRefIds);
 			offset = new Sync<Quaternionf>(this, newRefIds);
-			speed.value = new Vector3f(1f, 0f, 0f);
+			speed.Value = new Vector3f(1f, 0f, 0f);
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			float deltaSeconds = (float)world.worldManager.engine.platformInfo.deltaSeconds;
+			var deltaSeconds = (float)world.worldManager.engine.platformInfo.deltaSeconds;
 			if (driver.Linked)
 			{
-				Matrix4x4 newval = entity.localTrans() * Matrix4x4.CreateFromQuaternion(offset.value.ToSystemNumric()) * Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(speed.value.x * deltaSeconds, speed.value.y * deltaSeconds, speed.value.z * deltaSeconds));
-				Matrix4x4.Decompose(newval, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
+				var newval = entity.LocalTrans() * Matrix4x4.CreateFromQuaternion(offset.Value.ToSystemNumric()) * Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(speed.Value.x * deltaSeconds, speed.Value.y * deltaSeconds, speed.Value.z * deltaSeconds));
+				Matrix4x4.Decompose(newval, out _, out var newrotation, out _);
 				driver.Drivevalue = new Quaternionf(newrotation.X, newrotation.Y, newrotation.Z, newrotation.W);
 			}
 			else
 			{
-				driver.target = entity.rotation;
+				driver.Target = entity.rotation;
 			}
 		}
 		public Spinner(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

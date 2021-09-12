@@ -29,7 +29,7 @@ namespace RhubarbEngine.Components.Color
 		{
 			if (driver.Linked)
 			{
-				driver.Drivevalue = Value.value;
+				driver.Drivevalue = Value.Value;
 			}
 		}
 		public RGBDriver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

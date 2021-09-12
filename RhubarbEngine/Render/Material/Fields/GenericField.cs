@@ -20,12 +20,12 @@ namespace RhubarbEngine.Render.Material.Fields
 		}
 		public override void setValue(Object val)
 		{
-			field.value = (T)val;
+			field.Value = (T)val;
 		}
 
 		public virtual void SetDefault()
 		{
-			field.value = default;
+			field.Value = default;
 		}
 
 		private void valueUpdate(IChangeable e)
@@ -35,7 +35,7 @@ namespace RhubarbEngine.Render.Material.Fields
 
 		unsafe public override void updateBuffer(GraphicsDevice gb)
 		{
-			IntPtr e = GCHandle.ToIntPtr(GCHandle.Alloc(field.value));
+			IntPtr e = GCHandle.ToIntPtr(GCHandle.Alloc(field.Value));
 			gb.UpdateBuffer((DeviceBuffer)resource, 0, e, (uint)sizeof(T));
 		}
 

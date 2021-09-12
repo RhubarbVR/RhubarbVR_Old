@@ -33,7 +33,7 @@ namespace RhubarbEngine.Components.ImGUI
 			size = new Sync<Vector2f>(this, newRefIds);
 			border = new Sync<bool>(this, newRefIds);
 			windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
-			windowflag.value = ImGuiWindowFlags.None;
+			windowflag.Value = ImGuiWindowFlags.None;
 		}
 
 		public ImGUIBeginChild(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -46,11 +46,11 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (ImGui.BeginChild(id.value ?? "", new Vector2(size.value.x, size.value.y), border.value, windowflag.value))
+			if (ImGui.BeginChild(id.Value ?? "", new Vector2(size.Value.x, size.Value.y), border.Value, windowflag.Value))
 			{
 				foreach (var item in children)
 				{
-					item.target?.ImguiRender(imGuiRenderer, canvas);
+					item.Target?.ImguiRender(imGuiRenderer, canvas);
 				}
 				ImGui.EndChild();
 			}

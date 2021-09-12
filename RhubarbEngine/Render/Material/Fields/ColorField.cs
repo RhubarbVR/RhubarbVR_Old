@@ -14,7 +14,7 @@ namespace RhubarbEngine.Render.Material.Fields
 	{
 		public override void SetDefault()
 		{
-			field.value = Colorf.White;
+			field.Value = Colorf.White;
 		}
 
 		public override void createDeviceResource(ResourceFactory fact)
@@ -27,7 +27,7 @@ namespace RhubarbEngine.Render.Material.Fields
 		}
 		unsafe public override void updateBuffer(GraphicsDevice gb)
 		{
-			gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_color(field.value));
+			gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_color(field.Value));
 		}
 	}
 }

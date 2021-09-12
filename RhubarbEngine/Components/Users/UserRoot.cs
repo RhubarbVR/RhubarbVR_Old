@@ -21,7 +21,7 @@ namespace RhubarbEngine.Components.Users
 	public class UserRoot : Component
 	{
 
-		private float _moveSpeed = 10.0f;
+		private readonly float _moveSpeed = 10.0f;
 
 		public SyncRef<Entity> Head;
 
@@ -35,11 +35,23 @@ namespace RhubarbEngine.Components.Users
 		public Driver<Quaternionf> rotDriver;
 		public Driver<Vector3f> scaleDriver;
 
-		public Matrix4x4 Viewpos => entity.globalTrans();
+        public Matrix4x4 Viewpos
+        {
+            get
+            {
+                return entity.GlobalTrans();
+            }
+        }
 
-		public Matrix4x4 Headpos => Head.target?.globalTrans() ?? entity.globalTrans();
+        public Matrix4x4 Headpos
+        {
+            get
+            {
+                return Head.Target?.GlobalTrans() ?? entity.GlobalTrans();
+            }
+        }
 
-		public override void buildSyncObjs(bool newRefIds)
+        public override void buildSyncObjs(bool newRefIds)
 		{
 			Head = new SyncRef<Entity>(this, newRefIds);
 			LeftHand = new SyncRef<Entity>(this, newRefIds);
@@ -52,53 +64,56 @@ namespace RhubarbEngine.Components.Users
 
 		public override void onLoaded()
 		{
-			entity.persistence.value = false;
+			entity.persistence.Value = false;
 			logger.Log("Loaded Char");
 		}
 
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			posDriver.setDriveTarget(entity.position);
-			rotDriver.setDriveTarget(entity.rotation);
-			scaleDriver.setDriveTarget(entity.scale);
+			posDriver.SetDriveTarget(entity.position);
+			rotDriver.SetDriveTarget(entity.rotation);
+			scaleDriver.SetDriveTarget(entity.scale);
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (world.userspace)
+			if (world.Userspace)
 			{
 				return;
 			};
-			if (world.localUser == user.target)
+			if (world.LocalUser == user.Target)
 			{
 				if (input.mainWindows.GetKeyDown(Key.F7))
 				{
-					Console.WriteLine(entity.globalPos());
+					Console.WriteLine(entity.GlobalPos());
 				}
-				if (input.isKeyboardinuse)
-					return;
-				float deltaSeconds = (float)world.worldManager.engine.platformInfo.deltaSeconds;
-				float sprintFactor = world.worldManager.engine.inputManager.mainWindows.GetKey(Key.ControlLeft) || engine.inputManager.PrimaryPress()
+				if (input.IsKeyboardinuse)
+                {
+                    return;
+                }
+
+                var deltaSeconds = (float)world.worldManager.engine.platformInfo.deltaSeconds;
+				var sprintFactor = world.worldManager.engine.inputManager.mainWindows.GetKey(Key.ControlLeft) || engine.inputManager.PrimaryPress()
 				   ? 0.1f
 				   : world.worldManager.engine.inputManager.mainWindows.GetKey(Key.ShiftLeft)
 				   ? 2.5f
 					 : 1f;
-				Vector3 motionDir = Vector3.Zero;
+				var motionDir = Vector3.Zero;
 				var leftvraix = engine.inputManager.Axis(Input.Creality.Left);
 				var Rightvraix = engine.inputManager.Axis(Input.Creality.Right);
-				motionDir -= (LeftHand.target.rotation.value.AxisZ * leftvraix.y).ToSystemNumrics();
-				motionDir -= (RightHand.target.rotation.value.AxisZ * Rightvraix.y).ToSystemNumrics();
+				motionDir -= (LeftHand.Target.rotation.Value.AxisZ * leftvraix.y).ToSystemNumrics();
+				motionDir -= (RightHand.Target.rotation.Value.AxisZ * Rightvraix.y).ToSystemNumrics();
 
-				Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(leftvraix.x * -5f * deltaSeconds, 0.0f, 0.0f);
+				var lookRotation = Quaternion.CreateFromYawPitchRoll(leftvraix.x * -5f * deltaSeconds, 0.0f, 0.0f);
 				lookRotation *= Quaternion.CreateFromYawPitchRoll(Rightvraix.x * -5f * deltaSeconds, 0.0f, 0.0f);
 				float e = (world.worldManager.engine.inputManager.mainWindows.GetKey(Key.X)) ? 0 : 1;
 				e += (world.worldManager.engine.inputManager.mainWindows.GetKey(Key.Z)) ? 0 : -1;
 				lookRotation *= Quaternion.CreateFromYawPitchRoll(e * -5f * deltaSeconds, 0.0f, 0.0f);
 
-				var temp = world.userRoot.Head.target.rotation.value * Vector3f.AxisZ;
+				var temp = world.UserRoot.Head.Target.rotation.Value * Vector3f.AxisZ;
 				var HeadFacingDirection = new Vector3f(temp.x, 0, temp.z).Normalized;
-				Quaternionf looke = Quaternionf.FromTo(Vector3f.AxisZ, HeadFacingDirection);
+				var looke = Quaternionf.FromTo(Vector3f.AxisZ, HeadFacingDirection);
 				if (world.worldManager.engine.inputManager.mainWindows.GetKey(Key.A))
 				{
 					motionDir += -looke.AxisX.ToSystemNumrics();
@@ -132,35 +147,35 @@ namespace RhubarbEngine.Components.Users
 						return;
 					}
 
-					Matrix4x4 addTo = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(lookRotation) * Matrix4x4.CreateTranslation(motionDir * _moveSpeed * sprintFactor * deltaSeconds);
+					var addTo = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(lookRotation) * Matrix4x4.CreateTranslation(motionDir * _moveSpeed * sprintFactor * deltaSeconds);
 
-					var newtraans = addTo * entity.globalTrans();
-					entity.setGlobalTrans(newtraans);
+					var newtraans = addTo * entity.GlobalTrans();
+					entity.SetGlobalTrans(newtraans);
 
 
-					var userpos = world.localUser.FindOrCreateUserStream<SyncStream<Vector3f>>("UserPos");
-					var userrot = world.localUser.FindOrCreateUserStream<SyncStream<Quaternionf>>("UserRot");
-					var userscale = world.localUser.FindOrCreateUserStream<SyncStream<Vector3f>>("UserScale");
-					Matrix4x4.Decompose(entity.globalTrans(), out Vector3 scale, out Quaternion rotation, out Vector3 translation);
+					var userpos = world.LocalUser.FindOrCreateUserStream<SyncStream<Vector3f>>("UserPos");
+					var userrot = world.LocalUser.FindOrCreateUserStream<SyncStream<Quaternionf>>("UserRot");
+					var userscale = world.LocalUser.FindOrCreateUserStream<SyncStream<Vector3f>>("UserScale");
+					Matrix4x4.Decompose(entity.GlobalTrans(), out var scale, out var rotation, out var translation);
 
-					userpos.value = new Vector3f(translation.X, translation.Y, translation.Z);
-					userrot.value = new Quaternionf(rotation.X, rotation.Y, rotation.Z, rotation.W);
-					userscale.value = new Vector3f(scale.X, scale.Y, scale.Z);
-					engine.worldManager.privateOverlay.userRoot.entity.setGlobalTrans(entity.globalTrans());
+					userpos.Value = new Vector3f(translation.X, translation.Y, translation.Z);
+					userrot.Value = new Quaternionf(rotation.X, rotation.Y, rotation.Z, rotation.W);
+					userscale.Value = new Vector3f(scale.X, scale.Y, scale.Z);
+					engine.worldManager.privateOverlay.UserRoot.entity.SetGlobalTrans(entity.GlobalTrans());
 				}
 			}
 			else
 			{
-				if (user.target != null)
+				if (user.Target != null)
 				{
-					var temp = user.target;
+					var temp = user.Target;
 					var userpos = temp.FindUserStream<SyncStream<Vector3f>>("UserPos");
 					var userrot = temp.FindUserStream<SyncStream<Quaternionf>>("UserRot");
 					var userscale = temp.FindUserStream<SyncStream<Vector3f>>("UserScale");
 					try
 					{
-						Matrix4x4 value = Matrix4x4.CreateScale(userscale.value.ToSystemNumrics()) * Matrix4x4.CreateFromQuaternion(userrot.value.ToSystemNumric()) * Matrix4x4.CreateTranslation(userpos.value.ToSystemNumrics());
-						entity.setGlobalTrans(value);
+						var value = Matrix4x4.CreateScale(userscale.Value.ToSystemNumrics()) * Matrix4x4.CreateFromQuaternion(userrot.Value.ToSystemNumric()) * Matrix4x4.CreateTranslation(userpos.Value.ToSystemNumrics());
+						entity.SetGlobalTrans(value);
 					}
 					catch
 					{

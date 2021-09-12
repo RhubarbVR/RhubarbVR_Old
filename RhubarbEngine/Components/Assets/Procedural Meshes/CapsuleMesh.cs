@@ -22,17 +22,17 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			Longitudes = new Sync<int>(this, newRefIds);
-			Longitudes.value = 32;
+			Longitudes.Value = 32;
 			Latitudes = new Sync<int>(this, newRefIds);
-			Latitudes.value = 16;
+			Latitudes.Value = 16;
 			Rings = new Sync<int>(this, newRefIds);
-			Rings.value = 0;
+			Rings.Value = 0;
 			Depth = new Sync<float>(this, newRefIds);
-			Depth.value = 1.0f;
+			Depth.Value = 1.0f;
 			Radius = new Sync<float>(this, newRefIds);
-			Radius.value = 0.5f;
+			Radius.Value = 0.5f;
 			Profile = new Sync<CapsuleGenerator.UvProfile>(this, newRefIds);
-			Profile.value = CapsuleGenerator.UvProfile.Aspect;
+			Profile.Value = CapsuleGenerator.UvProfile.Aspect;
 		}
 		public override void onChanged()
 		{
@@ -41,12 +41,12 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		private void updateMesh()
 		{
-			_generator.Longitudes = Longitudes.value;
-			_generator.Latitudes = Latitudes.value;
-			_generator.Rings = Rings.value;
-			_generator.Depth = Depth.value;
-			_generator.Radius = Radius.value;
-			_generator.Profile = Profile.value;
+			_generator.Longitudes = Longitudes.Value;
+			_generator.Latitudes = Latitudes.Value;
+			_generator.Rings = Rings.Value;
+			_generator.Depth = Depth.Value;
+			_generator.Radius = Radius.Value;
+			_generator.Profile = Profile.Value;
 			MeshGenerator newmesh = _generator.Generate();
 			RMesh kite = new RMesh(newmesh.MakeDMesh());
 			kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

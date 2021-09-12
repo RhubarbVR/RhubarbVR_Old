@@ -32,9 +32,11 @@ namespace RhubarbEngine.Components.ImGUI
 			base.buildSyncObjs(newRefIds);
 			label = new Sync<string>(this, newRefIds);
 			preview = new Sync<string>(this, newRefIds);
-			comboflag = new Sync<ImGuiComboFlags>(this, newRefIds);
-			comboflag.value = ImGuiComboFlags.None;
-		}
+            comboflag = new Sync<ImGuiComboFlags>(this, newRefIds)
+            {
+                Value = ImGuiComboFlags.None
+            };
+        }
 
 		public ImGUIBeginCombo(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
@@ -46,11 +48,11 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (ImGui.BeginCombo(label.value ?? "", preview.value ?? "", comboflag.value))
+			if (ImGui.BeginCombo(label.Value ?? "", preview.Value ?? "", comboflag.Value))
 			{
 				foreach (var item in children)
 				{
-					item.target?.ImguiRender(imGuiRenderer, canvas);
+					item.Target?.ImguiRender(imGuiRenderer, canvas);
 				}
 				ImGui.EndCombo();
 			}

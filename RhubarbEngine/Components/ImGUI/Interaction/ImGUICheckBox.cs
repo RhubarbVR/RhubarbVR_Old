@@ -41,11 +41,11 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			bool vale = value.value;
-			ImGui.Checkbox(label.value ?? "", ref vale);
-			if (vale != value.value)
+			bool vale = value.Value;
+			ImGui.Checkbox(label.Value ?? "", ref vale);
+			if (vale != value.Value)
 			{
-				value.value = vale;
+				value.Value = vale;
 			}
 		}
 	}

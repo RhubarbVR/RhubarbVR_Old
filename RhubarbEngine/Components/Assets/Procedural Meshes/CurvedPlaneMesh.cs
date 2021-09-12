@@ -26,15 +26,15 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			TopRadius = new Sync<float>(this, newRefIds);
-			TopRadius.value = 180f;
+			TopRadius.Value = 180f;
 			BottomRadius = new Sync<float>(this, newRefIds);
-			BottomRadius.value = 180f;
+			BottomRadius.Value = 180f;
 			Width = new Sync<float>(this, newRefIds);
-			Width.value = 1.0f;
+			Width.Value = 1.0f;
 			Height = new Sync<float>(this, newRefIds);
-			Height.value = 1.0f;
+			Height.Value = 1.0f;
 			Slices = new Sync<int>(this, newRefIds);
-			Slices.value = 10;
+			Slices.Value = 10;
 		}
 
 		public override void onChanged()
@@ -44,11 +44,11 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		private void updateMesh()
 		{
-			_generator.bRadius = BottomRadius.value;
-			_generator.tRadius = TopRadius.value;
-			_generator.Height = Height.value;
-			_generator.Slices = Slices.value;
-			_generator.Width = Width.value;
+			_generator.bRadius = BottomRadius.Value;
+			_generator.tRadius = TopRadius.Value;
+			_generator.Height = Height.Value;
+			_generator.Slices = Slices.Value;
+			_generator.Width = Width.Value;
 			MeshGenerator newmesh = _generator.Generate();
 			RMesh kite = new RMesh(newmesh.MakeDMesh());
 			kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

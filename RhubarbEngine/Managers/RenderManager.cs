@@ -14,24 +14,42 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System.IO;
 using Veldrid.ImageSharp;
-using SixLabors.ImageSharp;
 
 namespace RhubarbEngine.Managers
 {
 	public class RenderManager : IManager
 	{
-		public float fieldOfView => engine.settingsObject.RenderSettings.DesktopRenderSettings.fov;
-		public float aspectRatio => engine.windowManager.mainWindow.aspectRatio;
+        public float FieldOfView
+        {
+            get
+            {
+                return _engine.settingsObject.RenderSettings.DesktopRenderSettings.fov;
+            }
+        }
 
-		public float nearPlaneDistance = 0.01f;
+        public float AspectRatio
+        {
+            get
+            {
+                return _engine.windowManager.mainWindow.aspectRatio;
+            }
+        }
+
+        public float nearPlaneDistance = 0.01f;
 
 		public float farPlaneDistance = 1000f;
 
-		private Engine engine;
+		private Engine _engine;
 
-		private Matrix4x4 _userTrans => (engine.worldManager.focusedWorld != null) ? engine.worldManager.focusedWorld.playerTrans : engine.worldManager.privateOverlay.playerTrans;
+        private Matrix4x4 UserTrans
+        {
+            get
+            {
+                return (_engine.worldManager.FocusedWorld != null) ? _engine.worldManager.FocusedWorld.PlayerTrans : _engine.worldManager.privateOverlay.PlayerTrans;
+            }
+        }
 
-		private RenderQueue mainQueue;
+        private RenderQueue _mainQueue;
 
 		public VRContext vrContext;
 
@@ -39,7 +57,7 @@ namespace RhubarbEngine.Managers
 
 		public Swapchain sc;
 
-		private CommandList eyesCL;
+		private CommandList _eyesCL;
 
 		public CommandList windowCL;
 
@@ -57,68 +75,75 @@ namespace RhubarbEngine.Managers
 
 		public TextureView[] cursors = new TextureView[50];
 
-		public MirrorTextureEyeSource eyeSource => engine.settingsObject.VRSettings.renderEye;
-		public IManager initialize(Engine _engine)
+        public MirrorTextureEyeSource EyeSource
+        {
+            get
+            {
+                return _engine.settingsObject.VRSettings.renderEye;
+            }
+        }
+
+        public IManager initialize(Engine _engine)
 		{
-			engine = _engine;
-			GraphicsBackend backend = engine.backend;
-			if (engine.platformInfo.platform == PlatformInfo.Platform.OSX)
+			this._engine = _engine;
+			var backend = this._engine.backend;
+			if (this._engine.platformInfo.platform == PlatformInfo.Platform.OSX)
 			{
 				backend = GraphicsBackend.Metal;
 			}
-			if ((backend == GraphicsBackend.Metal && engine.platformInfo.platform != PlatformInfo.Platform.OSX) && engine.platformInfo.platform != PlatformInfo.Platform.iOS)
+			if (backend == GraphicsBackend.Metal && this._engine.platformInfo.platform != PlatformInfo.Platform.OSX && this._engine.platformInfo.platform != PlatformInfo.Platform.iOS)
 			{
 				backend = GraphicsBackend.Vulkan;
 			}
-			if (backend == GraphicsBackend.Direct3D11 && engine.platformInfo.platform != PlatformInfo.Platform.Windows)
+			if (backend == GraphicsBackend.Direct3D11 && this._engine.platformInfo.platform != PlatformInfo.Platform.Windows)
 			{
 				backend = GraphicsBackend.Vulkan;
 			}
-			engine.logger.Log("Graphics Backend:" + backend, true);
-			if (engine.outputType == OutputType.Auto && engine.settingsObject.VRSettings.StartInVR)
+			this._engine.logger.Log("Graphics Backend:" + backend, true);
+			if (this._engine.outputType == OutputType.Auto && this._engine.settingsObject.VRSettings.StartInVR)
 			{
-				engine.outputType = OutputType.OculusVR;
+				this._engine.outputType = OutputType.OculusVR;
 				if (!VRContext.IsOculusSupported())
 				{
-					engine.outputType = OutputType.SteamVR;
+					this._engine.outputType = OutputType.SteamVR;
 					if (!VRContext.IsOpenVRSupported())
 					{
-						engine.logger.Log("Failed to find vr device starting in screen");
-						engine.outputType = OutputType.Screen;
+						this._engine.logger.Log("Failed to find vr device starting in screen");
+						this._engine.outputType = OutputType.Screen;
 					}
 				}
 			}
-			else if (engine.outputType == OutputType.Auto)
+			else if (this._engine.outputType == OutputType.Auto)
 			{
-				engine.outputType = OutputType.Screen;
+				this._engine.outputType = OutputType.Screen;
 			}
-			engine.logger.Log("Output Device:" + engine.outputType.ToString(), true);
-			vrContext = buildVRContext();
-			(gd, sc) = engine.windowManager.mainWindow.CreateScAndGD(vrContext, backend);
-			engine.backend = backend;
+			this._engine.logger.Log("Output Device:" + this._engine.outputType.ToString(), true);
+			vrContext = BuildVRContext();
+			(gd, sc) = this._engine.windowManager.mainWindow.CreateScAndGD(vrContext, backend);
+			this._engine.backend = backend;
 			vrContext.Initialize(gd);
 			windowCL = gd.ResourceFactory.CreateCommandList();
-			eyesCL = gd.ResourceFactory.CreateCommandList();
-			mainQueue = new RenderQueue();
-			engine.windowManager.mainWindow.window.Resized += Window_Resized;
+			_eyesCL = gd.ResourceFactory.CreateCommandList();
+			_mainQueue = new RenderQueue();
+			this._engine.windowManager.mainWindow.window.Resized += Window_Resized;
 			Window_Resized();
-			var _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "nulltexture.jpg"), false, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-			nulview = engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture);
-			var gridtexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Grid.jpg"), true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-			gridview = engine.renderManager.gd.ResourceFactory.CreateTextureView(gridtexture);
+			var _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "nulltexture.jpg"), false, true).CreateDeviceTexture(this._engine.renderManager.gd, this._engine.renderManager.gd.ResourceFactory);
+            nulview = this._engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture);
+			var gridtexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Grid.jpg"), true, true).CreateDeviceTexture(this._engine.renderManager.gd, this._engine.renderManager.gd.ResourceFactory);
+            gridview = this._engine.renderManager.gd.ResourceFactory.CreateTextureView(gridtexture);
 
-			var rhubatexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR2.png"), false, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-			rhubarbview = engine.renderManager.gd.ResourceFactory.CreateTextureView(rhubatexture);
+			var rhubatexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR2.png"), false, true).CreateDeviceTexture(this._engine.renderManager.gd, this._engine.renderManager.gd.ResourceFactory);
+            rhubarbview = this._engine.renderManager.gd.ResourceFactory.CreateTextureView(rhubatexture);
 
-			var rhubatextures = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR.png"), false, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-			rhubarbSolidview = engine.renderManager.gd.ResourceFactory.CreateTextureView(rhubatextures);
-			var solidTexture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, g3.Colorf.White), false).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-			solidview = engine.renderManager.gd.ResourceFactory.CreateTextureView(solidTexture);
-			int index = 0;
+			var rhubatextures = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR.png"), false, true).CreateDeviceTexture(this._engine.renderManager.gd, this._engine.renderManager.gd.ResourceFactory);
+            rhubarbSolidview = this._engine.renderManager.gd.ResourceFactory.CreateTextureView(rhubatextures);
+			var solidTexture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, g3.Colorf.White), false).CreateDeviceTexture(this._engine.renderManager.gd, this._engine.renderManager.gd.ResourceFactory);
+            solidview = this._engine.renderManager.gd.ResourceFactory.CreateTextureView(solidTexture);
+			var index = 0;
 			foreach (Input.Cursors item in Enum.GetValues(typeof(RhubarbEngine.Input.Cursors)))
 			{
-				var tempTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Cursors", item + ".png"), false, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-				cursors[index] = engine.renderManager.gd.ResourceFactory.CreateTextureView(tempTexture);
+				var tempTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Cursors", item + ".png"), false, true).CreateDeviceTexture(this._engine.renderManager.gd, this._engine.renderManager.gd.ResourceFactory);
+                cursors[index] = this._engine.renderManager.gd.ResourceFactory.CreateTextureView(tempTexture);
 				index++;
 			}
 
@@ -136,42 +161,44 @@ namespace RhubarbEngine.Managers
 
 		private void Window_Resized()
 		{
-			if (engine.settingsObject.RenderSettings.DesktopRenderSettings.auto)
+			if (_engine.settingsObject.RenderSettings.DesktopRenderSettings.auto)
 			{
-				sc.Resize((uint)engine.windowManager.mainWindow.window.Width, (uint)engine.windowManager.mainWindow.window.Height);
+				sc.Resize((uint)_engine.windowManager.mainWindow.window.Width, (uint)_engine.windowManager.mainWindow.window.Height);
 			}
 			else
 			{
-				sc.Resize((uint)engine.settingsObject.RenderSettings.DesktopRenderSettings.x, (uint)engine.settingsObject.RenderSettings.DesktopRenderSettings.y);
+				sc.Resize((uint)_engine.settingsObject.RenderSettings.DesktopRenderSettings.x, (uint)_engine.settingsObject.RenderSettings.DesktopRenderSettings.y);
 			}
 		}
 
-		public VRContext buildVRContext()
+		public VRContext BuildVRContext()
 		{
-			VRContextOptions options = new VRContextOptions
+			var options = new VRContextOptions
 			{
 				EyeFramebufferSampleCount = TextureSampleCount.Count1
 			};
-			switch (engine.outputType)
+			switch (_engine.outputType)
 			{
 				case OutputType.Screen:
-					return VRContext.CreateScreen(options, engine);
+					return VRContext.CreateScreen(options, _engine);
 				case OutputType.SteamVR:
-					return VRContext.CreateOpenVR(options, (engine.settingsObject.VRSettings.StartAsOverlay) ? Valve.VR.EVRApplicationType.VRApplication_Scene : Valve.VR.EVRApplicationType.VRApplication_Scene);
+					return VRContext.CreateOpenVR(options, (_engine.settingsObject.VRSettings.StartAsOverlay) ? Valve.VR.EVRApplicationType.VRApplication_Scene : Valve.VR.EVRApplicationType.VRApplication_Scene);
 				case OutputType.OculusVR:
 					return VRContext.CreateOculus(options);
 				default:
-					return VRContext.CreateScreen(options, engine);
+					return VRContext.CreateScreen(options, _engine);
 			}
 		}
 
-		private void BuildMainRenderQueue(Matrix4x4 leftp, Matrix4x4 leftv, Matrix4x4 rightp, Matrix4x4 rightv)
-		{
-			mainQueue.Clear();
+#pragma warning disable IDE0060 // Remove unused parameter
+        private void BuildMainRenderQueue(Matrix4x4 leftp, Matrix4x4 leftv, Matrix4x4 rightp, Matrix4x4 rightv)
+#pragma warning restore IDE0060 // Remove unused parameter
+        {
+			_mainQueue.Clear();
 			//When doing only left eye it seemed to be fine this might have problems of headsets with more fov
-			RhubarbEngine.Utilities.BoundingFrustum frustum = new RhubarbEngine.Utilities.BoundingFrustum(leftp);
-			engine.worldManager.addToRenderQueue(mainQueue, RemderLayers.normal_overlay_privateOverlay, frustum, leftv);
-			mainQueue.Order();
+			var frustum = new RhubarbEngine.Utilities.BoundingFrustum(leftp);
+			_engine.worldManager.AddToRenderQueue(_mainQueue, RemderLayers.normal_overlay_privateOverlay, frustum, leftv);
+			_mainQueue.Order();
 		}
 
 		private void RenderEye(CommandList cl, Framebuffer fb, Matrix4x4 proj, Matrix4x4 view)
@@ -180,24 +207,24 @@ namespace RhubarbEngine.Managers
 			cl.ClearDepthStencil(1f);
 			cl.ClearColorTarget(0, RgbaFloat.CornflowerBlue);
 			skybox.Render(cl, fb, proj, view);
-			foreach (Renderable renderObj in mainQueue.Renderables)
+			foreach (var renderObj in _mainQueue.Renderables)
 			{
 				renderObj.Render(gd, cl, new UBO(
 				proj,
 				view,
-				renderObj.entity.globalTrans()));
+				renderObj.entity.GlobalTrans()));
 			}
 		}
 
 
-		public void switchVRContext(OutputType type)
+		public void SwitchVRContext(OutputType type)
 		{
-			if ((type != engine.outputType) || vrContext.Disposed)
+			if ((type != _engine.outputType) || vrContext.Disposed)
 			{
-				engine.logger.Log("Output Device Change:" + type.ToString());
-				engine.outputType = type;
+				_engine.logger.Log("Output Device Change:" + type.ToString());
+				_engine.outputType = type;
 				var oldvrContext = vrContext;
-				vrContext = buildVRContext();
+				vrContext = BuildVRContext();
 				vrContext.Initialize(gd);
 				if (!oldvrContext.Disposed)
 				{
@@ -251,7 +278,7 @@ namespace RhubarbEngine.Managers
 
 		private void RenderRenderObjects()
 		{
-			foreach (var world in engine.worldManager.worlds)
+			foreach (var world in _engine.worldManager.worlds)
 			{
 				if (world.Focus != World.World.FocusLevel.Background)
 				{
@@ -265,56 +292,59 @@ namespace RhubarbEngine.Managers
 			if (vrContext.Disposed)
 			{
 				Console.WriteLine("Going to screen Cuz Disposed");
-				switchVRContext(OutputType.Screen);
+				SwitchVRContext(OutputType.Screen);
 			}
 
 			try
 			{
 				if (vrContext.GetType() == typeof(ScreenContext))
 				{
-					((ScreenContext)vrContext).updateInput();
+					((ScreenContext)vrContext).UpdateInput();
 				}
 				if (!await Task.Run(RenderRenderObjects).TimeOut(1000))
-					Logger.Log("Render Render Objects TimeOut", true);
-				gd.WaitForIdle();
-				HmdPoseState poses = vrContext.WaitForPoses();
-				Matrix4x4 leftView = poses.CreateView(VREye.Left, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
-				Matrix4x4 rightView = poses.CreateView(VREye.Right, _userTrans, -Vector3.UnitZ, Vector3.UnitY);
+                {
+                    Logger.Log("Render Render Objects TimeOut", true);
+                }
+
+                gd.WaitForIdle();
+				var poses = vrContext.WaitForPoses();
+				var leftView = poses.CreateView(VREye.Left, UserTrans, -Vector3.UnitZ, Vector3.UnitY);
+				var rightView = poses.CreateView(VREye.Right, UserTrans, -Vector3.UnitZ, Vector3.UnitY);
 				BuildMainRenderQueue(poses.LeftEyeProjection, leftView, poses.RightEyeProjection, rightView);
-				eyesCL.Begin();
-				if (!(engine.backend == GraphicsBackend.OpenGL || engine.backend == GraphicsBackend.OpenGLES))
+				_eyesCL.Begin();
+				if (_engine.backend is not (GraphicsBackend.OpenGL or GraphicsBackend.OpenGLES))
 				{
-					eyesCL.PushDebugGroup("Left Eye");
+					_eyesCL.PushDebugGroup("Left Eye");
 				}
 				try
 				{
-					RenderEye(eyesCL, vrContext.LeftEyeFramebuffer, poses.LeftEyeProjection, leftView);
+					RenderEye(_eyesCL, vrContext.LeftEyeFramebuffer, poses.LeftEyeProjection, leftView);
 				}
 				catch (Exception e)
 				{
 					throw new Exception("Left Eye" + e.ToString());
 				}
-				eyesCL.PopDebugGroup();
-				if (engine.outputType != OutputType.Screen)
+				_eyesCL.PopDebugGroup();
+				if (_engine.outputType != OutputType.Screen)
 				{
-					if (!(engine.backend == GraphicsBackend.OpenGL || engine.backend == GraphicsBackend.OpenGLES))
+                    if (_engine.backend is not (GraphicsBackend.OpenGL or GraphicsBackend.OpenGLES))
 					{
-						eyesCL.PushDebugGroup("Right Eye");
+						_eyesCL.PushDebugGroup("Right Eye");
 					}
 					try
 					{
-						RenderEye(eyesCL, vrContext.RightEyeFramebuffer, poses.RightEyeProjection, rightView);
+						RenderEye(_eyesCL, vrContext.RightEyeFramebuffer, poses.RightEyeProjection, rightView);
 					}
 					catch (Exception e)
 					{
 						throw new Exception("Right Eye" + e.ToString());
 					}
-					eyesCL.PopDebugGroup();
+					_eyesCL.PopDebugGroup();
 				}
 
 
-				eyesCL.End();
-				gd.SubmitCommands(eyesCL);
+				_eyesCL.End();
+				gd.SubmitCommands(_eyesCL);
 				gd.WaitForIdle();
 
 				vrContext.SubmitFrame();
@@ -323,12 +353,12 @@ namespace RhubarbEngine.Managers
 			{
 				Console.WriteLine("Render Error " + e.ToString());
 			}
-			if (engine.windowManager.mainWindowOpen)
+			if (_engine.windowManager.mainWindowOpen)
 			{
 				windowCL.Begin();
 				windowCL.SetFramebuffer(sc.Framebuffer);
 				windowCL.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0.2f, 1f));
-				vrContext.RenderMirrorTexture(windowCL, sc.Framebuffer, (engine.outputType != OutputType.Screen) ? eyeSource : MirrorTextureEyeSource.LeftEye);
+				vrContext.RenderMirrorTexture(windowCL, sc.Framebuffer, (_engine.outputType != OutputType.Screen) ? EyeSource : MirrorTextureEyeSource.LeftEye);
 				windowCL.End();
 				gd.SubmitCommands(windowCL);
 				gd.SwapBuffers(sc);

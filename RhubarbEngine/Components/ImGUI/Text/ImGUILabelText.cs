@@ -41,7 +41,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			ImGui.LabelText(label.value ?? "", text.value ?? "");
+			ImGui.LabelText(label.Value ?? "", text.Value ?? "");
 		}
 	}
 }

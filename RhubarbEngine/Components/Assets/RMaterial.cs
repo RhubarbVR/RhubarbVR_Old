@@ -50,20 +50,20 @@ namespace RhubarbEngine.Components.Assets
 			load(this);
 		}
 
-		public void getBindableResources(List<BindableResource> BindableResources, bool shadow = false)
+		public void GetBindableResources(List<BindableResource> BindableResources, bool shadow = false)
 		{
 			foreach (var field in Shader.Asset.Fields)
 			{
-				var mitfield = getField<MaterialField>(field.fieldName, field.shaderType);
+				var mitfield = GetField<MaterialField>(field.fieldName, field.shaderType);
 				if (mitfield == null)
 				{
 					logger.Log(field.fieldName + "  :  " + field.shaderType.ToString() + "  :  " + field.valueType.ToString());
-					createField(field.fieldName, field.shaderType, field.valueType);
-					mitfield = getField<MaterialField>(field.fieldName, field.shaderType);
+					CreateField(field.fieldName, field.shaderType, field.valueType);
+					mitfield = GetField<MaterialField>(field.fieldName, field.shaderType);
 				}
 				if (shadow)
 				{
-					if ((int)mitfield.shaderType.value > 2)
+					if ((int)mitfield.shaderType.Value > 2)
 					{
 						if (mitfield.resource == null)
 						{
@@ -78,7 +78,7 @@ namespace RhubarbEngine.Components.Assets
 				}
 				else
 				{
-					if ((int)mitfield.shaderType.value <= 2)
+					if ((int)mitfield.shaderType.Value <= 2)
 					{
 						if (mitfield.resource == null)
 						{
@@ -95,11 +95,11 @@ namespace RhubarbEngine.Components.Assets
 
 		}
 
-		public void setValueAtField<T>(string fieldName, ShaderType shaderType, T value)
+		public void SetValueAtField<T>(string fieldName, ShaderType shaderType, T value)
 		{
-			foreach (MaterialField item in Fields)
+			foreach (var item in Fields)
 			{
-				if (item.fieldName.value == fieldName && item.shaderType.value == shaderType)
+				if (item.fieldName.Value == fieldName && item.shaderType.Value == shaderType)
 				{
 					if (typeof(IWorldObject).IsAssignableFrom(typeof(T)))
 					{
@@ -113,11 +113,11 @@ namespace RhubarbEngine.Components.Assets
 				}
 			}
 		}
-		public T getField<T>(string fieldName, ShaderType shaderType) where T : MaterialField
+		public T GetField<T>(string fieldName, ShaderType shaderType) where T : MaterialField
 		{
-			foreach (MaterialField item in Fields)
+			foreach (var item in Fields)
 			{
-				if (item.fieldName.value == fieldName && item.shaderType.value == shaderType)
+				if (item.fieldName.Value == fieldName && item.shaderType.Value == shaderType)
 				{
 					return (T)item;
 				}
@@ -125,9 +125,9 @@ namespace RhubarbEngine.Components.Assets
 			return null;
 		}
 
-		public void createField(string fieldName, ShaderType shader, ShaderValueType type)
+		public void CreateField(string fieldName, ShaderType shader, ShaderValueType type)
 		{
-			Type vatype = typeof(MaterialField);
+			var vatype = typeof(MaterialField);
 			switch (type)
 			{
 				case ShaderValueType.Val_bool:
@@ -221,9 +221,9 @@ namespace RhubarbEngine.Components.Assets
 				default:
 					break;
 			}
-			MaterialField newField = Fields.Add(vatype, true);
-			newField.fieldName.value = fieldName;
-			newField.shaderType.value = shader;
+			var newField = Fields.Add(vatype, true);
+			newField.fieldName.Value = fieldName;
+			newField.shaderType.Value = shader;
 			newField.valueType = type;
 
 		}
@@ -231,16 +231,16 @@ namespace RhubarbEngine.Components.Assets
 		public void LoadChange(RShader shader)
 		{
 			logger.Log("Starting Shader Uniform list");
-			foreach (ShaderUniform item in shader.Fields)
+			foreach (var item in shader.Fields)
 			{
-				bool val = false;
-				foreach (MaterialField fildvalue in Fields)
+				var val = false;
+				foreach (var fildvalue in Fields)
 				{
-					if (fildvalue.fieldName.value == item.fieldName)
+					if (fildvalue.fieldName.Value == item.fieldName)
 					{
-						if (fildvalue.shaderType.value != item.shaderType)
+						if (fildvalue.shaderType.Value != item.shaderType)
 						{
-							fildvalue.shaderType.value = item.shaderType;
+							fildvalue.shaderType.Value = item.shaderType;
 						}
 						if (fildvalue.valueType != item.valueType)
 						{
@@ -252,7 +252,7 @@ namespace RhubarbEngine.Components.Assets
 				if (!val)
 				{
 					logger.Log(item.fieldName + "  :  " + item.shaderType.ToString() + "  :  " + item.valueType.ToString());
-					createField(item.fieldName, item.shaderType, item.valueType);
+					CreateField(item.fieldName, item.shaderType, item.valueType);
 				}
 			}
 			load(this);

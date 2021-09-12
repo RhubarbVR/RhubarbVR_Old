@@ -32,22 +32,22 @@ namespace RhubarbEngine.Components.Relations
 		private IChangeable linckedTarget;
 		public void sourceChange(IChangeable val)
 		{
-			if (source.target != null && driver.Linked)
+			if (source.Target != null && driver.Linked)
 			{
-				driver.Drivevalue = source.target.value;
+				driver.Drivevalue = source.Target.Value;
 			}
 		}
 
 		public void targetChange(IChangeable val)
 		{
-			if (writeBack.value && source.target != null && driver.Linked)
+			if (writeBack.Value && source.Target != null && driver.Linked)
 			{
-				source.target.value = driver.Drivevalue;
+				source.Target.Value = driver.Drivevalue;
 			}
 		}
 		public override void onChanged()
 		{
-			if (source.target != null && driver.Linked)
+			if (source.Target != null && driver.Linked)
 			{
 				if (linckedSource != null)
 				{
@@ -57,8 +57,8 @@ namespace RhubarbEngine.Components.Relations
 				{
 					linckedTarget.Changed -= targetChange;
 				}
-				linckedSource = source.target;
-				linckedTarget = driver.target;
+				linckedSource = source.Target;
+				linckedTarget = driver.Target;
 				linckedTarget.Changed += targetChange;
 				linckedTarget.Changed += sourceChange;
 

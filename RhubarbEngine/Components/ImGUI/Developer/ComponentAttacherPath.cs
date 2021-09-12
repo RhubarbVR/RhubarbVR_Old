@@ -34,15 +34,15 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (ImGui.Button(path.value + "##" + referenceID.id, new System.Numerics.Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
+			if (ImGui.Button(path.Value + "##" + referenceID.id, new System.Numerics.Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
 			{
-				if (path.value == "../")
+				if (path.Value == "../")
 				{
-					if (target.target != null)
+					if (target.Target != null)
 					{
 						string news = "/";
 						string temp = "";
-						foreach (var item in target.target.path.value.Split('/', '\\'))
+						foreach (var item in target.Target.path.Value.Split('/', '\\'))
 						{
 							if (!string.IsNullOrEmpty(item))
 							{
@@ -50,20 +50,20 @@ namespace RhubarbEngine.Components.ImGUI
 								temp = item;
 							}
 						}
-						if (target.target.path.value.Contains("`1"))
+						if (target.Target.path.Value.Contains("`1"))
 						{
-							target.target.path.value = target.target.path.value.Replace("`1", "");
+							target.Target.path.Value = target.Target.path.Value.Replace("`1", "");
 						}
 						else
 						{
-							target.target.path.value = news;
+							target.Target.path.Value = news;
 						}
 					}
 				}
 				else
 				{
-					if (target.target != null)
-						target.target.path.value += path.value;
+					if (target.Target != null)
+						target.Target.path.Value += path.Value;
 				}
 			}
 		}

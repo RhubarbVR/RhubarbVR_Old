@@ -42,12 +42,12 @@ namespace RhubarbEngine.Components.Interaction
 	/// </summary>
 	public class RenderHandler : IRenderHandler
 	{
-		private ChromiumWebBrowser browser;
+		private ChromiumWebBrowser _browser;
 
-		private Size popupSize;
-		private Point popupPosition;
+		private Size _popupSize;
+        private Point _popupPosition;
 
-		public event Action<TextInputMode> keyboard;
+		public event Action<TextInputMode> Keyboard;
 
 		/// <summary>
 		/// Need a lock because the caller may be asking for the bitmap
@@ -81,7 +81,7 @@ namespace RhubarbEngine.Components.Interaction
 		/// </summary>
 		public Size PopupSize
 		{
-			get { return popupSize; }
+			get { return _popupSize; }
 		}
 
 		/// <summary>
@@ -89,7 +89,7 @@ namespace RhubarbEngine.Components.Interaction
 		/// </summary>
 		public Point PopupPosition
 		{
-			get { return popupPosition; }
+			get { return _popupPosition; }
 		}
 
 		/// <summary>
@@ -98,10 +98,10 @@ namespace RhubarbEngine.Components.Interaction
 		/// <param name="browser">reference to the ChromiumWebBrowser</param>
 		public RenderHandler(ChromiumWebBrowser browser)
 		{
-			this.browser = browser;
+			this._browser = browser;
 
-			popupPosition = new Point();
-			popupSize = new Size();
+			_popupPosition = new Point();
+			_popupSize = new Size();
 
 			BitmapBuffer = new BitmapBuffer(BitmapLock);
 			PopupBuffer = new BitmapBuffer(BitmapLock);
@@ -112,7 +112,7 @@ namespace RhubarbEngine.Components.Interaction
 		/// </summary>
 		public void Dispose()
 		{
-			browser = null;
+			_browser = null;
 			BitmapBuffer = null;
 			PopupBuffer = null;
 		}
@@ -138,7 +138,7 @@ namespace RhubarbEngine.Components.Interaction
 		public virtual Rect GetViewRect()
 		{
 			//TODO: See if this can be refactored and remove browser reference
-			var size = browser.Size;
+			var size = _browser.Size;
 
 			var viewRect = new Rect(0, 0, size.Width, size.Height);
 
@@ -204,10 +204,10 @@ namespace RhubarbEngine.Components.Interaction
 		/// <param name="customCursorInfo">custom cursor Information</param>
 		public virtual void OnCursorChange(IntPtr cursor, CursorType type, CursorInfo customCursorInfo)
 		{
-			cursorChange?.Invoke(type);
+			CursorChange?.Invoke(type);
 		}
 
-		public event Action<CursorType> cursorChange;
+		public event Action<CursorType> CursorChange;
 
 		/// <summary>
 		/// Called when the user starts dragging content in the web view. Contextual information about the dragged content is
@@ -250,10 +250,10 @@ namespace RhubarbEngine.Components.Interaction
 		/// <param name="rect">contains the new location and size in view coordinates. </param>
 		public virtual void OnPopupSize(Rect rect)
 		{
-			popupPosition.X = rect.X;
-			popupPosition.Y = rect.Y;
-			popupSize.Width = rect.Width;
-			popupSize.Height = rect.Height;
+			_popupPosition.X = rect.X;
+			_popupPosition.Y = rect.Y;
+			_popupSize.Width = rect.Width;
+			_popupSize.Height = rect.Height;
 		}
 
 		/// <summary>
@@ -273,7 +273,7 @@ namespace RhubarbEngine.Components.Interaction
 		/// <param name="inputMode">specifies what kind of keyboard should be opened. If <see cref="TextInputMode.None"/>, any existing keyboard for this browser should be hidden.</param>
 		public virtual void OnVirtualKeyboardRequested(IBrowser browser, TextInputMode inputMode)
 		{
-			keyboard?.Invoke(inputMode);
+			Keyboard?.Invoke(inputMode);
 		}
 	}
 
@@ -305,21 +305,43 @@ namespace RhubarbEngine.Components.Interaction
 	[Category(new string[] { "Interaction" })]
 	public class WebBrowser : AssetProvider<RTexture2D>, IRenderObject, IKeyboardStealer, IAudioHandler, IAudioSource
 	{
-		private Size popupSize;
-		private Point popupPosition;
-		public bool Threaded => true;
+        public bool Threaded
+        {
+            get
+            {
+                return true;
+            }
+        }
 
-		public RenderFrequency renderFrac => renderFrequency.value;
+        public RenderFrequency renderFrac
+        {
+            get
+            {
+                return renderFrequency.Value;
+            }
+        }
 
-		public bool IsActive => loaded;
+        public bool IsActive { get; private set; }
 
-		public int ChannelCount => (int)audioType.value;
+        public int ChannelCount
+        {
+            get
+            {
+                return (int)audioType.Value;
+            }
+        }
 
-		RollBuffer frameInputBuffer;
+        RollBuffer _frameInputBuffer;
 
-		public byte[] FrameInputBuffer => frameInputBuffer.array;
+        public byte[] FrameInputBuffer
+        {
+            get
+            {
+                return _frameInputBuffer.array;
+            }
+        }
 
-		public Sync<RenderFrequency> renderFrequency;
+        public Sync<RenderFrequency> renderFrequency;
 		public Sync<Vector2u> scale;
 		public SyncRef<IinputPlane> imputPlane;
 		public Sync<string> path;
@@ -327,17 +349,15 @@ namespace RhubarbEngine.Components.Interaction
 		public Sync<bool> globalAudio;
 		public Sync<bool> noKeyboard;
 		public Sync<AudioType> audioType;
+        private bool _updateUrl = false;
 
-		private bool loaded;
-		private bool updateUrl = false;
-
-		ChromiumWebBrowser browser;
+		ChromiumWebBrowser _browser;
 
 		public override void Dispose()
 		{
 			base.Dispose();
 			load(null, true);
-			browser?.Dispose();
+			_browser?.Dispose();
 		}
 
 		public override void OnAttach()
@@ -345,41 +365,48 @@ namespace RhubarbEngine.Components.Interaction
 			base.OnAttach();
 
 		}
-		IAudioHandler audio;
+		IAudioHandler _audio;
 		public override void onLoaded()
 		{
 			base.onLoaded();
-			frameInputBuffer = new RollBuffer(engine.audioManager.AudioFrameSizeInBytes * ChannelCount);
+			_frameInputBuffer = new RollBuffer(engine.audioManager.AudioFrameSizeInBytes * ChannelCount);
 			if (!Cef.IsInitialized) // Check before init
 			{
 				Console.WriteLine("Init Cef");
-				var cefSettings = new CefSettings();
-				cefSettings.CachePath = Path.Combine(engine.dataPath, "WebBrowser");
-				cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
+                var cefSettings = new CefSettings
+                {
+                    CachePath = Path.Combine(engine.dataPath, "WebBrowser")
+                };
+                cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
 				cefSettings.CefCommandLineArgs.Add("disable-usb-keyboard-detect", "1");
 				cefSettings.EnableAudio();
 				Cef.Initialize(cefSettings);
 			}
-			browser = new ChromiumWebBrowser(path.value, null, null, false, onAfterBrowserCreated);
-			browser.MenuHandler = new CustomMenuHandler();
-			audio = browser.AudioHandler;
-			browser.AddressChanged += Browser_AddressChanged;
-			browser.TitleChanged += Browser_TitleChanged;
-			var hander = new RenderHandler(browser);
-			hander.keyboard += Hander_keyboard;
-			hander.cursorChange += Hander_cursorChange;
-			browser.RenderHandler = hander;
+            _browser = new ChromiumWebBrowser(path.Value, null, null, false, OnAfterBrowserCreated)
+            {
+                MenuHandler = new CustomMenuHandler()
+            };
+            _audio = _browser.AudioHandler;
+			_browser.AddressChanged += Browser_AddressChanged;
+			_browser.TitleChanged += Browser_TitleChanged;
+			var hander = new RenderHandler(_browser);
+			hander.Keyboard += Hander_keyboard;
+			hander.CursorChange += Hander_cursorChange;
+			_browser.RenderHandler = hander;
 			GlobalAudio_Changed(null);
-			browser.CreateBrowser();
-			browser.Size = new System.Drawing.Size { Width = (int)scale.value.x, Height = (int)scale.value.y };
-			loaded = true;
+			_browser.CreateBrowser();
+			_browser.Size = new System.Drawing.Size { Width = (int)scale.Value.x, Height = (int)scale.Value.y };
+			IsActive = true;
 		}
 
 		private void Hander_cursorChange(CursorType obj)
 		{
-			if (imputPlane.target == null)
-				return;
-			imputPlane.target.SetCursor(Input.CursorsEnumCaster.CursorType(obj));
+			if (imputPlane.Target == null)
+            {
+                return;
+            }
+
+            imputPlane.Target.SetCursor(Input.CursorsEnumCaster.CursorType(obj));
 		}
 
 		private void Hander_keyboard(TextInputMode obj)
@@ -397,23 +424,26 @@ namespace RhubarbEngine.Components.Interaction
 
 		private void TakeKeyboard()
 		{
-			if (noKeyboard.value)
-				return;
-			input.keyboard = this;
-			if (imputPlane.target != null)
+			if (noKeyboard.Value)
+            {
+                return;
+            }
+
+            input.Keyboard = this;
+			if (imputPlane.Target != null)
 			{
-				imputPlane.target.StopMouse = true;
+				imputPlane.Target.StopMouse = true;
 			}
 		}
 		private void LoseKeyboard()
 		{
-			if (input.keyboard == this)
+			if (input.Keyboard == this)
 			{
-				input.keyboard = null;
+				input.Keyboard = null;
 			}
-			if (imputPlane.target != null)
+			if (imputPlane.Target != null)
 			{
-				imputPlane.target.StopMouse = false;
+				imputPlane.Target.StopMouse = false;
 			}
 		}
 		private void Browser_TitleChanged(object sender, TitleChangedEventArgs e)
@@ -426,14 +456,14 @@ namespace RhubarbEngine.Components.Interaction
 
 		private void Browser_AddressChanged(object sender, AddressChangedEventArgs e)
 		{
-			path.value = e.Address;
+			path.Value = e.Address;
 		}
 
-		private void onAfterBrowserCreated(IBrowser obj)
+		private void OnAfterBrowserCreated(IBrowser obj)
 		{
-			if (updateUrl)
+			if (_updateUrl)
 			{
-				browser.LoadUrlAsync(path.value);
+				_browser.LoadUrlAsync(path.Value);
 			}
 		}
 
@@ -442,15 +472,17 @@ namespace RhubarbEngine.Components.Interaction
 			renderFrequency = new Sync<RenderFrequency>(this, newRefIds);
 			scale = new Sync<Vector2u>(this, newRefIds);
 			imputPlane = new SyncRef<IinputPlane>(this, newRefIds);
-			scale.value = new Vector2u(600, 600);
-			scale.Changed += onScaleChange;
+			scale.Value = new Vector2u(600, 600);
+			scale.Changed += OnScaleChange;
 			path = new Sync<string>(this, newRefIds);
 			globalAudio = new Sync<bool>(this, newRefIds);
-			audioType = new Sync<AudioType>(this, newRefIds);
-			audioType.value = AudioType.LayoutMono;
-			audioType.Changed += AudioType_Changed;
+            audioType = new Sync<AudioType>(this, newRefIds)
+            {
+                Value = AudioType.LayoutMono
+            };
+            audioType.Changed += AudioType_Changed;
 			globalAudio.Changed += GlobalAudio_Changed;
-			path.value = "https://www.youtube.com/watch?v=Rp6ehxZvvM4";
+			path.Value = "https://www.youtube.com/watch?v=Rp6ehxZvvM4";
 			path.Changed += Path_Changed;
 			//path.value = "https://google.com/";
 			//path.value = "https://g.co/arts/xoCTBcR4S3MD8QPE6";
@@ -462,12 +494,12 @@ namespace RhubarbEngine.Components.Interaction
 
 		private void AudioType_Changed(IChangeable obj)
 		{
-			loaded = false;
+			IsActive = false;
 			try
 			{
-				frameInputBuffer.Push(new byte[engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
-				browser.AudioHandler = null;
-				browser.Dispose();
+				_frameInputBuffer.Push(new byte[engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
+				_browser.AudioHandler = null;
+				_browser.Dispose();
 			}
 			catch { }
 			onLoaded();
@@ -475,50 +507,66 @@ namespace RhubarbEngine.Components.Interaction
 
 		private void GlobalAudio_Changed(IChangeable obj)
 		{
-			if (browser == null)
-				return;
-			if (globalAudio.value)
+			if (_browser == null)
+            {
+                return;
+            }
+
+            if (globalAudio.Value)
 			{
-				frameInputBuffer.Push(new byte[engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
-				browser.AudioHandler = null;
+				_frameInputBuffer.Push(new byte[engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
+				_browser.AudioHandler = null;
 			}
 			else
 			{
-				browser.AudioHandler = this;
+				_browser.AudioHandler = this;
 			}
 		}
 
-		private void onScaleChange(IChangeable obj)
+		private void OnScaleChange(IChangeable obj)
 		{
-			if (!loaded)
-				return;
-			browser.Size = new Size { Width = (int)scale.value.x, Height = (int)scale.value.y };
+			if (!IsActive)
+            {
+                return;
+            }
+
+            _browser.Size = new Size { Width = (int)scale.Value.x, Height = (int)scale.Value.y };
 		}
 
 		private void Path_Changed(IChangeable obj)
 		{
-			if (!loaded)
-				return;
-			if (browser.IsBrowserInitialized)
+			if (!IsActive)
+            {
+                return;
+            }
+
+            if (_browser.IsBrowserInitialized)
 			{
-				if (path.value != browser.Address)
-					browser.LoadUrlAsync(path.value);
-			}
+				if (path.Value != _browser.Address)
+                {
+                    _browser.LoadUrlAsync(path.Value);
+                }
+            }
 			else
 			{
-				if (path.value != browser.Address)
-					updateUrl = true;
-			}
+				if (path.Value != _browser.Address)
+                {
+                    _updateUrl = true;
+                }
+            }
 		}
 
-		TextureView view;
-		UpdateDatingTexture2D target;
+		TextureView _view;
+		UpdateDatingTexture2D _target;
 		public void Render()
 		{
-			if (!loaded)
-				return;
-			startRenderTask();
-			updateInpute();
+			if (!IsActive)
+            {
+                return;
+            }
+
+            StartRenderTask();
+			UpdateInpute();
 		}
 		public override void LoadListObject()
 		{
@@ -538,49 +586,52 @@ namespace RhubarbEngine.Components.Interaction
 			catch { }
 		}
 
-		private Task lastTask;
+		private Task _lastTask;
 
-		public void startRenderTask()
+		public void StartRenderTask()
 		{
-			if (lastTask != null)
+			if (_lastTask != null)
 			{
-				if ((!(lastTask.IsFaulted)) && !lastTask.IsCompleted)
+				if ((!(_lastTask.IsFaulted)) && !_lastTask.IsCompleted)
 				{
 					return;
 				}
 			}
-			lastTask = Task.Run(RenderTask);
+			_lastTask = Task.Run(RenderTask);
 		}
 
 		private void RenderTask()
 		{
 			try
 			{
-				if (view == null)
+				if (_view == null)
 				{
-					var thing = ScreenshotOrNull(browser, PopupBlending.Main);
+					var thing = ScreenshotOrNull(_browser, PopupBlending.Main);
 					if (thing == null)
-						return;
-					target = new UpdateDatingTexture2D();
-					view = target.InitializeView(((RenderHandler)browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory), engine.renderManager.gd);
-					var e = new RTexture2D(view);
-					e.addDisposable(target);
-					e.addDisposable(view);
+                    {
+                        return;
+                    }
+
+                    _target = new UpdateDatingTexture2D();
+					_view = _target.InitializeView(((RenderHandler)_browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory), engine.renderManager.gd);
+					var e = new RTexture2D(_view);
+					e.addDisposable(_target);
+					e.addDisposable(_view);
 					load(e, true);
 				}
 				else
 				{
 					// This still has memmory problems I believe it is a problem with the staging texture not geting disposed properly somewhere
-					((RenderHandler)browser.RenderHandler).renderEvent.WaitOne();
-					((RenderHandler)browser.RenderHandler).renderEvent.Reset();
-					target.UpdateBitmap(((RenderHandler)browser.RenderHandler).BitmapBuffer);
+					((RenderHandler)_browser.RenderHandler).renderEvent.WaitOne();
+					((RenderHandler)_browser.RenderHandler).renderEvent.Reset();
+					_target.UpdateBitmap(((RenderHandler)_browser.RenderHandler).BitmapBuffer);
 				}
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine("WebBrowser Render Error" + e.ToString());
 			}
-			lastTask = null;
+			_lastTask = null;
 		}
 
 		public Bitmap ScreenshotOrNull(ChromiumWebBrowser browser, PopupBlending blend = PopupBlending.Main)
@@ -590,14 +641,13 @@ namespace RhubarbEngine.Components.Interaction
 				throw new NullReferenceException("RenderHandler cannot be null. Use DefaultRenderHandler unless implementing your own");
 			}
 
-			var renderHandler = browser.RenderHandler as RenderHandler;
 
-			if (renderHandler == null)
-			{
-				throw new Exception("ScreenshotOrNull and ScreenshotAsync can only be used in combination with the DefaultRenderHandler");
-			}
+            if (browser.RenderHandler is not RenderHandler renderHandler)
+            {
+                throw new Exception("ScreenshotOrNull and ScreenshotAsync can only be used in combination with the DefaultRenderHandler");
+            }
 
-			lock (renderHandler.BitmapLock)
+            lock (renderHandler.BitmapLock)
 			{
 				if (blend == PopupBlending.Main)
 				{
@@ -636,41 +686,47 @@ namespace RhubarbEngine.Components.Interaction
 			return mergedBitmap;
 		}
 
-		public void updateInpute()
+		public void UpdateInpute()
 		{
-			if (imputPlane.target == null)
-				return;
-			var imp = imputPlane.target;
+			if (imputPlane.Target == null)
+            {
+                return;
+            }
+
+            var imp = imputPlane.Target;
 			foreach (var item in imp.KeyEvents)
 			{
-				CefSharp.KeyEvent k = new CefSharp.KeyEvent();
+				var k = new CefSharp.KeyEvent();
 				var lp = (int)item.Key;
 				k.FocusOnEditableField = true;
-				if (lp >= 83 && lp <= 108)
-				{
-					k.WindowsKeyCode = lp + (-83 + 65);
-				}
-				else if (lp >= 109 && lp <= 118)
-				{
-					k.WindowsKeyCode = lp + (-109 + 48);
-				}
-				else if (lp >= 67 && lp <= 118)
-				{
-					k.WindowsKeyCode = lp + (-67 + 76);
-				}
-				else if (lp >= 10 && lp <= 33)
-				{
-					k.WindowsKeyCode = lp + (-10 + 112);
-				}
-				else if (lp == 49)
-				{
-					k.WindowsKeyCode = lp + (-49 + 13);
-				}
-				else if (lp == 53)
-				{
-					k.WindowsKeyCode = lp + (-53 + 8);
-				}
-				k.Modifiers = CefEventFlags.None;
+                if (lp is not >= 83 or not <= 108)
+                {
+                    if (lp is >= 109 and <= 118)
+                    {
+                        k.WindowsKeyCode = lp + -109 + 48;
+                    }
+                    else if (lp is >= 67 and <= 118)
+                    {
+                        k.WindowsKeyCode = lp + -67 + 76;
+                    }
+                    else if (lp is >= 10 and <= 33)
+                    {
+                        k.WindowsKeyCode = lp + -10 + 112;
+                    }
+                    else if (lp == 49)
+                    {
+                        k.WindowsKeyCode = lp + -49 + 13;
+                    }
+                    else if (lp == 53)
+                    {
+                        k.WindowsKeyCode = lp + -53 + 8;
+                    }
+                }
+                else
+                {
+                    k.WindowsKeyCode = lp + -83 + 65;
+                }
+                k.Modifiers = CefEventFlags.None;
 				if ((((int)item.Modifiers) & ((int)ModifierKeys.Alt)) > 0f)
 				{
 					k.Modifiers |= CefEventFlags.AltDown;
@@ -685,17 +741,17 @@ namespace RhubarbEngine.Components.Interaction
 				}
 				k.Type = (item.Down) ? KeyEventType.KeyDown : KeyEventType.KeyUp;
 				k.IsSystemKey = false;
-				browser.GetBrowser().GetHost().SendKeyEvent(k);
+				_browser.GetBrowser().GetHost().SendKeyEvent(k);
 			}
 			foreach (var item in imp.KeyCharPresses)
 			{
-				CefSharp.KeyEvent k = new CefSharp.KeyEvent();
+				var k = new CefSharp.KeyEvent();
 				var lp = (int)item;
 				k.WindowsKeyCode = lp;
 				k.FocusOnEditableField = true;
 				k.IsSystemKey = false;
 				k.Type = KeyEventType.Char;
-				browser.GetBrowser().GetHost().SendKeyEvent(k);
+				_browser.GetBrowser().GetHost().SendKeyEvent(k);
 			}
 
 			foreach (var item in imp.MouseEvents)
@@ -704,28 +760,28 @@ namespace RhubarbEngine.Components.Interaction
 				switch (key)
 				{
 					case MouseButton.Left:
-						browser.GetBrowser().GetHost().SendMouseClickEvent((int)imp.MousePosition.X, (int)imp.MousePosition.Y, MouseButtonType.Left, !item.Down, 1, CefEventFlags.None);
+						_browser.GetBrowser().GetHost().SendMouseClickEvent((int)imp.MousePosition.X, (int)imp.MousePosition.Y, MouseButtonType.Left, !item.Down, 1, CefEventFlags.None);
 						break;
 					case MouseButton.Middle:
-						browser.GetBrowser().GetHost().SendMouseClickEvent((int)imp.MousePosition.X, (int)imp.MousePosition.Y, MouseButtonType.Middle, !item.Down, 1, CefEventFlags.None);
+						_browser.GetBrowser().GetHost().SendMouseClickEvent((int)imp.MousePosition.X, (int)imp.MousePosition.Y, MouseButtonType.Middle, !item.Down, 1, CefEventFlags.None);
 						break;
 					case MouseButton.Right:
-						browser.GetBrowser().GetHost().SendMouseClickEvent((int)imp.MousePosition.X, (int)imp.MousePosition.Y, MouseButtonType.Right, !item.Down, 1, CefEventFlags.None);
+						_browser.GetBrowser().GetHost().SendMouseClickEvent((int)imp.MousePosition.X, (int)imp.MousePosition.Y, MouseButtonType.Right, !item.Down, 1, CefEventFlags.None);
 						break;
 					default:
 						break;
 				}
 			}
 
-			browser.GetBrowser().GetHost().SendMouseMoveEvent(new CefSharp.MouseEvent((int)imp.MousePosition.X, (int)imp.MousePosition.Y, CefEventFlags.None), !imp.focused);
-			browser.GetBrowser().GetHost().SendMouseWheelEvent(0, (int)(imp.WheelDelta * 100), 0, (int)(imp.WheelDelta * 100), CefEventFlags.None);
-			browser.GetBrowser().GetHost().SetAudioMuted(false);
-			browser.GetBrowser().GetHost().SetFocus(imp.focused);
+			_browser.GetBrowser().GetHost().SendMouseMoveEvent(new CefSharp.MouseEvent((int)imp.MousePosition.X, (int)imp.MousePosition.Y, CefEventFlags.None), !imp.focused);
+			_browser.GetBrowser().GetHost().SendMouseWheelEvent(0, (int)(imp.WheelDelta * 100), 0, (int)(imp.WheelDelta * 100), CefEventFlags.None);
+			_browser.GetBrowser().GetHost().SetAudioMuted(false);
+			_browser.GetBrowser().GetHost().SetFocus(imp.focused);
 
 		}
 		public bool GetAudioParameters(IWebBrowser chromiumWebBrowser, IBrowser browser, ref AudioParameters parameters)
 		{
-			switch (audioType.value)
+			switch (audioType.Value)
 			{
 				case AudioType.LayoutUnsupported:
 					parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutUnsupported;
@@ -757,23 +813,23 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			unsafe
 			{
-				float** channelData = (float**)data.ToPointer();
-				int chan = ChannelCount;
-				int size = noOfFrames * sizeof(float) * chan;
-				byte[] samples = new byte[size];
+				var channelData = (float**)data.ToPointer();
+				var chan = ChannelCount;
+				var size = noOfFrames * sizeof(float) * chan;
+                var samples = new byte[size];
 				fixed (byte* pDestByte = samples)
 				{
-					float* pDest = (float*)pDestByte;
+					var pDest = (float*)pDestByte;
 
-					for (int i = 0; i < noOfFrames; i++)
+					for (var i = 0; i < noOfFrames; i++)
 					{
-						for (int c = 0; c < chan; c++)
+						for (var c = 0; c < chan; c++)
 						{
 							*pDest++ = channelData[c][i];
 						}
 					}
 				}
-				frameInputBuffer.Push(samples);
+				_frameInputBuffer.Push(samples);
 			}
 		}
 

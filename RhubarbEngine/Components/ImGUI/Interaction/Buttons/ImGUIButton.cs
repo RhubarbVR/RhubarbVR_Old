@@ -42,7 +42,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (ImGui.Button(label.value ?? "", new Vector2(size.value.x, size.value.y)))
+			if (ImGui.Button(label.Value ?? "", new Vector2(size.Value.x, size.Value.y)))
 			{
 				action.Target?.Invoke();
 			}

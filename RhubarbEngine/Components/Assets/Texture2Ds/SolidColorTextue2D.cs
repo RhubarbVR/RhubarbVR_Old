@@ -40,7 +40,7 @@ namespace RhubarbEngine.Components.Assets
 
 		public override void onLoaded()
 		{
-			texture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, color.value), false).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+			texture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, color.Value), false).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
 			view = engine.renderManager.gd.ResourceFactory.CreateTextureView(texture);
 			load(new RTexture2D(view));
 		}
@@ -48,7 +48,7 @@ namespace RhubarbEngine.Components.Assets
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			color = new Sync<Colorf>(this, newRefIds);
-			color.value = Colorf.White;
+			color.Value = Colorf.White;
 			color.Changed += Color_Changed;
 		}
 
@@ -56,7 +56,7 @@ namespace RhubarbEngine.Components.Assets
 		{
 			if (texture == null)
 				return;
-			texture.UpdateTexture(new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, color.value), false), engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+			texture.UpdateTexture(new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, color.Value), false), engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
 		}
 
 		public SolidColorTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

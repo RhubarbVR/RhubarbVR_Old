@@ -11,8 +11,8 @@ namespace RhubarbVR
         {
             try
             {
-                engine.initialize(_args);
-                engine.startUpdateLoop();
+                engine.Initialize(_args);
+                engine.StartUpdateLoop();
             }
             catch (Exception e)
             {
@@ -21,12 +21,12 @@ namespace RhubarbVR
 
             try
             {
-                engine.cleanUP();
+                engine.CleanUP();
             }
             catch (Exception e)
             {
                 engine.logger.Log(e.ToString(), true);
-                engine.logger.cleanUP();
+                engine.logger.CleanUP();
             }
         }
     }

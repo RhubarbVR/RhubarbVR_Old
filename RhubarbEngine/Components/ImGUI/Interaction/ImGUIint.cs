@@ -41,11 +41,11 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			int vale = value.value;
-			ImGui.DragInt(label.value ?? "", ref vale);
-			if (vale != value.value)
+			int vale = value.Value;
+			ImGui.DragInt(label.Value ?? "", ref vale);
+			if (vale != value.Value)
 			{
-				value.value = vale;
+				value.Value = vale;
 			}
 		}
 	}

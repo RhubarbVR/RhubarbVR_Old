@@ -42,7 +42,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				foreach (var item in children)
 				{
-					item.target?.ImguiRender(imGuiRenderer, canvas);
+					item.Target?.ImguiRender(imGuiRenderer, canvas);
 				}
 				ImGui.EndMenuBar();
 			}

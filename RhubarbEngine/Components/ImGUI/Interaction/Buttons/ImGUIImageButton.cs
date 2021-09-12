@@ -53,23 +53,23 @@ namespace RhubarbEngine.Components.ImGUI
 			texture = new AssetRef<RTexture2D>(this, newRefIds);
 			texture.loadChange += assetChange;
 			size = new Sync<Vector2f>(this, newRefIds);
-			size.value = new Vector2f(100, 100);
+			size.Value = new Vector2f(100, 100);
 			UV0 = new Sync<Vector2f>(this, newRefIds);
-			UV0.value = new Vector2f(0, 0);
+			UV0.Value = new Vector2f(0, 0);
 			UV1 = new Sync<Vector2f>(this, newRefIds);
-			UV1.value = new Vector2f(1, 1);
+			UV1.Value = new Vector2f(1, 1);
 			padding = new Sync<int>(this, newRefIds);
-			padding.value = 0;
+			padding.Value = 0;
 			tint = new Sync<Colorf>(this, newRefIds);
-			tint.value = Colorf.White;
+			tint.Value = Colorf.White;
 			big = new Sync<Colorf>(this, newRefIds);
-			big.value = Colorf.White;
+			big.Value = Colorf.White;
 			action = new SyncDelegate(this, newRefIds);
 			action.Target = test;
 			TintOnClick = new Sync<bool>(this, newRefIds);
-			TintOnClick.value = true;
+			TintOnClick.Value = true;
 			TintOnClickTime = new Sync<float>(this, newRefIds);
-			TintOnClickTime.value = 0.1f;
+			TintOnClickTime.Value = 0.1f;
 		}
 		public void assetChange(RTexture2D newAsset)
 		{
@@ -78,7 +78,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public void loadTextureView()
 		{
-			if (texture.target != null)
+			if (texture.Target != null)
 			{
 				if (texture.Asset != null)
 				{
@@ -121,14 +121,14 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			var tintval = tint.value;
-			if (TintOnClick.value & (DateTime.UtcNow - lastClick) < new TimeSpan(0, 0, 0, 0, (int)(TintOnClickTime.value * 1000)))
+			var tintval = tint.Value;
+			if (TintOnClick.Value & (DateTime.UtcNow - lastClick) < new TimeSpan(0, 0, 0, 0, (int)(TintOnClickTime.Value * 1000)))
 			{
 				tintval *= 0.8f;
 			}
-			if (ImGui.ImageButton(imGuiRenderer.GetOrCreateImGuiBinding(engine.renderManager.gd.ResourceFactory, view), new Vector2(size.value.x, size.value.y), new Vector2(UV0.value.x, UV0.value.y), new Vector2(UV1.value.x, UV1.value.y), padding.value, big.value.ToRGBA().ToSystem(), tintval.ToRGBA().ToSystem()))
+			if (ImGui.ImageButton(imGuiRenderer.GetOrCreateImGuiBinding(engine.renderManager.gd.ResourceFactory, view), new Vector2(size.Value.x, size.Value.y), new Vector2(UV0.Value.x, UV0.Value.y), new Vector2(UV1.Value.x, UV1.Value.y), padding.Value, big.Value.ToRGBA().ToSystem(), tintval.ToRGBA().ToSystem()))
 			{
-				if (TintOnClick.value)
+				if (TintOnClick.Value)
 				{
 					lastClick = DateTime.UtcNow;
 				}

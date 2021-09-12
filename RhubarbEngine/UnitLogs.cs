@@ -10,7 +10,7 @@ namespace RhubarbEngine
 {
 	public class UnitLogs
 	{
-		private Engine engine;
+		private readonly Engine _engine;
 
 		public string logFile = DateTime.Now.ToString().Replace("/", "-").Replace(":", "_") + ".txt";
 
@@ -22,7 +22,7 @@ namespace RhubarbEngine
 
 		public UnitLogs(Engine _engine)
 		{
-			engine = _engine;
+			this._engine = _engine;
 			if (!Directory.Exists(logDir))
 			{
 				Directory.CreateDirectory(logDir);
@@ -33,13 +33,13 @@ namespace RhubarbEngine
 
 		public void Log(string _log, bool _alwaysLog = false)
 		{
-			Console.WriteLine(String.Format("{0}: {1}", DateTime.Now, _log));
-			if (_alwaysLog || engine.verbose)
+			Console.WriteLine(string.Format("{0}: {1}", DateTime.Now, _log));
+			if (_alwaysLog || _engine.verbose)
 			{
-				writeLog(String.Format("{0}: {1}", DateTime.Now, _log));
+				WriteLog(string.Format("{0}: {1}", DateTime.Now, _log));
 			}
 		}
-		public bool writeLog(string strMessage)
+		public bool WriteLog(string strMessage)
 		{
 			try
 			{
@@ -47,13 +47,13 @@ namespace RhubarbEngine
 				objStreamWriter.FlushAsync();
 				return true;
 			}
-			catch (Exception ex)
+			catch
 			{
 				return false;
 			}
 		}
 
-		public void cleanUP()
+		public void CleanUP()
 		{
 			try
 			{

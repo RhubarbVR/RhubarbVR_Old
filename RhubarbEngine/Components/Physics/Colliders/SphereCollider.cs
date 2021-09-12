@@ -25,7 +25,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
 		{
 			base.buildSyncObjs(newRefIds);
 			radius = new Sync<double>(this, newRefIds);
-			radius.value = 0.5;
+			radius.Value = 0.5;
 			radius.Changed += UpdateChange;
 		}
 
@@ -42,7 +42,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
 		public override void BuildShape()
 		{
-			startShape(new SphereShape(radius.value));
+			StartShape(new SphereShape(radius.Value));
 		}
 
 		public SphereCollider(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

@@ -13,7 +13,7 @@ namespace RhubarbEngine
 {
 	public class EngineInitializer
 	{
-		private Engine engine;
+		private readonly Engine _engine;
 
 		public string intphase;
 
@@ -21,28 +21,28 @@ namespace RhubarbEngine
 
 		public EngineInitializer(Engine _engine)
 		{
-			engine = _engine;
+			this._engine = _engine;
 		}
 
-		public void initializeManagers()
+		public void InitializeManagers()
 		{
 			//This is to make finding memory problems easier
 			//System.Runtime.GCSettings.LatencyMode = System.Runtime.GCLatencyMode.LowLatency;
 			try
 			{
-				engine.logger.Log("Starting Managers");
+				_engine.logger.Log("Starting Managers");
 
 				intphase = "Platform Info Manager";
-				engine.logger.Log("Starting Platform Info Manager:");
-				engine.platformInfo = new PlatformInfoManager();
-				engine.platformInfo.initialize(engine);
+				_engine.logger.Log("Starting Platform Info Manager:");
+				_engine.platformInfo = new PlatformInfoManager();
+				_engine.platformInfo.initialize(_engine);
 
-				if (engine.platformInfo.platform != Platform.Android)
+				if (_engine.platformInfo.platform != Platform.Android)
 				{
 					intphase = "Window Manager";
-					engine.logger.Log("Starting Window Manager:");
-					engine.windowManager = new Managers.WindowManager();
-					engine.windowManager.initialize(engine);
+					_engine.logger.Log("Starting Window Manager:");
+					_engine.windowManager = new Managers.WindowManager();
+					_engine.windowManager.initialize(_engine);
 				}
 				else
 				{
@@ -50,41 +50,41 @@ namespace RhubarbEngine
 				}
 
 				intphase = "Input Manager";
-				engine.logger.Log("Starting Input Manager:");
-				engine.inputManager = new Managers.InputManager();
-				engine.inputManager.initialize(engine);
+				_engine.logger.Log("Starting Input Manager:");
+				_engine.inputManager = new Managers.InputManager();
+				_engine.inputManager.initialize(_engine);
 
 				intphase = "Render Manager";
-				engine.logger.Log("Starting Render Manager:");
-				engine.renderManager = new Managers.RenderManager();
-				engine.renderManager.initialize(engine);
+				_engine.logger.Log("Starting Render Manager:");
+				_engine.renderManager = new Managers.RenderManager();
+				_engine.renderManager.initialize(_engine);
 
 
 				intphase = "Audio Manager";
-				engine.logger.Log("Starting Audio Manager:");
-				engine.audioManager = new Managers.AudioManager();
-				engine.audioManager.initialize(engine);
+				_engine.logger.Log("Starting Audio Manager:");
+				_engine.audioManager = new Managers.AudioManager();
+				_engine.audioManager.initialize(_engine);
 
 				intphase = "Net Api Manager";
-				engine.logger.Log("Starting Net Api Manager:");
-				engine.netApiManager = new Managers.NetApiManager();
+				_engine.logger.Log("Starting Net Api Manager:");
+				_engine.netApiManager = new Managers.NetApiManager();
 				if (token != null)
 				{
-					engine.netApiManager.token = token;
+					_engine.netApiManager.token = token;
 				}
-				engine.netApiManager.initialize(engine);
+				_engine.netApiManager.initialize(_engine);
 
 				intphase = "World Manager";
-				engine.logger.Log("Starting World Manager:");
-				engine.worldManager = new WorldManager();
-				engine.worldManager.initialize(engine);
+				_engine.logger.Log("Starting World Manager:");
+				_engine.worldManager = new WorldManager();
+				_engine.worldManager.initialize(_engine);
 
-				engine.audioManager.task.Start();
+				_engine.audioManager.task.Start();
 				Initialised = true;
 			}
 			catch (Exception _e)
 			{
-				engine.logger.Log("Failed at " + intphase + " Error: " + _e);
+				_engine.logger.Log("Failed at " + intphase + " Error: " + _e);
 			}
 
 		}
@@ -95,31 +95,25 @@ namespace RhubarbEngine
 
 		public IEnumerable<string> settings = new string[] { };
 
-		public void loadArguments(string[] _args)
+		public void LoadArguments(string[] _args)
 		{
-			foreach (string arg in _args)
+			foreach (var arg in _args)
 			{
-				engine.logger.Log(arg, true);
+				_engine.logger.Log(arg, true);
 			}
 			Parser.Default.ParseArguments<CommandLineOptions>(_args)
 				.WithParsed<CommandLineOptions>(o =>
 				{
 					if (o.verbose)
 					{
-						engine.verbose = true;
+						_engine.verbose = true;
 					}
 					if (o.datapath != null)
 					{
-						engine.dataPath = o.datapath;
+						_engine.dataPath = o.datapath;
 					}
-					if (o.graphicsBackend != null)
-					{
-						engine.backend = o.graphicsBackend;
-					}
-					if (o.outputType != null)
-					{
-						engine.outputType = o.outputType;
-					}
+				    _engine.backend = o.graphicsBackend;
+				    _engine.outputType = o.outputType;
 					if (o.settings != null)
 					{
 						settings = o.settings;

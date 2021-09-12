@@ -47,113 +47,116 @@ namespace RhubarbEngine.Components.PrivateSpace
 			//        }
 			//        return;
 			//    }
-			if (Keyboard.target == null)
+			if (Keyboard.Target == null)
 			{
-				var keyboard = Keyboard.target = FollowUser.target.addChild("Keyboard");
+				var keyboard = Keyboard.Target = FollowUser.Target.AddChild("Keyboard");
 				var e = keyboard;
 
-				CurvedPlaneMesh bmesh = e.attachComponent<CurvedPlaneMesh>();
-				bmesh.BottomRadius.value = engine.settingsObject.UISettings.KeyBoardCurve;
-				bmesh.TopRadius.value = engine.settingsObject.UISettings.KeyBoardCurve + 10f;
-				bmesh.Height.value = 0.4f;
-				bmesh.Width.value = 0.5f;
-				MeshInputPlane bmeshcol = e.attachComponent<MeshInputPlane>();
-				Vector2f sizePix = new Vector2f(600, 600);
-				bmeshcol.mesh.target = bmesh;
-				bmeshcol.FocusedOverride.value = true;
+				var bmesh = e.AttachComponent<CurvedPlaneMesh>();
+				bmesh.BottomRadius.Value = engine.settingsObject.UISettings.KeyBoardCurve;
+				bmesh.TopRadius.Value = engine.settingsObject.UISettings.KeyBoardCurve + 10f;
+				bmesh.Height.Value = 0.4f;
+				bmesh.Width.Value = 0.5f;
+				var bmeshcol = e.AttachComponent<MeshInputPlane>();
+				var sizePix = new Vector2f(600, 600);
+				bmeshcol.mesh.Target = bmesh;
+				bmeshcol.FocusedOverride.Value = true;
 
-				bmeshcol.pixelSize.value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);
+				bmeshcol.pixelSize.Value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);
 				//e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
-				e.rotation.value = Quaternionf.CreateFromEuler(90f, -90f, -90f) * Quaternionf.CreateFromEuler(0f, -40f, 0f);
-				e.position.value = new Vector3f(0, -0.5, -0.6);
-				RMaterial mit = e.attachComponent<RMaterial>();
-				MeshRender meshRender = e.attachComponent<MeshRender>();
-				ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
-				imGUICanvas.noKeyboard.value = true;
-				imGUICanvas.scale.value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);
-				bmeshcol.pixelSize.value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);
-				ImGUIKeyboard imGUIText = e.attachComponent<ImGUIKeyboard>();
-				imGUICanvas.imputPlane.target = bmeshcol;
-				imGUICanvas.element.target = imGUIText;
-				mit.Shader.target = world.staticAssets.basicUnlitShader;
-				meshRender.Materials.Add().target = mit;
-				meshRender.Mesh.target = bmesh;
-				imGUICanvas.noCloseing.value = true;
-				imGUICanvas.noBackground.value = true;
-				Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-				field.field.target = imGUICanvas;
+				e.rotation.Value = Quaternionf.CreateFromEuler(90f, -90f, -90f) * Quaternionf.CreateFromEuler(0f, -40f, 0f);
+				e.position.Value = new Vector3f(0, -0.5, -0.6);
+				var mit = e.AttachComponent<RMaterial>();
+				var meshRender = e.AttachComponent<MeshRender>();
+				var imGUICanvas = e.AttachComponent<ImGUICanvas>();
+				imGUICanvas.noKeyboard.Value = true;
+				imGUICanvas.scale.Value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);
+				bmeshcol.pixelSize.Value = new Vector2u((uint)sizePix.x, (uint)sizePix.y);
+				var imGUIText = e.AttachComponent<ImGUIKeyboard>();
+				imGUICanvas.imputPlane.Target = bmeshcol;
+				imGUICanvas.element.Target = imGUIText;
+				mit.Shader.Target = world.staticAssets.basicUnlitShader;
+				meshRender.Materials.Add().Target = mit;
+				meshRender.Mesh.Target = bmesh;
+				imGUICanvas.noCloseing.Value = true;
+				imGUICanvas.noBackground.Value = true;
+				var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+				field.field.Target = imGUICanvas;
 			}
 			else
 			{
-				Keyboard.target.enabled.value = true;
+				Keyboard.Target.enabled.Value = true;
 			}
 		}
 
 		public void CloseKeyboard()
 		{
-			if (Keyboard.target != null)
+			if (Keyboard.Target != null)
 			{
-				Keyboard.target.enabled.value = false;
+				Keyboard.Target.enabled.Value = false;
 			}
 		}
 
 		public override void OnAttach()
 		{
 			base.onLoaded();
-			var d = world.RootEntity.addChild("User Follower");
-			FollowUser.target = d;
+			var d = world.RootEntity.AddChild("User Follower");
+			FollowUser.Target = d;
 
-			var e = d.addChild("Main Panel");
-			d.attachComponent<UserInterfacePositioner>();
-			e.attachComponent<TaskBarManager>();
+			var e = d.AddChild("Main Panel");
+			d.AttachComponent<UserInterfacePositioner>();
+			e.AttachComponent<TaskBarManager>();
 
-			Entity rootent = world.RootEntity.addChild();
-			rootent.name.value = $"PersonalSpace User";
-			rootent.persistence.value = false;
-			UserRoot userRoot = rootent.attachComponent<UserRoot>();
-			userRoot.user.target = world.localUser;
-			world.localUser.userroot.target = userRoot;
-			Entity head = rootent.addChild("Head");
-			head.attachComponent<Head>();
-			head.addChild("Laser").attachComponent<InteractionLaser>().source.value = InteractionSource.HeadLaser;
-			userRoot.Head.target = head;
-			Entity left = rootent.addChild("Left hand");
-			Entity right = rootent.addChild("Right hand");
+			var rootent = world.RootEntity.AddChild();
+			rootent.name.Value = $"PersonalSpace User";
+			rootent.persistence.Value = false;
+			var userRoot = rootent.AttachComponent<UserRoot>();
+			userRoot.user.Target = world.LocalUser;
+			world.LocalUser.userroot.Target = userRoot;
+			var head = rootent.AddChild("Head");
+			head.AttachComponent<Head>();
+			head.AddChild("Laser").AttachComponent<InteractionLaser>().source.Value = InteractionSource.HeadLaser;
+			userRoot.Head.Target = head;
+			var left = rootent.AddChild("Left hand");
+			var right = rootent.AddChild("Right hand");
 
 
-			userRoot.LeftHand.target = left;
-			userRoot.RightHand.target = right;
-			Hand leftcomp = left.attachComponent<Hand>();
-			leftcomp.userroot.target = userRoot;
-			leftcomp.creality.value = Input.Creality.Left;
-			Hand rightcomp = right.attachComponent<Hand>();
-			rightcomp.creality.value = Input.Creality.Right;
-			rightcomp.userroot.target = userRoot;
+			userRoot.LeftHand.Target = left;
+			userRoot.RightHand.Target = right;
+			var leftcomp = left.AttachComponent<Hand>();
+			leftcomp.userroot.Target = userRoot;
+			leftcomp.creality.Value = Input.Creality.Left;
+			var rightcomp = right.AttachComponent<Hand>();
+			rightcomp.creality.Value = Input.Creality.Right;
+			rightcomp.userroot.Target = userRoot;
 
-			var LeftLaser = left.addChild("Left Laser");
-			LeftLaser.attachComponent<InteractionLaser>().source.value = InteractionSource.LeftLaser;
-			LeftLaser.attachComponent<LaserVisual>().source.value = InteractionSource.LeftLaser;
-			var RightLaser = right.addChild("Right Laser");
-			RightLaser.attachComponent<InteractionLaser>().source.value = InteractionSource.RightLaser;
-			RightLaser.attachComponent<LaserVisual>().source.value = InteractionSource.RightLaser;
+			var LeftLaser = left.AddChild("Left Laser");
+			LeftLaser.AttachComponent<InteractionLaser>().source.Value = InteractionSource.LeftLaser;
+			LeftLaser.AttachComponent<LaserVisual>().source.Value = InteractionSource.LeftLaser;
+			var RightLaser = right.AddChild("Right Laser");
+			RightLaser.AttachComponent<InteractionLaser>().source.Value = InteractionSource.RightLaser;
+			RightLaser.AttachComponent<LaserVisual>().source.Value = InteractionSource.RightLaser;
 
-			Entity leftContext = rootent.addChild("Left Context");
-			Entity rightContext = rootent.addChild("Right Context");
+			var leftContext = rootent.AddChild("Left Context");
+			var rightContext = rootent.AddChild("Right Context");
 
-			var leftC = leftContext.attachComponent<ContextMenu>();
-			leftC.side.value = Input.Creality.Left;
+			var leftC = leftContext.AttachComponent<ContextMenu>();
+			leftC.side.Value = Input.Creality.Left;
 
-			var rightC = rightContext.attachComponent<ContextMenu>();
-			rightC.side.value = Input.Creality.Right;
+			var rightC = rightContext.AttachComponent<ContextMenu>();
+			rightC.side.Value = Input.Creality.Right;
 
 			logger.Log("Spawned User PersonalSpace");
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (input.isKeyboardinuse)
-				return;
-			if ((input.mainWindows.GetKeyDown(Veldrid.Key.Tab) && (input.mainWindows.GetKey(Veldrid.Key.AltLeft) || input.mainWindows.GetKey(Veldrid.Key.AltRight))) || input.SecondaryPress(Input.Creality.None))
+			if (input.IsKeyboardinuse)
+            {
+                return;
+            }
+
+            if ((input.mainWindows.GetKeyDown(Veldrid.Key.Tab) && (input.mainWindows.GetKey(Veldrid.Key.AltLeft) || input.mainWindows.GetKey(Veldrid.Key.AltRight))) || input.SecondaryPress(Input.Creality.None))
 			{
 				SwitchWorld();
 			}
@@ -163,7 +166,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 		{
 			var mang = engine.worldManager;
 
-			var pos = mang.worlds.IndexOf(mang.focusedWorld) + 1;
+			var pos = mang.worlds.IndexOf(mang.FocusedWorld) + 1;
 			if (pos == mang.worlds.Count)
 			{
 				JoinNextIfBackground(0);

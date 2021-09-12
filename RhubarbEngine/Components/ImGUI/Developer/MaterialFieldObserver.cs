@@ -40,7 +40,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void Target_Changed(IChangeable obj)
 		{
-			if (entity.manager != world.localUser)
+			if (entity.Manager != world.LocalUser)
 				return;
 			var e = new Thread(BuildView, 1024);
 			e.Priority = ThreadPriority.BelowNormal;
@@ -51,7 +51,7 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			foreach (var item in children)
 			{
-				item.target?.Dispose();
+				item.Target?.Dispose();
 			}
 			children.Clear();
 		}
@@ -61,17 +61,17 @@ namespace RhubarbEngine.Components.ImGUI
 			try
 			{
 				ClearOld();
-				if (target.target == null)
+				if (target.Target == null)
 					return;
-				FieldInfo[] fields = target.target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+				FieldInfo[] fields = target.Target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 				foreach (var field in fields)
 				{
 					if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
 					{
-						var obs = entity.attachComponent<WorkerObserver>();
-						obs.fieldName.value = field.Name;
-						obs.target.target = ((Worker)field.GetValue(target.target));
-						children.Add().target = obs;
+						var obs = entity.AttachComponent<WorkerObserver>();
+						obs.fieldName.Value = field.Name;
+						obs.target.Target = ((Worker)field.GetValue(target.Target));
+						children.Add().Target = obs;
 					}
 				}
 			}
@@ -89,11 +89,11 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			ImGui.Text(target.target.fieldName.value);
+			ImGui.Text(target.Target.fieldName.Value);
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				Interaction.GrabbableHolder source = null;
-				switch (canvas.imputPlane.target?.source ?? Interaction.InteractionSource.None)
+				switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 				{
 					case Interaction.InteractionSource.LeftLaser:
 						source = world.LeftLaserGrabbableHolder;
@@ -109,12 +109,12 @@ namespace RhubarbEngine.Components.ImGUI
 				}
 				if (source != null)
 				{
-					source.Referencer.target = target.target;
+					source.Referencer.Target = target.Target;
 				}
 			}
 			foreach (var item in children)
 			{
-				item.target?.ImguiRender(imGuiRenderer, canvas);
+				item.Target?.ImguiRender(imGuiRenderer, canvas);
 			}
 		}
 	}

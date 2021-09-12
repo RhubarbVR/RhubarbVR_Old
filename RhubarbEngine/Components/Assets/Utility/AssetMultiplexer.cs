@@ -58,13 +58,13 @@ namespace RhubarbEngine.Components.Assets
 
 		private void UpdateProvider()
 		{
-			if (index.value >= targets.Length)
+			if (index.Value >= targets.Length)
 			{
 				load(null);
 			}
 			else
 			{
-				load(targets[index.value]?.Asset);
+				load(targets[index.Value]?.Asset);
 			}
 		}
 

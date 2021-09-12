@@ -39,13 +39,13 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public Sync<Colorf> backGroundColor;
 
-		private ImGuiRenderer igr;
+		private ImGuiRenderer _igr;
 
-		private CommandList UIcommandList;
+		private CommandList _uIcommandList;
 
-		private Framebuffer framebuffer;
+		private Framebuffer _framebuffer;
 
-		private bool UIloaded = false;
+		private bool _uIloaded = false;
 
 		public SyncDelegate onClose;
 		public SyncDelegate onHeaderGrab;
@@ -70,17 +70,29 @@ namespace RhubarbEngine.Components.ImGUI
 		}
 
 
-		public RenderFrequency renderFrac => renderFrequency.value;
+        public RenderFrequency renderFrac
+        {
+            get
+            {
+                return renderFrequency.Value;
+            }
+        }
 
-		public bool Threaded => false;
+        public bool Threaded
+        {
+            get
+            {
+                return false;
+            }
+        }
 
-		public override void buildSyncObjs(bool newRefIds)
+        public override void buildSyncObjs(bool newRefIds)
 		{
 			base.buildSyncObjs(newRefIds);
 			scale = new Sync<Vector2u>(this, newRefIds);
 			renderFrequency = new Sync<RenderFrequency>(this, newRefIds);
-			scale.value = new Vector2u(600, 600);
-			scale.Changed += onScaleChange;
+			scale.Value = new Vector2u(600, 600);
+			scale.Changed += OnScaleChange;
 			element = new SyncRef<IUIElement>(this, newRefIds);
 			imputPlane = new SyncRef<IinputPlane>(this, newRefIds);
 			name = new Sync<string>(this, newRefIds);
@@ -90,41 +102,46 @@ namespace RhubarbEngine.Components.ImGUI
 			onClose = new SyncDelegate(this, newRefIds);
 			onHeaderClick = new SyncDelegate(this, newRefIds);
 			onHeaderGrab = new SyncDelegate(this, newRefIds);
-			backGroundColor = new Sync<Colorf>(this, newRefIds);
-			backGroundColor.value = Colorf.Black;
-		}
+            backGroundColor = new Sync<Colorf>(this, newRefIds)
+            {
+                Value = Colorf.Black
+            };
+        }
 
-		private void onScaleChange(IChangeable val)
+		private void OnScaleChange(IChangeable val)
 		{
-			if (UIcommandList == null)
-				return;
-			if (((framebuffer != null) && (igr != null) && UIloaded))
+			if (_uIcommandList == null)
+            {
+                return;
+            }
+
+            if (((_framebuffer != null) && (_igr != null) && _uIloaded))
 			{
-				UIloaded = false;
+				_uIloaded = false;
 				load(null);
-				framebuffer.Dispose();
-				igr.Dispose();
-				loadUI();
+				_framebuffer.Dispose();
+				_igr.Dispose();
+				LoadUI();
 			}
 		}
 
 		public override void onLoaded()
 		{
 			base.onLoaded();
-			UIcommandList = engine.renderManager.gd.ResourceFactory.CreateCommandList();
-			loadUI();
+			_uIcommandList = engine.renderManager.gd.ResourceFactory.CreateCommandList();
+			LoadUI();
 		}
 
 		private Framebuffer CreateFramebuffer(uint width, uint height)
 		{
-			ResourceFactory factory = engine.renderManager.gd.ResourceFactory;
-			Texture colorTarget = factory.CreateTexture(TextureDescription.Texture2D(
+			var factory = engine.renderManager.gd.ResourceFactory;
+			var colorTarget = factory.CreateTexture(TextureDescription.Texture2D(
 				width, height,
 				1, 1,
 				PixelFormat.R8_G8_B8_A8_UNorm_SRgb,
 				TextureUsage.RenderTarget | TextureUsage.Sampled
 				));
-			Texture depthTarget = factory.CreateTexture(TextureDescription.Texture2D(
+			var depthTarget = factory.CreateTexture(TextureDescription.Texture2D(
 				width, height,
 				1, 1,
 				PixelFormat.R32_Float,
@@ -132,19 +149,22 @@ namespace RhubarbEngine.Components.ImGUI
 			return factory.CreateFramebuffer(new FramebufferDescription(depthTarget, colorTarget));
 		}
 
-		private void loadUI()
+		private void LoadUI()
 		{
 			try
 			{
 				logger.Log("Loading ui");
-				if (scale.value.x < 2 || scale.value.y < 2)
-					throw new Exception("UI too Small");
-				framebuffer = CreateFramebuffer(scale.value.x, scale.value.y);
-				igr = new ImGuiRenderer(engine.renderManager.gd, framebuffer.OutputDescription, (int)scale.value.x, (int)scale.value.y, ColorSpaceHandling.Linear);
-				Texture target = framebuffer.ColorTargets[0].Target;
-				TextureView view = engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
+				if (scale.Value.x < 2 || scale.Value.y < 2)
+                {
+                    throw new Exception("UI too Small");
+                }
+
+                _framebuffer = CreateFramebuffer(scale.Value.x, scale.Value.y);
+				_igr = new ImGuiRenderer(engine.renderManager.gd, _framebuffer.OutputDescription, (int)scale.Value.x, (int)scale.Value.y, ColorSpaceHandling.Linear);
+				var target = _framebuffer.ColorTargets[0].Target;
+				var view = engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
 				load(new RTexture2D(view));
-				UIloaded = true;
+				_uIloaded = true;
 			}
 			catch (Exception e)
 			{
@@ -154,17 +174,47 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public class FakeInputSnapshot : InputSnapshot
 		{
-			public IReadOnlyList<KeyEvent> KeyEvents => new List<KeyEvent>();
+            public IReadOnlyList<KeyEvent> KeyEvents
+            {
+                get
+                {
+                    return new List<KeyEvent>();
+                }
+            }
 
-			public IReadOnlyList<MouseEvent> MouseEvents => new List<MouseEvent>();
+            public IReadOnlyList<MouseEvent> MouseEvents
+            {
+                get
+                {
+                    return new List<MouseEvent>();
+                }
+            }
 
-			public IReadOnlyList<char> KeyCharPresses => new List<char>();
+            public IReadOnlyList<char> KeyCharPresses
+            {
+                get
+                {
+                    return new List<char>();
+                }
+            }
 
-			public Vector2 MousePosition => Vector2.Zero;
+            public Vector2 MousePosition
+            {
+                get
+                {
+                    return Vector2.Zero;
+                }
+            }
 
-			public float WheelDelta => 0;
+            public float WheelDelta
+            {
+                get
+                {
+                    return 0;
+                }
+            }
 
-			public bool IsMouseDown(MouseButton button)
+            public bool IsMouseDown(MouseButton button)
 			{
 				return false;
 			}
@@ -173,27 +223,27 @@ namespace RhubarbEngine.Components.ImGUI
 		private void ImGuiUpdate()
 		{
 			var ui = ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize;
-			if (noBackground.value)
+			if (noBackground.Value)
 			{
 				ui |= ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoTitleBar;
 			}
-			bool val = false;
-			bool e = true;
-			if (!noCloseing.value)
+			bool val;
+			var e = true;
+			if (!noCloseing.Value)
 			{
-				val = ImGui.Begin(name.value ?? "Null", ref e, ui);
+				val = ImGui.Begin(name.Value ?? "Null", ref e, ui);
 			}
 			else
 			{
-				val = ImGui.Begin(name.value ?? "Null", ui);
+				val = ImGui.Begin(name.Value ?? "Null", ui);
 			}
 			if (val)
 			{
 				ImGui.SetWindowPos(Vector2.Zero);
-				ImGui.SetWindowSize(new Vector2(scale.value.x, scale.value.y));
-				if (element.target != null)
+				ImGui.SetWindowSize(new Vector2(scale.Value.x, scale.Value.y));
+				if (element.Target != null)
 				{
-					element.target.ImguiRender(igr, this);
+					element.Target.ImguiRender(_igr, this);
 				}
 				else
 				{
@@ -201,42 +251,49 @@ namespace RhubarbEngine.Components.ImGUI
 				}
 				if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 				{
-					float titleBarHeight = (((int)ui & (int)ImGuiWindowFlags.NoTitleBar) == 1) ? 0f : ImGui.GetFontSize() + ImGui.GetStyle().FramePadding.Y * 2.0f;
+					var titleBarHeight = (((int)ui & (int)ImGuiWindowFlags.NoTitleBar) == 1) ? 0f : ImGui.GetFontSize() + (ImGui.GetStyle().FramePadding.Y * 2.0f);
 					var pos = ImGui.GetWindowPos();
 					if (ImGui.IsMouseHoveringRect(pos, new Vector2(pos.X + ImGui.GetWindowSize().X, pos.Y + titleBarHeight), false))
-						onHeaderGrab.Target?.Invoke();
-				}
+                    {
+                        onHeaderGrab.Target?.Invoke();
+                    }
+                }
 				if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
 				{
-					float titleBarHeight = (((int)ui & (int)ImGuiWindowFlags.NoTitleBar) == 1) ? 0f : ImGui.GetFontSize() + ImGui.GetStyle().FramePadding.Y * 2.0f;
+					var titleBarHeight = (((int)ui & (int)ImGuiWindowFlags.NoTitleBar) == 1) ? 0f : ImGui.GetFontSize() + (ImGui.GetStyle().FramePadding.Y * 2.0f);
 					var pos = ImGui.GetWindowPos();
 					if (ImGui.IsMouseHoveringRect(pos, new Vector2(pos.X + ImGui.GetWindowSize().X, pos.Y + titleBarHeight), false))
-						onHeaderClick.Target?.Invoke();
-				}
-				if (noKeyboard.value)
-					return;
-				if (ImGui.GetIO().WantTextInput)
+                    {
+                        onHeaderClick.Target?.Invoke();
+                    }
+                }
+				if (noKeyboard.Value)
+                {
+                    return;
+                }
+
+                if (ImGui.GetIO().WantTextInput)
 				{
-					input.keyboard = this;
-					if (imputPlane.target != null)
+					input.Keyboard = this;
+					if (imputPlane.Target != null)
 					{
-						imputPlane.target.StopMouse = true;
+						imputPlane.Target.StopMouse = true;
 					}
 				}
 				else
 				{
-					if (input.keyboard == this)
+					if (input.Keyboard == this)
 					{
-						input.keyboard = null;
+						input.Keyboard = null;
 					}
-					if (imputPlane.target != null)
+					if (imputPlane.Target != null)
 					{
-						imputPlane.target.StopMouse = false;
+						imputPlane.Target.StopMouse = false;
 					}
 				}
-				if (imputPlane.target != null)
+				if (imputPlane.Target != null)
 				{
-					imputPlane.target.SetCursor(Input.CursorsEnumCaster.ImGuiMouse(ImGui.GetMouseCursor()));
+					imputPlane.Target.SetCursor(Input.CursorsEnumCaster.ImGuiMouse(ImGui.GetMouseCursor()));
 				}
 				ImGui.End();
 			}
@@ -250,26 +307,29 @@ namespace RhubarbEngine.Components.ImGUI
 		public void Render()
 		{
 			if (!loaded)
-				return;
-			try
+            {
+                return;
+            }
+
+            try
 			{
 				InputSnapshot inputSnapshot;
-				if (imputPlane.target == null)
+				if (imputPlane.Target == null)
 				{
 					inputSnapshot = fakeInputSnapshot;
 				}
 				else
 				{
-					inputSnapshot = imputPlane.target;
+					inputSnapshot = imputPlane.Target;
 				}
-				igr.Update((float)engine.platformInfo.deltaSeconds, inputSnapshot);
+				_igr.Update((float)engine.platformInfo.deltaSeconds, inputSnapshot);
 				ImGuiUpdate();
-				UIcommandList.Begin();
-				UIcommandList.SetFramebuffer(framebuffer);
-				UIcommandList.ClearColorTarget(0, new RgbaFloat((Vector4)backGroundColor.value.ToRGBA()));
-				igr.Render(engine.renderManager.gd, UIcommandList);
-				UIcommandList.End();
-				engine.renderManager.gd.SubmitCommands(UIcommandList);
+				_uIcommandList.Begin();
+				_uIcommandList.SetFramebuffer(_framebuffer);
+				_uIcommandList.ClearColorTarget(0, new RgbaFloat((Vector4)backGroundColor.Value.ToRGBA()));
+				_igr.Render(engine.renderManager.gd, _uIcommandList);
+				_uIcommandList.End();
+				engine.renderManager.gd.SubmitCommands(_uIcommandList);
 			}
 			catch (Exception e)
 			{

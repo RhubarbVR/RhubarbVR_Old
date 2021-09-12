@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,12 +22,12 @@ using RhubarbEngine.Components.PrivateSpace;
 using RhubarbEngine.Components.Audio;
 using RhubarbEngine.Components.Physics;
 
-using Org.OpenAPITools.Model;
 using BulletSharp;
 using System.Numerics;
 using System.Net;
 using RhubarbEngine.Components.Interaction;
 using DiscordRPC;
+using System.Collections.Generic;
 
 namespace RhubarbEngine.Managers
 {
@@ -44,19 +43,19 @@ namespace RhubarbEngine.Managers
 
 		private World.World _focusedWorld;
 
-		public World.World focusedWorld { get { return _focusedWorld; } set { _focusedWorld = value; focusedWorldChange(); } }
+		public World.World FocusedWorld { get { return _focusedWorld; } set { _focusedWorld = value; FocusedWorldChange(); } }
 
 		public PersonalSpace personalSpace;
 
 		public bool dontSaveLocal = false;
 
-		public void updateDiscord()
+		public void UpdateDiscord()
 		{
-			if (focusedWorld == localWorld)
+			if (FocusedWorld == localWorld)
 			{
 				engine.discordRpcClient.SetPresence(new RichPresence()
 				{
-					Timestamps = new Timestamps(focusedWorld.startTime),
+					Timestamps = new Timestamps(FocusedWorld.StartTime),
 					Details = "The Engine",
 					State = " in local World",
 					Assets = new Assets()
@@ -67,63 +66,63 @@ namespace RhubarbEngine.Managers
 					}
 				});
 			}
-			else if ((int)focusedWorld.accessLevel.value >= 3)
-			{
-				engine.discordRpcClient.SetPresence(new RichPresence()
-				{
-					Timestamps = new Timestamps(focusedWorld.startTime),
-					Details = "The Engine",
-					State = " in " + focusedWorld.Name.value,
-					Secrets = new Secrets()
-					{
-						JoinSecret = "rhubarb://" + focusedWorld.SessionID.value + "/",
-						MatchSecret = "rhubarb://" + focusedWorld.SessionID.value + "/",
-					},
-					Assets = new Assets()
-					{
-						LargeImageKey = "rhubarbvr",
-						LargeImageText = "Faolan Says HI",
-						SmallImageKey = "rhubarbvr2"
-					},
-					Party = new Party()
-					{
-						Privacy = Party.PrivacySetting.Public,
-						ID = focusedWorld.SessionID.value,
-						Max = focusedWorld.maxUsers,
-						Size = focusedWorld.users.Count(),
-					}
-				});
-			}
-			else
-			{
-				engine.discordRpcClient.SetPresence(new RichPresence()
-				{
-					Timestamps = new Timestamps(focusedWorld.startTime),
-					Details = "The Engine",
-					State = $" in {focusedWorld.accessLevel.ToString()} World",
-					Assets = new Assets()
-					{
-						LargeImageKey = "rhubarbvr",
-						LargeImageText = "Faolan Says HI",
-						SmallImageKey = "rhubarbvr2"
-					},
-					Party = new Party()
-					{
-						Privacy = Party.PrivacySetting.Private,
-						ID = focusedWorld.SessionID.value,
-						Max = focusedWorld.maxUsers,
-						Size = focusedWorld.users.Count(),
-					}
-				});
-			}
+			//else if ((int)FocusedWorld.accessLevel.value >= 3)
+			//{
+			//	engine.discordRpcClient.SetPresence(new RichPresence()
+			//	{
+			//		Timestamps = new Timestamps(FocusedWorld.StartTime),
+			//		Details = "The Engine",
+			//		State = " in " + FocusedWorld.Name.value,
+			//		Secrets = new Secrets()
+			//		{
+			//			JoinSecret = "rhubarb://" + FocusedWorld.SessionID.value + "/",
+			//			MatchSecret = "rhubarb://" + FocusedWorld.SessionID.value + "/",
+			//		},
+			//		Assets = new Assets()
+			//		{
+			//			LargeImageKey = "rhubarbvr",
+			//			LargeImageText = "Faolan Says HI",
+			//			SmallImageKey = "rhubarbvr2"
+			//		},
+			//		Party = new Party()
+			//		{
+			//			Privacy = Party.PrivacySetting.Public,
+			//			ID = FocusedWorld.SessionID.value,
+			//			Max = FocusedWorld.MaxUsers,
+			//			Size = FocusedWorld.users.Count(),
+			//		}
+			//	});
+			//}
+			//else
+			//{
+			//	engine.discordRpcClient.SetPresence(new RichPresence()
+			//	{
+			//		Timestamps = new Timestamps(FocusedWorld.StartTime),
+			//		Details = "The Engine",
+			//		State = $" in {FocusedWorld.accessLevel.ToString()} World",
+			//		Assets = new Assets()
+			//		{
+			//			LargeImageKey = "rhubarbvr",
+			//			LargeImageText = "Faolan Says HI",
+			//			SmallImageKey = "rhubarbvr2"
+			//		},
+			//		Party = new Party()
+			//		{
+			//			Privacy = Party.PrivacySetting.Private,
+			//			ID = FocusedWorld.SessionID.value,
+			//			Max = FocusedWorld.MaxUsers,
+			//			Size = FocusedWorld.users.Count(),
+			//		}
+			//	});
+			//}
 		}
 
-		public void focusedWorldChange()
+		public void FocusedWorldChange()
 		{
-			updateDiscord();
+			UpdateDiscord();
 		}
 
-		public void addToRenderQueue(RenderQueue gu, RemderLayers layer, RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
+		public void AddToRenderQueue(RenderQueue gu, RemderLayers layer, RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
 		{
 			try
 			{
@@ -131,7 +130,7 @@ namespace RhubarbEngine.Managers
 				 {
 					 if (world.Focus != World.World.FocusLevel.Background)
 					 {
-						 world.addToRenderQueue(gu, layer, frustum, view);
+						 world.AddToRenderQueue(gu, layer, frustum, view);
 					 }
 				 });
 			}
@@ -141,75 +140,26 @@ namespace RhubarbEngine.Managers
 			}
 		}
 
-		public void createNewWorld(AccessLevel accessLevel, SessionsType sessionsType, string name, string worlduuid, bool isOver, int maxusers, bool mobilefriendly, string templet = null, bool focus = true)
+		public World.World LoadWorldFromBytes(byte[] data)
 		{
-			Logger.Log("Creating world", true);
-			World.World world = new World.World(this, sessionsType, accessLevel, name, maxusers, worlduuid, isOver, mobilefriendly, templet);
-			string conectionkey = world.netModule.token;
-			Logger.Log("Creating world ConectionKey:" + conectionkey);
-			try
-			{
-				string sessionid = engine.netApiManager.sessionApi.SessionCreatesessionPost(new CreateSessionReq(name, worlduuid, new List<string>(new[] { "" }), "", (int)sessionsType, (int)accessLevel, isOver, maxusers, mobilefriendly, conectionkey), engine.netApiManager.token);
-				world.SessionID.value = sessionid;
-				world.loadHostUser();
-				worlds.SafeAdd(world);
-				if (focus)
-				{
-					world.Focus = World.World.FocusLevel.Focused;
-				}
-				Logger.Log("World Created sessionID: " + sessionid, true);
-
-			}
-			catch (Exception e)
-			{
-				Logger.Log("Create World Error" + e.ToString(), true);
-			}
-
-		}
-
-		public void JoinSessionFromUUID(string uuid, bool focus = true)
-		{
-			try
-			{
-				Logger.Log("Joining session ID: " + uuid, true);
-				World.World world = new World.World(this, "Loading", 1, false, false, null, true);
-				string conectionkey = world.netModule.token;
-				Logger.Log("Joining session ConectionKey:" + conectionkey);
-				var join = engine.netApiManager.sessionApi.SessionJoinsessionGet(uuid, conectionkey, engine.netApiManager.token);
-				world.SessionID.value = join.Uuid;
-				world.joinsession(join, conectionkey);
-				worlds.Add(world);
-				if (focus)
-				{
-					world.Focus = World.World.FocusLevel.Focused;
-				}
-			}
-			catch (Exception e)
-			{
-				Logger.Log("Create World Error" + e.ToString(), true);
-			}
-		}
-
-		public World.World loadWorldFromBytes(byte[] data)
-		{
-			DataNodeGroup node = new DataNodeGroup(data);
-			World.World tempWorld = new World.World(this, node, false);
+			var node = new DataNodeGroup(data);
+			var tempWorld = new World.World(this, node, false);
 			return tempWorld;
 		}
-		public byte[] worldToBytes(World.World world)
+		public byte[] WorldToBytes(World.World world)
 		{
-			byte[] val = new byte[] { };
-			if (focusedWorld != null)
+			var val = new byte[] { };
+			if (FocusedWorld != null)
 			{
-				DataNodeGroup node = world.serialize();
+				var node = world.Serialize();
 				val = node.getByteArray();
 			}
 			return val;
 		}
 
-		public byte[] focusedWorldToBytes()
+		public byte[] FocusedWorldToBytes()
 		{
-			return worldToBytes(focusedWorld);
+			return WorldToBytes(FocusedWorld);
 		}
 
 		public IManager initialize(Engine _engine)
@@ -218,7 +168,7 @@ namespace RhubarbEngine.Managers
 
 			engine.logger.Log("Starting Private Overlay World");
 			privateOverlay = new World.World(this, "Private Overlay", 1, true);
-			personalSpace = privateOverlay.RootEntity.attachComponent<PersonalSpace>();
+			personalSpace = privateOverlay.RootEntity.AttachComponent<PersonalSpace>();
 			worlds.Add(privateOverlay);
 			privateOverlay.Focus = World.World.FocusLevel.PrivateOverlay;
 
@@ -229,7 +179,7 @@ namespace RhubarbEngine.Managers
 				{
 					try
 					{
-						DataNodeGroup node = new DataNodeGroup(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
+						var node = new DataNodeGroup(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
 						localWorld = new World.World(this, "LocalWorld", 16, false, true, node);
 					}
 					catch (Exception e)
@@ -254,10 +204,10 @@ namespace RhubarbEngine.Managers
 				}
 				localWorld.Focus = World.World.FocusLevel.Focused;
 				worlds.Add(localWorld);
-				focusedWorld = localWorld;
+				FocusedWorld = localWorld;
 				if (engine.engineInitializer.session != null)
 				{
-					JoinSessionFromUUID(engine.engineInitializer.session, true);
+					//JoinSessionFromUUID(engine.engineInitializer.session, true);
 				}
 				else
 				{
@@ -267,89 +217,94 @@ namespace RhubarbEngine.Managers
 			return this;
 		}
 
+        private void JoinSessionFromUUID(string session, bool v)
+        {
+            throw new NotImplementedException();
+        }
 
-		public ImGUICanvas buildUI(Entity e)
+        public ImGUICanvas BuildUI(Entity e)
 		{
 
-			BasicUnlitShader shader = e.world.staticAssets.basicUnlitShader;
-			PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
-			InputPlane bmeshcol = e.attachComponent<InputPlane>();
+			var shader = e.world.staticAssets.basicUnlitShader;
+			var bmesh = e.AttachComponent<PlaneMesh>();
+			var bmeshcol = e.AttachComponent<InputPlane>();
 			//e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
-			e.rotation.value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
-			RMaterial mit = e.attachComponent<RMaterial>();
-			MeshRender meshRender = e.attachComponent<MeshRender>();
-			ImGUICanvas imGUICanvas = e.attachComponent<ImGUICanvas>();
-			ImGUIInputText imGUIText = e.attachComponent<ImGUIInputText>();
-			imGUICanvas.imputPlane.target = bmeshcol;
-			imGUICanvas.element.target = imGUIText;
-			mit.Shader.target = shader;
-			meshRender.Materials.Add().target = mit;
-			meshRender.Mesh.target = bmesh;
-			Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-			field.field.target = imGUICanvas;
+			e.rotation.Value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
+			var mit = e.AttachComponent<RMaterial>();
+			var meshRender = e.AttachComponent<MeshRender>();
+			var imGUICanvas = e.AttachComponent<ImGUICanvas>();
+			var imGUIText = e.AttachComponent<ImGUIInputText>();
+			imGUICanvas.imputPlane.Target = bmeshcol;
+			imGUICanvas.element.Target = imGUIText;
+			mit.Shader.Target = shader;
+			meshRender.Materials.Add().Target = mit;
+			meshRender.Mesh.Target = bmesh;
+			var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+			field.field.Target = imGUICanvas;
 			return imGUICanvas;
 		}
 
-		public WebBrowser buildWebBrowser(Entity e, Vector2u pixsize, Vector2f size, bool globalAudio = false)
+		public WebBrowser BuildWebBrowser(Entity e, Vector2u pixsize, Vector2f size, bool globalAudio = false)
 		{
-			BasicUnlitShader shader = e.world.staticAssets.basicUnlitShader;
-			PlaneMesh bmesh = e.attachComponent<PlaneMesh>();
-			InputPlane bmeshcol = e.attachComponent<InputPlane>();
-			bmesh.Width.value = size.x;
-			bmesh.Height.value = size.y;
-			bmeshcol.size.value = size / 2;
+			var shader = e.world.staticAssets.basicUnlitShader;
+			var bmesh = e.AttachComponent<PlaneMesh>();
+			var bmeshcol = e.AttachComponent<InputPlane>();
+			bmesh.Width.Value = size.x;
+			bmesh.Height.Value = size.y;
+			bmeshcol.size.Value = size / 2;
 			//e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
-			e.rotation.value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
-			RMaterial mit = e.attachComponent<RMaterial>();
-			MeshRender meshRender = e.attachComponent<MeshRender>();
-			WebBrowser imGUICanvas = e.attachComponent<WebBrowser>();
-			bmeshcol.pixelSize.value = imGUICanvas.scale.value = pixsize;
-			imGUICanvas.imputPlane.target = bmeshcol;
-			mit.Shader.target = shader;
-			meshRender.Materials.Add().target = mit;
-			meshRender.Mesh.target = bmesh;
-			Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-			field.field.target = imGUICanvas;
+			e.rotation.Value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
+			var mit = e.AttachComponent<RMaterial>();
+			var meshRender = e.AttachComponent<MeshRender>();
+			var imGUICanvas = e.AttachComponent<WebBrowser>();
+			bmeshcol.pixelSize.Value = imGUICanvas.scale.Value = pixsize;
+			imGUICanvas.imputPlane.Target = bmeshcol;
+			mit.Shader.Target = shader;
+			meshRender.Materials.Add().Target = mit;
+			meshRender.Mesh.Target = bmesh;
+			var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+			field.field.Target = imGUICanvas;
 			if (!globalAudio)
 			{
-				var audio = e.attachComponent<AudioOutput>();
-				audio.audioSource.target = imGUICanvas;
-				imGUICanvas.globalAudio.value = false;
+				var audio = e.AttachComponent<AudioOutput>();
+				audio.audioSource.Target = imGUICanvas;
+				imGUICanvas.globalAudio.Value = false;
 			}
 			else
 			{
-				imGUICanvas.globalAudio.value = true;
+				imGUICanvas.globalAudio.Value = true;
 			}
 			return imGUICanvas;
 		}
 
 		public void BuildLocalWorld(World.World world)
 		{
-			world.RootEntity.attachComponent<SimpleSpawn>();
-			Entity floor = world.RootEntity.addChild("Floor");
-			var mit = floor.attachComponent<RMaterial>();
-			mit.Shader.target = world.staticAssets.tilledUnlitShader;
-			var planemesh = floor.attachComponent<PlaneMesh>();
-			var planecol = floor.attachComponent<BoxCollider>();
-			planemesh.Width.value = 1000f;
-			planemesh.Height.value = 1000f;
-			planecol.boxExtents.value = new Vector3f(planemesh.Width.value, 0.01f, planemesh.Height.value);
-			var meshRender = floor.attachComponent<MeshRender>();
-			meshRender.Materials.Add().target = mit;
-			meshRender.Mesh.target = planemesh;
-			Render.Material.Fields.Vec2Field tilefield = mit.getField<Render.Material.Fields.Vec2Field>("Tile", Render.Shader.ShaderType.MainFrag);
-			tilefield.field.value = new Vector2f(500, 500);
+			world.RootEntity.AttachComponent<SimpleSpawn>();
+			var floor = world.RootEntity.AddChild("Floor");
+			var mit = floor.AttachComponent<RMaterial>();
+			mit.Shader.Target = world.staticAssets.tilledUnlitShader;
+			var planemesh = floor.AttachComponent<PlaneMesh>();
+			var planecol = floor.AttachComponent<BoxCollider>();
+			planemesh.Width.Value = 1000f;
+			planemesh.Height.Value = 1000f;
+			planecol.boxExtents.Value = new Vector3f(planemesh.Width.Value, 0.01f, planemesh.Height.Value);
+			var meshRender = floor.AttachComponent<MeshRender>();
+			meshRender.Materials.Add().Target = mit;
+			meshRender.Mesh.Target = planemesh;
+			var tilefield = mit.GetField<Render.Material.Fields.Vec2Field>("Tile", Render.Shader.ShaderType.MainFrag);
+			tilefield.field.Value = new Vector2f(500, 500);
 
-			GridTextue2D textue2DF = floor.attachComponent<GridTextue2D>();
-			Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-			field.field.target = textue2DF;
+			var textue2DF = floor.AttachComponent<GridTextue2D>();
+            var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+			field.field.Target = textue2DF;
 
-			Entity webBrowser = world.RootEntity.addChild("Web Browser");
-			webBrowser.position.value = new Vector3f(0, 4.3, -5);
-			var browser = buildWebBrowser(webBrowser, (new Vector2u(1920, 1080)) / 2, new Vector2f(16 / 2, 9 / 2));
+			var webBrowser = world.RootEntity.AddChild("Web Browser");
+			webBrowser.position.Value = new Vector3f(0, 4.3, -5);
+
+            BuildWebBrowser(webBrowser, new Vector2u(1920, 1080) / 2, new Vector2f(16 / 2, 9 / 2));
 
 
-			AttachSpiningCubes(world.RootEntity.addChild("Cubes"), textue2DF);
+            AttachSpiningCubes(world.RootEntity.AddChild("Cubes"), textue2DF);
 
 
 
@@ -359,38 +314,38 @@ namespace RhubarbEngine.Managers
 		public void AttachSpiningCubes(Entity root, AssetProvider<RTexture2D> textue2D)
 		{
 			var speed = 0.5f;
-			var group1 = root.addChild("group1");
-			group1.attachComponent<Spinner>().speed.value = new Vector3f(speed, 0, 0);
-			var group2 = root.addChild("group2");
-			group2.attachComponent<Spinner>().speed.value = new Vector3f(0, speed, 0);
-			var group3 = root.addChild("group3");
-			group3.attachComponent<Spinner>().speed.value = new Vector3f(0, 0, speed / 2);
-			var group4 = root.addChild("group4");
-			group4.attachComponent<Spinner>().speed.value = new Vector3f(speed, speed, 0);
-			var group5 = root.addChild("group5");
-			group5.attachComponent<Spinner>().speed.value = new Vector3f(speed / 2, speed, speed);
-			var group6 = root.addChild("group6");
-			group6.attachComponent<Spinner>().speed.value = new Vector3f(speed, 0, speed / 2);
-			var group11 = root.addChild("group1");
-			group11.attachComponent<Spinner>().speed.value = new Vector3f(-speed, 0, 0);
-			var group21 = root.addChild("group2");
-			group21.attachComponent<Spinner>().speed.value = new Vector3f(0, -speed, 0);
-			var group31 = root.addChild("group3");
-			group31.attachComponent<Spinner>().speed.value = new Vector3f(0, 0, -speed);
-			var group41 = root.addChild("group4");
-			group41.attachComponent<Spinner>().speed.value = new Vector3f(-speed, -speed / 2, 0);
-			var group51 = root.addChild("group5");
-			group51.attachComponent<Spinner>().speed.value = new Vector3f(-speed / 2, -speed, -speed);
-			var group61 = root.addChild("group6");
-			group61.attachComponent<Spinner>().speed.value = new Vector3f(-speed, 0, -speed);
+			var group1 = root.AddChild("group1");
+			group1.AttachComponent<Spinner>().speed.Value = new Vector3f(speed, 0, 0);
+			var group2 = root.AddChild("group2");
+			group2.AttachComponent<Spinner>().speed.Value = new Vector3f(0, speed, 0);
+			var group3 = root.AddChild("group3");
+			group3.AttachComponent<Spinner>().speed.Value = new Vector3f(0, 0, speed / 2);
+			var group4 = root.AddChild("group4");
+			group4.AttachComponent<Spinner>().speed.Value = new Vector3f(speed, speed, 0);
+			var group5 = root.AddChild("group5");
+			group5.AttachComponent<Spinner>().speed.Value = new Vector3f(speed / 2, speed, speed);
+			var group6 = root.AddChild("group6");
+			group6.AttachComponent<Spinner>().speed.Value = new Vector3f(speed, 0, speed / 2);
+			var group11 = root.AddChild("group1");
+			group11.AttachComponent<Spinner>().speed.Value = new Vector3f(-speed, 0, 0);
+			var group21 = root.AddChild("group2");
+			group21.AttachComponent<Spinner>().speed.Value = new Vector3f(0, -speed, 0);
+			var group31 = root.AddChild("group3");
+			group31.AttachComponent<Spinner>().speed.Value = new Vector3f(0, 0, -speed);
+			var group41 = root.AddChild("group4");
+			group41.AttachComponent<Spinner>().speed.Value = new Vector3f(-speed, -speed / 2, 0);
+			var group51 = root.AddChild("group5");
+			group51.AttachComponent<Spinner>().speed.Value = new Vector3f(-speed / 2, -speed, -speed);
+			var group61 = root.AddChild("group6");
+			group61.AttachComponent<Spinner>().speed.Value = new Vector3f(-speed, 0, -speed);
 
 
-			BasicUnlitShader shader = root.world.staticAssets.basicUnlitShader;
-			BoxMesh bmesh = root.attachComponent<BoxMesh>();
-			RMaterial mit = root.attachComponent<RMaterial>();
-			mit.Shader.target = shader;
-			Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-			field.field.target = textue2D;
+			var shader = root.world.staticAssets.basicUnlitShader;
+			var bmesh = root.AttachComponent<BoxMesh>();
+			var mit = root.AttachComponent<RMaterial>();
+			mit.Shader.Target = shader;
+			var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+			field.field.Target = textue2D;
 			BuildGroup(bmesh, mit, group1);
 			BuildGroup(bmesh, mit, group2);
 			BuildGroup(bmesh, mit, group3);
@@ -405,48 +360,48 @@ namespace RhubarbEngine.Managers
 			BuildGroup(bmesh, mit, group61);
 
 		}
-		static Random random = new Random();
+		static readonly Random _random = new Random();
 		static float NextFloat()
 		{
 			var buffer = new byte[4];
-			random.NextBytes(buffer);
+			_random.NextBytes(buffer);
 			return BitConverter.ToSingle(buffer, 0);
 		}
 		public void BuildGroup(BoxMesh bmesh, RMaterial mit, Entity entity)
 		{
-			for (int i = 0; i < 6; i++)
+			for (var i = 0; i < 6; i++)
 			{
-				var cubeholder = entity.addChild("CubeHolder");
-				cubeholder.rotation.value = Quaternionf.CreateFromEuler(NextFloat(), NextFloat(), NextFloat());
-				var cube = cubeholder.addChild("Cube");
-				cube.position.value = new Vector3f(0, 15, 0);
-				cube.scale.value = new Vector3f(0.5f);
-				attachRender(bmesh, mit, cube);
+				var cubeholder = entity.AddChild("CubeHolder");
+				cubeholder.rotation.Value = Quaternionf.CreateFromEuler(NextFloat(), NextFloat(), NextFloat());
+				var cube = cubeholder.AddChild("Cube");
+				cube.position.Value = new Vector3f(0, 15, 0);
+				cube.scale.Value = new Vector3f(0.5f);
+				AttachRender(bmesh, mit, cube);
 			}
 		}
 
-		public void attachRender(BoxMesh bmesh, RMaterial mit, Entity entity)
+		public void AttachRender(BoxMesh bmesh, RMaterial mit, Entity entity)
 		{
-			MeshRender meshRender = entity.attachComponent<MeshRender>();
-			meshRender.Materials.Add().target = mit;
-			meshRender.Mesh.target = bmesh;
+			var meshRender = entity.AttachComponent<MeshRender>();
+			meshRender.Materials.Add().Target = mit;
+			meshRender.Mesh.Target = bmesh;
 		}
 
 
 		public Entity AddMesh<T>(Entity ea) where T : ProceduralMesh
 		{
-			Entity e = ea.addChild();
-			BasicUnlitShader shader = e.world.staticAssets.basicUnlitShader;
-			T bmesh = e.attachComponent<T>();
-			RMaterial mit = e.attachComponent<RMaterial>();
-			MeshRender meshRender = e.attachComponent<MeshRender>();
-			Textue2DFromUrl textue2DFromUrl = e.attachComponent<Textue2DFromUrl>();
+			var e = ea.AddChild();
+			var shader = e.world.staticAssets.basicUnlitShader;
+			var bmesh = e.AttachComponent<T>();
+			var mit = e.AttachComponent<RMaterial>();
+			var meshRender = e.AttachComponent<MeshRender>();
+			var textue2DFromUrl = e.AttachComponent<Textue2DFromUrl>();
 
-			mit.Shader.target = shader;
-			meshRender.Materials.Add().target = mit;
-			meshRender.Mesh.target = bmesh;
-			Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-			field.field.target = textue2DFromUrl;
+			mit.Shader.Target = shader;
+			meshRender.Materials.Add().Target = mit;
+			meshRender.Mesh.Target = bmesh;
+			var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+			field.field.Target = textue2DFromUrl;
 
 
 			return e;
@@ -457,7 +412,7 @@ namespace RhubarbEngine.Managers
 		{
 			try
 			{
-				foreach (World.World world in worlds)
+				foreach (var world in worlds)
 				{
 					world.Update(startTime, Frame);
 				}
@@ -472,7 +427,7 @@ namespace RhubarbEngine.Managers
 		{
 			if (engine.engineInitializer == null && !dontSaveLocal)
 			{
-				File.WriteAllBytes(engine.dataPath + "/LocalWorld.RWorld", worldToBytes(localWorld));
+				File.WriteAllBytes(engine.dataPath + "/LocalWorld.RWorld", WorldToBytes(localWorld));
 			}
 		}
 	}

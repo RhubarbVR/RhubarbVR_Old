@@ -42,7 +42,7 @@ namespace RhubarbEngine.Components.Assets
 
 		private void LoadRhubarbTexture()
 		{
-			if (solid.value)
+			if (solid.Value)
 			{
 				load(new RTexture2D(engine.renderManager.rhubarbSolidview));
 			}

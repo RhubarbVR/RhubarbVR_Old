@@ -28,9 +28,9 @@ namespace RhubarbEngine.Components.Relations
 		{
 			if (driver.Linked)
 			{
-				if (source.target != null)
+				if (source.Target != null)
 				{
-					driver.Drivevalue = source.target.value;
+					driver.Drivevalue = source.Target.Value;
 				}
 			}
 		}

@@ -18,7 +18,7 @@ namespace RhubarbEngine.World
 
 	public class CodecStatistics
 	{
-		private double _avgDecay = 0.003;
+		private readonly double _avgDecay = 0.003;
 
 		private double _averageBitrate = 0;
 
@@ -34,35 +34,11 @@ namespace RhubarbEngine.World
 			}
 		}
 
-		private string _mode = "Hybrid";
+        public string Mode { get; set; } = "Hybrid";
 
-		public string Mode
-		{
-			get
-			{
-				return _mode;
-			}
-			set
-			{
-				_mode = value;
-			}
-		}
+        public int Bandwidth { get; set; } = 48000;
 
-		private int _bandwidth = 48000;
-
-		public int Bandwidth
-		{
-			get
-			{
-				return _bandwidth;
-			}
-			set
-			{
-				_bandwidth = value;
-			}
-		}
-
-		private double _avgEncodeSpeed = 1;
+        private double _avgEncodeSpeed = 1;
 
 		public double EncodeSpeed
 		{
@@ -117,28 +93,35 @@ namespace RhubarbEngine.World
 		public Sync<bool> cvbr;
 
 		public Sync<int> channels;
-
-		private int _packetLoss = 0;
-
-		private OpusEncoder _encoder;
+        private OpusEncoder _encoder;
 		private OpusDecoder _decoder;
-		private CodecStatistics _statistics = new CodecStatistics();
-		private Stopwatch _timer = new Stopwatch();
+		private readonly CodecStatistics _statistics = new CodecStatistics();
+		private readonly Stopwatch _timer = new Stopwatch();
 
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			base.buildSyncObjs(newRefIds);
-			bitrate = new Sync<int>(this, newRefIds);
-			bitrate.value = 64;
-			complexity = new Sync<int>(this, newRefIds);
-			complexity.value = 5;
-			vbr = new Sync<bool>(this, newRefIds);
-			vbr.value = false;
-			cvbr = new Sync<bool>(this, newRefIds);
-			cvbr.value = false;
-			channels = new Sync<int>(this, newRefIds);
-			channels.value = 1;
-			channels.Changed += Channels_Changed;
+            bitrate = new Sync<int>(this, newRefIds)
+            {
+                Value = 64
+            };
+            complexity = new Sync<int>(this, newRefIds)
+            {
+                Value = 5
+            };
+            vbr = new Sync<bool>(this, newRefIds)
+            {
+                Value = false
+            };
+            cvbr = new Sync<bool>(this, newRefIds)
+            {
+                Value = false
+            };
+            channels = new Sync<int>(this, newRefIds)
+            {
+                Value = 1
+            };
+            channels.Changed += Channels_Changed;
 			cvbr.Changed += Channels_Changed;
 			vbr.Changed += Channels_Changed;
 			complexity.Changed += Channels_Changed;
@@ -147,16 +130,16 @@ namespace RhubarbEngine.World
 
 		private void Channels_Changed(IChangeable obj)
 		{
-			update();
+			Update();
 		}
 
-		public void update()
+		public void Update()
 		{
-			_encoder = OpusEncoder.Create(engine.audioManager.SamplingRate, channels.value, OpusApplication.OPUS_APPLICATION_AUDIO);
-			_encoder.Bitrate = (bitrate.value * 1024);
-			_encoder.Complexity = (complexity.value);
-			_encoder.UseVBR = vbr.value;
-			_encoder.UseConstrainedVBR = cvbr.value;
+			_encoder = OpusEncoder.Create(engine.audioManager.SamplingRate, channels.Value, OpusApplication.OPUS_APPLICATION_AUDIO);
+			_encoder.Bitrate = (bitrate.Value * 1024);
+			_encoder.Complexity = (complexity.Value);
+			_encoder.UseVBR = vbr.Value;
+			_encoder.UseConstrainedVBR = cvbr.Value;
 			_encoder.EnableAnalysis = true;
 			_decoder = OpusDecoder.Create(48000, 1);
 		}
@@ -187,7 +170,7 @@ namespace RhubarbEngine.World
 		}
 
 
-		public void ReceiveData(DataNodeGroup data, Peer peer)
+        void ISyncMember.ReceiveData(DataNodeGroup data, Peer peer)
 		{
 
 		}
