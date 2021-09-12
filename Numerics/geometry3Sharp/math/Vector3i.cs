@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// 3D integer vector type. This is basically the same as Index3i but

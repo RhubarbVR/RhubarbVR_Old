@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// HBitArray is a hierarchical variant of BitArray. Basically the idea

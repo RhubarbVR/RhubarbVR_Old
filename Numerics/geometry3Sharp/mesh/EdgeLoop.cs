@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// Sequential set of vertices/edges in a mesh, that form a closed loop.

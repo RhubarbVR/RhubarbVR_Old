@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace g3
+namespace RNumerics
 {
 	// somewhat ported from WildMagic5
 	public class Circle3d

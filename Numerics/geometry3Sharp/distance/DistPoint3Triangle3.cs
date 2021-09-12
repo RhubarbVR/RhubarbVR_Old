@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace g3
+namespace RNumerics
 {
 	// ported from WildMagic 5 
 	// https://www.geometrictools.com/Downloads/Downloads.html

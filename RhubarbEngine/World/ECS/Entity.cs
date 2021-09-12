@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using g3;
+using RNumerics;
 using RhubarbEngine.Render;
 using RhubarbEngine.Components;
 using RhubarbEngine.Components.Rendering;

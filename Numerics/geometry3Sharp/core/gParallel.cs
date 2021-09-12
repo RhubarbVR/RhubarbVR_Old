@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 #endif
 
-namespace g3
+namespace RNumerics
 {
 	public class gParallel
 	{

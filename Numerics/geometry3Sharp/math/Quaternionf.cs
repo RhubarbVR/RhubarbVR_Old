@@ -6,7 +6,7 @@ using System.Numerics;
 
 
 
-namespace g3
+namespace RNumerics
 {
 	// mostly ported from WildMagic5 Wm5Quaternion, from geometrictools.com
 	[MessagePackObject]

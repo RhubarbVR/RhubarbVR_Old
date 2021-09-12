@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// Variant of LaplacianMeshDeformer that can be applied to 3D curve.

@@ -2,7 +2,7 @@
 
 using System;
 
-namespace g3
+namespace RNumerics
 {
 
 	public struct Index3i : IComparable<Index3i>, IEquatable<Index3i>

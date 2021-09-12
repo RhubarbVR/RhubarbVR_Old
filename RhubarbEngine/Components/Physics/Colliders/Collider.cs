@@ -11,7 +11,7 @@ using RhubarbEngine.World;
 using System.Numerics;
 using BulletSharp;
 using BulletSharp.Math;
-using g3;
+using RNumerics;
 namespace RhubarbEngine.Components.Physics.Colliders
 {
 

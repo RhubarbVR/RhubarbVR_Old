@@ -8,7 +8,7 @@ using RhubarbEngine.World;
 using RhubarbEngine.World.ECS;
 using RhubarbEngine.World.DataStructure;
 using RhubarbEngine.Render;
-using g3;
+using RNumerics;
 using RhubarbEngine.Components.Transform;
 using RhubarbEngine.World.Asset;
 using RhubarbEngine.Components.Assets;

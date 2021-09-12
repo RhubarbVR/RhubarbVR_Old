@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace g3
+namespace RNumerics
 {
 	// ported from WildMagic5 NURBSCurve2
 	public class NURBSCurve2 : BaseCurve2, IParametricCurve2d
@@ -408,7 +408,7 @@ namespace g3
 		protected BSplineBasis mBasis;
 		protected int mReplicate;  // the number of replicated control points
 
-		protected bool is_closed = false;       // added by RMS, used in g3
+		protected bool is_closed = false;       // added by RMS, used in RNumerics
 
 
 

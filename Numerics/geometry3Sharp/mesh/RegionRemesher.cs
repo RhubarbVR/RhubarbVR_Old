@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 
 
-namespace g3
+namespace RNumerics
 {
 	public class RegionRemesher : Remesher
 	{

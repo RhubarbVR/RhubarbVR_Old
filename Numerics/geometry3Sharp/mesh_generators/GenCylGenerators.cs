@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// Sweep a 2D Profile Polygon along a 3D Path.

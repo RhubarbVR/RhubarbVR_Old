@@ -2,7 +2,7 @@
 
 using System;
 
-namespace g3
+namespace RNumerics
 {
 	[MessagePackObject]
 	public struct Vector2u : IComparable<Vector2u>, IEquatable<Vector2u>, IConvertible

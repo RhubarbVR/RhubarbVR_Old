@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// 3D dense grid of floating-point scalar values. 

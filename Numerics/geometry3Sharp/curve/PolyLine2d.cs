@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace g3
+namespace RNumerics
 {
 	public class PolyLine2d : IEnumerable<Vector2d>
 	{

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Numerics;
 
-namespace g3
+namespace RNumerics
 {
 	[MessagePackObject]
 	public struct Vector4f : IComparable<Vector4f>, IEquatable<Vector4f>, IConvertible

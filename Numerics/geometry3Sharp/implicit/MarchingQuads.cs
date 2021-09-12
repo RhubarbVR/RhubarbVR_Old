@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// 2D MarchingQuads polyline extraction from scalar field

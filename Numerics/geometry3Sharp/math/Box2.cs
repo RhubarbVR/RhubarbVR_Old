@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace g3
+namespace RNumerics
 {
 
 	// partially based on WildMagic5 Box2
@@ -87,7 +87,7 @@ namespace g3
 		}
 
 
-		// g3 extensions
+		// RNumerics extensions
 		public double MaxExtent
 		{
 			get { return Math.Max(Extent.x, Extent.y); }
@@ -429,7 +429,7 @@ namespace g3
 		}
 
 
-		// g3 extensions
+		// RNumerics extensions
 		public double MaxExtent
 		{
 			get { return Math.Max(Extent.x, Extent.y); }

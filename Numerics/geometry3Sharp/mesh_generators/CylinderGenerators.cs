@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace g3
+namespace RNumerics
 {
 	// generate a cylinder 
 	public class OpenCylinderGenerator : MeshGenerator

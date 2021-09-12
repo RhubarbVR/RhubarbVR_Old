@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace g3
+namespace RNumerics
 {
 	public class Circle2d : IParametricCurve2d
 	{

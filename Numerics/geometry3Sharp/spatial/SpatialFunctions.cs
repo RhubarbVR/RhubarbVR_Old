@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace g3
+namespace RNumerics
 {
 
 	// [TODO] delete this file if nobody is using NormalOffset

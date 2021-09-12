@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-namespace g3
+namespace RNumerics
 {
 	public struct matrix_entry
 	{

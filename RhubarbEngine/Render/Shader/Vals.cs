@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
-using g3;
+using RNumerics;
 
 namespace RhubarbEngine.Render.Shader.Vals
 {

@@ -4,7 +4,7 @@
 using UnityEngine;
 #endif
 
-namespace g3
+namespace RNumerics
 {
 	public struct AxisAlignedBox3f : IComparable<AxisAlignedBox3f>, IEquatable<AxisAlignedBox3f>
 	{

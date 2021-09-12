@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace g3
+namespace RNumerics
 {
 	public class IntrRay3Triangle3
 	{
@@ -52,7 +52,7 @@ namespace g3
 		public bool Find()
 		{
 			if (Result != IntersectionResult.NotComputed)
-				return (Result != g3.IntersectionResult.NoIntersection);
+				return (Result != RNumerics.IntersectionResult.NoIntersection);
 
 			// Compute the offset origin, edges, and normal.
 			Vector3d diff = ray.Origin - triangle.V0;

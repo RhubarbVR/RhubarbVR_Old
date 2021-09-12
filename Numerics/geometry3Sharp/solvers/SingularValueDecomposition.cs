@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// Singular Value Decomposition of arbitrary matrix A

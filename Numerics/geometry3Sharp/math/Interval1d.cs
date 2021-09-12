@@ -1,6 +1,6 @@
 using System;
 
-namespace g3
+namespace RNumerics
 {
 	// interval [a,b] on Real line. 
 	//   TODO: should check that a <= b !!

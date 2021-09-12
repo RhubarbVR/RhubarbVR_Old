@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 
 
-namespace g3
+namespace RNumerics
 {
 
 	// An enumerator that enumerates over integers [start, start+count)
