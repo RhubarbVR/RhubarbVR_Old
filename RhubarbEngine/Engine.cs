@@ -14,7 +14,7 @@ namespace RhubarbEngine
 	{
 		public bool verbose;
 
-		public WorldManager worldManager;
+        public WorldManager worldManager;
 
 		public InputManager inputManager;
 

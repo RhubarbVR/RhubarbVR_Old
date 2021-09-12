@@ -24,6 +24,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore "RhubarbVR"
     - name: Build
-      run: dotnet build "RhubarbVR" --no-restore /p:Platform=x64
+      run: dotnet build "RhubarbVR" --no-restore /p:Configuration=Release /p:Platform="x64" /warnaserror
     - name: Test
-      run: dotnet test --no-build --verbosity normal  /p:Platform=x64
+      run: dotnet test --no-build --verbosity normal  /p:Configuration=Release /p:Platform="x64" /warnaserror
