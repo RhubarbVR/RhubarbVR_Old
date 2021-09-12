@@ -6,27 +6,27 @@ namespace RhubarbVR
 {
     public static class Program
     {
-        private static Engine Engine = new Engine();
+        public static Engine engine = new Engine();
         public static void Main(string[] _args)
         {
             try
             {
-                Engine.Initialize(_args);
-                Engine.StartUpdateLoop();
+                engine.Initialize(_args);
+                engine.StartUpdateLoop();
             }
             catch (Exception e)
             {
-                Engine.logger.Log(e.ToString(), true);
+                engine.logger.Log(e.ToString(), true);
             }
 
             try
             {
-                Engine.CleanUP();
+                engine.CleanUP();
             }
             catch (Exception e)
             {
-                Engine.logger.Log(e.ToString(), true);
-                Engine.logger.CleanUP();
+                engine.logger.Log(e.ToString(), true);
+                engine.logger.CleanUP();
             }
         }
     }
