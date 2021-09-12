@@ -21,16 +21,16 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			Curve = new SyncValueList<Vector3d>(this, newRefIds);
-			Curve.Add().value = new Vector3d(1.0f, 0.25f, 0.0f);
-			Curve.Add().value = new Vector3d(1.25f, 0.0f, 0.0f);
-			Curve.Add().value = new Vector3d(1.0f, -0.25f, 0.0f);
-			Curve.Add().value = new Vector3d(0.75f, 0.0f, 0.0f);
+			Curve.Add().Value = new Vector3d(1.0f, 0.25f, 0.0f);
+			Curve.Add().Value = new Vector3d(1.25f, 0.0f, 0.0f);
+			Curve.Add().Value = new Vector3d(1.0f, -0.25f, 0.0f);
+			Curve.Add().Value = new Vector3d(0.75f, 0.0f, 0.0f);
 
 			Slices = new Sync<int>(this, newRefIds);
-			Slices.value = 16;
+			Slices.Value = 16;
 
 			Capped = new Sync<bool>(this, newRefIds);
-			Capped.value = false;
+			Capped.Value = false;
 			NoSharedVertices = new Sync<bool>(this, newRefIds);
 		}
 		public override void onChanged()
@@ -42,13 +42,13 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			Vector3d[] tempArray = new Vector3d[Curve.Count];
 			for (int i = 0; i < Curve.Count; i++)
 			{
-				tempArray[i] = Curve[i].value;
+				tempArray[i] = Curve[i].Value;
 			}
 			_generator.Curve = tempArray;
 
-			_generator.Slices = Slices.value;
-			_generator.Capped = Capped.value;
-			_generator.NoSharedVertices = NoSharedVertices.value;
+			_generator.Slices = Slices.Value;
+			_generator.Capped = Capped.Value;
+			_generator.NoSharedVertices = NoSharedVertices.Value;
 			updateMesh();
 		}
 		private void updateMesh()

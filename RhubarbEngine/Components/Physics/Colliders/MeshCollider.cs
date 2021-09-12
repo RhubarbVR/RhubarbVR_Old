@@ -42,7 +42,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
 		private void goNull()
 		{
-			buildCollissionObject(null);
+			BuildCollissionObject(null);
 		}
 
 		public int[] index = new int[] { };
@@ -52,7 +52,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
 		{
 			if (mesh.Asset == null)
 			{ goNull(); return; };
-			if (!mesh.target?.loaded ?? false)
+			if (!mesh.Target?.loaded ?? false)
 			{ goNull(); return; };
 			// Initialize TriangleIndexVertexArray with Vector3 array
 			vertices = new BulletSharp.Math.Vector3[mesh.Asset.meshes[0].VertexCount];
@@ -75,7 +75,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
 				return;
 			var indexVertexArray2 = new TriangleIndexVertexArray(index, vertices);
 			BvhTriangleMeshShape trys = new BvhTriangleMeshShape(indexVertexArray2, true);
-			startShape(trys);
+			StartShape(trys);
 		}
 
 		public MeshCollider(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

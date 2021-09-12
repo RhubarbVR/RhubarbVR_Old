@@ -36,17 +36,22 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void Target_Changed(IChangeable obj)
 		{
-			if (entity.manager != world.localUser)
-				return;
-			var e = new Thread(BuildView, 1024);
-			e.Priority = ThreadPriority.BelowNormal;
-			e.Start();
+			if (entity.Manager != world.LocalUser)
+            {
+                return;
+            }
+
+            var e = new Thread(BuildView, 1024)
+            {
+                Priority = ThreadPriority.BelowNormal
+            };
+            e.Start();
 		}
 		private void ClearOld()
 		{
 			foreach (var item in children)
 			{
-				item.target?.Dispose();
+				item.Target?.Dispose();
 			}
 			children.Clear();
 		}
@@ -60,31 +65,34 @@ namespace RhubarbEngine.Components.ImGUI
 		[NoSave]
 		[NoShow]
 		[NoSync]
-		Entity e;
+		Entity _e;
 
 		private void BuildView()
 		{
 			try
 			{
 				ClearOld();
-				if (target.target == null)
-					return;
-				FieldInfo[] fields = typeof(Entity).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+				if (target.Target == null)
+                {
+                    return;
+                }
+
+                var fields = typeof(Entity).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 				//This is a temp fix
-				if (e == null)
+				if (_e == null)
 				{
-					e = entity.addChild("Entity Children");
-					e.persistence.value = false;
+					_e = entity.AddChild("Entity Children");
+					_e.persistence.Value = false;
 				}
 				//I should remove on change update before initialized or add a on initialized check inside this function
 				foreach (var field in fields)
 				{
 					if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
 					{
-						var obs = e.attachComponent<WorkerObserver>();
-						obs.fieldName.value = field.Name;
-						obs.target.target = ((Worker)field.GetValue(target.target));
-						children.Add().target = obs;
+						var obs = _e.AttachComponent<WorkerObserver>();
+						obs.fieldName.Value = field.Name;
+						obs.target.Target = ((Worker)field.GetValue(target.Target));
+						children.Add().Target = obs;
 					}
 				}
 			}
@@ -103,7 +111,7 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
 			Interaction.GrabbableHolder source = null;
-			switch (canvas.imputPlane.target?.source ?? Interaction.InteractionSource.None)
+			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
 					source = world.LeftLaserGrabbableHolder;
@@ -117,40 +125,47 @@ namespace RhubarbEngine.Components.ImGUI
 				default:
 					break;
 			}
-			ImGui.Text($"{target.target?.name.value ?? "null"} ID:({target.target?.referenceID.id.ToHexString() ?? "null"})");
+			ImGui.Text($"{target.Target?.name.Value ?? "null"} ID:({target.Target?.referenceID.id.ToHexString() ?? "null"})");
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				if (source != null)
 				{
-					source.Referencer.target = target.target;
+					source.Referencer.Target = target.Target;
 				}
 			}
 			ImGui.SameLine();
 			if (ImGui.Button("X##" + referenceID.id.ToString()))
 			{
-				var e = target.target?.parent.target;
-				target.target?.Destroy();
-				target.target = e;
+				var e = target.Target?.parent.Target;
+				target.Target?.Destroy();
+				target.Target = e;
 			}
 			ImGui.SameLine();
 			if (ImGui.Button("+##" + referenceID.id.ToString()))
 			{
-				var e = target.target?.addChild();
+				var e = target.Target?.AddChild();
 				if (e != null)
-					target.target = e;
-			}
+                {
+                    target.Target = e;
+                }
+            }
 			ImGui.SameLine();
 			if (ImGui.ArrowButton(referenceID.id.ToString(), ImGuiDir.Up))
 			{
-				var c = target.target.parent.target.addChild(target.target.name.value + "Parent");
-				if (target.target != null)
-					target.target.parent.target = c;
-				if (c != null)
-					target.target = c;
-			}
+				var c = target.Target.parent.Target.AddChild(target.Target.name.Value + "Parent");
+				if (target.Target != null)
+                {
+                    target.Target.parent.Target = c;
+                }
+
+                if (c != null)
+                {
+                    target.Target = c;
+                }
+            }
 			foreach (var item in children)
 			{
-				item.target?.ImguiRender(imGuiRenderer, canvas);
+				item.Target?.ImguiRender(imGuiRenderer, canvas);
 			}
 			ImGui.EndChild();
 			if (ImGui.IsMouseClicked(ImGuiMouseButton.COUNT))

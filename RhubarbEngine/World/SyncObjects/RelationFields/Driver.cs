@@ -10,66 +10,65 @@ namespace RhubarbEngine.World
 {
 	public class Driver<T> : SyncRef<DriveMember<T>>, IDriver where T : IConvertible
 	{
-		public event Action<IChangeable> Changed;
-		public T Drivevalue
+        public T Drivevalue
 		{
 			get
 			{
-				return target.value;
+				return Target.Value;
 			}
 			set
 			{
-				target.value = value;
+				Target.Value = value;
 			}
 		}
 
-		private Driveable driven;
+		private Driveable _driven;
 
-		public bool Linked { get { return (driven != null); } }
+		public bool Linked { get { return (_driven != null); } }
 
 		public void SetDriveLocation(Driveable val)
 		{
-			if (target == val)
+			if (Target == val)
 			{
-				driven = val;
+				_driven = val;
 			}
 			else
 			{
 				if (Linked)
 				{
-					unLink();
+					UnLink();
 				}
-				driven = val;
+				_driven = val;
 			}
 		}
 		public void RemoveDriveLocation()
 		{
-			driven = null;
+			_driven = null;
 		}
-		public void setDriveTarget(DriveMember<T> Target)
+		public void SetDriveTarget(DriveMember<T> Target)
 		{
-			target = Target;
+			base.Target = Target;
 		}
 		public override void onChanged()
 		{
-			if (target != null)
+			if (Target != null)
 			{
-				link();
+				Link();
 			}
 		}
-		private void link()
+		private void Link()
 		{
 			if (Linked)
 			{
-				unLink();
+				UnLink();
 			}
-			target.drive(this);
+			Target.drive(this);
 		}
-		private void unLink()
+		private void UnLink()
 		{
-			if (driven != null)
+			if (_driven != null)
 			{
-				driven.killDrive();
+				_driven.killDrive();
 			}
 		}
 		public Driver(World _world, IWorldObject _parent) : base(_world, _parent)

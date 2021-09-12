@@ -21,15 +21,14 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 		private readonly CVRCompositor _compositor;
 		private readonly OpenVRMirrorTexture _mirrorTexture;
 		private readonly VRContextOptions _options;
-		private GraphicsDevice _gd;
-		private string _deviceName;
+        private string _deviceName;
 		private Framebuffer _leftEyeFB;
 		private Framebuffer _rightEyeFB;
 		private Matrix4x4 _projLeft;
 		private Matrix4x4 _projRight;
 		private Matrix4x4 _headToEyeLeft;
 		private Matrix4x4 _headToEyeRight;
-		private TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[1];
+		private readonly TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[1];
 
 		public VRActiveActionSet_t generalActionSet;
 		public VRActiveActionSet_t viveActionSet;
@@ -37,22 +36,59 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 		public VRActiveActionSet_t knucklesActionSet;
 		public VRActiveActionSet_t oculustouchActionSet;
 
-		public override string DeviceName => _deviceName;
-		public override Framebuffer LeftEyeFramebuffer => _leftEyeFB;
+        public override string DeviceName
+        {
+            get
+            {
+                return _deviceName;
+            }
+        }
 
-		public override Framebuffer RightEyeFramebuffer => _rightEyeFB;
+        public override Framebuffer LeftEyeFramebuffer
+        {
+            get
+            {
+                return _leftEyeFB;
+            }
+        }
 
-		internal GraphicsDevice GraphicsDevice => _gd;
+        public override Framebuffer RightEyeFramebuffer
+        {
+            get
+            {
+                return _rightEyeFB;
+            }
+        }
 
-		public override IController leftController => (controllerOne != null) ? (controllerOne.Creality == Input.Creality.Left) ? controllerOne : controllerTwo : null;
+        internal GraphicsDevice GraphicsDevice { get; private set; }
 
-		public override IController RightController => (controllerOne != null) ? (controllerOne.Creality == Input.Creality.Right) ? controllerOne : controllerTwo : null;
+        public override IController leftController
+        {
+            get
+            {
+                return (controllerOne != null) ? (controllerOne.Creality == Input.Creality.Left) ? controllerOne : controllerTwo : null;
+            }
+        }
 
-		public override Matrix4x4 Headpos => headPos;
+        public override IController RightController
+        {
+            get
+            {
+                return (controllerOne != null) ? (controllerOne.Creality == Input.Creality.Right) ? controllerOne : controllerTwo : null;
+            }
+        }
 
-		public Matrix4x4 invertRot(Matrix4x4 val)
+        public override Matrix4x4 Headpos
+        {
+            get
+            {
+                return _headPos;
+            }
+        }
+
+        public Matrix4x4 InvertRot(Matrix4x4 val)
 		{
-			Matrix4x4.Decompose(val, out Vector3 scale, out Quaternion rot, out Vector3 trans);
+			Matrix4x4.Decompose(val, out var scale, out var rot, out var trans);
 
 			return Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(Quaternion.Inverse(rot)) * Matrix4x4.CreateTranslation(trans);
 		}
@@ -69,7 +105,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 		}
 
 
-		public static Matrix4x4 posHelp(HmdMatrix34_t pos)
+		public static Matrix4x4 PosHelp(HmdMatrix34_t pos)
 		{
 			return Matrix4x4.CreateScale(1) * Matrix4x4.CreateFromQuaternion(QuaternionFromMatrix(pos)) * Matrix4x4.CreateTranslation(new Vector3(pos.m3, pos.m7, pos.m11));
 		}
@@ -77,7 +113,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 		public OpenVRContext(VRContextOptions options, EVRApplicationType e = EVRApplicationType.VRApplication_Scene)
 		{
 			_options = options;
-			EVRInitError initError = EVRInitError.None;
+			var initError = EVRInitError.None;
 
 			_vrSystem = OVR.Init(ref initError, e, OVR.k_pch_SteamVR_NeverKillProcesses_Bool + "true");
 			if (initError != EVRInitError.None)
@@ -91,15 +127,18 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			}
 
 			Logger.Log("Loading app.vrmanifest");
-			EVRApplicationError apperro = EVRApplicationError.None;
-			apperro = OVR.Applications.AddApplicationManifest(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.vrmanifest"), false);
-			if (apperro != EVRApplicationError.None)
-				Logger.Log($"Failed to load Application Manifest: {Enum.GetName(typeof(EVRApplicationError), apperro)}", true);
-			else
-				Logger.Log("Application manifest loaded successfully.");
+            var apperro = OVR.Applications.AddApplicationManifest(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.vrmanifest"), false);
+            if (apperro != EVRApplicationError.None)
+            {
+                Logger.Log($"Failed to load Application Manifest: {Enum.GetName(typeof(EVRApplicationError), apperro)}", true);
+            }
+            else
+            {
+                Logger.Log("Application manifest loaded successfully.");
+            }
 
-			_mirrorTexture = new OpenVRMirrorTexture(this);
-			EVRInputError error = OVR.Input.SetActionManifestPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SteamVR", "steamvr_manifest.json"));
+            _mirrorTexture = new OpenVRMirrorTexture(this);
+			var error = OVR.Input.SetActionManifestPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SteamVR", "steamvr_manifest.json"));
 			if (error != EVRInputError.None)
 			{
 				Logger.Log($"Action manifest error {error.ToString()}");
@@ -119,22 +158,20 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 		public SteamVRController controllerOne;
 
 		public SteamVRController controllerTwo;
-		ulong leftHandle = 0;
-		ulong rightHandle = 0;
+		ulong _leftHandle = 0;
+		ulong _rightHandle = 0;
 
-		private SteamVRController setupSteamVRController(string divisenamen, uint devicetackindex)
+		private SteamVRController SetupSteamVRController(string divisenamen, uint devicetackindex)
 		{
-			ETrackedControllerRole role = OVR.System.GetControllerRoleForTrackedDeviceIndex(devicetackindex);
+			var role = OVR.System.GetControllerRoleForTrackedDeviceIndex(devicetackindex);
 			switch (role)
 			{
 				case ETrackedControllerRole.Invalid:
 					break;
 				case ETrackedControllerRole.LeftHand:
-					return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Left, leftHandle);
-					break;
+					return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Left, _leftHandle);
 				case ETrackedControllerRole.RightHand:
-					return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Right, rightHandle);
-					break;
+					return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Right, _rightHandle);
 				case ETrackedControllerRole.OptOut:
 					break;
 				case ETrackedControllerRole.Max:
@@ -149,26 +186,26 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 		{
 			controllerOne = null;
 			controllerTwo = null;
-			OVR.Input.GetInputSourceHandle("/user/hand/left", ref leftHandle);
-			OVR.Input.GetInputSourceHandle("/user/hand/right", ref rightHandle);
+			OVR.Input.GetInputSourceHandle("/user/hand/left", ref _leftHandle);
+			OVR.Input.GetInputSourceHandle("/user/hand/right", ref _rightHandle);
 
-			Logger.Log($"Left: {leftHandle} Right: {rightHandle}");
+			Logger.Log($"Left: {_leftHandle} Right: {_rightHandle}");
 			for (uint i = 0; i < OVR.k_unMaxTrackedDeviceCount; i++)
 			{
-				ETrackedDeviceClass device = OVR.System.GetTrackedDeviceClass(i);
+				var device = OVR.System.GetTrackedDeviceClass(i);
 				if (device == ETrackedDeviceClass.Controller)
 				{
-					ETrackedPropertyError error = ETrackedPropertyError.TrackedProp_Success;
-					StringBuilder value = new StringBuilder(64);
+					var error = ETrackedPropertyError.TrackedProp_Success;
+					var value = new StringBuilder(64);
 					OVR.System.GetStringTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_RenderModelName_String, value, 64, ref error);
 					if (controllerOne == null)
 					{
-						controllerOne = setupSteamVRController(value.ToString(), i);
+						controllerOne = SetupSteamVRController(value.ToString(), i);
 					}
 					else if (controllerTwo == null)
 					{
 
-						controllerTwo = setupSteamVRController(value.ToString(), i);
+						controllerTwo = SetupSteamVRController(value.ToString(), i);
 					}
 					else
 					{
@@ -194,7 +231,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 		private VRActiveActionSet_t SetUPActionSet(string path)
 		{
 			ulong handle = 0;
-			EVRInputError error = OVR.Input.GetActionSetHandle(path, ref handle);
+			var error = OVR.Input.GetActionSetHandle(path, ref handle);
 			if (error != EVRInputError.None)
 			{
 				Logger.Log($"Action Set Handle  {path}  error {error.ToString()}");
@@ -223,11 +260,11 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 		public override void Initialize(GraphicsDevice gd)
 		{
-			_gd = gd;
+			GraphicsDevice = gd;
 
-			StringBuilder sb = new StringBuilder(512);
-			ETrackedPropertyError error = ETrackedPropertyError.TrackedProp_Success;
-			uint ret = _vrSystem.GetStringTrackedDeviceProperty(
+			var sb = new StringBuilder(512);
+			var error = ETrackedPropertyError.TrackedProp_Success;
+			_vrSystem.GetStringTrackedDeviceProperty(
 				OVR.k_unTrackedDeviceIndex_Hmd,
 				ETrackedDeviceProperty.Prop_TrackingSystemName_String,
 				sb,
@@ -250,10 +287,10 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			_leftEyeFB = CreateFramebuffer(eyeWidth, eyeHeight);
 			_rightEyeFB = CreateFramebuffer(eyeWidth, eyeHeight);
 
-			Matrix4x4 eyeToHeadLeft = ToSysMatrix(_vrSystem.GetEyeToHeadTransform(EVREye.Eye_Left));
+			var eyeToHeadLeft = ToSysMatrix(_vrSystem.GetEyeToHeadTransform(EVREye.Eye_Left));
 			Matrix4x4.Invert(eyeToHeadLeft, out _headToEyeLeft);
 
-			Matrix4x4 eyeToHeadRight = ToSysMatrix(_vrSystem.GetEyeToHeadTransform(EVREye.Eye_Right));
+			var eyeToHeadRight = ToSysMatrix(_vrSystem.GetEyeToHeadTransform(EVREye.Eye_Right));
 			Matrix4x4.Invert(eyeToHeadRight, out _headToEyeRight);
 
 			_projLeft = ToSysMatrix(_vrSystem.GetProjectionMatrix(EVREye.Eye_Left, 0.1f, 1000f));
@@ -272,9 +309,9 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 
 
-		public unsafe void updateInput()
+		public unsafe void UpdateInput()
 		{
-			EVRInputError error = OVR.Input.UpdateActionState(new[] { generalActionSet, viveActionSet, cosmosActionSet, oculustouchActionSet, knucklesActionSet }, (uint)Marshal.SizeOf(typeof(VRActiveActionSet_t)));
+			var error = OVR.Input.UpdateActionState(new[] { generalActionSet, viveActionSet, cosmosActionSet, oculustouchActionSet, knucklesActionSet }, (uint)Marshal.SizeOf(typeof(VRActiveActionSet_t)));
 
 			if (error != EVRInputError.None)
 			{
@@ -303,32 +340,32 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			return (new string[] { }, new string[] { });
 		}
 
-		Matrix4x4 headPos;
+		Matrix4x4 _headPos;
 		public override HmdPoseState WaitForPoses()
 		{
 			if (Disposed)
 			{
-				return default(HmdPoseState);
+				return default;
 			}
-			EVRCompositorError compositorError = _compositor.WaitGetPoses(_devicePoses, Array.Empty<TrackedDevicePose_t>());
+			var compositorError = _compositor.WaitGetPoses(_devicePoses, Array.Empty<TrackedDevicePose_t>());
 			if (compositorError != EVRCompositorError.None)
 			{
 				throw new Exception($"Failed to WaitGetPoses from OpenVR: {compositorError}");
 			}
-			TrackedDevicePose_t hmdPose = _devicePoses[OVR.k_unTrackedDeviceIndex_Hmd];
-			headPos = posHelp(hmdPose.mDeviceToAbsoluteTracking);
+			var hmdPose = _devicePoses[OVR.k_unTrackedDeviceIndex_Hmd];
+			_headPos = PosHelp(hmdPose.mDeviceToAbsoluteTracking);
 
-			Matrix4x4 deviceToAbsolute = ToSysMatrix(hmdPose.mDeviceToAbsoluteTracking);
-			Matrix4x4.Invert(deviceToAbsolute, out Matrix4x4 absoluteToDevice);
+			var deviceToAbsolute = ToSysMatrix(hmdPose.mDeviceToAbsoluteTracking);
+			Matrix4x4.Invert(deviceToAbsolute, out var absoluteToDevice);
 
-			Matrix4x4 viewLeft = absoluteToDevice * _headToEyeLeft;
-			Matrix4x4 viewRight = absoluteToDevice * _headToEyeRight;
+			var viewLeft = absoluteToDevice * _headToEyeLeft;
+			var viewRight = absoluteToDevice * _headToEyeRight;
 
-			Matrix4x4.Invert(viewLeft, out Matrix4x4 invViewLeft);
-			Matrix4x4.Decompose(invViewLeft, out _, out Quaternion leftRotation, out Vector3 leftPosition);
+			Matrix4x4.Invert(viewLeft, out var invViewLeft);
+			Matrix4x4.Decompose(invViewLeft, out _, out var leftRotation, out var leftPosition);
 
-			Matrix4x4.Invert(viewRight, out Matrix4x4 invViewRight);
-			Matrix4x4.Decompose(invViewRight, out _, out Quaternion rightRotation, out Vector3 rightPosition);
+			Matrix4x4.Invert(viewRight, out var invViewRight);
+			Matrix4x4.Decompose(invViewRight, out _, out var rightRotation, out var rightPosition);
 
 			return new HmdPoseState(
 				_projLeft, _projRight,
@@ -348,7 +385,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			{
 				return;
 			}
-			VREvent_t _vrevent = new VREvent_t();
+			var _vrevent = new VREvent_t();
 			if (PollNextEvent(ref _vrevent))
 			{
 				if (_vrevent.eventType == 700)
@@ -357,7 +394,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 					Dispose();
 					return;
 				}
-				if ((_vrevent.eventType >= 100) && (_vrevent.eventType <= 102))
+                if (_vrevent.eventType is >= 100 and <= 102)
 				{
 					Task.Run(() =>
 					{
@@ -366,11 +403,11 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 					});
 				}
 			}
-			if (_gd.GetOpenGLInfo(out BackendInfoOpenGL glInfo))
+			if (GraphicsDevice.GetOpenGLInfo(out var glInfo))
 			{
 				glInfo.FlushAndFinish();
 			}
-			updateInput();
+			UpdateInput();
 			SubmitTexture(_compositor, LeftEyeFramebuffer.ColorTargets[0].Target, EVREye.Eye_Left);
 			SubmitTexture(_compositor, RightEyeFramebuffer.ColorTargets[0].Target, EVREye.Eye_Right);
 		}
@@ -392,19 +429,19 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			}
 			Texture_t texT;
 
-			if (_gd.GetD3D11Info(out BackendInfoD3D11 d3dInfo))
+			if (GraphicsDevice.GetD3D11Info(out var d3dInfo))
 			{
 				texT.eColorSpace = EColorSpace.Gamma;
 				texT.eType = ETextureType.DirectX;
 				texT.handle = d3dInfo.GetTexturePointer(colorTex);
 			}
-			else if (_gd.GetOpenGLInfo(out BackendInfoOpenGL openglInfo))
+			else if (GraphicsDevice.GetOpenGLInfo(out var openglInfo))
 			{
 				texT.eColorSpace = EColorSpace.Gamma;
 				texT.eType = ETextureType.OpenGL;
 				texT.handle = (IntPtr)openglInfo.GetTextureName(colorTex);
 			}
-			else if (_gd.GetVulkanInfo(out BackendInfoVulkan vkInfo))
+			else if (GraphicsDevice.GetVulkanInfo(out var vkInfo))
 			{
 				vkInfo.TransitionImageLayout(colorTex, (uint)Vulkan.VkImageLayout.TransferSrcOptimal);
 
@@ -440,13 +477,10 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			boundsT.vMin = 0;
 			boundsT.vMax = 1;
 
-			EVRCompositorError compositorError = EVRCompositorError.None;
-			if (_gd.GetOpenGLInfo(out BackendInfoOpenGL glInfo))
+			var compositorError = EVRCompositorError.None;
+			if (GraphicsDevice.GetOpenGLInfo(out var glInfo))
 			{
-				glInfo.ExecuteOnGLThread(() =>
-				{
-					compositorError = compositor.Submit(eye, ref texT, ref boundsT, EVRSubmitFlags.Submit_Default);
-				});
+				glInfo.ExecuteOnGLThread(() => compositorError = compositor.Submit(eye, ref texT, ref boundsT, EVRSubmitFlags.Submit_Default));
 			}
 			else
 			{
@@ -477,14 +511,14 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 		private Framebuffer CreateFramebuffer(uint width, uint height)
 		{
-			ResourceFactory factory = _gd.ResourceFactory;
-			Texture colorTarget = factory.CreateTexture(TextureDescription.Texture2D(
+			var factory = GraphicsDevice.ResourceFactory;
+			var colorTarget = factory.CreateTexture(TextureDescription.Texture2D(
 				width, height,
 				1, 1,
 				PixelFormat.R8_G8_B8_A8_UNorm_SRgb,
 				TextureUsage.RenderTarget | TextureUsage.Sampled,
 				_options.EyeFramebufferSampleCount));
-			Texture depthTarget = factory.CreateTexture(TextureDescription.Texture2D(
+			var depthTarget = factory.CreateTexture(TextureDescription.Texture2D(
 				width, height,
 				1, 1,
 				PixelFormat.R32_Float,

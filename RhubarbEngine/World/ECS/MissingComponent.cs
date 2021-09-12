@@ -24,7 +24,7 @@ namespace RhubarbEngine.World.ECS
 
 		public override void onLoaded()
 		{
-			type.value = temptype;
+			type.Value = temptype;
 		}
 		public MissingComponent(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
@@ -34,27 +34,27 @@ namespace RhubarbEngine.World.ECS
 		{
 		}
 
-		public virtual DataNodeGroup serialize()
+		public virtual DataNodeGroup Serialize()
 		{
-			FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-			DataNodeGroup obj = new DataNodeGroup();
+			var fields = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+			var obj = new DataNodeGroup();
 			if (Persistent)
 			{
 				foreach (var field in fields)
 				{
 					if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))
 					{
-						obj.setValue(field.Name, ((IWorldObject)field.GetValue(this)).serialize());
+						obj.SetValue(field.Name, ((IWorldObject)field.GetValue(this)).Serialize());
 					}
 				}
-				DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
-				obj.setValue("referenceID", Refid);
-				obj.setValue("Data", tempdata);
+				var Refid = new DataNode<NetPointer>(referenceID);
+				obj.SetValue("referenceID", Refid);
+				obj.SetValue("Data", tempdata);
 			}
 			return obj;
 		}
 
-		public virtual void deSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, RefIDResign> latterResign = default(Dictionary<ulong, RefIDResign>))
+		public virtual void DeSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, RefIDResign> latterResign = default)
 		{
 			if (data == null)
 			{
@@ -63,18 +63,18 @@ namespace RhubarbEngine.World.ECS
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID(), referenceID.getID());
-				latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()](referenceID.getID());
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), referenceID.getID());
+				latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()](referenceID.getID());
 			}
 			else
 			{
-				referenceID = ((DataNode<NetPointer>)data.getValue("referenceID")).Value;
-				world.addWorldObj(this);
+				referenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
+				world.AddWorldObj(this);
 			}
-			if (((DataNode<string>)data.getValue("type")) != null)
+			if (((DataNode<string>)data.GetValue("type")) != null)
 			{
-				temptype = ((DataNode<string>)data.getValue("type")).Value;
-				tempdata = ((DataNodeGroup)data.getValue("Data"));
+				temptype = ((DataNode<string>)data.GetValue("type")).Value;
+				tempdata = ((DataNodeGroup)data.GetValue("Data"));
 			}
 			else
 			{

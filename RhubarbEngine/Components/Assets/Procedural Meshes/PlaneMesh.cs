@@ -25,15 +25,15 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			Width = new Sync<float>(this, newRefIds);
-			Width.value = 1f;
+			Width.Value = 1f;
 			Height = new Sync<float>(this, newRefIds);
-			Height.value = 1f;
+			Height.Value = 1f;
 			Normal = new Sync<Vector3f>(this, newRefIds);
-			Normal.value = Vector3f.AxisZ;
+			Normal.Value = Vector3f.AxisZ;
 			IndicesMap = new Sync<Index2i>(this, newRefIds);
-			IndicesMap.value = new Index2i(1, 3);
+			IndicesMap.Value = new Index2i(1, 3);
 			UVMode = new Sync<TrivialRectGenerator.UVModes>(this, newRefIds);
-			UVMode.value = TrivialRectGenerator.UVModes.FullUVSquare;
+			UVMode.Value = TrivialRectGenerator.UVModes.FullUVSquare;
 		}
 		public override void onChanged()
 		{
@@ -42,11 +42,11 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		private void updateMesh()
 		{
-			_generator.Width = Width.value;
-			_generator.Height = Height.value;
-			_generator.Normal = Normal.value;
-			_generator.IndicesMap = IndicesMap.value;
-			_generator.UVMode = UVMode.value;
+			_generator.Width = Width.Value;
+			_generator.Height = Height.Value;
+			_generator.Normal = Normal.Value;
+			_generator.IndicesMap = IndicesMap.Value;
+			_generator.UVMode = UVMode.Value;
 			MeshGenerator newmesh = _generator.Generate();
 			RMesh kite = new RMesh(newmesh.MakeDMesh());
 			kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

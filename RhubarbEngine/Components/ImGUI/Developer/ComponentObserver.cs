@@ -39,18 +39,23 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void Target_Changed(IChangeable obj)
 		{
-			if (entity.manager != world.localUser)
-				return;
-			var e = new Thread(BuildView, 1024);
-			e.Priority = ThreadPriority.BelowNormal;
-			e.Start();
+			if (entity.Manager != world.LocalUser)
+            {
+                return;
+            }
+
+            var e = new Thread(BuildView, 1024)
+            {
+                Priority = ThreadPriority.BelowNormal
+            };
+            e.Start();
 		}
 
 		private void ClearOld()
 		{
 			foreach (var item in children)
 			{
-				item.target?.Dispose();
+				item.Target?.Dispose();
 			}
 			children.Clear();
 		}
@@ -60,17 +65,20 @@ namespace RhubarbEngine.Components.ImGUI
 			try
 			{
 				ClearOld();
-				if (target.target == null)
-					return;
-				FieldInfo[] fields = target.target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+				if (target.Target == null)
+                {
+                    return;
+                }
+
+                var fields = target.Target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 				foreach (var field in fields)
 				{
 					if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
 					{
-						var obs = entity.attachComponent<WorkerObserver>();
-						obs.fieldName.value = field.Name;
-						obs.target.target = ((Worker)field.GetValue(target.target));
-						children.Add().target = obs;
+						var obs = entity.AttachComponent<WorkerObserver>();
+						obs.fieldName.Value = field.Name;
+						obs.target.Target = ((Worker)field.GetValue(target.Target));
+						children.Add().Target = obs;
 					}
 				}
 			}
@@ -88,16 +96,16 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			bool open = true;
+			var open = true;
 			Vector2 max;
 			Vector2 min;
-			if (ImGui.CollapsingHeader($"{target.target?.GetType().GetFormattedName() ?? "null"} ID:({target.target?.referenceID.id.ToHexString() ?? "null"}) ##{referenceID.id}", ref open))
+			if (ImGui.CollapsingHeader($"{target.Target?.GetType().GetFormattedName() ?? "null"} ID:({target.Target?.referenceID.id.ToHexString() ?? "null"}) ##{referenceID.id}", ref open))
 			{
 				max = ImGui.GetItemRectMax();
 				min = ImGui.GetItemRectMin();
 				foreach (var item in children)
 				{
-					item.target?.ImguiRender(imGuiRenderer, canvas);
+					item.Target?.ImguiRender(imGuiRenderer, canvas);
 				}
 			}
 			else
@@ -108,7 +116,7 @@ namespace RhubarbEngine.Components.ImGUI
 			if (ImGui.IsMouseHoveringRect(min, max) && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				Interaction.GrabbableHolder source = null;
-				switch (canvas.imputPlane.target?.source ?? Interaction.InteractionSource.None)
+				switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 				{
 					case Interaction.InteractionSource.LeftLaser:
 						source = world.LeftLaserGrabbableHolder;
@@ -124,12 +132,12 @@ namespace RhubarbEngine.Components.ImGUI
 				}
 				if (source != null)
 				{
-					source.Referencer.target = target.target;
+					source.Referencer.Target = target.Target;
 				}
 			}
 			if (!open)
 			{
-				target.target?.Dispose();
+				target.Target?.Dispose();
 			}
 
 		}

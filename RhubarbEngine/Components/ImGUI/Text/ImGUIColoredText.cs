@@ -29,7 +29,7 @@ namespace RhubarbEngine.Components.ImGUI
 			base.buildSyncObjs(newRefIds);
 			text = new Sync<string>(this, newRefIds);
 			color = new Sync<Colorf>(this, newRefIds);
-			color.value = Colorf.Cyan;
+			color.Value = Colorf.Cyan;
 		}
 
 		public ImGUIColoredText(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -42,7 +42,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			ImGui.TextColored(color.value.ToRGBA().ToSystem(), text.value ?? "");
+			ImGui.TextColored(color.Value.ToRGBA().ToSystem(), text.Value ?? "");
 		}
 	}
 }

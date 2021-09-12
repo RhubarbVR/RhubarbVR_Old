@@ -42,14 +42,14 @@ namespace RhubarbEngine.Components.ImGUI
 		public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
 			bool Changeboarder = false;
-			if (target.target?.Driven ?? false)
+			if (target.Target?.Driven ?? false)
 			{
 				var e = ImGui.GetStyleColorVec4(ImGuiCol.FrameBg);
 				var vec = (Vector4f)(*e);
 				ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 1f, 0, 0)).ToSystem());
 			}
 			Interaction.GrabbableHolder source = null;
-			switch (canvas.imputPlane.target?.source ?? Interaction.InteractionSource.None)
+			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
 					source = world.LeftLaserGrabbableHolder;
@@ -65,7 +65,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (source != null)
 			{
-				var type = source.Referencer.target?.GetType();
+				var type = source.Referencer.Target?.GetType();
 				if (typeof(Sync<Vector3f>).IsAssignableFrom(type))
 				{
 					Changeboarder = true;
@@ -76,20 +76,20 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 3);
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
-			Vector3 val = target.target?.value.ToSystemNumrics() ?? Vector3.Zero;
-			if (ImGui.DragFloat3((fieldName.value ?? "null") + $"##{referenceID.id}", ref val, 0.1f, -10000, 10000, "%.2f", ImGuiSliderFlags.NoRoundToFormat))
+			Vector3 val = target.Target?.Value.ToSystemNumrics() ?? Vector3.Zero;
+			if (ImGui.DragFloat3((fieldName.Value ?? "null") + $"##{referenceID.id}", ref val, 0.1f, -10000, 10000, "%.2f", ImGuiSliderFlags.NoRoundToFormat))
 			{
-				if (target.target != null)
-					target.target.value = (Vector3f)val;
+				if (target.Target != null)
+					target.Target.Value = (Vector3f)val;
 			}
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				if (source != null)
 				{
-					source.Referencer.target = target.target;
+					source.Referencer.Target = target.Target;
 				}
 			}
-			if (target.target?.Driven ?? false)
+			if (target.Target?.Driven ?? false)
 			{
 				ImGui.PopStyleColor();
 			}
@@ -97,10 +97,10 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-					Sync<Vector3f> e = (Sync<Vector3f>)source.Referencer.target;
-					if (target.target != null)
-						target.target.value = e.value;
-					source.Referencer.target = null;
+					Sync<Vector3f> e = (Sync<Vector3f>)source.Referencer.Target;
+					if (target.Target != null)
+						target.Target.Value = e.Value;
+					source.Referencer.Target = null;
 				}
 				ImGui.PopStyleVar();
 				ImGui.PopStyleColor();

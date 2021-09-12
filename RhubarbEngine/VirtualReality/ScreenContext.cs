@@ -14,43 +14,80 @@ namespace RhubarbEngine.VirtualReality
 	{
 		private readonly VRContextOptions _options;
 		private readonly ScreenMirrorTexture _mirrorTexture;
-		private GraphicsDevice _gd;
-		private string _deviceName;
+        private readonly string _deviceName = "Screen";
 		private Framebuffer _leftEyeFB;
-		private Framebuffer _rightEyeFB;
 		private Matrix4x4 _projLeft;
-		private Matrix4x4 _projRight;
-		private Matrix4x4 _headToEyeLeft;
-		private Matrix4x4 _headToEyeRight;
-		private TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[1];
+		private readonly TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[1];
 
-		public override string DeviceName => _deviceName;
+        public override string DeviceName
+        {
+            get
+            {
+                return _deviceName;
+            }
+        }
 
-		public override Framebuffer LeftEyeFramebuffer => _leftEyeFB;
+        public override Framebuffer LeftEyeFramebuffer
+        {
+            get
+            {
+                return _leftEyeFB;
+            }
+        }
 
-		public override Framebuffer RightEyeFramebuffer => _rightEyeFB;
+        public override Framebuffer RightEyeFramebuffer
+        {
+            get
+            {
+                return null;
+            }
+        }
 
-		internal GraphicsDevice GraphicsDevice => _gd;
+        internal GraphicsDevice GraphicsDevice { get; private set; }
 
-		//throw new NotImplementedException()
-		public override IController leftController => null;
+        //throw new NotImplementedException()
+        public override IController leftController
+        {
+            get
+            {
+                return null;
+            }
+        }
 
-		//throw new NotImplementedException()
-		public override IController RightController => null;
+        //throw new NotImplementedException()
+        public override IController RightController
+        {
+            get
+            {
+                return null;
+            }
+        }
 
-		public override Matrix4x4 Headpos => headPos;
+        public override Matrix4x4 Headpos
+        {
+            get
+            {
+                return HeadPos;
+            }
+        }
 
-		private float HorizontalAngle;
+        private float _horizontalAngle;
 
-		private float VerticalAngle;
+		private float _verticalAngle;
 
 		public float VerticalMin = -90f;
 
 		public float VerticalMax = 90f;
 
-		public Matrix4x4 headPos => Matrix4x4.CreateScale(1.0f) * Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(HorizontalAngle, 0, 0) * Quaternion.CreateFromYawPitchRoll(0, VerticalAngle, 0)) * Matrix4x4.CreateTranslation(new Vector3(0f, 1.7f, 0f));
+        public Matrix4x4 HeadPos
+        {
+            get
+            {
+                return Matrix4x4.CreateScale(1.0f) * Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(_horizontalAngle, 0, 0) * Quaternion.CreateFromYawPitchRoll(0, _verticalAngle, 0)) * Matrix4x4.CreateTranslation(new Vector3(0f, 1.7f, 0f));
+            }
+        }
 
-		private Engine _eng;
+        private readonly Engine _eng;
 
 
 		public ScreenContext(VRContextOptions options, Engine eng)
@@ -65,14 +102,14 @@ namespace RhubarbEngine.VirtualReality
 			return true;
 		}
 
-		public void changeProject(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
+		public void ChangeProject(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
 		{
 			_projLeft = Matrix4x4.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance);
 		}
 
 		public override void Initialize(GraphicsDevice gd)
 		{
-			_gd = gd;
+			GraphicsDevice = gd;
 			if (_eng.settingsObject.RenderSettings.DesktopRenderSettings.auto)
 			{
 				_leftEyeFB = CreateFramebuffer((uint)_eng.windowManager.mainWindow.width, (uint)_eng.windowManager.mainWindow.height);
@@ -86,7 +123,7 @@ namespace RhubarbEngine.VirtualReality
 			{
 				Logger.Log("Error Loading Frame Buffer", true);
 			}
-			changeProject((float)(Math.PI / 180) * _eng.renderManager.fieldOfView, _eng.renderManager.aspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
+			ChangeProject((float)(Math.PI / 180) * _eng.renderManager.FieldOfView, _eng.renderManager.AspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
 		}
 
 		private void Window_Resized()
@@ -111,19 +148,19 @@ namespace RhubarbEngine.VirtualReality
 				oldbuf.Dispose();
 				_mirrorTexture.clearLeftSet();
 			}
-			changeProject((float)(Math.PI / 180) * _eng.renderManager.fieldOfView, _eng.renderManager.aspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
+			ChangeProject((float)(Math.PI / 180) * _eng.renderManager.FieldOfView, _eng.renderManager.AspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
 		}
 
 		private Framebuffer CreateFramebuffer(uint width, uint height)
 		{
-			ResourceFactory factory = _gd.ResourceFactory;
-			Texture colorTarget = factory.CreateTexture(TextureDescription.Texture2D(
+			var factory = GraphicsDevice.ResourceFactory;
+			var colorTarget = factory.CreateTexture(TextureDescription.Texture2D(
 				width, height,
 				1, 1,
 				PixelFormat.R8_G8_B8_A8_UNorm_SRgb,
 				TextureUsage.RenderTarget | TextureUsage.Sampled,
 				_options.EyeFramebufferSampleCount));
-			Texture depthTarget = factory.CreateTexture(TextureDescription.Texture2D(
+			var depthTarget = factory.CreateTexture(TextureDescription.Texture2D(
 				width, height,
 				1, 1,
 				PixelFormat.R32_Float,
@@ -138,28 +175,28 @@ namespace RhubarbEngine.VirtualReality
 
 		public override HmdPoseState WaitForPoses()
 		{
-			Matrix4x4 deviceToAbsolute = headPos;
-			Matrix4x4.Invert(deviceToAbsolute, out Matrix4x4 absoluteToDevice);
+			var deviceToAbsolute = HeadPos;
+			Matrix4x4.Invert(deviceToAbsolute, out var absoluteToDevice);
 
-			Matrix4x4 viewLeft = Matrix4x4.CreateScale(1f) * absoluteToDevice;
-			Matrix4x4 viewRight = Matrix4x4.CreateScale(1f) * absoluteToDevice;
+			var viewLeft = Matrix4x4.CreateScale(1f) * absoluteToDevice;
+			var viewRight = Matrix4x4.CreateScale(1f) * absoluteToDevice;
 
 
-			Matrix4x4.Invert(viewLeft, out Matrix4x4 invViewLeft);
-			Matrix4x4.Decompose(invViewLeft, out _, out Quaternion leftRotation, out Vector3 leftPosition);
+			Matrix4x4.Invert(viewLeft, out var invViewLeft);
+			Matrix4x4.Decompose(invViewLeft, out _, out var leftRotation, out var leftPosition);
 
-			Matrix4x4.Invert(viewRight, out Matrix4x4 invViewRight);
-			Matrix4x4.Decompose(invViewRight, out _, out Quaternion rightRotation, out Vector3 rightPosition);
+			Matrix4x4.Invert(viewRight, out var invViewRight);
+			Matrix4x4.Decompose(invViewRight, out _, out var rightRotation, out var rightPosition);
 
 			return new HmdPoseState(
-				_projLeft, _projRight,
+				_projLeft, _projLeft,
 				leftPosition, rightPosition,
 				leftRotation, rightRotation);
 		}
 
 		public override void SubmitFrame()
 		{
-			if (_gd.GetOpenGLInfo(out BackendInfoOpenGL glInfo))
+			if (GraphicsDevice.GetOpenGLInfo(out var glInfo))
 			{
 				glInfo.FlushAndFinish();
 			}
@@ -170,7 +207,7 @@ namespace RhubarbEngine.VirtualReality
 		private bool _mousePressed = false;
 
 
-		public void updateInput()
+		public void UpdateInput()
 		{
 			Vector2 mouseDelta = default;
 			if (_eng.inputManager.mainWindows.GetKeyDown(Key.R))
@@ -199,8 +236,8 @@ namespace RhubarbEngine.VirtualReality
 			}
 			if (mouseDelta != default)
 			{
-				HorizontalAngle += (mouseDelta.X * 0.002f);
-				VerticalAngle = Math.Clamp(VerticalAngle + (mouseDelta.Y * 0.002f), VerticalMin / 90, VerticalMax / 90);
+				_horizontalAngle += (mouseDelta.X * 0.002f);
+				_verticalAngle = Math.Clamp(_verticalAngle + (mouseDelta.Y * 0.002f), VerticalMin / 90, VerticalMax / 90);
 			}
 		}
 

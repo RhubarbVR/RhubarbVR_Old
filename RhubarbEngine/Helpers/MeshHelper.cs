@@ -20,8 +20,6 @@ using RhubarbEngine.Components.Users;
 using RhubarbEngine.Components.ImGUI;
 using RhubarbEngine.Components.Physics.Colliders;
 using RhubarbEngine.Components.PrivateSpace;
-
-using Org.OpenAPITools.Model;
 using BulletSharp;
 using System.Numerics;
 using System.Net;
@@ -31,55 +29,55 @@ namespace RhubarbEngine.Helpers
 {
 	public static class MeshHelper
 	{
-		public static (Entity, Window, T) attachWindow<T>(Entity ea, string name = "Window") where T : Component, IUIElement
+		public static (Entity, Window, T) AttachWindow<T>(Entity ea, string name = "Window") where T : Component, IUIElement
 		{
 			if (name == "Window")
 			{
 				name = typeof(T).Name;
 			}
-			Entity e = ea.addChild(name);
-			Window window = e.attachComponent<Window>();
-			T trains = e.attachComponent<T>();
-			window.element.target = trains;
+			var e = ea.AddChild(name);
+			var window = e.AttachComponent<Window>();
+			var trains = e.AttachComponent<T>();
+			window.element.Target = trains;
 			return (e, window, trains);
 		}
 
-		public static (Entity, Window) attachWindow(Entity ea, UIWidget uI, string name = "Window")
+		public static (Entity, Window) AttachWindow(Entity ea, UIWidget uI, string name = "Window")
 		{
-			Entity e = ea.addChild(name);
-			Window window = e.attachComponent<Window>();
-			window.element.target = uI;
+			var e = ea.AddChild(name);
+			var window = e.AttachComponent<Window>();
+			window.element.Target = uI;
 			return (e, window);
 		}
 
 		public static (Entity, T) AddMesh<T>(Entity ea, string name = "Entity") where T : ProceduralMesh
 		{
-			Entity e = ea.addChild(name);
-			BasicUnlitShader shader = e.world.staticAssets.basicUnlitShader;
-			T bmesh = e.attachComponent<T>();
-			RMaterial mit = e.attachComponent<RMaterial>();
-			MeshRender meshRender = e.attachComponent<MeshRender>();
-			Textue2DFromUrl textue2DFromUrl = e.attachComponent<Textue2DFromUrl>();
+			var e = ea.AddChild(name);
+			var shader = e.world.staticAssets.basicUnlitShader;
+			var bmesh = e.AttachComponent<T>();
+			var mit = e.AttachComponent<RMaterial>();
+			var meshRender = e.AttachComponent<MeshRender>();
+			var textue2DFromUrl = e.AttachComponent<Textue2DFromUrl>();
 
-			mit.Shader.target = shader;
-			meshRender.Materials.Add().target = mit;
-			meshRender.Mesh.target = bmesh;
-			Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-			field.field.target = textue2DFromUrl;
+			mit.Shader.Target = shader;
+			meshRender.Materials.Add().Target = mit;
+			meshRender.Mesh.Target = bmesh;
+			var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+			field.field.Target = textue2DFromUrl;
 
 			return (e, bmesh);
 		}
 
 		public static (Entity, T, RMaterial) AddMesh<T>(Entity ea, AssetProvider<RShader> shader, string name = "Entity", uint renderOffset = int.MaxValue) where T : ProceduralMesh
 		{
-			Entity e = ea.addChild(name);
-			T bmesh = e.attachComponent<T>();
-			RMaterial mit = e.attachComponent<RMaterial>();
-			MeshRender meshRender = e.attachComponent<MeshRender>();
-			meshRender.RenderOrderOffset.value = renderOffset;
-			mit.Shader.target = shader;
-			meshRender.Materials.Add().target = mit;
-			meshRender.Mesh.target = bmesh;
+			var e = ea.AddChild(name);
+			var bmesh = e.AttachComponent<T>();
+			var mit = e.AttachComponent<RMaterial>();
+			var meshRender = e.AttachComponent<MeshRender>();
+			meshRender.RenderOrderOffset.Value = renderOffset;
+			mit.Shader.Target = shader;
+			meshRender.Materials.Add().Target = mit;
+			meshRender.Mesh.Target = bmesh;
 
 			return (e, bmesh, mit);
 		}

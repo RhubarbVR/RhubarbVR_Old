@@ -38,7 +38,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 			drawlist.AddCircleFilled(new Vector2(300f), 60f, ImGui.GetColorU32(ImGuiCol.WindowBg));
 		}
 
-		private void focusLost()
+		private void FocusLost()
 		{
 			Close();
 		}
@@ -47,25 +47,25 @@ namespace RhubarbEngine.Components.PrivateSpace
 		{
 			base.OnAttach();
 			var (renderentity, mesh, mit) = MeshHelper.AddMesh<PlaneMesh>(entity, world.staticAssets.overLayedUnlitShader, "RenderEntity", 10);
-			renderEntity.target = renderentity;
-			mesh.Width.value = 0.5f;
-			mesh.Height.value = 0.5f;
-			InputPlane col = renderentity.attachComponent<InputPlane>();
-			col.onFocusLost.Target = focusLost;
-			col.pixelSize.value = new Vector2u(600 * 2);
-			col.size.value = new Vector2f(0.25f);
-			ImGUICanvas imGUICanvas = renderentity.attachComponent<ImGUICanvas>();
-			imGUICanvas.noBackground.value = true;
-			imGUICanvas.imputPlane.target = col;
-			imGUICanvas.scale.value = new Vector2u(600);
-			imGUICanvas.element.target = this;
-			imGUICanvas.backGroundColor.value = Colorf.TransparentWhite;
-			Render.Material.Fields.Texture2DField field = mit.getField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
-			field.field.target = imGUICanvas;
+			renderEntity.Target = renderentity;
+			mesh.Width.Value = 0.5f;
+			mesh.Height.Value = 0.5f;
+			var col = renderentity.AttachComponent<InputPlane>();
+			col.onFocusLost.Target = FocusLost;
+			col.pixelSize.Value = new Vector2u(600 * 2);
+			col.size.Value = new Vector2f(0.25f);
+			var imGUICanvas = renderentity.AttachComponent<ImGUICanvas>();
+			imGUICanvas.noBackground.Value = true;
+			imGUICanvas.imputPlane.Target = col;
+			imGUICanvas.scale.Value = new Vector2u(600);
+			imGUICanvas.element.Target = this;
+			imGUICanvas.backGroundColor.Value = Colorf.TransparentWhite;
+			var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+			field.field.Target = imGUICanvas;
 
 
-			var pos = mit.getField<Render.Material.Fields.FloatField>("Zpos", Render.Shader.ShaderType.MainFrag);
-			pos.field.value = 0.4f;
+			var pos = mit.GetField<Render.Material.Fields.FloatField>("Zpos", Render.Shader.ShaderType.MainFrag);
+			pos.field.Value = 0.4f;
 
 			Close();
 		}
@@ -80,7 +80,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (prossesOpenKey())
+			if (ProssesOpenKey())
 			{
 				Open();
 			}
@@ -89,55 +89,62 @@ namespace RhubarbEngine.Components.PrivateSpace
 
 		public void Open()
 		{
-			renderEntity.target.enabled.value = true;
+			renderEntity.Target.enabled.Value = true;
 			Alline();
-			if (open.value)
-				return;
-			open.value = true;
+			if (open.Value)
+            {
+                return;
+            }
+
+            open.Value = true;
 		}
 
 		private void Alline()
 		{
-			Matrix4x4 trans = Matrix4x4.CreateScale(1);
+			var trans = Matrix4x4.CreateScale(1);
 			if (engine.outputType == VirtualReality.OutputType.Screen)
 			{
-				if (side.value == Creality.Left)
-					return;
-				trans = (Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 1, 0)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric())) * world.userRoot.Head.target.globalTrans();
+				if (side.Value == Creality.Left)
+                {
+                    return;
+                }
+
+                trans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 1, 0)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric()) * world.UserRoot.Head.Target.GlobalTrans();
 			}
 			else
 			{
-				switch (side.value)
+				switch (side.Value)
 				{
 					case Creality.Left:
-						trans = (Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 0.5f, 0)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric())) * world.userRoot.LeftHand.target.globalTrans();
+						trans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 0.5f, 0)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric()) * world.UserRoot.LeftHand.Target.GlobalTrans();
 						break;
 					case Creality.Right:
-						trans = (Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 0.5f, 0)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric())) * world.userRoot.RightHand.target.globalTrans();
+						trans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 0.5f, 0)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric()) * world.UserRoot.RightHand.Target.GlobalTrans();
 						break;
 					default:
 						break;
 				}
 			}
-			renderEntity.target.setGlobalTrans(trans);
+			renderEntity.Target.SetGlobalTrans(trans);
 		}
 
 		public void Close()
 		{
-			if (!open.value)
-				return;
-			renderEntity.target.enabled.value = false;
-			open.value = false;
+			if (!open.Value)
+            {
+                return;
+            }
+
+            renderEntity.Target.enabled.Value = false;
+			open.Value = false;
 		}
-		private bool prossesOpenKey()
+		private bool ProssesOpenKey()
 		{
 			if (engine.outputType == VirtualReality.OutputType.Screen)
 			{
-				if (side.value == Creality.Left)
-					return false;
-				return input.mainWindows.GetKeyDown(Key.F);
-			}
-			return input.MenuPress(side.value);
+                return side.Value != Creality.Left && input.mainWindows.GetKeyDown(Key.F);
+            }
+            return input.MenuPress(side.Value);
 		}
 
 		public ContextMenu(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

@@ -16,67 +16,74 @@ namespace RhubarbEngine.World.ECS
 	public class Entity : Worker, IWorldObject
 	{
 
-		[NoShow]
+        [NoShow]
+        [NoSave]
+        [NoSync]
+        public User CreatingUser
+        {
+            get
+            {
+                return world.users[(int)referenceID.getOwnerID()];
+            }
+        }
+
+        [NoShow]
 		[NoSave]
 		[NoSync]
-		public User CreatingUser => world.users[(int)referenceID.getOwnerID()];
-		[NoShow]
-		[NoSave]
-		[NoSync]
-		public User manager
+		public User Manager
 		{
 			get
 			{
 				User retur;
-				if (_manager.target == null)
+				if (_manager.Target == null)
 				{
-					retur = parent.target?.nullableManager;
+					retur = parent.Target?.NullableManager;
 				}
 				else
 				{
-					retur = _manager.target;
+					retur = _manager.Target;
 				}
 				if (retur == null)
 				{
-					retur = world.hostUser;
+					retur = world.HostUser;
 				}
 				return retur;
 			}
-			set { _manager.target = value; }
+			set { _manager.Target = value; }
 		}
 		[NoShow]
 		[NoSave]
 		[NoSync]
-		public User nullableManager
+		public User NullableManager
 		{
 			get
 			{
 				User retur;
-				if (_manager.target == null)
+				if (_manager.Target == null)
 				{
-					retur = parent.target?.manager;
+					retur = parent.Target?.Manager;
 				}
 				else
 				{
-					retur = _manager.target;
+					retur = _manager.Target;
 				}
 				return retur;
 			}
 		}
 
 
-		private Matrix4x4 cashedGlobalTrans = Matrix4x4.CreateScale(Vector3.One);
+		private Matrix4x4 _cashedGlobalTrans = Matrix4x4.CreateScale(Vector3.One);
 
-		private Matrix4x4 cashedLocalMatrix = Matrix4x4.CreateScale(Vector3.One);
+		private Matrix4x4 _cashedLocalMatrix = Matrix4x4.CreateScale(Vector3.One);
 		[NoShow]
 		[NoSave]
 		[NoSync]
-		private Entity internalParent;
+		private Entity _internalParent;
 
 		[NoSave]
 		public SyncRef<User> _manager;
 
-		public SyncRef<Entity> parent;
+		public new SyncRef<Entity> parent;
 
 		public Sync<RemderLayers> remderlayer;
 
@@ -85,7 +92,7 @@ namespace RhubarbEngine.World.ECS
 			try
 			{
 				physicsDisableders.Add(physicsDisableder);
-				onPhysicsDisableder?.Invoke(PhysicsDisabled);
+				OnPhysicsDisableder?.Invoke(PhysicsDisabled);
 			}
 			catch
 			{
@@ -94,53 +101,53 @@ namespace RhubarbEngine.World.ECS
 
 		public Vector3f GlobalPointToLocal(Vector3f point, bool Child = true)
 		{
-			Matrix4x4 newtrans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromYawPitchRoll(0f, 0f, 0f) * Matrix4x4.CreateTranslation(point.ToSystemNumrics());
-			Matrix4x4 parentMatrix;
+			var newtrans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromYawPitchRoll(0f, 0f, 0f) * Matrix4x4.CreateTranslation(point.ToSystemNumrics());
+            Matrix4x4 parentMatrix;
 			if (Child)
 			{
-				parentMatrix = cashedGlobalTrans;
+				parentMatrix = _cashedGlobalTrans;
 			}
 			else
 			{
-				parentMatrix = parent.target.cashedGlobalTrans;
+				parentMatrix = parent.Target._cashedGlobalTrans;
 			}
-			Matrix4x4.Invert(parentMatrix, out Matrix4x4 invparentMatrix);
-			Matrix4x4 newlocal = newtrans * invparentMatrix;
-			Matrix4x4.Decompose(newlocal, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
+			Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
+			var newlocal = newtrans * invparentMatrix;
+			Matrix4x4.Decompose(newlocal, out _, out _, out var newtranslation);
 			return (Vector3f)newtranslation;
 		}
 		public Vector3f GlobalScaleToLocal(Vector3f Scale, bool Child = true)
 		{
-			Matrix4x4 newtrans = Matrix4x4.CreateScale((Vector3)Scale) * Matrix4x4.CreateFromYawPitchRoll(0f, 0f, 0f) * Matrix4x4.CreateTranslation(0, 0, 0);
+			var newtrans = Matrix4x4.CreateScale((Vector3)Scale) * Matrix4x4.CreateFromYawPitchRoll(0f, 0f, 0f) * Matrix4x4.CreateTranslation(0, 0, 0);
 			Matrix4x4 parentMatrix;
 			if (Child)
 			{
-				parentMatrix = cashedGlobalTrans;
+				parentMatrix = _cashedGlobalTrans;
 			}
 			else
 			{
-				parentMatrix = parent.target.cashedGlobalTrans;
+				parentMatrix = parent.Target._cashedGlobalTrans;
 			}
-			Matrix4x4.Invert(parentMatrix, out Matrix4x4 invparentMatrix);
-			Matrix4x4 newlocal = newtrans * invparentMatrix;
-			Matrix4x4.Decompose(newlocal, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
+			Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
+			var newlocal = newtrans * invparentMatrix;
+			Matrix4x4.Decompose(newlocal, out var newscale, out _, out _);
 			return (Vector3f)newscale;
 		}
 		public Quaternionf GlobalRotToLocal(Quaternionf Rot, bool Child = true)
 		{
-			Matrix4x4 newtrans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion((Quaternion)Rot) * Matrix4x4.CreateTranslation(0, 0, 0);
+			var newtrans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion((Quaternion)Rot) * Matrix4x4.CreateTranslation(0, 0, 0);
 			Matrix4x4 parentMatrix;
 			if (Child)
 			{
-				parentMatrix = cashedGlobalTrans;
+				parentMatrix = _cashedGlobalTrans;
 			}
 			else
 			{
-				parentMatrix = parent.target.cashedGlobalTrans;
+				parentMatrix = parent.Target._cashedGlobalTrans;
 			}
-			Matrix4x4.Invert(parentMatrix, out Matrix4x4 invparentMatrix);
-			Matrix4x4 newlocal = newtrans * invparentMatrix;
-			Matrix4x4.Decompose(newlocal, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
+			Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
+			var newlocal = newtrans * invparentMatrix;
+			Matrix4x4.Decompose(newlocal, out _, out var newrotation, out _);
 			return (Quaternionf)newrotation;
 		}
 
@@ -150,28 +157,41 @@ namespace RhubarbEngine.World.ECS
 			try
 			{
 				physicsDisableders.Remove(physicsDisableder);
-				onPhysicsDisableder?.Invoke(PhysicsDisabled);
+				OnPhysicsDisableder?.Invoke(PhysicsDisabled);
 			}
 			catch
 			{
 			}
 		}
 
-		public event Action<bool> onPhysicsDisableder;
+		public event Action<bool> OnPhysicsDisableder;
 		[NoShow]
 		[NoSave]
 		[NoSync]
 		public List<IPhysicsDisableder> physicsDisableders = new List<IPhysicsDisableder>();
-		[NoShow]
-		[NoSave]
-		[NoSync]
-		public bool PhysicsDisabled => physicsDisableders.Count > 0;
-		[NoShow]
-		[NoSave]
-		[NoSync]
-		IWorldObject IWorldObject.Parent => internalParent?._children ?? (IWorldObject)world;
+        [NoShow]
+        [NoSave]
+        [NoSync]
+        public bool PhysicsDisabled
+        {
+            get
+            {
+                return physicsDisableders.Count > 0;
+            }
+        }
 
-		public Sync<string> name;
+        [NoShow]
+        [NoSave]
+        [NoSync]
+        IWorldObject IWorldObject.Parent
+        {
+            get
+            {
+                return _internalParent?._children ?? (IWorldObject)world;
+            }
+        }
+
+        public Sync<string> name;
 
 		public Sync<Vector3f> position;
 
@@ -187,250 +207,291 @@ namespace RhubarbEngine.World.ECS
 
 		public bool parentEnabled = true;
 
-		public event Action enabledChanged;
+		public event Action EnabledChanged;
 
-		public event Action<bool> onClick;
+		public event Action<bool> OnClick;
 
-		public event Action<GrabbableHolder, bool> onGrip;
+		public event Action<GrabbableHolder, bool> OnGrip;
 
-		public event Action<GrabbableHolder, bool> onDrop;
+		public event Action<GrabbableHolder, bool> OnDrop;
 
-		public event Action<bool> onPrimary;
+		public event Action<bool> OnPrimary;
 
-		public event Action<bool> onSecondary;
+		public event Action<bool> OnSecondary;
 
-		public event Action<bool> onTriggerTouching;
+		public event Action<bool> OnTriggerTouching;
 
 		public void SetParent(Entity entity, bool preserverGlobal = true, bool resetPos = false)
 		{
-			Matrix4x4 mach = cashedGlobalTrans;
-			parent.target = entity;
+			var mach = _cashedGlobalTrans;
+			parent.Target = entity;
 			if (preserverGlobal)
 			{
-				setGlobalTrans(mach);
+				SetGlobalTrans(mach);
 			}
 			else if (resetPos)
 			{
-				setGlobalTrans(entity.cashedGlobalTrans);
+				SetGlobalTrans(entity._cashedGlobalTrans);
 			}
 		}
 
 		public void SendTriggerTouching(bool laser, bool click = true)
 		{
 			if (!click)
-				return;
-			onTriggerTouching?.Invoke(laser);
+            {
+                return;
+            }
+
+            OnTriggerTouching?.Invoke(laser);
 		}
 
 		public void SendClick(bool laser, bool click = true)
 		{
 			if (!click)
-				return;
-			onClick?.Invoke(laser);
+            {
+                return;
+            }
+
+            OnClick?.Invoke(laser);
 		}
 		public void SendGrip(bool laser, GrabbableHolder holder, bool click = true)
 		{
 			if (!click)
-				return;
-			onGrip?.Invoke(holder, laser);
+            {
+                return;
+            }
+
+            OnGrip?.Invoke(holder, laser);
 		}
 
 		public void SendDrop(bool laser, GrabbableHolder holder, bool click = true)
 		{
 			if (!click)
-				return;
-			onDrop?.Invoke(holder, laser);
+            {
+                return;
+            }
+
+            OnDrop?.Invoke(holder, laser);
 		}
 
 		public void SendPrimary(bool laser, bool click = true)
 		{
 			if (!click)
-				return;
-			onPrimary?.Invoke(laser);
+            {
+                return;
+            }
+
+            OnPrimary?.Invoke(laser);
 		}
 		public void SendSecondary(bool laser, bool click = true)
 		{
 			if (!click)
-				return;
-			onSecondary?.Invoke(laser);
-		}
-		public bool isEnabled => parentEnabled && enabled.value;
+            {
+                return;
+            }
 
-		private void LoadListObject()
+            OnSecondary?.Invoke(laser);
+		}
+        public bool IsEnabled
+        {
+            get
+            {
+                return parentEnabled && enabled.Value;
+            }
+        }
+
+        private void LoadListObject()
 		{
 			foreach (var item in _components)
 			{
-				item.ListObject(isEnabled);
+				item.ListObject(IsEnabled);
 			}
 		}
 
-		public void parentEnabledChange(bool _parentEnabled)
+		public void ParentEnabledChange(bool _parentEnabled)
 		{
-			if (!enabled.value)
-				return;
-			if (_parentEnabled != parentEnabled)
+			if (!enabled.Value)
+            {
+                return;
+            }
+
+            if (_parentEnabled != parentEnabled)
 			{
 				parentEnabled = _parentEnabled;
-				foreach (Entity item in _children)
+				foreach (var item in _children)
 				{
-					item.parentEnabledChange(_parentEnabled);
+					item.ParentEnabledChange(_parentEnabled);
 				}
 			}
 			LoadListObject();
-			enabledChanged?.Invoke();
+			EnabledChanged?.Invoke();
 		}
 
-		public void onPersistenceChange(IChangeable newValue)
+		public void OnPersistenceChange(IChangeable newValue)
 		{
-			base.Persistent = persistence.value;
+			base.Persistent = persistence.Value;
 		}
 		public override void inturnalSyncObjs(bool newRefIds)
 		{
-			world.addWorldEntity(this);
+			world.AddWorldEntity(this);
 		}
 
-		public Vector3f globalPos()
+		public Vector3f GlobalPos()
 		{
-			Matrix4x4.Decompose(cashedGlobalTrans, out Vector3 scale, out Quaternion rotation, out Vector3 translation);
+			Matrix4x4.Decompose(_cashedGlobalTrans, out _, out _, out var translation);
 			return (Vector3f)translation;
 		}
-		public Quaternionf globalRot()
+		public Quaternionf GlobalRot()
 		{
-			Matrix4x4.Decompose(cashedGlobalTrans, out Vector3 scale, out Quaternion rotation, out Vector3 translation);
+			Matrix4x4.Decompose(_cashedGlobalTrans, out _, out var rotation, out _);
 			return (Quaternionf)rotation;
 		}
-		public Vector3f globalScale()
+		public Vector3f GlobalScale()
 		{
-			Matrix4x4.Decompose(cashedGlobalTrans, out Vector3 scale, out Quaternion rotation, out Vector3 translation);
+			Matrix4x4.Decompose(_cashedGlobalTrans, out var scale, out _, out _);
 			return (Vector3f)scale;
 		}
 
 		public void SetGlobalPos(Vector3f pos)
 		{
-			Matrix4x4.Decompose(cashedGlobalTrans, out Vector3 scale, out Quaternion rotation, out Vector3 translation);
-			setGlobalTrans(Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(pos.ToSystemNumrics()));
+			Matrix4x4.Decompose(_cashedGlobalTrans, out var scale, out var rotation, out _);
+			SetGlobalTrans(Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(pos.ToSystemNumrics()));
 		}
 
 		public void SetGlobalRot(Quaternionf rot)
 		{
-			Matrix4x4.Decompose(cashedGlobalTrans, out Vector3 scale, out Quaternion rotation, out Vector3 translation);
-			setGlobalTrans(Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(rot.ToSystemNumric()) * Matrix4x4.CreateTranslation(translation));
+			Matrix4x4.Decompose(_cashedGlobalTrans, out var scale, out _, out var translation);
+			SetGlobalTrans(Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(rot.ToSystemNumric()) * Matrix4x4.CreateTranslation(translation));
 		}
 
 		public void SetGlobalScale(Vector3f pos)
 		{
-			Matrix4x4.Decompose(cashedGlobalTrans, out Vector3 scale, out Quaternion rotation, out Vector3 translation);
-			setGlobalTrans(Matrix4x4.CreateScale(pos.ToSystemNumrics()) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(translation));
+			Matrix4x4.Decompose(_cashedGlobalTrans, out _, out var rotation, out var translation);
+			SetGlobalTrans(Matrix4x4.CreateScale(pos.ToSystemNumrics()) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(translation));
 		}
-		public Matrix4x4 globalTrans()
+		public Matrix4x4 GlobalTrans()
 		{
-			return cashedGlobalTrans;
+			return _cashedGlobalTrans;
 		}
 
-		public Vector3f up
+		public Vector3f Up
 		{
 			get
 			{
-				var mat = cashedGlobalTrans;
-				var e = new Vector3f(mat.M11 * Vector3f.AxisY.x + mat.M12 * Vector3f.AxisY.y + mat.M13 * Vector3f.AxisY.z, mat.M21 * Vector3f.AxisY.x + mat.M22 * Vector3f.AxisY.y + mat.M23 * Vector3f.AxisY.z, mat.M31 * Vector3f.AxisY.x + mat.M32 * Vector3f.AxisY.y + mat.M33 * Vector3f.AxisY.z);
+				var mat = _cashedGlobalTrans;
+				var e = new Vector3f((mat.M11 * Vector3f.AxisY.x) + (mat.M12 * Vector3f.AxisY.y) + (mat.M13 * Vector3f.AxisY.z), (mat.M21 * Vector3f.AxisY.x) + (mat.M22 * Vector3f.AxisY.y) + (mat.M23 * Vector3f.AxisY.z), (mat.M31 * Vector3f.AxisY.x) + (mat.M32 * Vector3f.AxisY.y) + (mat.M33 * Vector3f.AxisY.z));
 				return e;
 
 			}
 		}
 
-		public Matrix4x4 localTrans()
+		public Matrix4x4 LocalTrans()
 		{
-			return cashedLocalMatrix;
+			return _cashedLocalMatrix;
 		}
 
-		public void setGlobalTrans(Matrix4x4 newtrans, bool SendUpdate = true)
+		public void SetGlobalTrans(Matrix4x4 newtrans, bool SendUpdate = true)
 		{
-			Matrix4x4 parentMatrix = Matrix4x4.CreateScale(Vector3.One);
-			if (internalParent != null)
+			var parentMatrix = Matrix4x4.CreateScale(Vector3.One);
+			if (_internalParent != null)
 			{
-				parentMatrix = internalParent.globalTrans();
+				parentMatrix = _internalParent.GlobalTrans();
 			}
-			Matrix4x4.Invert(parentMatrix, out Matrix4x4 invparentMatrix);
-			Matrix4x4 newlocal = newtrans * invparentMatrix;
-			Matrix4x4.Decompose(newlocal, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
-			position.setValueNoOnChange((Vector3f)newtranslation);
-			rotation.setValueNoOnChange((Quaternionf)newrotation);
-			scale.setValueNoOnChange((Vector3f)newscale);
-			cashedGlobalTrans = newtrans;
-			updateGlobalTrans(SendUpdate);
+			Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
+			var newlocal = newtrans * invparentMatrix;
+			Matrix4x4.Decompose(newlocal, out var newscale, out var newrotation, out var newtranslation);
+			position.SetValueNoOnChange((Vector3f)newtranslation);
+			rotation.SetValueNoOnChange((Quaternionf)newrotation);
+			scale.SetValueNoOnChange((Vector3f)newscale);
+			_cashedGlobalTrans = newtrans;
+			UpdateGlobalTrans(SendUpdate);
 		}
 
 		public Action<Matrix4x4> GlobalTransformChange;
 		public Action<Matrix4x4> GlobalTransformChangePhysics;
 
-		public void setLocalTrans(Matrix4x4 newtrans)
+		public void SetLocalTrans(Matrix4x4 newtrans)
 		{
-			Matrix4x4.Decompose(newtrans, out Vector3 newscale, out Quaternion newrotation, out Vector3 newtranslation);
-			position.setValueNoOnChange((Vector3f)newtranslation);
-			rotation.setValueNoOnChange((Quaternionf)newrotation);
-			scale.setValueNoOnChange((Vector3f)newscale);
-			updateGlobalTrans();
+			Matrix4x4.Decompose(newtrans, out var newscale, out var newrotation, out var newtranslation);
+			position.SetValueNoOnChange((Vector3f)newtranslation);
+			rotation.SetValueNoOnChange((Quaternionf)newrotation);
+			scale.SetValueNoOnChange((Vector3f)newscale);
+			UpdateGlobalTrans();
 		}
 
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			position = new Sync<Vector3f>(this, newRefIds);
-			scale = new Sync<Vector3f>(this, newRefIds);
-			scale.value = Vector3f.One;
-			rotation = new Sync<Quaternionf>(this, newRefIds);
-			rotation.value = Quaternionf.Identity;
-			name = new Sync<string>(this, newRefIds);
+            scale = new Sync<Vector3f>(this, newRefIds)
+            {
+                Value = Vector3f.One
+            };
+            rotation = new Sync<Quaternionf>(this, newRefIds)
+            {
+                Value = Quaternionf.Identity
+            };
+            name = new Sync<string>(this, newRefIds);
 			enabled = new Sync<bool>(this, newRefIds);
-			persistence = new Sync<bool>(this, newRefIds);
-			persistence.value = true;
-			_children = new SyncObjList<Entity>(this, newRefIds);
+            persistence = new Sync<bool>(this, newRefIds)
+            {
+                Value = true
+            };
+            _children = new SyncObjList<Entity>(this, newRefIds);
 			_components = new SyncAbstractObjList<Component>(this, newRefIds);
 			_manager = new SyncRef<User>(this, newRefIds);
-			enabled.value = true;
+			enabled.Value = true;
 			parent = new SyncRef<Entity>(this, newRefIds);
 			parent.Changed += Parent_Changed;
-			remderlayer = new Sync<RemderLayers>(this, newRefIds);
-			remderlayer.value = RemderLayers.normal;
-			position.Changed += onTransChange;
-			rotation.Changed += onTransChange;
-			scale.Changed += onTransChange;
-			enabled.Changed += onEnableChange;
-			persistence.Changed += onPersistenceChange;
+            remderlayer = new Sync<RemderLayers>(this, newRefIds)
+            {
+                Value = RemderLayers.normal
+            };
+            position.Changed += OnTransChange;
+			rotation.Changed += OnTransChange;
+			scale.Changed += OnTransChange;
+			enabled.Changed += OnEnableChange;
+			persistence.Changed += OnPersistenceChange;
 		}
 
 		private void Parent_Changed(IChangeable obj)
 		{
 			if (world.RootEntity == this)
-				return;
-			if (parent.target == internalParent)
-				return;
-			if (internalParent == null)
+            {
+                return;
+            }
+
+            if (parent.Target == _internalParent)
+            {
+                return;
+            }
+
+            if (_internalParent == null)
 			{
-				internalParent = parent.target;
-				updateGlobalTrans();
+				_internalParent = parent.Target;
+				UpdateGlobalTrans();
 				return;
 			}
-			if (parent.target == null)
+			if (parent.Target == null)
 			{
-				parent.target = world.RootEntity;
+				parent.Target = world.RootEntity;
 				return;
 			}
-			if (world != parent.target.world)
+			if (world != parent.Target.world)
 			{
 				logger.Log("tried to set parent from another world");
 				return;
 			}
-			if (!parent.target.CheckIfParented(this))
+			if (!parent.Target.CheckIfParented(this))
 			{
-				parent.target._children.AddInternal(this);
-				internalParent._children.RemoveInternal(this);
-				internalParent = parent.target;
-				parentEnabledChange(internalParent.isEnabled);
-				updateGlobalTrans();
+				parent.Target._children.AddInternal(this);
+				_internalParent._children.RemoveInternal(this);
+				_internalParent = parent.Target;
+				ParentEnabledChange(_internalParent.IsEnabled);
+				UpdateGlobalTrans();
 			}
 			else
 			{
-				parent.target = internalParent;
+				parent.Target = _internalParent;
 			}
 		}
 		public bool CheckIfParented(Entity entity)
@@ -441,59 +502,62 @@ namespace RhubarbEngine.World.ECS
 			}
 			else
 			{
-				return internalParent?.CheckIfParented(entity) ?? false;
+				return _internalParent?.CheckIfParented(entity) ?? false;
 			}
 		}
-		private void onTransChange(IChangeable newValue)
+		private void OnTransChange(IChangeable newValue)
 		{
-			updateGlobalTrans();
+			UpdateGlobalTrans();
 		}
 
-		private void onEnableChange(IChangeable newValue)
+		private void OnEnableChange(IChangeable newValue)
 		{
-			if (!enabled.value && (world.RootEntity == this))
-			{ enabled.value = true; };
-			foreach (Entity item in _children)
+			if (!enabled.Value && (world.RootEntity == this))
+			{ enabled.Value = true; };
+			foreach (var item in _children)
 			{
-				item.parentEnabledChange(enabled.value);
+				item.ParentEnabledChange(enabled.Value);
 			}
 			LoadListObject();
-			enabledChanged?.Invoke();
+			EnabledChanged?.Invoke();
 		}
-		private void updateGlobalTrans(bool Sendupdate = true)
+		private void UpdateGlobalTrans(bool Sendupdate = true)
 		{
-			Matrix4x4 parentMatrix = Matrix4x4.CreateScale(Vector3.One);
-			if (internalParent != null)
+			var parentMatrix = Matrix4x4.CreateScale(Vector3.One);
+			if (_internalParent != null)
 			{
-				parentMatrix = internalParent.globalTrans();
+				parentMatrix = _internalParent.GlobalTrans();
 			}
-			Matrix4x4 localMatrix = Matrix4x4.CreateScale((Vector3)scale.value) * Matrix4x4.CreateFromQuaternion(rotation.value.ToSystemNumric()) * Matrix4x4.CreateTranslation((Vector3)position.value);
-			cashedGlobalTrans = localMatrix * parentMatrix;
-			cashedLocalMatrix = localMatrix;
+			var localMatrix = Matrix4x4.CreateScale((Vector3)scale.Value) * Matrix4x4.CreateFromQuaternion(rotation.Value.ToSystemNumric()) * Matrix4x4.CreateTranslation((Vector3)position.Value);
+			_cashedGlobalTrans = localMatrix * parentMatrix;
+			_cashedLocalMatrix = localMatrix;
 			if (Sendupdate)
-				GlobalTransformChangePhysics?.Invoke(cashedGlobalTrans);
-			GlobalTransformChange?.Invoke(cashedGlobalTrans);
-			foreach (Entity entity in _children)
+            {
+                GlobalTransformChangePhysics?.Invoke(_cashedGlobalTrans);
+            }
+
+            GlobalTransformChange?.Invoke(_cashedGlobalTrans);
+			foreach (var entity in _children)
 			{
-				entity.updateGlobalTrans();
+				entity.UpdateGlobalTrans();
 			}
 		}
 		[NoShow]
 		[NoSync]
 		[NoSave]
-		public Entity addChild(string name = "Entity")
+		public Entity AddChild(string name = "Entity")
 		{
-			Entity val = _children.Add(true);
-			val.parent.target = this;
-			val.name.value = name;
+			var val = _children.Add(true);
+			val.parent.Target = this;
+			val.name.Value = name;
 			return val;
 		}
 		[NoShow]
 		[NoSync]
 		[NoSave]
-		public T attachComponent<T>() where T : Component
+		public T AttachComponent<T>() where T : Component
 		{
-			T newcomp = (T)Activator.CreateInstance(typeof(T));
+			var newcomp = (T)Activator.CreateInstance(typeof(T));
 			_components.Add(newcomp);
 			try
 			{
@@ -510,9 +574,9 @@ namespace RhubarbEngine.World.ECS
 		[NoShow]
 		[NoSync]
 		[NoSave]
-		public Component attachComponent(Type type)
+		public Component AttachComponent(Type type)
 		{
-			Component newcomp = (Component)Activator.CreateInstance(type);
+			var newcomp = (Component)Activator.CreateInstance(type);
 			_components.Add(newcomp);
 			try
 			{
@@ -529,12 +593,12 @@ namespace RhubarbEngine.World.ECS
 		public override void onLoaded()
 		{
 			base.onLoaded();
-			updateGlobalTrans();
+			UpdateGlobalTrans();
 		}
 		[NoShow]
 		[NoSync]
 		[NoSave]
-		public T getFirstComponent<T>() where T : Component
+		public T GetFirstComponent<T>() where T : Component
 		{
 			foreach (var item in _components)
 			{
@@ -548,7 +612,7 @@ namespace RhubarbEngine.World.ECS
 		[NoShow]
 		[NoSync]
 		[NoSave]
-		public IEnumerable<T> getAllComponents<T>() where T : Component
+		public IEnumerable<T> GetAllComponents<T>() where T : Component
 		{
 			foreach (var item in _components)
 			{
@@ -559,9 +623,9 @@ namespace RhubarbEngine.World.ECS
 			}
 		}
 
-		public void addToRenderQueue(RenderQueue gu, Vector3 playpos, RemderLayers layer, RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
+		public void AddToRenderQueue(RenderQueue gu, Vector3 playpos, RemderLayers layer, RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
 		{
-			if (((int)layer & (int)remderlayer.value) <= 0)
+			if (((int)layer & (int)remderlayer.Value) <= 0)
 			{
 				return;
 			}
@@ -580,16 +644,19 @@ namespace RhubarbEngine.World.ECS
 		{
 			logger.Log("Entity Remove");
 			base.Dispose();
-			world.removeWorldEntity(this);
+			world.RemoveWorldEntity(this);
 		}
 
 		public void Update(DateTime startTime, DateTime Frame)
 		{
 			if (base.IsRemoved)
-				return;
-			foreach (Component comp in _components)
+            {
+                return;
+            }
+
+            foreach (var comp in _components)
 			{
-				if (comp.enabled.value && !comp.IsRemoved && world.Focus != World.FocusLevel.Background)
+				if (comp.enabled.Value && !comp.IsRemoved && world.Focus != World.FocusLevel.Background)
 				{
 					comp.CommonUpdate(startTime, Frame);
 				}

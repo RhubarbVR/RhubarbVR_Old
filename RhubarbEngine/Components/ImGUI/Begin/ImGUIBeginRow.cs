@@ -40,7 +40,7 @@ namespace RhubarbEngine.Components.ImGUI
 			ImGui.Columns(children.Count());
 			foreach (var item in children)
 			{
-				item.target?.ImguiRender(imGuiRenderer, canvas);
+				item.Target?.ImguiRender(imGuiRenderer, canvas);
 				ImGui.NextColumn();
 			}
 		}

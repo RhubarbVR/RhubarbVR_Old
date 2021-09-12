@@ -13,9 +13,9 @@ namespace RhubarbEngine.World
 	{
 		public event Func<double> stateChange;
 
-		public override Playback defalut()
+		public override Playback Defalut()
 		{
-			return new Playback { Speed = 1f, Looping = true, Offset = world.worldTime };
+			return new Playback { Speed = 1f, Looping = true, Offset = world.WorldTime };
 		}
 
 		public override void UpdatedValue()
@@ -30,17 +30,17 @@ namespace RhubarbEngine.World
 			get { return ProccessPosition(); }
 			set
 			{
-				base.value = new Playback { Looping = base.value.Looping, Offset = world.worldTime, Playing = base.value.Playing, Speed = base.value.Speed, Position = value };
+				base.Value = new Playback { Looping = base.Value.Looping, Offset = world.WorldTime, Playing = base.Value.Playing, Speed = base.Value.Speed, Position = value };
 			}
 		}
 
-		public bool Playing => (((RawPos() < ClipLength) || Looping) || Stream) && value.Playing;
+		public bool Playing => (((RawPos() < ClipLength) || Looping) || Stream) && Value.Playing;
 
 		public bool Stream { get { return ClipLength >= double.PositiveInfinity; } }
 
 		public double ProccessPosition()
 		{
-			if (value.Playing)
+			if (Value.Playing)
 			{
 				if (Stream)
 				{
@@ -59,12 +59,12 @@ namespace RhubarbEngine.World
 					return RawPos();
 				}
 			}
-			return value.Position;
+			return Value.Position;
 		}
 
 		public double RawPos()
 		{
-			return ((value.Offset - world.worldTime) * Speed) + value.Position;
+			return ((Value.Offset - world.WorldTime) * Speed) + Value.Position;
 		}
 
 		public override void LoadedFromBytes(bool networked)
@@ -72,34 +72,34 @@ namespace RhubarbEngine.World
 			base.LoadedFromBytes(networked);
 			if (!networked)
 			{
-				value = new Playback { Looping = value.Looping, Offset = world.worldTime, Playing = value.Playing, Speed = value.Speed, Position = value.Position };
+				Value = new Playback { Looping = Value.Looping, Offset = world.WorldTime, Playing = Value.Playing, Speed = Value.Speed, Position = Value.Position };
 			}
 		}
 		public override Playback SaveToBytes(bool netsync)
 		{
-			return new Playback { Looping = value.Looping, Offset = 0f, Playing = value.Playing, Speed = value.Speed, Position = RawPos() };
+			return new Playback { Looping = Value.Looping, Offset = 0f, Playing = Value.Playing, Speed = Value.Speed, Position = RawPos() };
 
 		}
 		public bool Looping
 		{
 			get
 			{
-				return value.Looping;
+				return Value.Looping;
 			}
 			set
 			{
-				base.value = new Playback { Looping = value, Offset = base.value.Offset, Playing = true, Speed = base.value.Speed, Position = base.value.Position };
+				base.Value = new Playback { Looping = value, Offset = base.Value.Offset, Playing = true, Speed = base.Value.Speed, Position = base.Value.Position };
 			}
 		}
 		public float Speed
 		{
 			get
 			{
-				return value.Speed;
+				return Value.Speed;
 			}
 			set
 			{
-				base.value = new Playback { Looping = base.value.Looping, Offset = base.value.Offset, Playing = true, Speed = value, Position = base.value.Position };
+				base.Value = new Playback { Looping = base.Value.Looping, Offset = base.Value.Offset, Playing = true, Speed = value, Position = base.Value.Position };
 			}
 		}
 
@@ -110,19 +110,19 @@ namespace RhubarbEngine.World
 
 		public void Play()
 		{
-			value = new Playback { Looping = value.Looping, Offset = world.worldTime, Playing = true, Speed = value.Speed, Position = 0f };
+			Value = new Playback { Looping = Value.Looping, Offset = world.WorldTime, Playing = true, Speed = Value.Speed, Position = 0f };
 		}
 		public void Stop()
 		{
-			value = new Playback { Looping = value.Looping, Offset = world.worldTime, Playing = false, Speed = value.Speed, Position = 0f };
+			Value = new Playback { Looping = Value.Looping, Offset = world.WorldTime, Playing = false, Speed = Value.Speed, Position = 0f };
 		}
 		public void Pause()
 		{
-			value = new Playback { Looping = value.Looping, Offset = value.Offset, Playing = false, Speed = value.Speed, Position = Position };
+			Value = new Playback { Looping = Value.Looping, Offset = Value.Offset, Playing = false, Speed = Value.Speed, Position = Position };
 		}
 		public void Resume()
 		{
-			value = new Playback { Looping = value.Looping, Offset = value.Offset, Playing = true, Speed = value.Speed, Position = value.Position };
+			Value = new Playback { Looping = Value.Looping, Offset = Value.Offset, Playing = true, Speed = Value.Speed, Position = Value.Position };
 		}
 		public SyncPlayback(World _world, IWorldObject _parent, bool newref = true) : base(_world, _parent, newref)
 		{

@@ -19,10 +19,10 @@ namespace RhubarbEngine.World
 			{
 				if (_tilledUnlitShader == null)
 				{
-					var comp = _world.RootEntity.getFirstComponent<TilledUnlitShader>();
+					var comp = _world.RootEntity.GetFirstComponent<TilledUnlitShader>();
 					if (comp == null)
 					{
-						comp = _world.RootEntity.attachComponent<TilledUnlitShader>();
+						comp = _world.RootEntity.AttachComponent<TilledUnlitShader>();
 					}
 					_tilledUnlitShader = comp;
 				}
@@ -37,10 +37,10 @@ namespace RhubarbEngine.World
 			{
 				if (_basicUnlitShader == null)
 				{
-					var comp = _world.RootEntity.getFirstComponent<BasicUnlitShader>();
+					var comp = _world.RootEntity.GetFirstComponent<BasicUnlitShader>();
 					if (comp == null)
 					{
-						comp = _world.RootEntity.attachComponent<BasicUnlitShader>();
+						comp = _world.RootEntity.AttachComponent<BasicUnlitShader>();
 					}
 					_basicUnlitShader = comp;
 				}
@@ -56,10 +56,10 @@ namespace RhubarbEngine.World
 			{
 				if (_overLayedUnlitShader == null)
 				{
-					var comp = _world.RootEntity.getFirstComponent<OverLayedUnlitShader>();
+					var comp = _world.RootEntity.GetFirstComponent<OverLayedUnlitShader>();
 					if (comp == null)
 					{
-						comp = _world.RootEntity.attachComponent<OverLayedUnlitShader>();
+						comp = _world.RootEntity.AttachComponent<OverLayedUnlitShader>();
 					}
 					_overLayedUnlitShader = comp;
 				}

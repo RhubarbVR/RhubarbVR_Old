@@ -32,50 +32,68 @@ namespace RhubarbEngine.Components.PrivateSpace
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			if (!world.userspace)
-				return;
-			rotation.setDriveTarget(entity.rotation);
+			if (!world.Userspace)
+            {
+                return;
+            }
+
+            rotation.SetDriveTarget(entity.rotation);
 		}
 
 
 		public override void buildSyncObjs(bool newRefIds)
 		{
-			source = new Sync<InteractionSource>(this, newRefIds);
-			source.value = InteractionSource.HeadLaser;
-			rayderection = new Sync<Vector3f>(this, newRefIds);
-			rayderection.value = Vector3f.AxisZ;
-			distances = new Sync<float>(this, newRefIds);
-			distances.value = 25f;
-			rotation = new Driver<Quaternionf>(this, newRefIds);
+            source = new Sync<InteractionSource>(this, newRefIds)
+            {
+                Value = InteractionSource.HeadLaser
+            };
+            rayderection = new Sync<Vector3f>(this, newRefIds)
+            {
+                Value = Vector3f.AxisZ
+            };
+            distances = new Sync<float>(this, newRefIds)
+            {
+                Value = 25f
+            };
+            rotation = new Driver<Quaternionf>(this, newRefIds);
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (!world.userspace)
-				return;
-			if (((engine.outputType == VirtualReality.OutputType.Screen) && (source.value != InteractionSource.HeadLaser)))
-				return;
-			if (((engine.outputType != VirtualReality.OutputType.Screen) && (source.value == InteractionSource.HeadLaser)))
-				return;
-			try
+			if (!world.Userspace)
+            {
+                return;
+            }
+
+            if (((engine.outputType == VirtualReality.OutputType.Screen) && (source.Value != InteractionSource.HeadLaser)))
+            {
+                return;
+            }
+
+            if (((engine.outputType != VirtualReality.OutputType.Screen) && (source.Value == InteractionSource.HeadLaser)))
+            {
+                return;
+            }
+
+            try
 			{
-				if (source.value == InteractionSource.HeadLaser)
+				if (source.Value == InteractionSource.HeadLaser)
 				{
 					var mousepos = engine.inputManager.mainWindows.MousePosition;
 					var size = new System.Numerics.Vector2(engine.windowManager.mainWindow.width, engine.windowManager.mainWindow.height);
-					float x = 2.0f * mousepos.X / size.X - 1.0f;
-					float y = 2.0f * mousepos.Y / size.Y - 1.0f;
-					float ar = size.X / size.Y;
-					float tan = (float)Math.Tan(engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
-					Vector3f vectforward = new Vector3f(-x * tan * ar, y * tan, 1);
-					Vector3f vectup = new Vector3f(0, 1, 0);
-					entity.rotation.value = Quaternionf.LookRotation(vectforward, vectup);
+					var x = (2.0f * mousepos.X / size.X) - 1.0f;
+					var y = (2.0f * mousepos.Y / size.Y) - 1.0f;
+					var ar = size.X / size.Y;
+					var tan = (float)Math.Tan(engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
+					var vectforward = new Vector3f(-x * tan * ar, y * tan, 1);
+					var vectup = new Vector3f(0, 1, 0);
+					entity.rotation.Value = Quaternionf.LookRotation(vectforward, vectup);
 				}
-				System.Numerics.Matrix4x4.Decompose(entity.globalTrans(), out System.Numerics.Vector3 vsg, out System.Numerics.Quaternion vrg, out System.Numerics.Vector3 global);
-				Vector3 sourcse = new Vector3(global.X, global.Y, global.Z);
-				var val = entity.globalRot().AxisZ;
-				Vector3 destination = new Vector3(-val.x, -val.y, -val.z);
-				switch (source.value)
+				System.Numerics.Matrix4x4.Decompose(entity.GlobalTrans(), out var vsg, out var vrg, out var global);
+				var sourcse = new Vector3(global.X, global.Y, global.Z);
+				var val = entity.GlobalRot().AxisZ;
+				var destination = new Vector3(-val.x, -val.y, -val.z);
+				switch (source.Value)
 				{
 					case InteractionSource.LeftLaser:
 						input.LeftLaser.SendRayCast(sourcse, destination);

@@ -13,23 +13,23 @@ namespace RhubarbEngine.World
 {
 	public static class WorldObjectHelper
 	{
-		public static void openWindow(this IWorldObject worldObject)
+		public static void OpenWindow(this IWorldObject worldObject)
 		{
-			var worker = worldObject.getClosedWorker();
+			var worker = worldObject.GetClosedWorker();
 			if (worker != null)
 			{
-				World createWorld = worldObject.World.worldManager.focusedWorld ?? worldObject.World;
-				Entity User = createWorld.userRoot.entity;
-				Entity par = User.parent.target;
-				var (cube, win, comp) = Helpers.MeshHelper.attachWindow<Components.ImGUI.WorkerObserver>(par);
-				var headPos = createWorld.userRoot.Headpos;
+				var createWorld = worldObject.World.worldManager.FocusedWorld ?? worldObject.World;
+				var User = createWorld.UserRoot.entity;
+				var par = User.parent.Target;
+				var (cube, _, comp) = Helpers.MeshHelper.AttachWindow<Components.ImGUI.WorkerObserver>(par);
+				var headPos = createWorld.UserRoot.Headpos;
 				var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 2, 0.5f)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric());
-				cube.setGlobalTrans(move * headPos);
-				comp.target.target = worker;
+				cube.SetGlobalTrans(move * headPos);
+				comp.target.Target = worker;
 			}
 		}
 
-		public static Worker getClosedWorker(this IWorldObject worldObject, bool allowSyncVals = false)
+		public static Worker GetClosedWorker(this IWorldObject worldObject, bool allowSyncVals = false)
 		{
 			try
 			{
@@ -41,7 +41,7 @@ namespace RhubarbEngine.World
 				{
 					if (typeof(ISyncMember).IsAssignableFrom(worldObject.GetType()))
 					{
-						return worldObject.Parent?.getClosedWorker(allowSyncVals);
+						return worldObject.Parent?.GetClosedWorker(allowSyncVals);
 					}
 					else
 					{
@@ -51,11 +51,11 @@ namespace RhubarbEngine.World
 			}
 			catch
 			{
-				return worldObject.Parent?.getClosedWorker(allowSyncVals);
+				return worldObject.Parent?.GetClosedWorker(allowSyncVals);
 			}
 		}
 
-		public static Entity getClosedEntity(this IWorldObject worldObject)
+		public static Entity GetClosedEntity(this IWorldObject worldObject)
 		{
 			try
 			{
@@ -63,11 +63,11 @@ namespace RhubarbEngine.World
 			}
 			catch
 			{
-				return worldObject.Parent?.getClosedEntity();
+				return worldObject.Parent?.GetClosedEntity();
 			}
 		}
 
-		public static User getClosedUser(this IWorldObject worldObject)
+		public static User GetClosedUser(this IWorldObject worldObject)
 		{
 			try
 			{
@@ -75,13 +75,13 @@ namespace RhubarbEngine.World
 			}
 			catch
 			{
-				return worldObject.Parent?.getClosedUser();
+				return worldObject.Parent?.GetClosedUser();
 			}
 		}
 
-		public static string getNameString(this IWorldObject worldObject)
+		public static string GetNameString(this IWorldObject worldObject)
 		{
-			return worldObject?.getClosedEntity()?.name.value ?? worldObject?.getClosedUser()?.username.value ?? worldObject?.GetType().Name ?? "null";
+			return worldObject?.GetClosedEntity()?.name.Value ?? worldObject?.GetClosedUser()?.username.Value ?? worldObject?.GetType().Name ?? "null";
 		}
 	}
 
@@ -91,9 +91,9 @@ namespace RhubarbEngine.World
 
 		World World { get; }
 
-		void addDisposable(IDisposable val);
+		void AddDisposable(IDisposable val);
 
-		void removeDisposable(IDisposable val);
+		void RemoveDisposable(IDisposable val);
 
 		IWorldObject Parent { get; }
 
@@ -102,9 +102,9 @@ namespace RhubarbEngine.World
 		bool IsPersistent { get; }
 
 		bool IsRemoved { get; }
-		DataNodeGroup serialize(bool netsync = false);
+		DataNodeGroup Serialize(bool netsync = false);
 
-		void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>));
+		void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default);
 
 	}
 }

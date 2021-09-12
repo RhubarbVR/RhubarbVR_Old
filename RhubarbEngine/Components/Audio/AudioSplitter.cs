@@ -30,7 +30,7 @@ namespace RhubarbEngine.Components.Audio
 			{
 				if (audioParent != null)
 					return false;
-				return active.value && audioParent.isConpatable() && (getPos() < getParentCount());
+				return active.Value && audioParent.isConpatable() && (getPos() < getParentCount());
 			}
 
 			public int getPos()
@@ -68,7 +68,7 @@ namespace RhubarbEngine.Components.Audio
 			{
 				base.buildSyncObjs(newRefIds);
 				active = new Sync<bool>(this, newRefIds);
-				active.value = true;
+				active.Value = true;
 			}
 			public AudioSplits(IWorldObject _parent, bool newRefIds = true) : base(_parent.World, _parent, newRefIds)
 			{
@@ -88,13 +88,13 @@ namespace RhubarbEngine.Components.Audio
 		{
 			if (channelminsone == 0)
 			{
-				data = audioSource.target.FrameInputBuffer;
+				data = audioSource.Target.FrameInputBuffer;
 			}
 			var returnData = new byte[engine.audioManager.AudioFrameSizeInBytes];
 			int index = 0;
 			for (int i = 0; i < data.Length; i += 8)
 			{
-				if (channelminsone == ((i / 8) % audioSource.target.ChannelCount))
+				if (channelminsone == ((i / 8) % audioSource.Target.ChannelCount))
 				{
 					for (int e = 0; e < 8; e++)
 					{
@@ -109,9 +109,9 @@ namespace RhubarbEngine.Components.Audio
 
 		public bool isConpatable()
 		{
-			if (audioSource.target == null)
+			if (audioSource.Target == null)
 				return false;
-			return (outputs.Count() == audioSource.target.ChannelCount);
+			return (outputs.Count() == audioSource.Target.ChannelCount);
 		}
 
 		public override void buildSyncObjs(bool newRefIds)

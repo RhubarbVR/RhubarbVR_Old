@@ -34,14 +34,14 @@ namespace RhubarbEngine.Components.Audio
 		{
 			get
 			{
-				if (audioSource.target == null)
+				if (audioSource.Target == null)
 					return false;
-				if (!audioSource.target.IsActive)
+				if (!audioSource.Target.IsActive)
 					return false;
-				if (audioSource.target.ChannelCount != 1)
+				if (audioSource.Target.ChannelCount != 1)
 					return false;
-				float e = entity.globalPos().Distance(world.headTrans.Translation);
-				return (e <= cullingDistance.value);
+				float e = entity.GlobalPos().Distance(world.HeadTrans.Translation);
+				return (e <= cullingDistance.Value);
 			}
 		}
 
@@ -49,9 +49,9 @@ namespace RhubarbEngine.Components.Audio
 		{
 			audioSource = new SyncRef<IAudioSource>(this, newRefIds);
 			spatialBlend = new Sync<float>(this, newRefIds);
-			spatialBlend.value = 1f;
+			spatialBlend.Value = 1f;
 			cullingDistance = new Sync<float>(this, newRefIds);
-			cullingDistance.value = 100f;
+			cullingDistance.Value = 100f;
 		}
 
 		public override void onLoaded()
@@ -94,19 +94,19 @@ namespace RhubarbEngine.Components.Audio
 		{
 			if (iplBinauralEffect == default)
 				return;
-			if (!audioSource.target.IsActive)
+			if (!audioSource.Target.IsActive)
 				return;
-			var data = audioSource.target.FrameInputBuffer;
+			var data = audioSource.Target.FrameInputBuffer;
 			if (data == null)
 				return;
 			if (data.Length < engine.audioManager.AudioFrameSizeInBytes)
 				return;
-			Matrix4x4.Decompose(world.headTrans, out Vector3 sc, out Quaternion ret, out Vector3 trans);
-			var position = Vector3.Transform((entity.globalPos().ToSystemNumrics() - trans), Quaternion.Inverse(ret));
+			Matrix4x4.Decompose(world.HeadTrans, out Vector3 sc, out Quaternion ret, out Vector3 trans);
+			var position = Vector3.Transform((entity.GlobalPos().ToSystemNumrics() - trans), Quaternion.Inverse(ret));
 			var e = new IPL.Vector3(position.X, position.Y, position.Z);
 			fixed (byte* ptr = data)
 			{
-				var prams = new IPL.BinauralEffectParams { direction = e, interpolation = IPL.HRTFInterpolation.Nearest, spatialBlend = spatialBlend.value, hrtf = engine.audioManager.hrtf };
+				var prams = new IPL.BinauralEffectParams { direction = e, interpolation = IPL.HRTFInterpolation.Nearest, spatialBlend = spatialBlend.Value, hrtf = engine.audioManager.hrtf };
 				IPL.AudioBufferDeinterleave(engine.audioManager.iplContext, (IntPtr)ptr, ref iplInputBuffer);
 				IPL.BinauralEffectApply(iplBinauralEffect, ref prams, ref iplInputBuffer, ref iplOutputBuffer);
 			}

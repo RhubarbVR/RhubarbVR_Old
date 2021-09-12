@@ -38,7 +38,7 @@ namespace RhubarbEngine.World
 			int returnint = -1;
 			for (int i = 0; i < _syncreflist.Count; i++)
 			{
-				if (this[i].target == val)
+				if (this[i].Target == val)
 				{
 					returnint = i;
 					return returnint;
@@ -71,22 +71,22 @@ namespace RhubarbEngine.World
 		private void netAdd(AssetRef<T> val)
 		{
 			DataNodeGroup send = new DataNodeGroup();
-			send.setValue("Type", new DataNode<byte>(0));
-			DataNodeGroup tip = val.serialize(true);
-			send.setValue("Data", tip);
-			world.netModule?.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+			send.SetValue("Type", new DataNode<byte>(0));
+			DataNodeGroup tip = val.Serialize(true);
+			send.SetValue("Data", tip);
+			world.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
 		}
 
 		private void netClear()
 		{
 			DataNodeGroup send = new DataNodeGroup();
-			send.setValue("Type", new DataNode<byte>(1));
-			world.netModule?.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+			send.SetValue("Type", new DataNode<byte>(1));
+			world.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
 		}
 
 		public void ReceiveData(DataNodeGroup data, Peer peer)
 		{
-			if (((DataNode<byte>)data.getValue("Type")).Value == 1)
+			if (((DataNode<byte>)data.GetValue("Type")).Value == 1)
 			{
 				_syncreflist.Clear();
 			}
@@ -95,7 +95,7 @@ namespace RhubarbEngine.World
 				AssetRef<T> a = new AssetRef<T>(this, false);
 				a.loadChange += onLoad;
 				List<Action> actions = new List<Action>();
-				a.deSerialize((DataNodeGroup)data.getValue("Data"), actions, false);
+				a.DeSerialize((DataNodeGroup)data.GetValue("Data"), actions, false);
 				foreach (var item in actions)
 				{
 					item?.Invoke();
@@ -115,25 +115,25 @@ namespace RhubarbEngine.World
 
 		}
 
-		public override DataNodeGroup serialize(bool netsync = false)
+		public override DataNodeGroup Serialize(bool netsync = false)
 		{
 			DataNodeGroup obj = new DataNodeGroup();
 			DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
-			obj.setValue("referenceID", Refid);
+			obj.SetValue("referenceID", Refid);
 			DataNodeList list = new DataNodeList();
 			foreach (AssetRef<T> val in _syncreflist)
 			{
-				DataNodeGroup tip = val.serialize(netsync);
+				DataNodeGroup tip = val.Serialize(netsync);
 				if (tip != null)
 				{
 					list.Add(tip);
 				}
 			}
-			obj.setValue("list", list);
+			obj.SetValue("list", list);
 			return obj;
 		}
 
-		public override void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
 		{
 			if (data == null)
 			{
@@ -142,10 +142,10 @@ namespace RhubarbEngine.World
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID(), referenceID.getID());
-				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()))
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), referenceID.getID());
+				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
 				{
-					foreach (RefIDResign func in latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()])
+					foreach (RefIDResign func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
 					{
 						func(referenceID.getID());
 					}
@@ -153,12 +153,12 @@ namespace RhubarbEngine.World
 			}
 			else
 			{
-				referenceID = ((DataNode<NetPointer>)data.getValue("referenceID")).Value;
-				world.addWorldObj(this);
+				referenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
+				world.AddWorldObj(this);
 			}
-			foreach (DataNodeGroup val in ((DataNodeList)data.getValue("list")))
+			foreach (DataNodeGroup val in ((DataNodeList)data.GetValue("list")))
 			{
-				Add(NewRefIDs).deSerialize(val, onload, NewRefIDs, newRefID, latterResign);
+				Add(NewRefIDs).DeSerialize(val, onload, NewRefIDs, newRefID, latterResign);
 			}
 		}
 

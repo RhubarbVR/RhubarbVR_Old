@@ -41,12 +41,12 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			int c = (int)(object)value.value;
+			int c = (int)(object)value.Value;
 			var e = Enum.GetNames(typeof(T)).ToList();
-			ImGui.Combo(label.value ?? "", ref c, e.ToArray(), e.Count);
-			if (c != (int)(object)value.value)
+			ImGui.Combo(label.Value ?? "", ref c, e.ToArray(), e.Count);
+			if (c != (int)(object)value.Value)
 			{
-				value.value = (T)(object)c;
+				value.Value = (T)(object)c;
 			}
 		}
 	}

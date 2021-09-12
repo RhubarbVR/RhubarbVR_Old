@@ -28,7 +28,7 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			base.buildSyncObjs(newRefIds);
 			label = new Sync<string>(this, newRefIds);
-			label.value = "ColorThing";
+			label.Value = "ColorThing";
 			value = new Sync<Colorf>(this, newRefIds);
 		}
 
@@ -42,11 +42,11 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			Vector4 vale = value.value.ToRGBA().ToSystem();
-			ImGui.ColorEdit4(label.value ?? "", ref vale);
-			if (vale != value.value.ToRGBA().ToSystem())
+			Vector4 vale = value.Value.ToRGBA().ToSystem();
+			ImGui.ColorEdit4(label.Value ?? "", ref vale);
+			if (vale != value.Value.ToRGBA().ToSystem())
 			{
-				value.value = new Colorf(vale.X, vale.Y, vale.Z, vale.W);
+				value.Value = new Colorf(vale.X, vale.Y, vale.Z, vale.W);
 			}
 		}
 	}

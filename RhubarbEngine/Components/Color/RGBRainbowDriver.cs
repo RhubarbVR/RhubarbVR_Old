@@ -23,7 +23,7 @@ namespace RhubarbEngine.Components.Color
 		{
 			driver = new Driver<Colorf>(this, newRefIds);
 			speed = new Sync<float>(this, newRefIds);
-			speed.value = 50f;
+			speed.Value = 50f;
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
@@ -32,7 +32,7 @@ namespace RhubarbEngine.Components.Color
 			if (driver.Linked)
 			{
 				ColorHSV color = driver.Drivevalue;
-				driver.Drivevalue = color.updateHue(deltaSeconds * speed.value);
+				driver.Drivevalue = color.updateHue(deltaSeconds * speed.Value);
 			}
 		}
 		public RGBRainbowDriver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

@@ -29,15 +29,15 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			bool Changeboarder = false;
-			if (target.target?.Driven ?? false)
+			var Changeboarder = false;
+			if (target.Target?.Driven ?? false)
 			{
 				var e = ImGui.GetStyleColorVec4(ImGuiCol.FrameBg);
 				var vec = (Vector4f)(*e);
 				ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 1f, 0, 0)).ToSystem());
 			}
 			Interaction.GrabbableHolder source = null;
-			switch (canvas.imputPlane.target?.source ?? Interaction.InteractionSource.None)
+			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
 					source = world.LeftLaserGrabbableHolder;
@@ -53,7 +53,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (source != null)
 			{
-				var type = source.Referencer.target?.GetType();
+				var type = source.Referencer.Target?.GetType();
 				if (typeof(T).IsAssignableFrom(type))
 				{
 					Changeboarder = true;
@@ -68,32 +68,34 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 3);
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
-			string val = "null";
-			if (target.target != null)
+			var val = "null";
+			if (target.Target != null)
 			{
-				val = $"{target.target?.targetIWorldObject.getNameString() ?? ""} ID:({target.target?.targetIWorldObject?.ReferenceID.id.ToHexString() ?? "null"})";
+				val = $"{target.Target?.TargetIWorldObject.GetNameString() ?? ""} ID:({target.Target?.TargetIWorldObject?.ReferenceID.id.ToHexString() ?? "null"})";
 			}
 			if (ImGui.Button("^##" + referenceID.id.ToString()))
 			{
-				target.target.targetIWorldObject?.openWindow();
+				target.Target.TargetIWorldObject?.OpenWindow();
 			}
 			ImGui.SameLine();
 			if (ImGui.Button("X##" + referenceID.id.ToString()))
 			{
-				if (target.target != null)
-					target.target.value = default(NetPointer);
-			}
+				if (target.Target != null)
+                {
+                    target.Target.Value = default;
+                }
+            }
 			ImGui.SameLine();
 			ImGui.SetNextItemWidth(ImGui.CalcItemWidth() - 45);
-			ImGui.InputText((fieldName.value ?? "null") + $"##{referenceID.id}", ref val, (uint)val.Length + 255, ImGuiInputTextFlags.ReadOnly);
+			ImGui.InputText((fieldName.Value ?? "null") + $"##{referenceID.id}", ref val, (uint)val.Length + 255, ImGuiInputTextFlags.ReadOnly);
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				if (source != null)
 				{
-					source.Referencer.target = target.target;
+					source.Referencer.Target = target.Target;
 				}
 			}
-			if (target.target?.Driven ?? false)
+			if (target.Target?.Driven ?? false)
 			{
 				ImGui.PopStyleColor();
 			}
@@ -101,19 +103,25 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-					var type = source.Referencer.target?.GetType();
+					var type = source.Referencer.Target?.GetType();
 					if (typeof(T).IsAssignableFrom(type))
 					{
-						if (target.target != null)
-							target.target.targetIWorldObject = source.Referencer.target;
-						source.Referencer.target = null;
+						if (target.Target != null)
+                        {
+                            target.Target.TargetIWorldObject = source.Referencer.Target;
+                        }
+
+                        source.Referencer.Target = null;
 					}
 
 					else if (typeof(SyncRef<T>).IsAssignableFrom(type))
 					{
-						if (target.target != null)
-							target.target.targetIWorldObject = ((SyncRef<T>)source.Referencer.target).target;
-						source.Referencer.target = null;
+						if (target.Target != null)
+                        {
+                            target.Target.TargetIWorldObject = ((SyncRef<T>)source.Referencer.Target).Target;
+                        }
+
+                        source.Referencer.Target = null;
 					}
 				}
 				ImGui.PopStyleVar();

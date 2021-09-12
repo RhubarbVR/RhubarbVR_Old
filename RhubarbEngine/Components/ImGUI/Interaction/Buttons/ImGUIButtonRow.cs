@@ -31,7 +31,7 @@ namespace RhubarbEngine.Components.ImGUI
 			action = new SyncDelegate<Action<string>>(this, newRefIds);
 			widths = new SyncValueList<float>(this, newRefIds);
 			hight = new Sync<float>(this, newRefIds);
-			hight.value = 0.06666666666666666f;
+			hight.Value = 0.06666666666666666f;
 		}
 
 		public ImGUIButtonRow(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -46,18 +46,18 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			for (int i = 0; i < labels.Count; i++)
 			{
-				var label = labels[i].value;
+				var label = labels[i].Value;
 				ImGui.SameLine();
 				if (label != null)
 				{
-					if (ImGui.Button(label, new Vector2(ImGui.GetIO().DisplaySize.X * widths[i]?.value ?? 0, ImGui.GetIO().DisplaySize.Y * hight.value)))
+					if (ImGui.Button(label, new Vector2(ImGui.GetIO().DisplaySize.X * widths[i]?.Value ?? 0, ImGui.GetIO().DisplaySize.Y * hight.Value)))
 					{
 						action.Target?.Invoke(label);
 					}
 				}
 				else
 				{
-					ImGui.Dummy(new Vector2(ImGui.GetIO().DisplaySize.X * widths[i]?.value ?? 0, ImGui.GetIO().DisplaySize.Y * hight.value));
+					ImGui.Dummy(new Vector2(ImGui.GetIO().DisplaySize.X * widths[i]?.Value ?? 0, ImGui.GetIO().DisplaySize.Y * hight.Value));
 				}
 			}
 			ImGui.Separator();

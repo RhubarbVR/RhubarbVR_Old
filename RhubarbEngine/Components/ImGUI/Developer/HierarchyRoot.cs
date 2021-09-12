@@ -31,16 +31,18 @@ namespace RhubarbEngine.Components.ImGUI
 			base.buildSyncObjs(newRefIds);
 			size = new Sync<Vector2f>(this, newRefIds);
 			border = new Sync<bool>(this, newRefIds);
-			windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
-			windowflag.value = ImGuiWindowFlags.None;
-			root = new SyncRef<HierarchyItem>(this, newRefIds);
+            windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds)
+            {
+                Value = ImGuiWindowFlags.None
+            };
+            root = new SyncRef<HierarchyItem>(this, newRefIds);
 		}
 
 		public void Initialize(Entity tentity)
 		{
-			var e = entity.attachComponent<HierarchyItem>();
-			root.target = e;
-			e.target.target = tentity;
+			var e = entity.AttachComponent<HierarchyItem>();
+			root.Target = e;
+			e.target.Target = tentity;
 		}
 
 		public HierarchyRoot(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -53,9 +55,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (ImGui.BeginChild(referenceID.id.ToString(), new Vector2(size.value.x, size.value.y), border.value, windowflag.value))
+			if (ImGui.BeginChild(referenceID.id.ToString(), new Vector2(size.Value.x, size.Value.y), border.Value, windowflag.Value))
 			{
-				root.target?.ImguiRender(imGuiRenderer, canvas);
+				root.Target?.ImguiRender(imGuiRenderer, canvas);
 				ImGui.EndChild();
 			}
 		}

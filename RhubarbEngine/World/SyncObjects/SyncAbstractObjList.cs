@@ -13,7 +13,7 @@ namespace RhubarbEngine.World
 {
 	public class SyncAbstractObjList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : Worker
 	{
-		private SynchronizedCollection<T> _synclist = new SynchronizedCollection<T>(25);
+		private readonly SynchronizedCollection<T> _synclist = new SynchronizedCollection<T>(25);
 
 		public T this[int i]
 		{
@@ -25,7 +25,7 @@ namespace RhubarbEngine.World
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			for (int i = 0; i < _synclist.Count; i++)
+			for (var i = 0; i < _synclist.Count; i++)
 			{
 				yield return this[i];
 			}
@@ -36,22 +36,22 @@ namespace RhubarbEngine.World
 		}
 		public T Add(T val, bool Refid = true)
 		{
-			val.initialize(this.world, this, Refid);
+			val.initialize(world, this, Refid);
 			AddInternal(val);
 			if (Refid)
 			{
-				netAdd(val);
+				NetAdd(val);
 			}
 			return _synclist[_synclist.Count - 1];
 		}
 		public T Add<L>(bool Refid = true) where L : T
 		{
-			L val = (L)Activator.CreateInstance(typeof(L));
-			val.initialize(this.world, this, Refid);
+			var val = (L)Activator.CreateInstance(typeof(L));
+			val.initialize(world, this, Refid);
 			AddInternal(val);
 			if (Refid)
 			{
-				netAdd(val);
+				NetAdd(val);
 			}
 			return _synclist[_synclist.Count - 1];
 		}
@@ -60,14 +60,14 @@ namespace RhubarbEngine.World
 		{
 			_synclist.SafeAdd(value);
 			value.onDispose += Value_onDispose;
-			addDisposable(value);
+			AddDisposable(value);
 		}
 
 		public void RemoveInternal(T value)
 		{
 			_synclist.Remove(value);
 			value.onDispose -= Value_onDispose;
-			removeDisposable(value);
+			RemoveDisposable(value);
 		}
 
 		private void Value_onDispose(Worker worker)
@@ -84,66 +84,66 @@ namespace RhubarbEngine.World
 
 		public T Add(Type type, bool Refid = true)
 		{
-			T val = (T)Activator.CreateInstance(type);
-			val.initialize(this.world, this, Refid);
+			var val = (T)Activator.CreateInstance(type);
+			val.initialize(world, this, Refid);
 			AddInternal(val);
 			if (Refid)
 			{
-				netAdd(val);
+				NetAdd(val);
 			}
 			return _synclist[_synclist.Count - 1];
 		}
 
-		private void netAdd(T val)
+		private void NetAdd(T val)
 		{
-			DataNodeGroup send = new DataNodeGroup();
-			send.setValue("Type", new DataNode<byte>(0));
-			DataNodeGroup tip = val.serialize(true);
-			DataNodeGroup listobj = new DataNodeGroup();
+			var send = new DataNodeGroup();
+			send.SetValue("Type", new DataNode<byte>(0));
+			var tip = val.Serialize(true);
+            var listobj = new DataNodeGroup();
 			if (tip != null)
 			{
-				listobj.setValue("Value", tip);
+				listobj.SetValue("Value", tip);
 			}
 			//Need To add Constant Type Strings for better compression 
-			listobj.setValue("Type", new DataNode<string>(val.GetType().FullName));
-			send.setValue("Data", listobj);
-			world.netModule?.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+			listobj.SetValue("Type", new DataNode<string>(val.GetType().FullName));
+			send.SetValue("Data", listobj);
+			world.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
 		}
 
-		private void netClear()
+		private void NetClear()
 		{
-			DataNodeGroup send = new DataNodeGroup();
-			send.setValue("Type", new DataNode<byte>(1));
-			world.netModule?.addToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+			var send = new DataNodeGroup();
+			send.SetValue("Type", new DataNode<byte>(1));
+			world.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
 		}
 
 		public void Clear()
 		{
 			_synclist.Clear();
-			netClear();
+			NetClear();
 		}
 
 		public void ReceiveData(DataNodeGroup data, Peer peer)
 		{
 			try
 			{
-				if (((DataNode<byte>)data.getValue("Type")).Value == 1)
+				if (((DataNode<byte>)data.GetValue("Type")).Value == 1)
 				{
 					_synclist.Clear();
 				}
 				else
 				{
-					Type ty = Type.GetType(((DataNode<string>)((DataNodeGroup)data.getValue("Data")).getValue("Type")).Value);
+					var ty = Type.GetType(((DataNode<string>)((DataNodeGroup)data.GetValue("Data")).GetValue("Type")).Value);
 					if (ty == null)
 					{
-						logger.Log("Type not found" + ((DataNode<string>)((DataNodeGroup)data.getValue("Data")).getValue("Type")).Value, true);
+						logger.Log("Type not found" + ((DataNode<string>)((DataNodeGroup)data.GetValue("Data")).GetValue("Type")).Value, true);
 					}
 					else
 					{
-						T val = (T)Activator.CreateInstance(ty);
-						val.initialize(this.world, this, false);
-						List<Action> actions = new List<Action>();
-						val.deSerialize((DataNodeGroup)((DataNodeGroup)data.getValue("Data")).getValue("Value"), actions, false);
+						var val = (T)Activator.CreateInstance(ty);
+						val.initialize(world, this, false);
+						var actions = new List<Action>();
+						val.DeSerialize((DataNodeGroup)((DataNodeGroup)data.GetValue("Data")).GetValue("Value"), actions, false);
 						_synclist.SafeAdd(val);
 						foreach (var item in actions)
 						{
@@ -170,28 +170,28 @@ namespace RhubarbEngine.World
 
 		}
 
-		public override DataNodeGroup serialize(bool netsync = false)
+		public override DataNodeGroup Serialize(bool netsync = false)
 		{
-			DataNodeGroup obj = new DataNodeGroup();
-			DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
-			obj.setValue("referenceID", Refid);
-			DataNodeList list = new DataNodeList();
-			foreach (T val in _synclist)
+			var obj = new DataNodeGroup();
+			var Refid = new DataNode<NetPointer>(referenceID);
+			obj.SetValue("referenceID", Refid);
+			var list = new DataNodeList();
+			foreach (var val in _synclist)
 			{
-				DataNodeGroup tip = val.serialize(netsync);
-				DataNodeGroup listobj = new DataNodeGroup();
+				var tip = val.Serialize(netsync);
+				var listobj = new DataNodeGroup();
 				if (tip != null)
 				{
-					listobj.setValue("Value", tip);
+					listobj.SetValue("Value", tip);
 				}
 				//Need To add Constant Type Strings for better compression 
-				listobj.setValue("Type", new DataNode<string>(val.GetType().FullName));
+				listobj.SetValue("Type", new DataNode<string>(val.GetType().FullName));
 				list.Add(listobj);
 			}
-			obj.setValue("list", list);
+			obj.SetValue("list", list);
 			return obj;
 		}
-		public override void deSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
 		{
 			if (data == null)
 			{
@@ -200,10 +200,10 @@ namespace RhubarbEngine.World
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID(), referenceID.getID());
-				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()))
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), referenceID.getID());
+				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
 				{
-					foreach (RefIDResign func in latterResign[((DataNode<NetPointer>)data.getValue("referenceID")).Value.getID()])
+					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
 					{
 						func(referenceID.getID());
 					}
@@ -211,27 +211,27 @@ namespace RhubarbEngine.World
 			}
 			else
 			{
-				referenceID = ((DataNode<NetPointer>)data.getValue("referenceID")).Value;
-				world.addWorldObj(this);
+				referenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
+				world.AddWorldObj(this);
 			}
-			foreach (DataNodeGroup val in ((DataNodeList)data.getValue("list")))
+			foreach (DataNodeGroup val in ((DataNodeList)data.GetValue("list")))
 			{
-				Type ty = Type.GetType(((DataNode<string>)val.getValue("Type")).Value);
+				var ty = Type.GetType(((DataNode<string>)val.GetValue("Type")).Value);
 				if (ty == typeof(MissingComponent))
 				{
-					ty = Type.GetType(((DataNode<string>)((DataNodeGroup)val.getValue("Value")).getValue("type")).Value, true);
+					ty = Type.GetType(((DataNode<string>)((DataNodeGroup)val.GetValue("Value")).GetValue("type")).Value, true);
 					if (ty == null)
 					{
-						world.worldManager.engine.logger.Log("Component still not found" + ((DataNode<string>)val.getValue("Type")).Value);
-						T obj = (T)Activator.CreateInstance(typeof(MissingComponent));
-						Add(obj, NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), onload, NewRefIDs, newRefID, latterResign);
+						world.worldManager.engine.logger.Log("Component still not found" + ((DataNode<string>)val.GetValue("Type")).Value);
+						var obj = (T)Activator.CreateInstance(typeof(MissingComponent));
+						Add(obj, NewRefIDs).DeSerialize((DataNodeGroup)val.GetValue("Value"), onload, NewRefIDs, newRefID, latterResign);
 					}
 					else
 					{
 						if ((ty).IsAssignableFrom(typeof(T)))
 						{
-							T obj = (T)Activator.CreateInstance(ty);
-							Add(obj, NewRefIDs).deSerialize(((DataNodeGroup)((DataNodeGroup)val.getValue("Value")).getValue("Data")), onload, NewRefIDs, newRefID, latterResign);
+							var obj = (T)Activator.CreateInstance(ty);
+							Add(obj, NewRefIDs).DeSerialize(((DataNodeGroup)((DataNodeGroup)val.GetValue("Value")).GetValue("Data")), onload, NewRefIDs, newRefID, latterResign);
 						}
 						else
 						{
@@ -243,17 +243,17 @@ namespace RhubarbEngine.World
 				{
 					if (ty == null)
 					{
-						world.worldManager.engine.logger.Log("Type not found" + ((DataNode<string>)val.getValue("Type")).Value, true);
+						world.worldManager.engine.logger.Log("Type not found" + ((DataNode<string>)val.GetValue("Type")).Value, true);
 						if (typeof(T) == typeof(Component))
 						{
-							T obj = (T)Activator.CreateInstance(typeof(MissingComponent));
-							Add(obj, NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), onload, NewRefIDs, newRefID, latterResign);
+							var obj = (T)Activator.CreateInstance(typeof(MissingComponent));
+							Add(obj, NewRefIDs).DeSerialize((DataNodeGroup)val.GetValue("Value"), onload, NewRefIDs, newRefID, latterResign);
 						}
 					}
 					else
 					{
-						T obj = (T)Activator.CreateInstance(ty);
-						Add(obj, NewRefIDs).deSerialize((DataNodeGroup)val.getValue("Value"), onload, NewRefIDs, newRefID, latterResign);
+						var obj = (T)Activator.CreateInstance(ty);
+						Add(obj, NewRefIDs).DeSerialize((DataNodeGroup)val.GetValue("Value"), onload, NewRefIDs, newRefID, latterResign);
 					}
 				}
 			}
@@ -261,7 +261,7 @@ namespace RhubarbEngine.World
 
 		IEnumerator<IWorldObject> IEnumerable<IWorldObject>.GetEnumerator()
 		{
-			for (int i = 0; i < _synclist.Count; i++)
+			for (var i = 0; i < _synclist.Count; i++)
 			{
 				yield return this[i];
 			}

@@ -28,11 +28,11 @@ namespace RhubarbEngine.Components.Physics.Colliders
 
 			base.buildSyncObjs(newRefIds);
 			radius = new Sync<double>(this, newRefIds);
-			radius.value = 0.5;
+			radius.Value = 0.5;
 			radius.Changed += UpdateChange;
 
 			height = new Sync<double>(this, newRefIds);
-			height.value = 1.0;
+			height.Value = 1.0;
 			height.Changed += UpdateChange;
 		}
 
@@ -48,7 +48,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
 		}
 		public override void BuildShape()
 		{
-			startShape(new CapsuleShape(radius.value, height.value));
+			StartShape(new CapsuleShape(radius.Value, height.Value));
 		}
 
 		public CapsuleCollider(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

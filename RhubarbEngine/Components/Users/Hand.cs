@@ -27,47 +27,47 @@ namespace RhubarbEngine.Components.Users
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			posDriver.setDriveTarget(entity.position);
-			rotDriver.setDriveTarget(entity.rotation);
-			scaleDriver.setDriveTarget(entity.scale);
+			posDriver.SetDriveTarget(entity.position);
+			rotDriver.SetDriveTarget(entity.rotation);
+			scaleDriver.SetDriveTarget(entity.scale);
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (world.userspace)
+			if (world.Userspace)
 			{
-				Matrix4x4 val = input.GetPos(creality.value);
-				entity.setLocalTrans(val);
+				Matrix4x4 val = input.GetPos(creality.Value);
+				entity.SetLocalTrans(val);
 				return;
 			}
-			if (userroot.target == null)
+			if (userroot.Target == null)
 			{
 				return;
 			}
-			if (userroot.target.user.target == world.localUser)
+			if (userroot.Target.user.Target == world.LocalUser)
 			{
-				Matrix4x4 val = input.GetPos(creality.value);
-				entity.setLocalTrans(val);
-				var userpos = world.localUser.FindOrCreateUserStream<SyncStream<Vector3f>>($"Hand{creality.value}Pos");
-				var userrot = world.localUser.FindOrCreateUserStream<SyncStream<Quaternionf>>($"Hand{creality.value}Rot");
-				var userscale = world.localUser.FindOrCreateUserStream<SyncStream<Vector3f>>($"Hand{creality.value}Scale");
-				userpos.value = entity.position.value;
-				userrot.value = entity.rotation.value;
-				userscale.value = entity.scale.value;
+				Matrix4x4 val = input.GetPos(creality.Value);
+				entity.SetLocalTrans(val);
+				var userpos = world.LocalUser.FindOrCreateUserStream<SyncStream<Vector3f>>($"Hand{creality.Value}Pos");
+				var userrot = world.LocalUser.FindOrCreateUserStream<SyncStream<Quaternionf>>($"Hand{creality.Value}Rot");
+				var userscale = world.LocalUser.FindOrCreateUserStream<SyncStream<Vector3f>>($"Hand{creality.Value}Scale");
+				userpos.Value = entity.position.Value;
+				userrot.Value = entity.rotation.Value;
+				userscale.Value = entity.scale.Value;
 			}
 			else
 			{
-				if (userroot.target.user.target != null)
+				if (userroot.Target.user.Target != null)
 				{
-					var temp = userroot.target.user.target;
-					var userpos = temp.FindUserStream<SyncStream<Vector3f>>($"Hand{creality.value}Pos");
-					var userrot = temp.FindUserStream<SyncStream<Quaternionf>>($"Hand{creality.value}Rot");
-					var userscale = temp.FindUserStream<SyncStream<Vector3f>>($"Hand{creality.value}Scale");
+					var temp = userroot.Target.user.Target;
+					var userpos = temp.FindUserStream<SyncStream<Vector3f>>($"Hand{creality.Value}Pos");
+					var userrot = temp.FindUserStream<SyncStream<Quaternionf>>($"Hand{creality.Value}Rot");
+					var userscale = temp.FindUserStream<SyncStream<Vector3f>>($"Hand{creality.Value}Scale");
 
 					try
 					{
-						Matrix4x4 value = Matrix4x4.CreateScale(userscale.value.ToSystemNumrics()) * Matrix4x4.CreateFromQuaternion(userrot.value.ToSystemNumric()) * Matrix4x4.CreateTranslation(userpos.value.ToSystemNumrics());
-						entity.setLocalTrans(value);
+						Matrix4x4 value = Matrix4x4.CreateScale(userscale.Value.ToSystemNumrics()) * Matrix4x4.CreateFromQuaternion(userrot.Value.ToSystemNumric()) * Matrix4x4.CreateTranslation(userpos.Value.ToSystemNumrics());
+						entity.SetLocalTrans(value);
 					}
 					catch
 					{

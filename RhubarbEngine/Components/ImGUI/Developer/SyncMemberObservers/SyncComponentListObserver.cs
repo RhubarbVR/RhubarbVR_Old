@@ -18,9 +18,15 @@ namespace RhubarbEngine.Components.ImGUI
 	[Category("ImGUI/Developer/SyncMemberObservers")]
 	public class SyncComponentListObserver : SyncListBaseObserver, IObserver
 	{
-		public override bool removeable => false;
+        public override bool removeable
+        {
+            get
+            {
+                return false;
+            }
+        }
 
-		public SyncComponentListObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public SyncComponentListObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}
@@ -38,14 +44,14 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (ImGui.Button($"Attach Component##{referenceID.id}", new Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
 			{
-				World.World createWorld = world.worldManager.focusedWorld ?? world;
-				Entity User = createWorld.userRoot.entity;
-				Entity par = User.parent.target;
-				var (cube, win, comp) = Helpers.MeshHelper.attachWindow<ComponentAttacher>(par);
-				var headPos = createWorld.userRoot.Headpos;
+				var createWorld = world.worldManager.FocusedWorld ?? world;
+				var User = createWorld.UserRoot.entity;
+				var par = User.parent.Target;
+				var (cube, _, comp) = Helpers.MeshHelper.AttachWindow<ComponentAttacher>(par);
+				var headPos = createWorld.UserRoot.Headpos;
 				var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 2, 0.5f)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric());
-				cube.setGlobalTrans(move * headPos);
-				comp.Tentity.target = target.target.getClosedEntity();
+				cube.SetGlobalTrans(move * headPos);
+				comp.Tentity.Target = target.Target.GetClosedEntity();
 			}
 		}
 

@@ -27,16 +27,18 @@ namespace RhubarbEngine.Components.ImGUI
 		[NoSave]
 		[NoShow]
 		[NoSync]
-		Entity list;
+		Entity _list;
 
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			base.buildSyncObjs(newRefIds);
 			target = new SyncRef<Worker>(this, newRefIds);
 			children = new SyncRefList<ComponentAttacherField>(this, newRefIds);
-			path = new Sync<string>(this, newRefIds);
-			path.value = "/";
-			path.Changed += Path_Changed;
+            path = new Sync<string>(this, newRefIds)
+            {
+                Value = "/"
+            };
+            path.Changed += Path_Changed;
 			Tentity = new SyncRef<Entity>(this, newRefIds);
 		}
 
@@ -57,7 +59,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				return false;
 			}
-			for (int i = 0; i < Path.Length; i++)
+			for (var i = 0; i < Path.Length; i++)
 			{
 				if (Path[i] != strings[i])
 				{
@@ -69,16 +71,25 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void LoadList()
 		{
-			if (world.localUser != entity.manager)
-				return;
-			if (path.value.Contains("`1"))
-				return;
-			if (list != null)
-				list.Destroy();
-			list = entity.addChild("CompList");
-			list.persistence.value = false;
+			if (world.LocalUser != entity.Manager)
+            {
+                return;
+            }
+
+            if (path.Value.Contains("`1"))
+            {
+                return;
+            }
+
+            if (_list != null)
+            {
+                _list.Destroy();
+            }
+
+            _list = entity.AddChild("CompList");
+			_list.persistence.Value = false;
 			string[] pa;
-			if (string.IsNullOrEmpty(path.value))
+			if (string.IsNullOrEmpty(path.Value))
 			{
 				pa = new string[0] { };
 			}
@@ -87,7 +98,7 @@ namespace RhubarbEngine.Components.ImGUI
 				IEnumerable<string> p;
 				try
 				{
-					p = from e in path.value.Split('/', '\\')
+					p = from e in path.Value.Split('/', '\\')
 						where !string.IsNullOrEmpty(e)
 						select e;
 				}
@@ -113,13 +124,13 @@ namespace RhubarbEngine.Components.ImGUI
 				  select new { Type = t, Attribute = att };
 				if (pa.Length != 0)
 				{
-					var comp = list.attachComponent<ComponentAttacherPath>();
-					children.Add().target = comp;
-					comp.target.target = this;
-					comp.path.value = "../";
+					var comp = _list.AttachComponent<ComponentAttacherPath>();
+					children.Add().Target = comp;
+					comp.target.Target = this;
+					comp.path.Value = "../";
 				}
-				List<string> addedPaths = new List<string>();
-				List<ComponentAttacherAttach> attachLater = new List<ComponentAttacherAttach>();
+				var addedPaths = new List<string>();
+				var attachLater = new List<ComponentAttacherAttach>();
 				foreach (var item in types)
 				{
 					var a = item.Attribute;
@@ -127,24 +138,24 @@ namespace RhubarbEngine.Components.ImGUI
 					{
 						if (!addedPaths.Contains(a.Paths[pa.Length]))
 						{
-							var comp = list.attachComponent<ComponentAttacherPath>();
-							children.Add().target = comp;
-							comp.target.target = this;
-							comp.path.value = a.Paths[pa.Length] + "/";
+							var comp = _list.AttachComponent<ComponentAttacherPath>();
+							children.Add().Target = comp;
+							comp.target.Target = this;
+							comp.path.Value = a.Paths[pa.Length] + "/";
 							addedPaths.Add(a.Paths[pa.Length]);
 						}
 					}
 					else
 					{
-						var comp = list.attachComponent<ComponentAttacherAttach>();
+						var comp = _list.AttachComponent<ComponentAttacherAttach>();
 						attachLater.Add(comp);
-						comp.target.target = this;
-						comp.type.value = item.Type.FullName;
+						comp.target.Target = this;
+						comp.type.Value = item.Type.FullName;
 					}
 				}
 				foreach (var item in attachLater)
 				{
-					children.Add().target = item;
+					children.Add().Target = item;
 				}
 			}
 			catch (Exception e)
@@ -164,35 +175,41 @@ namespace RhubarbEngine.Components.ImGUI
 						var constra = from t in type.GetGenericArguments() from l in t.GetGenericParameterConstraints() select l;
 						if (constra.Contains(typeof(Enum)))
 						{
-							if (list != null)
-								list.Destroy();
-							list = entity.addChild("CompList");
-							list.persistence.value = false;
+							if (_list != null)
+                            {
+                                _list.Destroy();
+                            }
+
+                            _list = entity.AddChild("CompList");
+							_list.persistence.Value = false;
 							var assems = new Assembly[2] { Assembly.GetAssembly(typeof(Vector2f)), Assembly.GetAssembly(typeof(World.Asset.RMesh)) };
 							var IConvertibleTypes =
 								 from assem in assems.AsParallel()
 								 from t in assem.GetTypes().AsParallel()
 								 where t.IsEnum
 								 select t;
-							var comp = list.attachComponent<ComponentAttacherPath>();
-							children.Add().target = comp;
-							comp.target.target = this;
-							comp.path.value = "../";
+							var comp = _list.AttachComponent<ComponentAttacherPath>();
+							children.Add().Target = comp;
+							comp.target.Target = this;
+							comp.path.Value = "../";
 							foreach (var item in IConvertibleTypes)
 							{
-								var compa = list.attachComponent<ComponentAttacherAttach>();
-								compa.target.target = this;
-								compa.type.value = type.MakeGenericType(item).FullName;
-								children.Add().target = compa;
+								var compa = _list.AttachComponent<ComponentAttacherAttach>();
+								compa.target.Target = this;
+								compa.type.Value = type.MakeGenericType(item).FullName;
+								children.Add().Target = compa;
 							}
-							path.value += "`1";
+							path.Value += "`1";
 						}
 						else if (constra.Contains(typeof(IAsset)))
 						{
-							if (list != null)
-								list.Destroy();
-							list = entity.addChild("CompList");
-							list.persistence.value = false;
+							if (_list != null)
+                            {
+                                _list.Destroy();
+                            }
+
+                            _list = entity.AddChild("CompList");
+							_list.persistence.Value = false;
 							var assems = new Assembly[2] { Assembly.GetAssembly(typeof(Vector2f)), Assembly.GetAssembly(typeof(World.Asset.RMesh)) };
 							var IConvertibleTypes =
 								 from assem in assems.AsParallel()
@@ -200,55 +217,61 @@ namespace RhubarbEngine.Components.ImGUI
 								 where typeof(IAsset).IsAssignableFrom(t)
 								 where !t.IsEnum
 								 select t;
-							var comp = list.attachComponent<ComponentAttacherPath>();
-							children.Add().target = comp;
-							comp.target.target = this;
-							comp.path.value = "../";
+							var comp = _list.AttachComponent<ComponentAttacherPath>();
+							children.Add().Target = comp;
+							comp.target.Target = this;
+							comp.path.Value = "../";
 							foreach (var item in IConvertibleTypes)
 							{
 								if (item != typeof(Enum))
 								{
-									var compa = list.attachComponent<ComponentAttacherAttach>();
-									compa.target.target = this;
-									compa.type.value = type.MakeGenericType(item).FullName;
-									children.Add().target = compa;
+									var compa = _list.AttachComponent<ComponentAttacherAttach>();
+									compa.target.Target = this;
+									compa.type.Value = type.MakeGenericType(item).FullName;
+									children.Add().Target = compa;
 								}
 							}
-							path.value += "`1";
+							path.Value += "`1";
 						}
 						else if (constra.Contains(typeof(IWorldObject)))
 						{
-							if (list != null)
-								list.Destroy();
-							list = entity.addChild("CompList");
-							list.persistence.value = false;
+							if (_list != null)
+                            {
+                                _list.Destroy();
+                            }
+
+                            _list = entity.AddChild("CompList");
+							_list.persistence.Value = false;
 							var IConvertibleTypes =
 								 from t in Assembly.GetAssembly(typeof(IWorldObject)).GetTypes().AsParallel()
 								 where typeof(IAsset).IsAssignableFrom(t)
 								 where !t.IsEnum
 								 select t;
-							var comp = list.attachComponent<ComponentAttacherPath>();
-							children.Add().target = comp;
-							comp.target.target = this;
-							comp.path.value = "../";
+							var comp = _list.AttachComponent<ComponentAttacherPath>();
+							children.Add().Target = comp;
+							comp.target.Target = this;
+							comp.path.Value = "../";
 							foreach (var item in IConvertibleTypes)
 							{
 								if (item != typeof(Enum))
 								{
-									var compa = list.attachComponent<ComponentAttacherAttach>();
-									compa.target.target = this;
-									compa.type.value = type.MakeGenericType(item).FullName;
-									children.Add().target = compa;
+									var compa = _list.AttachComponent<ComponentAttacherAttach>();
+									compa.target.Target = this;
+									compa.type.Value = type.MakeGenericType(item).FullName;
+									children.Add().Target = compa;
 								}
 							}
-							path.value += "`1";
+							path.Value += "`1";
 						}
 						else if (constra.Contains(typeof(IConvertible)))
 						{
-							if (list != null)
-								list.Destroy();
-							list = entity.addChild("CompList");
-							list.persistence.value = false;
+							if (_list != null)
+                            {
+                                _list.Destroy();
+                            }
+
+                            _list = entity.AddChild("CompList");
+							_list.persistence.Value = false;
 							var assems = new Assembly[2] { Assembly.GetAssembly(typeof(Vector2f)), Assembly.GetAssembly(typeof(string)) };
 							var IConvertibleTypes =
 								 from assem in assems.AsParallel()
@@ -256,21 +279,21 @@ namespace RhubarbEngine.Components.ImGUI
 								 where typeof(IConvertible).IsAssignableFrom(t)
 								 where !t.IsEnum
 								 select t;
-							var comp = list.attachComponent<ComponentAttacherPath>();
-							children.Add().target = comp;
-							comp.target.target = this;
-							comp.path.value = "../";
+							var comp = _list.AttachComponent<ComponentAttacherPath>();
+							children.Add().Target = comp;
+							comp.target.Target = this;
+							comp.path.Value = "../";
 							foreach (var item in IConvertibleTypes)
 							{
 								if (item != typeof(Enum))
 								{
-									var compa = list.attachComponent<ComponentAttacherAttach>();
-									compa.target.target = this;
-									compa.type.value = type.MakeGenericType(item).FullName;
-									children.Add().target = compa;
+									var compa = _list.AttachComponent<ComponentAttacherAttach>();
+									compa.target.Target = this;
+									compa.type.Value = type.MakeGenericType(item).FullName;
+									children.Add().Target = compa;
 								}
 							}
-							path.value += "`1";
+							path.Value += "`1";
 						}
 						else
 						{
@@ -279,13 +302,13 @@ namespace RhubarbEngine.Components.ImGUI
 					}
 					else
 					{
-						Tentity.target?.attachComponent(type);
+						Tentity.Target?.AttachComponent(type);
 						entity.Destroy();
 					}
 				}
 				else
 				{
-					Tentity.target?.attachComponent(type);
+					Tentity.Target?.AttachComponent(type);
 					entity.Destroy();
 				}
 			}
@@ -307,7 +330,7 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			foreach (var item in children)
 			{
-				item.target?.ImguiRender(imGuiRenderer, canvas);
+				item.Target?.ImguiRender(imGuiRenderer, canvas);
 			}
 		}
 	}

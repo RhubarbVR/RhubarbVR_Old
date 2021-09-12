@@ -29,7 +29,7 @@ namespace RhubarbEngine.Components.ImGUI
 			labels = new SyncValueList<string>(this, newRefIds);
 			action = new SyncDelegate<Action<string>>(this, newRefIds);
 			Columns = new Sync<int>(this, newRefIds);
-			Columns.value = 5;
+			Columns.Value = 5;
 		}
 
 		public ImGUIButtonGrid(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -42,15 +42,15 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			ImGui.Columns(Columns.value, null);
+			ImGui.Columns(Columns.Value, null);
 			ImGui.Separator();
 			for (int i = 0; i < labels.Count; i++)
 			{
-				var label = labels[i].value;
+				var label = labels[i].Value;
 
 				if (label != null)
 				{
-					if (ImGui.Button(label, new Vector2(ImGui.GetIO().DisplaySize.X / Columns.value, ImGui.GetIO().DisplaySize.Y / Columns.value)))
+					if (ImGui.Button(label, new Vector2(ImGui.GetIO().DisplaySize.X / Columns.Value, ImGui.GetIO().DisplaySize.Y / Columns.Value)))
 					{
 						action.Target?.Invoke(label);
 					}

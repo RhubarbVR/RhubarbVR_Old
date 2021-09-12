@@ -39,8 +39,8 @@ namespace RhubarbEngine.Components.Interaction
 
 		public void initializeGrabHolder(InteractionSource _source)
 		{
-			user.target = world.localUser;
-			source.value = _source;
+			user.Target = world.LocalUser;
+			source.Value = _source;
 			switch (_source)
 			{
 				case InteractionSource.None:
@@ -71,13 +71,13 @@ namespace RhubarbEngine.Components.Interaction
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
 			base.CommonUpdate(startTime, Frame);
-			if (user.target == null)
+			if (user.Target == null)
 				return;
-			if (holder.target == null)
+			if (holder.Target == null)
 				return;
-			if (user.target != world.localUser)
+			if (user.Target != world.LocalUser)
 				return;
-			if (source.value == InteractionSource.HeadLaser)
+			if (source.Value == InteractionSource.HeadLaser)
 			{
 				var mousepos = engine.inputManager.mainWindows.MousePosition;
 				var size = new System.Numerics.Vector2(engine.windowManager.mainWindow.width, engine.windowManager.mainWindow.height);
@@ -87,7 +87,7 @@ namespace RhubarbEngine.Components.Interaction
 				float tan = (float)Math.Tan(engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
 				Vector3f vectforward = new Vector3f(-x * tan * ar, y * tan, 1);
 				Vector3f vectup = new Vector3f(0, 1, 0);
-				holder.target.rotation.value = Quaternionf.LookRotation(vectforward, vectup);
+				holder.Target.rotation.Value = Quaternionf.LookRotation(vectforward, vectup);
 			}
 			if (onGriping() != gripping)
 			{
@@ -95,14 +95,14 @@ namespace RhubarbEngine.Components.Interaction
 				if (!gripping)
 				{
 
-					foreach (var child in holder.target._children.getCopy())
+					foreach (var child in holder.Target._children.GetCopy())
 					{
-						foreach (var grab in child.getAllComponents<Grabbable>())
+						foreach (var grab in child.GetAllComponents<Grabbable>())
 						{
 							grab.Drop();
 						}
 					}
-					switch (source.value)
+					switch (source.Value)
 					{
 						case InteractionSource.LeftLaser:
 							input.LeftLaser.unLock();
@@ -122,25 +122,25 @@ namespace RhubarbEngine.Components.Interaction
 					world.lastHolder = this;
 				}
 			}
-			if (Referencer.target == null)
+			if (Referencer.Target == null)
 				return;
 			if (!gripping)
 			{
 				timeout++;
 				if (timeout > 16)
 				{
-					Referencer.target = null;
+					Referencer.Target = null;
 				}
 			}
 		}
 
 		private bool onGriping()
 		{
-			if ((engine.outputType == VirtualReality.OutputType.Screen) && (source.value == InteractionSource.RightLaser))
+			if ((engine.outputType == VirtualReality.OutputType.Screen) && (source.Value == InteractionSource.RightLaser))
 			{
 				return engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right);
 			}
-			switch (source.value)
+			switch (source.Value)
 			{
 				case InteractionSource.None:
 					break;
@@ -165,7 +165,7 @@ namespace RhubarbEngine.Components.Interaction
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			holder.target = entity.addChild("Holder");
+			holder.Target = entity.AddChild("Holder");
 		}
 
 		public override void buildSyncObjs(bool newRefIds)
@@ -181,7 +181,7 @@ namespace RhubarbEngine.Components.Interaction
 		private void Referencer_Changed(IChangeable obj)
 		{
 			timeout = 0;
-			Console.WriteLine("Changed To " + Referencer.target?.ReferenceID.id.ToHexString());
+			Console.WriteLine("Changed To " + Referencer.Target?.ReferenceID.id.ToHexString());
 		}
 
 		public GrabbableHolder(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

@@ -24,17 +24,17 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			BaseRadius = new Sync<float>(this, newRefIds);
-			BaseRadius.value = 1f;
+			BaseRadius.Value = 1f;
 			TopRadius = new Sync<float>(this, newRefIds);
-			TopRadius.value = 1f;
+			TopRadius.Value = 1f;
 			Height = new Sync<float>(this, newRefIds);
-			Height.value = 1f;
+			Height.Value = 1f;
 			StartAngleDeg = new Sync<float>(this, newRefIds);
-			StartAngleDeg.value = 0.0f;
+			StartAngleDeg.Value = 0.0f;
 			EndAngleDeg = new Sync<float>(this, newRefIds);
-			EndAngleDeg.value = 360f;
+			EndAngleDeg.Value = 360f;
 			Slices = new Sync<int>(this, newRefIds);
-			Slices.value = 16;
+			Slices.Value = 16;
 
 			NoSharedVertices = new Sync<bool>(this, newRefIds);
 		}
@@ -45,13 +45,13 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		private void updateMesh()
 		{
-			_generator.BaseRadius = BaseRadius.value;
-			_generator.TopRadius = TopRadius.value;
-			_generator.Height = Height.value;
-			_generator.StartAngleDeg = StartAngleDeg.value;
-			_generator.EndAngleDeg = EndAngleDeg.value;
-			_generator.Slices = Slices.value;
-			_generator.NoSharedVertices = NoSharedVertices.value;
+			_generator.BaseRadius = BaseRadius.Value;
+			_generator.TopRadius = TopRadius.Value;
+			_generator.Height = Height.Value;
+			_generator.StartAngleDeg = StartAngleDeg.Value;
+			_generator.EndAngleDeg = EndAngleDeg.Value;
+			_generator.Slices = Slices.Value;
+			_generator.NoSharedVertices = NoSharedVertices.Value;
 			MeshGenerator newmesh = _generator.Generate();
 			RMesh kite = new RMesh(newmesh.MakeDMesh());
 			kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

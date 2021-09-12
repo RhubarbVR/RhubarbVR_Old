@@ -32,7 +32,7 @@ namespace RhubarbEngine.Components.ImGUI
 			color = new Sync<Colorf>(this, newRefIds);
 			id = new Sync<string>(this, newRefIds);
 			imGuiColorEditFlags = new Sync<ImGuiColorEditFlags>(this, newRefIds);
-			imGuiColorEditFlags.value = ImGuiColorEditFlags.None;
+			imGuiColorEditFlags.Value = ImGuiColorEditFlags.None;
 			action = new SyncDelegate(this, newRefIds);
 		}
 
@@ -46,7 +46,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (ImGui.ColorButton(id.value ?? "", color.value.ToRGBA().ToSystem(), imGuiColorEditFlags.value))
+			if (ImGui.ColorButton(id.Value ?? "", color.Value.ToRGBA().ToSystem(), imGuiColorEditFlags.Value))
 			{
 				action.Target?.Invoke();
 			}

@@ -33,7 +33,7 @@ namespace RhubarbEngine.Render.Material.Fields
 
 		public override void setValue(Object val)
 		{
-			field.value = (NetPointer)val;
+			field.Value = (NetPointer)val;
 		}
 		public void assetChange(RTexture2D newAsset)
 		{
@@ -50,7 +50,7 @@ namespace RhubarbEngine.Render.Material.Fields
 		}
 		public void loadTextureView(bool forceR = false)
 		{
-			if (field.target != null)
+			if (field.Target != null)
 			{
 				if (field.Asset != null)
 				{

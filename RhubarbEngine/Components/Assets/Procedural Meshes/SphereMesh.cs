@@ -21,9 +21,9 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			Radius = new Sync<double>(this, newRefIds);
-			Radius.value = 0.5f;
+			Radius.Value = 0.5f;
 			EdgeVertices = new Sync<int>(this, newRefIds);
-			EdgeVertices.value = 8;
+			EdgeVertices.Value = 8;
 
 			NoSharedVertices = new Sync<bool>(this, newRefIds);
 		}
@@ -34,9 +34,9 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		private void updateMesh()
 		{
-			sphereGen.Radius = Radius.value;
-			sphereGen.EdgeVertices = EdgeVertices.value;
-			sphereGen.NoSharedVertices = NoSharedVertices.value;
+			sphereGen.Radius = Radius.Value;
+			sphereGen.EdgeVertices = EdgeVertices.Value;
+			sphereGen.NoSharedVertices = NoSharedVertices.Value;
 			MeshGenerator newmesh = sphereGen.Generate();
 			RMesh kite = new RMesh(newmesh.MakeDMesh());
 			kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);

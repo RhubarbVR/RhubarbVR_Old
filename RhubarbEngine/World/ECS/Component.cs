@@ -21,7 +21,7 @@ namespace RhubarbEngine.World.ECS
 		public override void inturnalSyncObjs(bool newRefIds)
 		{
 			enabled = new Sync<bool>(this, newRefIds);
-			enabled.value = true;
+			enabled.Value = true;
 			_entity = (Entity)(parent.Parent);
 			LoadToWorld();
 		}
@@ -29,7 +29,7 @@ namespace RhubarbEngine.World.ECS
 		public override void onLoaded()
 		{
 			base.onLoaded();
-			ListObject(entity.isEnabled);
+			ListObject(entity.IsEnabled);
 		}
 
 		public virtual void LoadToWorld()

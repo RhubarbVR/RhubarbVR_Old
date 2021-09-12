@@ -39,7 +39,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (ImGui.RadioButton(id.value ?? "", active.value))
+			if (ImGui.RadioButton(id.Value ?? "", active.Value))
 			{
 				action.Target?.Invoke();
 			}

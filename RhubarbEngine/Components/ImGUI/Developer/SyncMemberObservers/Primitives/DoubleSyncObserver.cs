@@ -42,14 +42,14 @@ namespace RhubarbEngine.Components.ImGUI
 		public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
 			bool Changeboarder = false;
-			if (target.target?.Driven ?? false)
+			if (target.Target?.Driven ?? false)
 			{
 				var e = ImGui.GetStyleColorVec4(ImGuiCol.FrameBg);
 				var vec = (Vector4f)(*e);
 				ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 1f, 0, 0)).ToSystem());
 			}
 			Interaction.GrabbableHolder source = null;
-			switch (canvas.imputPlane.target?.source ?? Interaction.InteractionSource.None)
+			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
 					source = world.LeftLaserGrabbableHolder;
@@ -65,7 +65,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (source != null)
 			{
-				var type = source.Referencer.target?.GetType();
+				var type = source.Referencer.Target?.GetType();
 				if (typeof(IPrimitiveEditable).IsAssignableFrom(type))
 				{
 					Changeboarder = true;
@@ -76,20 +76,20 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 3);
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
-			double val = target.target?.value ?? 0;
-			if (ImGui.DragScalarN((fieldName.value ?? "null") + $"##{referenceID.id}", ImGuiDataType.Double, (IntPtr)(&val), 1, 2f))
+			double val = target.Target?.Value ?? 0;
+			if (ImGui.DragScalarN((fieldName.Value ?? "null") + $"##{referenceID.id}", ImGuiDataType.Double, (IntPtr)(&val), 1, 2f))
 			{
-				if (target.target != null)
-					target.target.value = val;
+				if (target.Target != null)
+					target.Target.Value = val;
 			}
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				if (source != null)
 				{
-					source.Referencer.target = target.target;
+					source.Referencer.Target = target.Target;
 				}
 			}
-			if (target.target?.Driven ?? false)
+			if (target.Target?.Driven ?? false)
 			{
 				ImGui.PopStyleColor();
 			}
@@ -97,10 +97,10 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-					IPrimitiveEditable e = (IPrimitiveEditable)source.Referencer.target;
-					if (target.target != null)
-						target.target.primitiveString = e.primitiveString;
-					source.Referencer.target = null;
+					IPrimitiveEditable e = (IPrimitiveEditable)source.Referencer.Target;
+					if (target.Target != null)
+						target.Target.primitiveString = e.primitiveString;
+					source.Referencer.Target = null;
 				}
 				ImGui.PopStyleVar();
 				ImGui.PopStyleColor();

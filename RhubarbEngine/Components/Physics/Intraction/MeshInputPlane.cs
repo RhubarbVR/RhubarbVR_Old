@@ -32,19 +32,25 @@ namespace RhubarbEngine.Components.Physics
 
 		public SyncDelegate onFocusLost;
 
-		public IReadOnlyList<KeyEvent> KeyEvents { get { if (!focused) return new List<KeyEvent>(); return input.mainWindows.FrameSnapshot.KeyEvents; } }
+		public IReadOnlyList<KeyEvent> KeyEvents { get { return !focused ? new List<KeyEvent>() : input.mainWindows.FrameSnapshot.KeyEvents; } }
 
-		public IReadOnlyList<MouseEvent> MouseEvents { get { if (isNotTakingInput) return new List<MouseEvent>(); return input.mainWindows.FrameSnapshot.MouseEvents; } }
+		public IReadOnlyList<MouseEvent> MouseEvents { get { return IsNotTakingInput ? new List<MouseEvent>() : input.mainWindows.FrameSnapshot.MouseEvents; } }
 
-		public IReadOnlyList<char> KeyCharPresses { get { if (!focused) return new List<Char>(); return input.mainWindows.FrameSnapshot.KeyCharPresses; } }
+		public IReadOnlyList<char> KeyCharPresses { get { return !focused ? new List<char>() : input.mainWindows.FrameSnapshot.KeyCharPresses; } }
 
-		private Vector2 mousePosition = Vector2.Zero;
+		private Vector2 _mousePosition = Vector2.Zero;
 
-		public Vector2 MousePosition => mousePosition;
+        public Vector2 MousePosition
+        {
+            get
+            {
+                return _mousePosition;
+            }
+        }
 
-		public void SetCursor(Cursors cursor)
+        public void SetCursor(Cursors cursor)
 		{
-			if (!isNotTakingInput)
+			if (!IsNotTakingInput)
 			{
 				switch (source)
 				{
@@ -65,67 +71,83 @@ namespace RhubarbEngine.Components.Physics
 		public void Click(Vector2 pos, InteractionSource sourc)
 		{
 			Setfocused();
-			val = sourc;
-			mousePosition = pos;
+			source = sourc;
+			_mousePosition = pos;
 			StopMousePos = false;
 		}
 
-		public void updatePos(Vector2 pos, InteractionSource sourc)
+		public void UpdatePos(Vector2 pos, InteractionSource sourc)
 		{
-			if (sourc != val)
-				return;
-			if (!_focused && !input.isKeyboardinuse)
+			if (sourc != source)
+            {
+                return;
+            }
+
+            if (!_focused && !input.IsKeyboardinuse)
 			{
 				Setfocused();
 				StopMousePos = false;
 			}
 			if (StopMousePos)
-				return;
-			mousePosition = pos;
-			hover = 0;
+            {
+                return;
+            }
+
+            _mousePosition = pos;
+			_hover = 0;
 		}
 
 		public float WheelDelta
 		{
 			get
 			{
-				if (isNotTakingInput)
-					return 0f;
-				return input.mainWindows.FrameSnapshot.WheelDelta;
-			}
-		}
+                return IsNotTakingInput ? 0f : input.mainWindows.FrameSnapshot.WheelDelta;
+            }
+        }
 
-		private InteractionSource val = InteractionSource.RightLaser;
+        public InteractionSource source { get; private set; } = InteractionSource.RightLaser;
 
-		public InteractionSource source => val;
+        public bool IsNotTakingInput
+        {
+            get
+            {
+                return !_focused || (_hover > 3);
+            }
+        }
 
-		public bool isNotTakingInput => (!_focused || (hover > 3));
-
-		private byte hover = 0;
+        private byte _hover = 0;
 
 		private bool _focused = false;
 
-		public bool focused => (input.isKeyboardinuse) ? _focused : !isNotTakingInput;
+        public bool focused
+        {
+            get
+            {
+                return input.IsKeyboardinuse ? _focused : !IsNotTakingInput;
+            }
+        }
 
-		public bool StopMousePos = false;
+        public bool StopMousePos = false;
 
 		public bool StopMouse { get { return StopMousePos; } set { StopMousePos = value; } }
 
 		public override void buildSyncObjs(bool newRefIds)
 		{
 			base.buildSyncObjs(newRefIds);
-			pixelSize = new Sync<Vector2u>(this, newRefIds);
-			pixelSize.value = new Vector2u(600, 600);
-			FocusedOverride = new Sync<bool>(this, newRefIds);
+            pixelSize = new Sync<Vector2u>(this, newRefIds)
+            {
+                Value = new Vector2u(600, 600)
+            };
+            FocusedOverride = new Sync<bool>(this, newRefIds);
 			onFocusLost = new SyncDelegate(this, newRefIds);
 			mesh = new AssetRef<RMesh>(this, newRefIds);
 			mesh.loadChange += Mesh_loadChange;
-			entity.enabledChanged += Entity_enabledChanged;
+			entity.EnabledChanged += Entity_enabledChanged;
 		}
 
 		private void Entity_enabledChanged()
 		{
-			if ((!entity.isEnabled) && focused)
+			if ((!entity.IsEnabled) && focused)
 			{
 				Removefocused();
 			}
@@ -141,9 +163,9 @@ namespace RhubarbEngine.Components.Physics
 			base.onLoaded();
 			BuildShape();
 		}
-		private void goNull()
+		private void GoNull()
 		{
-			buildCollissionObject(null);
+			BuildCollissionObject(null);
 		}
 		public int[] index = new int[] { };
 		public BulletSharp.Math.Vector3[] vertices = new BulletSharp.Math.Vector3[] { };
@@ -152,13 +174,13 @@ namespace RhubarbEngine.Components.Physics
 		public unsafe override void BuildShape()
 		{
 			if (mesh.Asset == null)
-			{ goNull(); return; };
-			if (!mesh.target?.loaded ?? false)
-			{ goNull(); return; };
+			{ GoNull(); return; };
+			if (!mesh.Target?.loaded ?? false)
+			{ GoNull(); return; };
 
 			// Initialize TriangleIndexVertexArray with Vector3 array
 			vertices = new BulletSharp.Math.Vector3[mesh.Asset.meshes[0].VertexCount];
-			for (int i = 0; i < vertices.Length; i++)
+			for (var i = 0; i < vertices.Length; i++)
 			{
 				vertices[i] = new BulletSharp.Math.Vector3(
 					mesh.Asset.meshes[0].GetVertex(i).x,
@@ -169,30 +191,42 @@ namespace RhubarbEngine.Components.Physics
 
 			// Initialize TriangleIndexIndexArray with int array
 			index = new int[e.Length];
-			for (int i = 0; i < index.Length; i++)
+			for (var i = 0; i < index.Length; i++)
 			{
 				index[i] = e[i];
 			}
 			if (index.Length < 3)
-				return;
-			var indexVertexArray2 = new TriangleIndexVertexArray(index, vertices);
-			BvhTriangleMeshShape trys = new BvhTriangleMeshShape(indexVertexArray2, false);
-			startShape(trys);
+            {
+                return;
+            }
+
+            var indexVertexArray2 = new TriangleIndexVertexArray(index, vertices);
+			var trys = new BvhTriangleMeshShape(indexVertexArray2, false);
+			StartShape(trys);
 		}
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
 			base.CommonUpdate(startTime, Frame);
-			if (hover > 3)
-				return;
-			hover++;
+			if (_hover > 3)
+            {
+                return;
+            }
+
+            _hover++;
 		}
 		public bool IsMouseDown(MouseButton button)
 		{
 			if (StopMousePos)
-				return false;
-			if (isNotTakingInput)
-				return false;
-			if (engine.outputType == VirtualReality.OutputType.Screen)
+            {
+                return false;
+            }
+
+            if (IsNotTakingInput)
+            {
+                return false;
+            }
+
+            if (engine.outputType == VirtualReality.OutputType.Screen)
 			{
 				return engine.inputManager.mainWindows.GetMouseButton(button);
 			}
@@ -206,13 +240,10 @@ namespace RhubarbEngine.Components.Physics
 						case MouseButton.Left:
 							// need to make not pur frame
 							return input.PrimaryPress(Input.Creality.Left);
-							break;
 						case MouseButton.Middle:
 							return input.SecondaryPress(Input.Creality.Left);
-							break;
 						case MouseButton.Right:
 							return input.GrabPress(Input.Creality.Left);
-							break;
 						case MouseButton.Button1:
 							break;
 						case MouseButton.Button2:
@@ -244,13 +275,10 @@ namespace RhubarbEngine.Components.Physics
 					{
 						case MouseButton.Left:
 							return input.PrimaryPress(Input.Creality.Right);
-							break;
 						case MouseButton.Middle:
 							return input.SecondaryPress(Input.Creality.Right);
-							break;
 						case MouseButton.Right:
 							return input.GrabPress(Input.Creality.Right);
-							break;
 						case MouseButton.Button1:
 							break;
 						case MouseButton.Button2:
@@ -279,7 +307,6 @@ namespace RhubarbEngine.Components.Physics
 					break;
 				case InteractionSource.HeadLaser:
 					return engine.inputManager.mainWindows.GetMouseButton(button);
-					break;
 				case InteractionSource.HeadFinger:
 					break;
 				default:
@@ -295,17 +322,17 @@ namespace RhubarbEngine.Components.Physics
 				return;
 			}
 			_focused = true;
-			if (!FocusedOverride.value)
+			if (!FocusedOverride.Value)
 			{
-				input.RemoveFocus();
+				input.InvokeRemoveFocus();
 			}
-			input.removeFocus += Removefocused;
+			input.RemoveFocus += Removefocused;
 		}
 
 		public void Removefocused()
 		{
 			onFocusLost.Target?.Invoke();
-			input.removeFocus -= Removefocused;
+			input.RemoveFocus -= Removefocused;
 			_focused = false;
 		}
 

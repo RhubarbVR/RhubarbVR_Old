@@ -10,7 +10,7 @@ namespace RhubarbEngine.World
 {
 	public interface ValueSource<T> : IChangeable, IWorldObject where T : IConvertible
 	{
-		T value { get; set; }
+		T Value { get; set; }
 
 	}
 }

@@ -40,33 +40,33 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void Dispose()
 		{
 			base.Dispose();
-			childrenHolder.target?.Dispose();
+			childrenHolder.Target?.Dispose();
 		}
 
 		private void Target_Changed(IChangeable obj)
 		{
-			if (entity.manager != world.localUser)
+			if (entity.Manager != world.LocalUser)
 				return;
 			foreach (var item in children)
 			{
-				item.target?.Dispose();
+				item.Target?.Dispose();
 			}
 			children.Clear();
-			if (target.target == null)
+			if (target.Target == null)
 				return;
-			if (childrenHolder.target == null)
+			if (childrenHolder.Target == null)
 			{
-				childrenHolder.target = entity.addChild(fieldName.value + "Holder");
+				childrenHolder.Target = entity.AddChild(fieldName.Value + "Holder");
 			}
 			int index = 0;
-			foreach (var item in target.target)
+			foreach (var item in target.Target)
 			{
 				if (typeof(Worker).IsAssignableFrom(item.GetType()))
 				{
-					var obs = childrenHolder.target.attachComponent<WorkerObserver>();
-					obs.fieldName.value = index.ToString();
-					obs.target.target = ((Worker)item);
-					children.Add().target = obs;
+					var obs = childrenHolder.Target.AttachComponent<WorkerObserver>();
+					obs.fieldName.Value = index.ToString();
+					obs.target.Target = ((Worker)item);
+					children.Add().Target = obs;
 				}
 				index++;
 			}
@@ -82,15 +82,15 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public virtual void ChildRender(int index, ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (children[index].target != null)
+			if (children[index].Target != null)
 			{
-				children[index].target.ImguiRender(imGuiRenderer, canvas);
+				children[index].Target.ImguiRender(imGuiRenderer, canvas);
 				if (removeable)
 				{
 					ImGui.SameLine();
 					if (ImGui.Button("X##" + referenceID.id.ToString()))
 					{
-						target.target?.Remove(index);
+						target.Target?.Remove(index);
 					}
 				}
 			}

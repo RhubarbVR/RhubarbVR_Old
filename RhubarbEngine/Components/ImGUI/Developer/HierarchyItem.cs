@@ -27,11 +27,11 @@ namespace RhubarbEngine.Components.ImGUI
 		[NoShow]
 		[NoSave]
 		[NoSync]
-		private Entity last;
+		private Entity _last;
 
 		public SyncRefList<HierarchyItem> children;
 
-		private bool Bound;
+		private bool _bound;
 
 		public override void buildSyncObjs(bool newRefIds)
 		{
@@ -45,9 +45,12 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void DropedDown_Changed(IChangeable obj)
 		{
-			if (entity.manager != world.localUser)
-				return;
-			if (dropedDown.value)
+			if (entity.Manager != world.LocalUser)
+            {
+                return;
+            }
+
+            if (dropedDown.Value)
 			{
 				BuildChildren();
 			}
@@ -57,37 +60,46 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			foreach (var item in children)
 			{
-				item.target?.Dispose();
+				item.Target?.Dispose();
 			}
 			children.Clear();
-			if (target.target == null)
-				return;
-			int index = 0;
-			foreach (var item in target.target._children)
+			if (target.Target == null)
+            {
+                return;
+            }
+
+            var index = 0;
+			foreach (var item in target.Target._children)
 			{
-				var newHierarchyItem = entity.attachComponent<HierarchyItem>();
-				children.Add().target = newHierarchyItem;
-				newHierarchyItem.target.target = item;
+				var newHierarchyItem = entity.AttachComponent<HierarchyItem>();
+				children.Add().Target = newHierarchyItem;
+				newHierarchyItem.target.Target = item;
 				index++;
 			}
 		}
 
 		private void Target_Changed(IChangeable obj)
 		{
-			if (entity.manager != world.localUser)
-				return;
-			Bind();
-			last = target.target;
+			if (entity.Manager != world.LocalUser)
+            {
+                return;
+            }
+
+            Bind();
+			_last = target.Target;
 		}
 
 		private void Bind()
 		{
-			if (entity.manager != world.localUser)
-				return;
-			if (Bound)
+			if (entity.Manager != world.LocalUser)
+            {
+                return;
+            }
+
+            if (_bound)
 			{
 
-				Bound = false;
+				_bound = false;
 			}
 
 
@@ -95,10 +107,10 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void UnBind()
 		{
-			if (Bound)
+			if (_bound)
 			{
 
-				Bound = false;
+				_bound = false;
 			}
 
 		}
@@ -106,28 +118,31 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
 			base.CommonUpdate(startTime, Frame);
-			if (entity.manager == world.localUser)
-				return;
-			if (Bound)
+			if (entity.Manager == world.LocalUser)
+            {
+                return;
+            }
+
+            if (_bound)
 			{
 				UnBind();
-				Bound = false;
+				_bound = false;
 			}
 		}
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			bool val = dropedDown.value;
+			var val = dropedDown.Value;
 			ImGui.SetNextItemOpen(val);
-			if (ImGui.TreeNodeEx($"{target.target?.name.value ?? "null"}##{referenceID.id.ToString()}", ImGuiTreeNodeFlags.OpenOnArrow))
+			if (ImGui.TreeNodeEx($"{target.Target?.name.Value ?? "null"}##{referenceID.id.ToString()}", ImGuiTreeNodeFlags.OpenOnArrow))
 			{
 				foreach (var item in children)
 				{
-					item.target?.ImguiRender(imGuiRenderer, canvas);
+					item.Target?.ImguiRender(imGuiRenderer, canvas);
 				}
 				if (!val)
 				{
-					dropedDown.value = true;
+					dropedDown.Value = true;
 				}
 				ImGui.TreePop();
 			}
@@ -135,11 +150,11 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (val)
 				{
-					dropedDown.value = false;
+					dropedDown.Value = false;
 				}
 			}
 			Interaction.GrabbableHolder source = null;
-			switch (canvas.imputPlane.target?.source ?? Interaction.InteractionSource.None)
+			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
 					source = world.LeftLaserGrabbableHolder;
@@ -159,13 +174,13 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
-				Grabbed(source, canvas);
+				Grabbed(source);
 			}
 			if (ImGui.IsItemHovered() && source.DropedRef)
 			{
-				if (typeof(Entity) == source.Referencer.target.GetType())
+				if (typeof(Entity) == source.Referencer.Target.GetType())
 				{
-					((Entity)source.Referencer.target).parent.target = target.target;
+					((Entity)source.Referencer.Target).parent.Target = target.Target;
 				}
 			}
 		}
@@ -173,18 +188,20 @@ namespace RhubarbEngine.Components.ImGUI
 		private void Clicked()
 		{
 			if (world.lastEntityObserver != null)
-				world.lastEntityObserver.target.target = target.target;
-		}
-		private void Grabbed(Interaction.GrabbableHolder source, ImGUICanvas canvas)
+            {
+                world.lastEntityObserver.target.Target = target.Target;
+            }
+        }
+		private void Grabbed(Interaction.GrabbableHolder source)
 		{
 			if (source != null)
 			{
-				if (source.Referencer.target == null)
+				if (source.Referencer.Target == null)
 				{
-					source.Referencer.target = target.target;
+					source.Referencer.Target = target.Target;
 				}
 			}
-		}
+        }
 		public HierarchyItem(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
