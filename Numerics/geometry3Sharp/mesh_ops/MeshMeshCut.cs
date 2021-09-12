@@ -22,7 +22,7 @@ namespace RNumerics
 		public DMesh3 Target;
 		public DMesh3 CutMesh;
 
-		PointHashGrid3d<int> PointHash;
+		PointHashGrid3d<int> _pointHash;
 
 		// points within this tolerance are merged
 		public double VertexSnapTol = 0.00001;
@@ -35,80 +35,98 @@ namespace RNumerics
 
 		public void Compute()
 		{
-			double cellSize = Target.CachedBounds.MaxDim / 64;
-			PointHash = new PointHashGrid3d<int>(cellSize, -1);
+			var cellSize = Target.CachedBounds.MaxDim / 64;
+			_pointHash = new PointHashGrid3d<int>(cellSize, -1);
 
 			// insert target vertices into hash
-			foreach (int vid in Target.VertexIndices())
+			foreach (var vid in Target.VertexIndices())
 			{
-				Vector3d v = Target.GetVertex(vid);
-				int existing = find_existing_vertex(v);
+				var v = Target.GetVertex(vid);
+				var existing = Find_existing_vertex(v);
 				if (existing != -1)
-					System.Console.WriteLine("VERTEX {0} IS DUPLICATE OF {1}!", vid, existing);
-				PointHash.InsertPointUnsafe(vid, v);
+                {
+                    System.Console.WriteLine("VERTEX {0} IS DUPLICATE OF {1}!", vid, existing);
+                }
+
+                _pointHash.InsertPointUnsafe(vid, v);
 			}
 
-			initialize();
-			find_segments();
-			insert_face_vertices();
-			insert_edge_vertices();
-			connect_edges();
+			Initialize();
+			Find_segments();
+			Insert_face_vertices();
+			Insert_edge_vertices();
+			Connect_edges();
 
 			// SegmentInsertVertices was constructed by planar polygon
 			// insertions in MeshInsertUVPolyCurve calls, but we also
 			// need to the segment vertices
-			foreach (SegmentVtx sv in SegVertices)
-				SegmentInsertVertices.Add(sv.vtx_id);
-		}
+			foreach (var sv in _segVertices)
+            {
+                _segmentInsertVertices.Add(sv.vtx_id);
+            }
+        }
 
 
 		public void RemoveContained()
 		{
-			DMeshAABBTree3 spatial = new DMeshAABBTree3(CutMesh, true);
+			var spatial = new DMeshAABBTree3(CutMesh, true);
 			spatial.WindingNumber(Vector3d.Zero);
-			SafeListBuilder<int> removeT = new SafeListBuilder<int>();
+			var removeT = new SafeListBuilder<int>();
 			gParallel.ForEach(Target.TriangleIndices(), (tid) =>
 			{
-				Vector3d v = Target.GetTriCentroid(tid);
+				var v = Target.GetTriCentroid(tid);
 				if (spatial.WindingNumber(v) > 0.9)
-					removeT.SafeAdd(tid);
-			});
+                {
+                    removeT.SafeAdd(tid);
+                }
+            });
 			MeshEditor.RemoveTriangles(Target, removeT.Result);
 
 			// [RMS] construct set of on-cut vertices? This is not
 			// necessarily all boundary vertices...
 			CutVertices = new List<int>();
-			foreach (int vid in SegmentInsertVertices)
+			foreach (var vid in _segmentInsertVertices)
 			{
 				if (Target.IsVertex(vid))
-					CutVertices.Add(vid);
-			}
+                {
+                    CutVertices.Add(vid);
+                }
+            }
 		}
 
 		public void AppendSegments(double r)
 		{
-			foreach (var seg in Segments)
+			foreach (var seg in _segments)
 			{
-				Segment3d s = new Segment3d(seg.v0.v, seg.v1.v);
+				var s = new Segment3d(seg.v0.v, seg.v1.v);
 				if (Target.FindEdge(seg.v0.vtx_id, seg.v1.vtx_id) == DMesh3.InvalidID)
-					MeshEditor.AppendLine(Target, s, (float)r);
-			}
+                {
+                    MeshEditor.AppendLine(Target, s, (float)r);
+                }
+            }
 		}
 
 		public void ColorFaces()
 		{
-			int counter = 1;
-			Dictionary<int, int> gidmap = new Dictionary<int, int>();
-			foreach (var key in SubFaces.Keys)
-				gidmap[key] = counter++;
-			Target.EnableTriangleGroups(0);
-			foreach (int tid in Target.TriangleIndices())
+			var counter = 1;
+			var gidmap = new Dictionary<int, int>();
+			foreach (var key in _subFaces.Keys)
+            {
+                gidmap[key] = counter++;
+            }
+
+            Target.EnableTriangleGroups(0);
+			foreach (var tid in Target.TriangleIndices())
 			{
-				if (ParentFaces.ContainsKey(tid))
-					Target.SetTriangleGroup(tid, gidmap[ParentFaces[tid]]);
-				else if (SubFaces.ContainsKey(tid))
-					Target.SetTriangleGroup(tid, gidmap[tid]);
-			}
+				if (_parentFaces.ContainsKey(tid))
+                {
+                    Target.SetTriangleGroup(tid, gidmap[_parentFaces[tid]]);
+                }
+                else if (_subFaces.ContainsKey(tid))
+                {
+                    Target.SetTriangleGroup(tid, gidmap[tid]);
+                }
+            }
 		}
 
 
@@ -120,15 +138,15 @@ namespace RNumerics
 			public int vtx_id = DMesh3.InvalidID;
 			public int elem_id = DMesh3.InvalidID;
 		}
-		List<SegmentVtx> SegVertices;
-		Dictionary<int, SegmentVtx> VIDToSegVtxMap;
+		List<SegmentVtx> _segVertices;
+		Dictionary<int, SegmentVtx> _vIDToSegVtxMap;
 
 
 		// segment vertices in each triangle that we still have to insert
-		Dictionary<int, List<SegmentVtx>> FaceVertices;
+		Dictionary<int, List<SegmentVtx>> _faceVertices;
 
 		// segment vertices in each edge that we still have to insert
-		Dictionary<int, List<SegmentVtx>> EdgeVertices;
+		Dictionary<int, List<SegmentVtx>> _edgeVertices;
 
 
 		class IntersectSegment
@@ -139,34 +157,39 @@ namespace RNumerics
 			public SegmentVtx this[int key]
 			{
 				get { return (key == 0) ? v0 : v1; }
-				set { if (key == 0) v0 = value; else v1 = value; }
+				set { if (key == 0) { v0 = value; } else
+                    {
+                        v1 = value;
+                    }
+                }
 			}
 		}
-		IntersectSegment[] Segments;
+		IntersectSegment[] _segments;
 
-		Vector3d[] BaseFaceCentroids;
-		Vector3d[] BaseFaceNormals;
-		Dictionary<int, HashSet<int>> SubFaces;
-		Dictionary<int, int> ParentFaces;
+		Vector3d[] _baseFaceCentroids;
+		Vector3d[] _baseFaceNormals;
+		Dictionary<int, HashSet<int>> _subFaces;
+		Dictionary<int, int> _parentFaces;
 
-		HashSet<int> SegmentInsertVertices;
+		HashSet<int> _segmentInsertVertices;
 
-		void initialize()
+		void Initialize()
 		{
-			BaseFaceCentroids = new Vector3d[Target.MaxTriangleID];
-			BaseFaceNormals = new Vector3d[Target.MaxTriangleID];
-			double area = 0;
-			foreach (int tid in Target.TriangleIndices())
-				Target.GetTriInfo(tid, out BaseFaceNormals[tid], out area, out BaseFaceCentroids[tid]);
+			_baseFaceCentroids = new Vector3d[Target.MaxTriangleID];
+			_baseFaceNormals = new Vector3d[Target.MaxTriangleID];
+			foreach (var tid in Target.TriangleIndices())
+            {
+                Target.GetTriInfo(tid, out _baseFaceNormals[tid], out _, out _baseFaceCentroids[tid]);
+            }
 
-			// allocate internals
-			SegVertices = new List<SegmentVtx>();
-			EdgeVertices = new Dictionary<int, List<SegmentVtx>>();
-			FaceVertices = new Dictionary<int, List<SegmentVtx>>();
-			SubFaces = new Dictionary<int, HashSet<int>>();
-			ParentFaces = new Dictionary<int, int>();
-			SegmentInsertVertices = new HashSet<int>();
-			VIDToSegVtxMap = new Dictionary<int, SegmentVtx>();
+            // allocate internals
+            _segVertices = new List<SegmentVtx>();
+			_edgeVertices = new Dictionary<int, List<SegmentVtx>>();
+			_faceVertices = new Dictionary<int, List<SegmentVtx>>();
+			_subFaces = new Dictionary<int, HashSet<int>>();
+			_parentFaces = new Dictionary<int, int>();
+			_segmentInsertVertices = new HashSet<int>();
+			_vIDToSegVtxMap = new Dictionary<int, SegmentVtx>();
 		}
 
 
@@ -175,75 +198,74 @@ namespace RNumerics
 		/// 1) Find intersection segments
 		/// 2) sort onto existing input mesh vtx/edge/face
 		/// </summary>
-		void find_segments()
+		void Find_segments()
 		{
-			Dictionary<Vector3d, SegmentVtx> SegVtxMap = new Dictionary<Vector3d, SegmentVtx>();
+			var SegVtxMap = new Dictionary<Vector3d, SegmentVtx>();
 
 			// find intersection segments
 			// TODO: intersection polygons
 			// TODO: do we need to care about intersection vertices?
-			DMeshAABBTree3 targetSpatial = new DMeshAABBTree3(Target, true);
-			DMeshAABBTree3 cutSpatial = new DMeshAABBTree3(CutMesh, true);
+			var targetSpatial = new DMeshAABBTree3(Target, true);
+			var cutSpatial = new DMeshAABBTree3(CutMesh, true);
 			var intersections = targetSpatial.FindAllIntersections(cutSpatial);
 
 			// for each segment, for each vtx, determine if it is 
 			// at an existing vertex, on-edge, or in-face
-			Segments = new IntersectSegment[intersections.Segments.Count];
-			for (int i = 0; i < Segments.Length; ++i)
+			_segments = new IntersectSegment[intersections.Segments.Count];
+			for (var i = 0; i < _segments.Length; ++i)
 			{
 				var isect = intersections.Segments[i];
-				Vector3dTuple2 points = new Vector3dTuple2(isect.point0, isect.point1);
-				IntersectSegment iseg = new IntersectSegment()
+				var points = new Vector3dTuple2(isect.point0, isect.point1);
+				var iseg = new IntersectSegment()
 				{
 					base_tid = isect.t0
 				};
-				Segments[i] = iseg;
-				for (int j = 0; j < 2; ++j)
+				_segments[i] = iseg;
+				for (var j = 0; j < 2; ++j)
 				{
-					Vector3d v = points[j];
+					var v = points[j];
 
-					// if this exact vtx coord has been seen, use same vtx
-					SegmentVtx sv;
-					if (SegVtxMap.TryGetValue(v, out sv))
-					{
-						iseg[j] = sv;
-						continue;
-					}
-					sv = new SegmentVtx() { v = v };
-					SegVertices.Add(sv);
+                    // if this exact vtx coord has been seen, use same vtx
+                    if (SegVtxMap.TryGetValue(v, out var sv))
+                    {
+                        iseg[j] = sv;
+                        continue;
+                    }
+                    sv = new SegmentVtx() { v = v };
+					_segVertices.Add(sv);
 					SegVtxMap[v] = sv;
 					iseg[j] = sv;
 
 					// this vtx is tol-equal to input mesh vtx
-					int existing_v = find_existing_vertex(isect.point0);
+					var existing_v = Find_existing_vertex(isect.point0);
 					if (existing_v >= 0)
 					{
 						sv.initial_type = sv.type = 0;
 						sv.elem_id = existing_v;
 						sv.vtx_id = existing_v;
-						VIDToSegVtxMap[sv.vtx_id] = sv;
+						_vIDToSegVtxMap[sv.vtx_id] = sv;
 						continue;
 					}
 
-					Triangle3d tri = new Triangle3d();
+					var tri = new Triangle3d();
 					Target.GetTriVertices(isect.t0, ref tri.V0, ref tri.V1, ref tri.V2);
-					Index3i tv = Target.GetTriangle(isect.t0);
+					var tv = Target.GetTriangle(isect.t0);
 
 					// this vtx is tol-on input mesh edge
-					int on_edge_i = on_edge(ref tri, ref v);
+					var on_edge_i = On_edge(ref tri, ref v);
 					if (on_edge_i >= 0)
 					{
 						sv.initial_type = sv.type = 1;
 						sv.elem_id = Target.FindEdge(tv[on_edge_i], tv[(on_edge_i + 1) % 3]);
 						Util.gDevAssert(sv.elem_id != DMesh3.InvalidID);
-						add_edge_vtx(sv.elem_id, sv);
+						Add_edge_vtx(sv.elem_id, sv);
 						continue;
 					}
 
 					// otherwise contained in input mesh face
 					sv.initial_type = sv.type = 2;
 					sv.elem_id = isect.t0;
-					add_face_vtx(sv.elem_id, sv);
+					Add_face_vtx(sv.elem_id, sv);
 				}
 
 			}
@@ -257,69 +279,77 @@ namespace RNumerics
 		/// For each on-face vtx, we poke the face, and re-sort 
 		/// the remaining vertices on that face onto new faces/edges
 		/// </summary>
-		void insert_face_vertices()
+		void Insert_face_vertices()
 		{
-			while (FaceVertices.Count > 0)
-			{
-				var pair = FaceVertices.First();
-				int tid = pair.Key;
-				List<SegmentVtx> triVerts = pair.Value;
-				SegmentVtx v = triVerts[triVerts.Count - 1];
-				triVerts.RemoveAt(triVerts.Count - 1);
+			while (_faceVertices.Count > 0)
+            {
+                var pair = _faceVertices.First();
+                var tid = pair.Key;
+                var triVerts = pair.Value;
+                var v = triVerts[triVerts.Count - 1];
+                triVerts.RemoveAt(triVerts.Count - 1);
 
-				DMesh3.PokeTriangleInfo pokeInfo;
-				MeshResult result = Target.PokeTriangle(tid, out pokeInfo);
-				if (result != MeshResult.Ok)
-					throw new Exception("shit");
-				int new_v = pokeInfo.new_vid;
+                var result = Target.PokeTriangle(tid, out var pokeInfo);
+                if (result == MeshResult.Ok)
+                {
+                    var new_v = pokeInfo.new_vid;
 
-				Target.SetVertex(new_v, v.v);
-				v.vtx_id = new_v;
-				VIDToSegVtxMap[v.vtx_id] = v;
-				PointHash.InsertPoint(v.vtx_id, v.v);
+                    Target.SetVertex(new_v, v.v);
+                    v.vtx_id = new_v;
+                    _vIDToSegVtxMap[v.vtx_id] = v;
+                    _pointHash.InsertPoint(v.vtx_id, v.v);
 
-				// remove this triangles vtx list because it is no longer valid
-				FaceVertices.Remove(tid);
+                    // remove this triangles vtx list because it is no longer valid
+                    _faceVertices.Remove(tid);
 
-				// update remaining verts
-				Index3i pokeEdges = pokeInfo.new_edges;
-				Index3i pokeTris = new Index3i(tid, pokeInfo.new_t1, pokeInfo.new_t2);
-				foreach (SegmentVtx sv in triVerts)
-				{
-					update_from_poke(sv, pokeEdges, pokeTris);
-					if (sv.type == 1)
-						add_edge_vtx(sv.elem_id, sv);
-					else if (sv.type == 2)
-						add_face_vtx(sv.elem_id, sv);
-				}
+                    // update remaining verts
+                    var pokeEdges = pokeInfo.new_edges;
+                    var pokeTris = new Index3i(tid, pokeInfo.new_t1, pokeInfo.new_t2);
+                    foreach (var sv in triVerts)
+                    {
+                        Update_from_poke(sv, pokeEdges, pokeTris);
+                        if (sv.type == 1)
+                        {
+                            Add_edge_vtx(sv.elem_id, sv);
+                        }
+                        else if (sv.type == 2)
+                        {
+                            Add_face_vtx(sv.elem_id, sv);
+                        }
+                    }
 
-				// track poke subfaces
-				add_poke_subfaces(tid, ref pokeInfo);
-			}
-		}
+                    // track poke subfaces
+                    Add_poke_subfaces(tid, ref pokeInfo);
+                }
+                else
+                {
+                    throw new Exception("shit");
+                }
+            }
+        }
 
 
 
 		/// <summary>
 		/// figure out which vtx/edge/face the input vtx is on
 		/// </summary>
-		void update_from_poke(SegmentVtx sv, Index3i pokeEdges, Index3i pokeTris)
+		void Update_from_poke(SegmentVtx sv, Index3i pokeEdges, Index3i pokeTris)
 		{
 			// check if within tolerance of existing vtx, because we did not 
 			// sort that out before...
-			int existing_v = find_existing_vertex(sv.v);
+			var existing_v = Find_existing_vertex(sv.v);
 			if (existing_v >= 0)
 			{
 				sv.type = 0;
 				sv.elem_id = existing_v;
 				sv.vtx_id = existing_v;
-				VIDToSegVtxMap[sv.vtx_id] = sv;
+				_vIDToSegVtxMap[sv.vtx_id] = sv;
 				return;
 			}
 
-			for (int j = 0; j < 3; ++j)
+			for (var j = 0; j < 3; ++j)
 			{
-				if (is_on_edge(pokeEdges[j], sv.v))
+				if (Is_on_edge(pokeEdges[j], sv.v))
 				{
 					sv.type = 1;
 					sv.elem_id = pokeEdges[j];
@@ -328,9 +358,9 @@ namespace RNumerics
 			}
 
 			// [TODO] should use PrimalQuery2d for this!
-			for (int j = 0; j < 3; ++j)
+			for (var j = 0; j < 3; ++j)
 			{
-				if (is_in_triangle(pokeTris[j], sv.v))
+				if (Is_in_triangle(pokeTris[j], sv.v))
 				{
 					sv.type = 2;
 					sv.elem_id = pokeTris[j];
@@ -349,43 +379,47 @@ namespace RNumerics
 		/// for each on-edge vtx, we split the edge and then
 		/// re-sort any of the vertices on that edge onto new edges
 		/// </summary>
-		void insert_edge_vertices()
+		void Insert_edge_vertices()
 		{
-			while (EdgeVertices.Count > 0)
+			while (_edgeVertices.Count > 0)
 			{
-				var pair = EdgeVertices.First();
-				int eid = pair.Key;
-				List<SegmentVtx> edgeVerts = pair.Value;
-				SegmentVtx v = edgeVerts[edgeVerts.Count - 1];
+				var pair = _edgeVertices.First();
+				var eid = pair.Key;
+				var edgeVerts = pair.Value;
+				var v = edgeVerts[edgeVerts.Count - 1];
 				edgeVerts.RemoveAt(edgeVerts.Count - 1);
 
-				Index2i splitTris = Target.GetEdgeT(eid);
+				var splitTris = Target.GetEdgeT(eid);
 
-				DMesh3.EdgeSplitInfo splitInfo;
-				MeshResult result = Target.SplitEdge(eid, out splitInfo);
-				if (result != MeshResult.Ok)
-					throw new Exception("insert_edge_vertices: split failed!");
-				int new_v = splitInfo.vNew;
-				Index2i splitEdges = new Index2i(eid, splitInfo.eNewBN);
+                var result = Target.SplitEdge(eid, out var splitInfo);
+                if (result != MeshResult.Ok)
+                {
+                    throw new Exception("insert_edge_vertices: split failed!");
+                }
+
+                var new_v = splitInfo.vNew;
+				var splitEdges = new Index2i(eid, splitInfo.eNewBN);
 
 				Target.SetVertex(new_v, v.v);
 				v.vtx_id = new_v;
-				VIDToSegVtxMap[v.vtx_id] = v;
-				PointHash.InsertPoint(v.vtx_id, v.v);
+				_vIDToSegVtxMap[v.vtx_id] = v;
+				_pointHash.InsertPoint(v.vtx_id, v.v);
 
 				// remove this triangles vtx list because it is no longer valid
-				EdgeVertices.Remove(eid);
+				_edgeVertices.Remove(eid);
 
-				// update remaining verts
-				foreach (SegmentVtx sv in edgeVerts)
+                // update remaining verts
+                foreach (var sv in edgeVerts)
 				{
-					update_from_split(sv, splitEdges);
+					Update_from_split(sv, splitEdges);
 					if (sv.type == 1)
-						add_edge_vtx(sv.elem_id, sv);
-				}
+                    {
+                        Add_edge_vtx(sv.elem_id, sv);
+                    }
+                }
 
 				// track subfaces
-				add_split_subfaces(splitTris, ref splitInfo);
+				Add_split_subfaces(splitTris, ref splitInfo);
 
 			}
 		}
@@ -395,23 +429,23 @@ namespace RNumerics
 		/// <summary>
 		/// figure out which vtx/edge the input vtx is on
 		/// </summary>
-		void update_from_split(SegmentVtx sv, Index2i splitEdges)
+		void Update_from_split(SegmentVtx sv, Index2i splitEdges)
 		{
 			// check if within tolerance of existing vtx, because we did not 
 			// sort that out before...
-			int existing_v = find_existing_vertex(sv.v);
+			var existing_v = Find_existing_vertex(sv.v);
 			if (existing_v >= 0)
 			{
 				sv.type = 0;
 				sv.elem_id = existing_v;
 				sv.vtx_id = existing_v;
-				VIDToSegVtxMap[sv.vtx_id] = sv;
+				_vIDToSegVtxMap[sv.vtx_id] = sv;
 				return;
 			}
 
-			for (int j = 0; j < 2; ++j)
+			for (var j = 0; j < 2; ++j)
 			{
-				if (is_on_edge(splitEdges[j], sv.v))
+				if (Is_on_edge(splitEdges[j], sv.v))
 				{
 					sv.type = 1;
 					sv.elem_id = splitEdges[j];
@@ -432,36 +466,46 @@ namespace RNumerics
 		/// Make sure that all intersection segments are represented by
 		/// a connected chain of edges.
 		/// </summary>
-		void connect_edges()
+		void Connect_edges()
 		{
-			int NS = Segments.Length;
-			for (int si = 0; si < NS; ++si)
+			var NS = _segments.Length;
+			for (var si = 0; si < NS; ++si)
 			{
-				IntersectSegment seg = Segments[si];
+				var seg = _segments[si];
 				if (seg.v0 == seg.v1)
-					continue;       // degenerate!
-				if (seg.v0.vtx_id == seg.v1.vtx_id)
-					continue;       // also degenerate and how does this happen?
+                {
+                    continue;       // degenerate!
+                }
 
-				int a = seg.v0.vtx_id, b = seg.v1.vtx_id;
+                if (seg.v0.vtx_id == seg.v1.vtx_id)
+                {
+                    continue;       // also degenerate and how does this happen?
+                }
+
+                int a = seg.v0.vtx_id, b = seg.v1.vtx_id;
 
 				if (a == DMesh3.InvalidID || b == DMesh3.InvalidID)
-					throw new Exception("segment vertex is not defined?");
-				int eid = Target.FindEdge(a, b);
+                {
+                    throw new Exception("segment vertex is not defined?");
+                }
+
+                var eid = Target.FindEdge(a, b);
 				if (eid != DMesh3.InvalidID)
-					continue;       // already connected
+                {
+                    continue;       // already connected
+                }
 
-				// TODO: in many cases there is an edge we added during a
-				// poke or split that we could flip to get edge AB. 
-				// this is much faster and we should do it where possible!
-				// HOWEVER we need to know which edges we can and cannot flip
-				// is_inserted_free_edge() should do this but not implemented yet
-				// possibly also requires that we do all these flips before any
-				// calls to insert_segment() !
+                // TODO: in many cases there is an edge we added during a
+                // poke or split that we could flip to get edge AB. 
+                // this is much faster and we should do it where possible!
+                // HOWEVER we need to know which edges we can and cannot flip
+                // is_inserted_free_edge() should do this but not implemented yet
+                // possibly also requires that we do all these flips before any
+                // calls to insert_segment() !
 
-				try
+                try
 				{
-					insert_segment(seg);
+					Insert_segment(seg);
 				}
 				catch (Exception)
 				{
@@ -471,18 +515,17 @@ namespace RNumerics
 		}
 
 
-		void insert_segment(IntersectSegment seg)
+		void Insert_segment(IntersectSegment seg)
 		{
-			List<int> subfaces = get_all_baseface_tris(seg.base_tid);
+			var subfaces = Get_all_baseface_tris(seg.base_tid);
 
-			RegionOperator op = new RegionOperator(Target, subfaces);
+			var op = new RegionOperator(Target, subfaces);
 
-			Vector3d n = BaseFaceNormals[seg.base_tid];
-			Vector3d c = BaseFaceCentroids[seg.base_tid];
-			Vector3d e0, e1;
-			Vector3d.MakePerpVectors(ref n, out e0, out e1);
+			var n = _baseFaceNormals[seg.base_tid];
+			var c = _baseFaceCentroids[seg.base_tid];
+            Vector3d.MakePerpVectors(ref n, out var e0, out var e1);
 
-			DMesh3 mesh = op.Region.SubMesh;
+            var mesh = op.Region.SubMesh;
 			MeshTransforms.PerVertexTransform(mesh, (v) =>
 			{
 				v -= c;
@@ -492,182 +535,201 @@ namespace RNumerics
 			Vector3d end0 = seg.v0.v, end1 = seg.v1.v;
 			end0 -= c;
 			end1 -= c;
-			Vector2d p0 = new Vector2d(end0.Dot(e0), end0.Dot(e1));
-			Vector2d p1 = new Vector2d(end1.Dot(e0), end1.Dot(e1));
-			PolyLine2d path = new PolyLine2d();
+			var p0 = new Vector2d(end0.Dot(e0), end0.Dot(e1));
+			var p1 = new Vector2d(end1.Dot(e0), end1.Dot(e1));
+			var path = new PolyLine2d();
 			path.AppendVertex(p0);
 			path.AppendVertex(p1);
 
-			MeshInsertUVPolyCurve insert = new MeshInsertUVPolyCurve(mesh, path);
+			var insert = new MeshInsertUVPolyCurve(mesh, path);
 			insert.Apply();
 
-			MeshVertexSelection cutVerts = new MeshVertexSelection(mesh);
+			var cutVerts = new MeshVertexSelection(mesh);
 			cutVerts.SelectEdgeVertices(insert.OnCutEdges);
 
-			MeshTransforms.PerVertexTransform(mesh, (v) =>
-			{
-				return c + v.x * e0 + v.y * e1;
-			});
+            MeshTransforms.PerVertexTransform(mesh, (v) => c + (v.x * e0) + (v.y * e1));
 
 			op.BackPropropagate();
 
-			// add new cut vertices to cut list
-			foreach (int vid in cutVerts)
-				SegmentInsertVertices.Add(op.ReinsertSubToBaseMapV[vid]);
+            // add new cut vertices to cut list
+            foreach (var vid in cutVerts)
+            {
+                _segmentInsertVertices.Add(op.ReinsertSubToBaseMapV[vid]);
+            }
 
-			add_regionop_subfaces(seg.base_tid, op);
+            Add_regionop_subfaces(seg.base_tid, op);
 		}
 
 
 
 
 
-		void add_edge_vtx(int eid, SegmentVtx vtx)
+		void Add_edge_vtx(int eid, SegmentVtx vtx)
 		{
-			List<SegmentVtx> l;
-			if (EdgeVertices.TryGetValue(eid, out l))
-			{
-				l.Add(vtx);
-			}
-			else
-			{
-				l = new List<SegmentVtx>() { vtx };
-				EdgeVertices[eid] = l;
-			}
-		}
+            if (_edgeVertices.TryGetValue(eid, out var l))
+            {
+                l.Add(vtx);
+            }
+            else
+            {
+                l = new List<SegmentVtx>() { vtx };
+                _edgeVertices[eid] = l;
+            }
+        }
 
-		void add_face_vtx(int tid, SegmentVtx vtx)
+		void Add_face_vtx(int tid, SegmentVtx vtx)
 		{
-			List<SegmentVtx> l;
-			if (FaceVertices.TryGetValue(tid, out l))
-			{
-				l.Add(vtx);
-			}
-			else
-			{
-				l = new List<SegmentVtx>() { vtx };
-				FaceVertices[tid] = l;
-			}
-		}
+            if (_faceVertices.TryGetValue(tid, out var l))
+            {
+                l.Add(vtx);
+            }
+            else
+            {
+                l = new List<SegmentVtx>() { vtx };
+                _faceVertices[tid] = l;
+            }
+        }
 
 
 
-		void add_poke_subfaces(int tid, ref DMesh3.PokeTriangleInfo pokeInfo)
+		void Add_poke_subfaces(int tid, ref DMesh3.PokeTriangleInfo pokeInfo)
 		{
-			int parent = get_parent(tid);
-			HashSet<int> subfaces = get_subfaces(parent);
+			var parent = Get_parent(tid);
+			var subfaces = Get_subfaces(parent);
 			if (tid != parent)
-				add_subface(subfaces, parent, tid);
-			add_subface(subfaces, parent, pokeInfo.new_t1);
-			add_subface(subfaces, parent, pokeInfo.new_t2);
+            {
+                Add_subface(subfaces, parent, tid);
+            }
+
+            Add_subface(subfaces, parent, pokeInfo.new_t1);
+			Add_subface(subfaces, parent, pokeInfo.new_t2);
 		}
-		void add_split_subfaces(Index2i origTris, ref DMesh3.EdgeSplitInfo splitInfo)
+		void Add_split_subfaces(Index2i origTris, ref DMesh3.EdgeSplitInfo splitInfo)
 		{
-			int parent_1 = get_parent(origTris.a);
-			HashSet<int> subfaces_1 = get_subfaces(parent_1);
+			var parent_1 = Get_parent(origTris.a);
+			var subfaces_1 = Get_subfaces(parent_1);
 			if (origTris.a != parent_1)
-				add_subface(subfaces_1, parent_1, origTris.a);
-			add_subface(subfaces_1, parent_1, splitInfo.eNewT2);
+            {
+                Add_subface(subfaces_1, parent_1, origTris.a);
+            }
+
+            Add_subface(subfaces_1, parent_1, splitInfo.eNewT2);
 
 			if (origTris.b != DMesh3.InvalidID)
 			{
-				int parent_2 = get_parent(origTris.b);
-				HashSet<int> subfaces_2 = get_subfaces(parent_2);
+				var parent_2 = Get_parent(origTris.b);
+                var subfaces_2 = Get_subfaces(parent_2);
 				if (origTris.b != parent_2)
-					add_subface(subfaces_2, parent_2, origTris.b);
-				add_subface(subfaces_2, parent_2, splitInfo.eNewT3);
+                {
+                    Add_subface(subfaces_2, parent_2, origTris.b);
+                }
+
+                Add_subface(subfaces_2, parent_2, splitInfo.eNewT3);
 			}
 		}
-		void add_regionop_subfaces(int parent, RegionOperator op)
+		void Add_regionop_subfaces(int parent, RegionOperator op)
 		{
-			HashSet<int> subfaces = get_subfaces(parent);
-			foreach (int tid in op.CurrentBaseTriangles)
+			var subfaces = Get_subfaces(parent);
+            foreach (var tid in op.CurrentBaseTriangles)
 			{
 				if (tid != parent)
-					add_subface(subfaces, parent, tid);
-			}
+                {
+                    Add_subface(subfaces, parent, tid);
+                }
+            }
 		}
 
 
-		int get_parent(int tid)
+		int Get_parent(int tid)
 		{
-			int parent;
-			if (ParentFaces.TryGetValue(tid, out parent) == false)
-				parent = tid;
-			return parent;
+            if (_parentFaces.TryGetValue(tid, out var parent) == false)
+            {
+                parent = tid;
+            }
+
+            return parent;
 		}
-		HashSet<int> get_subfaces(int parent)
+        HashSet<int> Get_subfaces(int parent)
 		{
-			HashSet<int> subfaces;
-			if (SubFaces.TryGetValue(parent, out subfaces) == false)
-			{
-				subfaces = new HashSet<int>();
-				SubFaces[parent] = subfaces;
-			}
-			return subfaces;
+            if (_subFaces.TryGetValue(parent, out var subfaces) == false)
+            {
+                subfaces = new HashSet<int>();
+                _subFaces[parent] = subfaces;
+            }
+            return subfaces;
 		}
-		void add_subface(HashSet<int> subfaces, int parent, int tid)
+		void Add_subface(HashSet<int> subfaces, int parent, int tid)
 		{
 			subfaces.Add(tid);
-			ParentFaces[tid] = parent;
+			_parentFaces[tid] = parent;
 		}
-		List<int> get_all_baseface_tris(int base_tid)
+        List<int> Get_all_baseface_tris(int base_tid)
 		{
-			List<int> faces = new List<int>(get_subfaces(base_tid));
-			faces.Add(base_tid);
-			return faces;
-		}
-
-		bool is_inserted_free_edge(int eid)
-		{
-			Index2i et = Target.GetEdgeT(eid);
-			if (get_parent(et.a) != get_parent(et.b))
-				return false;
-			// TODO need to check if we need to save edge AB to connect vertices!
-			throw new Exception("not done yet!");
-			return true;
+            var faces = new List<int>(Get_subfaces(base_tid))
+            {
+                base_tid
+            };
+            return faces;
 		}
 
-
-
-
-		protected int on_edge(ref Triangle3d tri, ref Vector3d v)
+		bool Is_inserted_free_edge(int eid)
 		{
-			Segment3d s01 = new Segment3d(tri.V0, tri.V1);
+			var et = Target.GetEdgeT(eid);
+			if (Get_parent(et.a) != Get_parent(et.b))
+            {
+                return false;
+            }
+            // TODO need to check if we need to save edge AB to connect vertices!
+            throw new Exception("not done yet!");
+		}
+
+
+
+
+        protected int On_edge(ref Triangle3d tri, ref Vector3d v)
+		{
+			var s01 = new Segment3d(tri.V0, tri.V1);
 			if (s01.DistanceSquared(v) < VertexSnapTol * VertexSnapTol)
-				return 0;
-			Segment3d s12 = new Segment3d(tri.V1, tri.V2);
+            {
+                return 0;
+            }
+
+            var s12 = new Segment3d(tri.V1, tri.V2);
 			if (s12.DistanceSquared(v) < VertexSnapTol * VertexSnapTol)
-				return 1;
-			Segment3d s20 = new Segment3d(tri.V2, tri.V0);
-			if (s20.DistanceSquared(v) < VertexSnapTol * VertexSnapTol)
-				return 2;
-			return -1;
-		}
-		protected int on_edge_eid(int tid, Vector3d v)
+            {
+                return 1;
+            }
+
+            var s20 = new Segment3d(tri.V2, tri.V0);
+            return s20.DistanceSquared(v) < VertexSnapTol * VertexSnapTol ? 2 : -1;
+        }
+        protected int On_edge_eid(int tid, Vector3d v)
 		{
-			Index3i tv = Target.GetTriangle(tid);
-			Triangle3d tri = new Triangle3d();
+			var tv = Target.GetTriangle(tid);
+			var tri = new Triangle3d();
 			Target.GetTriVertices(tid, ref tri.V0, ref tri.V1, ref tri.V2);
-			int eidx = on_edge(ref tri, ref v);
+			var eidx = On_edge(ref tri, ref v);
 			if (eidx < 0)
-				return DMesh3.InvalidID;
-			int eid = Target.FindEdge(tv[eidx], tv[(eidx + 1) % 3]);
+            {
+                return DMesh3.InvalidID;
+            }
+
+            var eid = Target.FindEdge(tv[eidx], tv[(eidx + 1) % 3]);
 			Util.gDevAssert(eid != DMesh3.InvalidID);
 			return eid;
 		}
-		protected bool is_on_edge(int eid, Vector3d v)
+        protected bool Is_on_edge(int eid, Vector3d v)
 		{
-			Index2i ev = Target.GetEdgeV(eid);
-			Segment3d seg = new Segment3d(Target.GetVertex(ev.a), Target.GetVertex(ev.b));
+			var ev = Target.GetEdgeV(eid);
+			var seg = new Segment3d(Target.GetVertex(ev.a), Target.GetVertex(ev.b));
 			return seg.DistanceSquared(v) < VertexSnapTol * VertexSnapTol;
 		}
 
-		protected bool is_in_triangle(int tid, Vector3d v)
+		protected bool Is_in_triangle(int tid, Vector3d v)
 		{
-			Triangle3d tri = new Triangle3d();
+			var tri = new Triangle3d();
 			Target.GetTriVertices(tid, ref tri.V0, ref tri.V1, ref tri.V2);
-			Vector3d bary = tri.BarycentricCoords(v);
+			var bary = tri.BarycentricCoords(v);
 			return (bary.x >= 0 && bary.y >= 0 && bary.z >= 0
 				  && bary.x < 1 && bary.y <= 1 && bary.z <= 1);
 
@@ -678,28 +740,26 @@ namespace RNumerics
 		/// <summary>
 		/// find existing vertex at point, if it exists
 		/// </summary>
-		protected int find_existing_vertex(Vector3d pt)
+		protected int Find_existing_vertex(Vector3d pt)
 		{
-			return find_nearest_vertex(pt, VertexSnapTol);
+			return Find_nearest_vertex(pt, VertexSnapTol);
 		}
 		/// <summary>
 		/// find closest vertex, within searchRadius
 		/// </summary>
-		protected int find_nearest_vertex(Vector3d pt, double searchRadius, int ignore_vid = -1)
+		protected int Find_nearest_vertex(Vector3d pt, double searchRadius, int ignore_vid = -1)
 		{
-			KeyValuePair<int, double> found = (ignore_vid == -1) ?
-				PointHash.FindNearestInRadius(pt, searchRadius,
-							(b) => { return pt.DistanceSquared(Target.GetVertex(b)); })
+			var found = (ignore_vid == -1) ?
+				_pointHash.FindNearestInRadius(pt, searchRadius,
+                            (b) => pt.DistanceSquared(Target.GetVertex(b)))
 							:
-				PointHash.FindNearestInRadius(pt, searchRadius,
-							(b) => { return pt.DistanceSquared(Target.GetVertex(b)); },
-							(vid) => { return vid == ignore_vid; });
-			if (found.Key == PointHash.InvalidValue)
-				return -1;
-			return found.Key;
-		}
+				_pointHash.FindNearestInRadius(pt, searchRadius,
+                            (b) => pt.DistanceSquared(Target.GetVertex(b)),
+                            (vid) => vid == ignore_vid);
+            return found.Key == _pointHash.InvalidValue ? -1 : found.Key;
+        }
 
 
 
-	}
+    }
 }
