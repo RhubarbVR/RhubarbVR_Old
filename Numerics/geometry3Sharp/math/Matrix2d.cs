@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace g3
+namespace RNumerics
 {
 	// some functions ported from WildMagic5 Matrix2
 	public class Matrix2d

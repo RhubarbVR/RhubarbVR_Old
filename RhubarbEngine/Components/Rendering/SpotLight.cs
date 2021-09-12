@@ -10,7 +10,7 @@ using RhubarbEngine.World.ECS;
 using RhubarbEngine.World;
 using RhubarbEngine.Render;
 using RhubarbEngine.World.Asset;
-using g3;
+using RNumerics;
 using Veldrid;
 using System.Numerics;
 using RhubarbEngine.Utilities;

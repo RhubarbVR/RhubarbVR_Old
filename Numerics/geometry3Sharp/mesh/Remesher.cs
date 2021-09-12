@@ -4,7 +4,7 @@ using System.Collections;
 using System.Diagnostics;
 
 
-namespace g3
+namespace RNumerics
 {
 
 	public class Remesher : MeshRefinerBase

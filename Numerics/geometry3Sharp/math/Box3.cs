@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace g3
+namespace RNumerics
 {
 
 	// partially based on WildMagic5 Box3
@@ -159,7 +159,7 @@ namespace g3
 		}
 
 
-		// g3 extensions
+		// RNumerics extensions
 		public double MaxExtent
 		{
 			get { return Math.Max(Extent.x, Math.Max(Extent.y, Extent.z)); }
@@ -615,7 +615,7 @@ namespace g3
 
 
 
-		// g3 extensions
+		// RNumerics extensions
 		public double MaxExtent
 		{
 			get { return Math.Max(Extent.x, Math.Max(Extent.y, Extent.z)); }

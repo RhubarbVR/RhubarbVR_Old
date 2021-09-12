@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-namespace g3
+namespace RNumerics
 {
 	public class Polygon2d : IDuplicatable<Polygon2d>
 	{

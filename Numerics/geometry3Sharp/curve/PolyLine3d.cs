@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace g3
+namespace RNumerics
 {
 	public class PolyLine3d : IEnumerable<Vector3d>
 	{

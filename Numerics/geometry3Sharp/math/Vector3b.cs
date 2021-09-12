@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using MessagePack;
 
-namespace g3
+namespace RNumerics
 {
 	[MessagePackObject]
 	public struct Vector3b : IComparable<Vector3b>, IEquatable<Vector3b>, IConvertible

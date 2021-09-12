@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-using g3;
+using RNumerics;
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// Basic implementation of marching cubes mesh generation, which can be applied to

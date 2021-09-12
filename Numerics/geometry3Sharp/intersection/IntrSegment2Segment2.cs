@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace g3
+namespace RNumerics
 {
 	// ported from WildMagic5
 	//

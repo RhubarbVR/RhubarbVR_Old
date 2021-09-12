@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace g3
+namespace RNumerics
 {
 
 	// ported from GTEngine GteContOrientedBox3.h

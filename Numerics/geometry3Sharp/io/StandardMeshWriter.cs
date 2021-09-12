@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Globalization;
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// Writes various mesh file formats. Format is determined from extension. Currently supports:
@@ -58,7 +58,7 @@ namespace g3
 
 		static public IOWriteResult WriteMeshes(string sFilename, List<DMesh3> vMeshes, WriteOptions options)
 		{
-			List<WriteMesh> meshes = new List<g3.WriteMesh>();
+			List<WriteMesh> meshes = new List<RNumerics.WriteMesh>();
 			foreach (var m in vMeshes)
 				meshes.Add(new WriteMesh(m));
 			StandardMeshWriter writer = new StandardMeshWriter();

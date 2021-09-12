@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace g3
+namespace RNumerics
 {
 	public interface ITransform2
 	{

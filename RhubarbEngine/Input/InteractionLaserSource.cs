@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BulletSharp;
 using BulletSharp.Math;
-using g3;
+using RNumerics;
 using RhubarbEngine.Components.Interaction;
 using RhubarbEngine.Components.Physics.Colliders;
 using RhubarbEngine.Managers;

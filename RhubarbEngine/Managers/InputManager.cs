@@ -7,7 +7,7 @@ using RhubarbEngine.Input;
 using Veldrid;
 using RhubarbEngine.VirtualReality;
 using RhubarbEngine.Input.Controllers;
-using g3;
+using RNumerics;
 using System.Numerics;
 using RhubarbEngine.Components.Interaction;
 

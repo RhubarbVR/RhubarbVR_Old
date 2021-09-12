@@ -4,7 +4,7 @@
 using UnityEngine;
 #endif
 
-namespace g3
+namespace RNumerics
 {
 	abstract public class MeshGenerator
 	{

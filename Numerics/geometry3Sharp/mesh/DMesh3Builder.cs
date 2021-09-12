@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace g3
+namespace RNumerics
 {
 	public class DMesh3Builder : IMeshBuilder
 	{

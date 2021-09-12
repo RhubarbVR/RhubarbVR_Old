@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// Scalar version of a ColorMap (ie interpolate between sample points)

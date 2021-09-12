@@ -12,7 +12,7 @@ using RhubarbEngine.World;
 using Veldrid;
 using Veldrid.Sdl2;
 using System.Runtime.InteropServices;
-using g3;
+using RNumerics;
 using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.Components.Users

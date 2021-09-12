@@ -5,7 +5,7 @@ using System.Linq;
 using System.Diagnostics;
 
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// Arbitrary-Topology 2D Graph. This is similar to DMesh3 but without faces. 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// Utility functions for manipulating sets/lists of mesh indices

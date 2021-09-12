@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
-using g3;
+using RNumerics;
 using MessagePack;
-namespace g3
+namespace RNumerics
 {
 	[MessagePackObject]
 	public struct Frame3f

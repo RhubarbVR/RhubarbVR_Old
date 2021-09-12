@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Veldrid;
 using RhubarbEngine.Render.Shader.Vals;
-using g3;
+using RNumerics;
 
 namespace RhubarbEngine.Render.Material.Fields
 {

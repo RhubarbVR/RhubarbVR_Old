@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace g3
+namespace RNumerics
 {
 	/*
      * Basic cache of per-triangle information for a DMesh3

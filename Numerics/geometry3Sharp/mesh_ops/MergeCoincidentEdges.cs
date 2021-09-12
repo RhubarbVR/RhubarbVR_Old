@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-using g3;
+using RNumerics;
 
 namespace gs
 {

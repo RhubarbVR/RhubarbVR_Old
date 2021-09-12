@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace g3
+namespace RNumerics
 {
 
 	public class Arc2d : IParametricCurve2d

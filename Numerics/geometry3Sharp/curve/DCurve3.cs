@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace g3
+namespace RNumerics
 {
 	/// <summary>
 	/// DCurve3 is a 3D polyline, either open or closed (via .Closed)

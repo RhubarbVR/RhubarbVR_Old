@@ -16,8 +16,8 @@ namespace RhubarbEngine.Components.Interaction.Tests
         [TestMethod()]
         public void getUVPosOnTryTest()
         {
-            //var val = InteractionLaser.getUVPosOnTry(new g3.Vector3d(2, 2, 0), new g3.Vector2f(1, 1), new g3.Vector3d(0, 0, 0), new g3.Vector2f(0, 0), new g3.Vector3d(2, 0, 0), new g3.Vector2f(1, 0), new g3.Vector3d(1, 1, 0));
-            //if (val != new g3.Vector2f(0.5, 0.5))
+            //var val = InteractionLaser.getUVPosOnTry(new RNumerics.Vector3d(2, 2, 0), new RNumerics.Vector2f(1, 1), new RNumerics.Vector3d(0, 0, 0), new RNumerics.Vector2f(0, 0), new RNumerics.Vector3d(2, 0, 0), new RNumerics.Vector2f(1, 0), new RNumerics.Vector3d(1, 1, 0));
+            //if (val != new RNumerics.Vector2f(0.5, 0.5))
             //{
             //    Assert.Fail(val.ToString());
             //}

@@ -12,7 +12,7 @@ using Veldrid;
 using Veldrid.ImageSharp;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using g3;
+using RNumerics;
 using CefSharp.OffScreen;
 
 public static class ImageSharpExtensions

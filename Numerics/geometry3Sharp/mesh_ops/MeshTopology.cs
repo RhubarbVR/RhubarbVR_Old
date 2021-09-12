@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using g3;
+using RNumerics;
 
 namespace gs
 {

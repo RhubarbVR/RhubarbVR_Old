@@ -8,7 +8,7 @@ using System.Text;
 using UnityEngine;
 #endif
 
-namespace g3
+namespace RNumerics
 {
 	[MessagePackObject]
 	public struct Colorf : IComparable<Colorf>, IEquatable<Colorf>, IConvertible

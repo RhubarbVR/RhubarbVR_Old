@@ -1,6 +1,6 @@
 using System;
 
-namespace g3
+namespace RNumerics
 {
 	public struct AxisAlignedBox3d : IComparable<AxisAlignedBox3d>, IEquatable<AxisAlignedBox3d>
 	{

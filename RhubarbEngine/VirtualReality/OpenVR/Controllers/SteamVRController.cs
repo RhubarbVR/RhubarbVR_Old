@@ -4,7 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using g3;
+using RNumerics;
 using RhubarbEngine.Input;
 using RhubarbEngine.Input.Controllers;
 using OVR = Valve.VR.OpenVR;

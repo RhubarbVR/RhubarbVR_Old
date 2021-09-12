@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace g3
+namespace RNumerics
 {
 	public partial class DMesh3
 	{

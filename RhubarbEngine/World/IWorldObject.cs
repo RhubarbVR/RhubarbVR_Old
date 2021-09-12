@@ -7,7 +7,7 @@ using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
 using RhubarbEngine.World.ECS;
 using System.Numerics;
-using g3;
+using RNumerics;
 
 namespace RhubarbEngine.World
 {

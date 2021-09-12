@@ -9,7 +9,7 @@ using RhubarbEngine.World.ECS;
 using RhubarbEngine.World.DataStructure;
 using System.Reflection;
 using RhubarbDataTypes;
-using g3;
+using RNumerics;
 using RhubarbEngine.Render;
 using System.Numerics;
 using RhubarbEngine.Components.Users;

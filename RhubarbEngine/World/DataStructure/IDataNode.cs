@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RhubarbDataTypes;
-using g3;
+using RNumerics;
 namespace RhubarbEngine.World.DataStructure
 {
 	public interface IDataNode

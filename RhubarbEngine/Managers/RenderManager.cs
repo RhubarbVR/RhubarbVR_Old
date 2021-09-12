@@ -137,7 +137,7 @@ namespace RhubarbEngine.Managers
 
 			var rhubatextures = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR.png"), false, true).CreateDeviceTexture(this._engine.renderManager.gd, this._engine.renderManager.gd.ResourceFactory);
             rhubarbSolidview = this._engine.renderManager.gd.ResourceFactory.CreateTextureView(rhubatextures);
-			var solidTexture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, g3.Colorf.White), false).CreateDeviceTexture(this._engine.renderManager.gd, this._engine.renderManager.gd.ResourceFactory);
+			var solidTexture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, RNumerics.Colorf.White), false).CreateDeviceTexture(this._engine.renderManager.gd, this._engine.renderManager.gd.ResourceFactory);
             solidview = this._engine.renderManager.gd.ResourceFactory.CreateTextureView(solidTexture);
 			var index = 0;
 			foreach (Input.Cursors item in Enum.GetValues(typeof(RhubarbEngine.Input.Cursors)))

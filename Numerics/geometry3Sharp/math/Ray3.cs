@@ -7,7 +7,7 @@ using System.Text;
 using UnityEngine;
 #endif
 
-namespace g3
+namespace RNumerics
 {
 	public struct Ray3d
 	{
