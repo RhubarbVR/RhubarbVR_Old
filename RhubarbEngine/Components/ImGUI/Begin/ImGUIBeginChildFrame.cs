@@ -25,9 +25,9 @@ namespace RhubarbEngine.Components.ImGUI
 		public Sync<Vector2f> size;
 
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			id = new Sync<uint>(this, newRefIds);
 			size = new Sync<Vector2f>(this, newRefIds);
 

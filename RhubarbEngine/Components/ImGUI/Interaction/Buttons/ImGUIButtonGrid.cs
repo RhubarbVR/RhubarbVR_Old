@@ -23,9 +23,9 @@ namespace RhubarbEngine.Components.ImGUI
 		public SyncValueList<string> labels;
 		public Sync<int> Columns;
 		public SyncDelegate<Action<string>> action;
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			labels = new SyncValueList<string>(this, newRefIds);
 			action = new SyncDelegate<Action<string>>(this, newRefIds);
 			Columns = new Sync<int>(this, newRefIds);

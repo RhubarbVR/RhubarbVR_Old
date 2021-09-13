@@ -23,9 +23,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<Sync<Vector4f>> target;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<Sync<Vector4f>>(this, newRefIds);
 			fieldName = new Sync<string>(this, newRefIds);
 		}
@@ -52,13 +52,13 @@ namespace RhubarbEngine.Components.ImGUI
 			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
-					source = world.LeftLaserGrabbableHolder;
+					source = World.LeftLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.RightLaser:
-					source = world.RightLaserGrabbableHolder;
+					source = World.RightLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.HeadLaser:
-					source = world.HeadLaserGrabbableHolder;
+					source = World.HeadLaserGrabbableHolder;
 					break;
 				default:
 					break;
@@ -77,7 +77,7 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
 			var val = target.Target?.Value.ToSystemNumrics() ?? Vector4.Zero;
-			if (ImGui.DragFloat4((fieldName.Value ?? "null") + $"##{referenceID.id}", ref val, 0.1f, -10000, 10000, "%.2f", ImGuiSliderFlags.NoRoundToFormat))
+			if (ImGui.DragFloat4((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref val, 0.1f, -10000, 10000, "%.2f", ImGuiSliderFlags.NoRoundToFormat))
 			{
 				if (target.Target != null)
                 {

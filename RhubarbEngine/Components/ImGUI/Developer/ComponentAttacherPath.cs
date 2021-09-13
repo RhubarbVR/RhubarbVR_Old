@@ -17,9 +17,9 @@ namespace RhubarbEngine.Components.ImGUI
 	{
 		public Sync<string> path;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			path = new Sync<string>(this, newRefIds);
 		}
 
@@ -34,7 +34,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (ImGui.Button(path.Value + "##" + referenceID.id, new System.Numerics.Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
+			if (ImGui.Button(path.Value + "##" + ReferenceID.id, new System.Numerics.Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
 			{
 				if (path.Value == "../")
 				{

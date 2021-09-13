@@ -234,8 +234,8 @@ namespace RhubarbEngine.World
 				Logger.Log("Sent start state");
 				var send = new DataNodeGroup();
 				send.SetValue("responses", new DataNode<string>("WorldSync"));
-				var value = Serialize(true);
-				send.SetValue("data", value);
+				var value = Serialize(new WorkerSerializerObject(true));
+                send.SetValue("data", value);
 				peer.Send(send.getByteArray(), ReliabilityLevel.Reliable);
 			}
 		}
@@ -548,7 +548,7 @@ namespace RhubarbEngine.World
 				{
 					if (((Worker)val) != null)
 					{
-						((Worker)val).onUpdate();
+						((Worker)val).OnUpdate();
 					}
 				});
 			}
@@ -566,7 +566,7 @@ namespace RhubarbEngine.World
 			{
 				if (((Worker)val) != null)
 				{
-					((Worker)val).onUserJoined(user);
+					((Worker)val).OnUserJoined(user);
 				}
 			}
 		}
@@ -756,27 +756,6 @@ namespace RhubarbEngine.World
 			}
 		}
 
-		public DataNodeGroup Serialize(bool netSave = false)
-		{
-			var fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-			var obj = new DataNodeGroup();
-			foreach (var field in fields)
-			{
-				if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && !(!netSave && (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length > 0)) && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))
-				{
-					if (((IWorldObject)field.GetValue(this)) != null)
-					{
-						obj.SetValue(field.Name, ((IWorldObject)field.GetValue(this)).Serialize(netSave));
-					}
-				}
-			}
-			if (netSave)
-			{
-				obj.SetValue("StartTime", new DataNode<DateTime>(StartTime));
-			}
-			return obj;
-		}
-
 		public void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = true, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
 		{
 			var fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
@@ -813,8 +792,12 @@ namespace RhubarbEngine.World
 
 		public DataNodeGroup Serialize()
 		{
-			return Serialize(false);
+			return Serialize(new WorkerSerializerObject(false));
 		}
 
-	}
+        public DataNodeGroup Serialize(WorkerSerializerObject serializerObject)
+        {
+            return serializerObject.CommonWorkerSerialize(this);
+        }
+    }
 }

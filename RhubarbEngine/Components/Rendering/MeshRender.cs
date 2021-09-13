@@ -42,7 +42,7 @@ namespace RhubarbEngine.Components.Rendering
             }
         }
 
-        public override void buildSyncObjs(bool newRefIds)
+        public override void BuildSyncObjs(bool newRefIds)
 		{
 			Mesh = new AssetRef<RMesh>(this, newRefIds);
 			Materials = new SyncAssetRefList<RMaterial>(this, newRefIds);
@@ -63,13 +63,13 @@ namespace RhubarbEngine.Components.Rendering
 
             if (Mesh.Target == null)
 			{
-				logger.Log("no mesh provider");
+				Logger.Log("no mesh provider");
 				return;
 			}
 			if (Mesh.Target.value == null)
 			{
-				logger.Log("no mesh to load");
-				logger.Log($"{Mesh.Value.getID()}");
+				Logger.Log("no mesh to load");
+				Logger.Log($"{Mesh.Value.getID()}");
 			}
 			else
 			{
@@ -96,7 +96,7 @@ namespace RhubarbEngine.Components.Rendering
                 return;
             }
 
-            logger.Log("load Materials");
+            Logger.Log("load Materials");
 			var factory = Gd.ResourceFactory;
 
             var positionLayoutDesc = new VertexLayoutDescription(
@@ -129,7 +129,7 @@ namespace RhubarbEngine.Components.Rendering
 				PrimitiveTopology.TriangleList,
 				new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.mainVertShader, mit.Shader.Asset.mainFragShader }),
 				mit.Shader.Asset.mainresourceLayout,
-				engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
+				Engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
 								AddDisposable(mainPipeline);
 								_mainPipeline.Add(mainPipeline);
 
@@ -141,7 +141,7 @@ namespace RhubarbEngine.Components.Rendering
 				PrimitiveTopology.TriangleList,
 				new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.shadowVertShader, mit.Shader.Asset.shadowFragShader }),
 				mit.Shader.Asset.shadowresourceLayout,
-				engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
+				Engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
 								AddDisposable(shadowPipeline);
 								_shadowpipeline.Add(mainPipeline);
 
@@ -255,7 +255,7 @@ namespace RhubarbEngine.Components.Rendering
         {
             get
             {
-                return engine.renderManager.gd;
+                return Engine.renderManager.gd;
             }
         }
 
@@ -310,7 +310,7 @@ namespace RhubarbEngine.Components.Rendering
 
 		public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
 		{
-			return RenderOrderKey.Create(RenderOrderOffset.Value, BoundingBox.DistanceFromPoint((Vector3)entity.GlobalPointToLocal((Vector3f)cameraPosition, false)));
+			return RenderOrderKey.Create(RenderOrderOffset.Value, BoundingBox.DistanceFromPoint((Vector3)Entity.GlobalPointToLocal((Vector3f)cameraPosition, false)));
 		}
 
 
@@ -318,15 +318,15 @@ namespace RhubarbEngine.Components.Rendering
 		{
 
 		}
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			_wvpBuffer = engine.renderManager.gd.ResourceFactory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+			_wvpBuffer = Engine.renderManager.gd.ResourceFactory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 			AddDisposable(_wvpBuffer);
-			Logger.Log("Loading Mesh Render");
+            RhubarbEngine.Logger.Log("Loading Mesh Render");
 			LoadMesh(null);
 			LoadMaterial(null);
 		}
-		public override void onChanged()
+		public override void OnChanged()
 		{
 		}
 		public MeshRender(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

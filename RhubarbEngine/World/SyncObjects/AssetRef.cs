@@ -39,9 +39,9 @@ namespace RhubarbEngine.World
 				loadedCall(Target.value);
 			}
 		}
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
+			base.OnLoaded();
 			base.Target.onLoadedCall += loadedCall;
 			if (base.Target.loaded)
 			{

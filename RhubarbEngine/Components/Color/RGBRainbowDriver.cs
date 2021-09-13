@@ -19,7 +19,7 @@ namespace RhubarbEngine.Components.Color
 		public Driver<Colorf> driver;
 
 		public Sync<float> speed;
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			driver = new Driver<Colorf>(this, newRefIds);
 			speed = new Sync<float>(this, newRefIds);
@@ -28,7 +28,7 @@ namespace RhubarbEngine.Components.Color
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			float deltaSeconds = (float)world.worldManager.engine.platformInfo.deltaSeconds;
+			float deltaSeconds = (float)World.worldManager.engine.platformInfo.deltaSeconds;
 			if (driver.Linked)
 			{
 				ColorHSV color = driver.Drivevalue;

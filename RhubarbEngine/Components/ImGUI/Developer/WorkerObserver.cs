@@ -37,9 +37,9 @@ namespace RhubarbEngine.Components.ImGUI
             }
         }
 
-        public override void buildSyncObjs(bool newRefIds)
+        public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<Worker>(this, newRefIds);
 			target.Changed += Target_Changed;
 			root = new SyncRef<IObserver>(this, newRefIds);
@@ -50,7 +50,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void Target_Changed(IChangeable obj)
 		{
-			if (entity.Manager != world.LocalUser)
+			if (Entity.Manager != World.LocalUser)
             {
                 return;
             }
@@ -84,26 +84,26 @@ namespace RhubarbEngine.Components.ImGUI
 
                 if (_lastWorker != null)
 				{
-					_lastWorker.onDispose -= Target_onDispose;
+					_lastWorker.OnDispose -= Target_onDispose;
 				}
-				target.Target.onDispose += Target_onDispose;
+				target.Target.OnDispose += Target_onDispose;
 				_lastWorker = target.Target;
 				var type = target.Target.GetType();
 				if ((typeof(Entity).IsAssignableFrom(type)))
 				{
-					var comp = entity.AttachComponent<EntityObserver>();
+					var comp = Entity.AttachComponent<EntityObserver>();
 					comp.target.Target = (Entity)target.Target;
 					root.Target = comp;
 				}
 				else if ((typeof(Component).IsAssignableFrom(type)))
 				{
-					var comp = entity.AttachComponent<ComponentObserver>();
+					var comp = Entity.AttachComponent<ComponentObserver>();
 					comp.target.Target = (Component)target.Target;
 					root.Target = comp;
 				}
 				else if ((typeof(Render.Material.Fields.MaterialField).IsAssignableFrom(type)))
 				{
-					var comp = entity.AttachComponent<MaterialFieldObserver>();
+					var comp = Entity.AttachComponent<MaterialFieldObserver>();
 					comp.target.Target = (Render.Material.Fields.MaterialField)target.Target;
 					root.Target = comp;
 				}
@@ -148,7 +148,7 @@ namespace RhubarbEngine.Components.ImGUI
 			//This is a temp fix
 			if (_e == null)
 			{
-				_e = entity.AddChild(type.Name + "Children");
+				_e = Entity.AddChild(type.Name + "Children");
 				_e.persistence.Value = false;
 			}
 			//I should remove on change update before initialized or add a on initialized check inside this function
@@ -173,7 +173,7 @@ namespace RhubarbEngine.Components.ImGUI
 				if (gType.GetCustomAttribute<FlagsAttribute>() != null)
 				{
 					var a = typeof(FlagsEnumSyncObserver<>).MakeGenericType(gType);
-					var obs = (FlagsEnumSyncObserver)entity.AttachComponent(a);
+					var obs = (FlagsEnumSyncObserver)Entity.AttachComponent(a);
 					obs.fieldName.Value = fieldName.Value;
 					obs.target.Target = ((IPrimitiveEditable)target.Target);
 					root.Target = obs;
@@ -181,7 +181,7 @@ namespace RhubarbEngine.Components.ImGUI
 				else
 				{
 					var a = typeof(EnumSyncObserver<>).MakeGenericType(gType);
-					var obs = (EnumSyncObserver)entity.AttachComponent(a);
+					var obs = (EnumSyncObserver)Entity.AttachComponent(a);
 					obs.fieldName.Value = fieldName.Value;
 					obs.target.Target = ((IPrimitiveEditable)target.Target);
 					root.Target = obs;
@@ -189,91 +189,91 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			else if (gType == typeof(bool))
 			{
-				var obs = entity.AttachComponent<BoolSyncObserver>();
+				var obs = Entity.AttachComponent<BoolSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((Sync<bool>)target.Target);
 				root.Target = obs;
 			}
 			else if (gType == typeof(int))
 			{
-				var obs = entity.AttachComponent<IntSyncObserver>();
+				var obs = Entity.AttachComponent<IntSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((Sync<int>)target.Target);
 				root.Target = obs;
 			}
 			else if (gType == typeof(float))
 			{
-				var obs = entity.AttachComponent<FloatSyncObserver>();
+				var obs = Entity.AttachComponent<FloatSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((Sync<float>)target.Target);
 				root.Target = obs;
 			}
 			else if (gType == typeof(double))
 			{
-				var obs = entity.AttachComponent<DoubleSyncObserver>();
+				var obs = Entity.AttachComponent<DoubleSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((Sync<double>)target.Target);
 				root.Target = obs;
 			}
 			else if (gType == typeof(Colorf))
 			{
-				var obs = entity.AttachComponent<ColorfSyncObserver>();
+				var obs = Entity.AttachComponent<ColorfSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((Sync<Colorf>)target.Target);
 				root.Target = obs;
 			}
 			else if (gType == typeof(Vector2f))
 			{
-				var obs = entity.AttachComponent<Vector2fSyncObserver>();
+				var obs = Entity.AttachComponent<Vector2fSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((Sync<Vector2f>)target.Target);
 				root.Target = obs;
 			}
 			else if (gType == typeof(Vector3f))
 			{
-				var obs = entity.AttachComponent<Vector3fSyncObserver>();
+				var obs = Entity.AttachComponent<Vector3fSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((Sync<Vector3f>)target.Target);
 				root.Target = obs;
 			}
 			else if (gType == typeof(Vector4f))
 			{
-				var obs = entity.AttachComponent<Vector4fSyncObserver>();
+				var obs = Entity.AttachComponent<Vector4fSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((Sync<Vector4f>)target.Target);
 				root.Target = obs;
 			}
 			else if (gType == typeof(Quaternionf))
 			{
-				var obs = entity.AttachComponent<QuaternionfSyncObserver>();
+				var obs = Entity.AttachComponent<QuaternionfSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((Sync<Quaternionf>)target.Target);
 				root.Target = obs;
 			}
 			else if (gType == typeof(Vector2d))
 			{
-				var obs = entity.AttachComponent<Vector2dSyncObserver>();
+				var obs = Entity.AttachComponent<Vector2dSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((Sync<Vector2d>)target.Target);
 				root.Target = obs;
 			}
 			else if (gType == typeof(Vector3d))
 			{
-				var obs = entity.AttachComponent<Vector3dSyncObserver>();
+				var obs = Entity.AttachComponent<Vector3dSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((Sync<Vector3d>)target.Target);
 				root.Target = obs;
 			}
 			else if (gType == typeof(Vector4d))
 			{
-				var obs = entity.AttachComponent<Vector4dSyncObserver>();
+				var obs = Entity.AttachComponent<Vector4dSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((Sync<Vector4d>)target.Target);
 				root.Target = obs;
 			}
 			else
 			{
-				var obs = entity.AttachComponent<PrimitiveSyncObserver>();
+				var obs = Entity.AttachComponent<PrimitiveSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((IPrimitiveEditable)target.Target);
 				root.Target = obs;
@@ -285,7 +285,7 @@ namespace RhubarbEngine.Components.ImGUI
 			var gType = type.GetGenericArguments()[0];
 			if (gType == typeof(Component))
 			{
-				var obs = entity.AttachComponent<SyncComponentListObserver>();
+				var obs = Entity.AttachComponent<SyncComponentListObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((ISyncList)target.Target);
 				root.Target = obs;
@@ -300,14 +300,14 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			if (withAdd)
 			{
-				var obs = entity.AttachComponent<SyncListObserver>();
+				var obs = Entity.AttachComponent<SyncListObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((ISyncList)target.Target);
 				root.Target = obs;
 			}
 			else
 			{
-				var obs = entity.AttachComponent<NoAddSyncListObserver>();
+				var obs = Entity.AttachComponent<NoAddSyncListObserver>();
 				obs.fieldName.Value = fieldName.Value;
 				obs.target.Target = ((ISyncList)target.Target);
 				root.Target = obs;
@@ -364,7 +364,7 @@ namespace RhubarbEngine.Components.ImGUI
 		private void BuildSyncRef(Type type)
 		{
 			var a = typeof(SyncRefObserver<>).MakeGenericType(type);
-			var obs = (SyncRefObserver)entity.AttachComponent(a);
+			var obs = (SyncRefObserver)Entity.AttachComponent(a);
 			obs.fieldName.Value = fieldName.Value;
 			obs.target.Target = ((ISyncRef)target.Target);
 			root.Target = obs;

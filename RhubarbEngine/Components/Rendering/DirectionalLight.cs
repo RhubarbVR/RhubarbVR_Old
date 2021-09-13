@@ -44,7 +44,7 @@ namespace RhubarbEngine.Components.Rendering
             }
         }
 
-        public override void buildSyncObjs(bool newRefIds)
+        public override void BuildSyncObjs(bool newRefIds)
 		{
 
 		}

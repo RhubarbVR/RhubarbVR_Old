@@ -24,9 +24,9 @@ namespace RhubarbEngine.Components.ImGUI
 		public Sync<ImGuiDir> imGuiDir;
 		public Sync<string> id;
 		public SyncDelegate action;
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			imGuiDir = new Sync<ImGuiDir>(this, newRefIds);
 			imGuiDir.Value = ImGuiDir.None;
 			id = new Sync<string>(this, newRefIds);

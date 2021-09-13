@@ -20,9 +20,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private Type _setType;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			type = new Sync<string>(this, newRefIds);
 			type.Changed += Type_Changed;
 		}
@@ -44,7 +44,7 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
 			ImGui.PushStyleColor(ImGuiCol.Button, (Vector4)Colorf.DarkBlue.ToRGBA());
-			if (ImGui.Button(_setType.GetFormattedName() ?? "Null" + "##" + referenceID.id, new Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
+			if (ImGui.Button(_setType.GetFormattedName() ?? "Null" + "##" + ReferenceID.id, new Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
 			{
 				if ((target.Target != null) && (_setType != null))
                 {

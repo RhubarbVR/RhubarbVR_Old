@@ -22,9 +22,9 @@ namespace RhubarbEngine.Components.Physics.Colliders
 	{
 		public AssetRef<RMesh> mesh;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			mesh = new AssetRef<RMesh>(this, newRefIds);
 			mesh.loadChange += Mesh_loadChange;
 		}
@@ -34,9 +34,9 @@ namespace RhubarbEngine.Components.Physics.Colliders
 			BuildShape();
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
+			base.OnLoaded();
 			BuildShape();
 		}
 

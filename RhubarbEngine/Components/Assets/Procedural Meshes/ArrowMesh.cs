@@ -19,7 +19,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public Sync<float> HeadLength;
 		public Sync<bool> DoubleSided;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			StickRadius = new Sync<float>(this, newRefIds);
 			StickRadius.Value = 0.5f;
@@ -39,7 +39,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			DoubleSided = new Sync<bool>(this, newRefIds);
 			DoubleSided.Value = false;
 		}
-		public override void onChanged()
+		public override void OnChanged()
 		{
 			updateMesh();
 		}
@@ -54,10 +54,10 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			_generator.DoubleSided = DoubleSided.Value;
 			MeshGenerator newmesh = _generator.Generate();
 			RMesh kite = new RMesh(newmesh.MakeDMesh());
-			kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
+			kite.createMeshesBuffers(World.worldManager.engine.renderManager.gd);
 			load(kite, true);
 		}
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
 			updateMesh();
 		}

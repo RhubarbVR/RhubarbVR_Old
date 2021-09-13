@@ -13,268 +13,314 @@ using RhubarbEngine.Render.Material.Fields;
 
 namespace RhubarbEngine.World
 {
-	public class Worker : IChangeable, IWorldObject
-	{
-		private List<IDisposable> _disposables = new List<IDisposable>();
-		public void AddDisposable(IDisposable add)
-		{
-			try
-			{
-				_disposables.Add(add);
-			}
-			catch { }
-		}
+    public interface IWorker : IChangeable, IWorldObject
+    {
 
-		public void RemoveDisposable(IDisposable add)
-		{
-			try
-			{
-				_disposables.Remove(add);
-			}
-			catch { }
-		}
+        public UnitLogs Logger { get; }
 
-		public event Action<IChangeable> Changed;
-		[NoShow]
-		[NoSync]
-		[NoSave]
-		public World world { get; protected set; }
-		[NoShow]
-		[NoSync]
-		[NoSave]
-		public IWorldObject parent;
+        public Engine Engine { get; }
 
-		public NetPointer referenceID { get; protected set; }
+        public InputManager Input { get; }
 
-		public UnitLogs logger => world.worldManager.engine.logger;
+        public double DeltaSeconds { get; }
 
-		public Engine engine => world.worldManager.engine;
+        public void Initialize(World _world, IWorldObject _parent, bool newRefID = true, bool childlisten = true);
 
-		public InputManager input => engine.inputManager;
+        public void CommonUpdate();
 
-		public double DeltaSeconds => world.worldManager.engine.platformInfo.deltaSeconds;
-
-		public bool Persistent = true;
-
-		NetPointer IWorldObject.ReferenceID => referenceID;
-		[NoShow]
-		[NoSync]
-		[NoSave]
-		World IWorldObject.World => world;
-		[NoShow]
-		[NoSync]
-		[NoSave]
-		IWorldObject IWorldObject.Parent => parent;
-
-		bool IWorldObject.IsLocalObject => false;
-
-		bool IWorldObject.IsPersistent => Persistent;
-
-		bool _Removed = false;
-
-		public bool IsRemoved => _Removed;
-
-		public void Destroy()
-		{
-			Dispose();
-		}
-
-		public Worker(World _world, IWorldObject _parent, bool newRefID = true, bool childlisten = true)
-		{
-			world = _world;
-			parent = _parent;
-			parent.AddDisposable(this);
-			inturnalSyncObjs(newRefID);
-			buildSyncObjs(newRefID);
-			if (childlisten)
-			{
-				FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-				foreach (var field in fields)
-				{
-					if (typeof(IChangeable).IsAssignableFrom(field.FieldType) && ((IChangeable)field.GetValue(this)) != null)
-					{
-						((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
-
-					}
-				}
-			}
-			if (newRefID)
-			{
-				referenceID = _world.BuildRefID();
-				_world.AddWorldObj(this);
-			}
-		}
-
-		public virtual void initialize(World _world, IWorldObject _parent, bool newRefID = true)
-		{
-			world = _world;
-			parent = _parent;
-			parent.AddDisposable(this);
-			inturnalSyncObjs(newRefID);
-			buildSyncObjs(newRefID);
-			FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-			foreach (var field in fields)
-			{
-				if (typeof(IChangeable).IsAssignableFrom(field.FieldType) && ((IChangeable)field.GetValue(this)) != null)
-				{
-					((IChangeable)field.GetValue(this)).Changed += onChangeInternal;
-				}
-			}
-			if (newRefID)
-			{
-				referenceID = _world.BuildRefID();
-				_world.AddWorldObj(this);
-				onLoaded();
-			}
-		}
-		public Worker()
-		{
-
-		}
-
-		public virtual void inturnalSyncObjs(bool newRefIds)
-		{
-
-		}
+        public void InturnalSyncObjs(bool newRefIds);
 
 
-		public virtual void buildSyncObjs(bool newRefIds)
-		{
+        public void BuildSyncObjs(bool newRefIds);
+        public void OnLoaded();
 
-		}
+        public void OnUpdate();
 
-		public virtual void onLoaded()
-		{
+        public void OnChangeInternal(IChangeable newValue);
+        public void OnChanged();
+        public void Removed();
 
-		}
+        public void OnUserJoined(User user);
 
-		public virtual void onUpdate()
-		{
+    }
 
-		}
+    public class Worker : IWorker
+    {
+        private readonly List<IDisposable> _disposables = new List<IDisposable>();
+        public void AddDisposable(IDisposable add)
+        {
+            try
+            {
+                _disposables.Add(add);
+            }
+            catch { }
+        }
 
-		public void onChangeInternal(IChangeable newValue)
-		{
-			if (Changed != null)
-			{
-				Changed(this);
-			}
-			onChanged();
-		}
-		public virtual void onChanged()
-		{
+        public void RemoveDisposable(IDisposable add)
+        {
+            try
+            {
+                _disposables.Remove(add);
+            }
+            catch { }
+        }
+        public event Action<Worker> OnDispose;
 
-		}
-		public virtual void Removed()
-		{
+        public event Action<IChangeable> Changed;
+        [NoShow]
+        [NoSync]
+        [NoSave]
+        public World World { get; protected set; }
+        [NoShow]
+        [NoSync]
+        [NoSave]
+        public IWorldObject parent;
 
-		}
+        public NetPointer ReferenceID { get; protected set; }
 
-		public virtual void onUserJoined(User user)
-		{
+        public UnitLogs Logger
+        {
+            get
+            {
+                return World.worldManager.engine.logger;
+            }
+        }
 
-		}
+        public Engine Engine
+        {
+            get
+            {
+                return World.worldManager.engine;
+            }
+        }
 
-		public event Action<Worker> onDispose;
+        public InputManager Input
+        {
+            get
+            {
+                return Engine.inputManager;
+            }
+        }
 
-		public virtual void Dispose()
-		{
-			Removed();
-			world.RemoveWorldObj(this);
-			onDispose?.Invoke(this);
-			foreach (IDisposable dep in _disposables)
-			{
-				dep.Dispose();
-			}
-			_Removed = true;
-		}
-		public virtual void CommonUpdate()
-		{
+        public double DeltaSeconds
+        {
+            get
+            {
+                return World.worldManager.engine.platformInfo.deltaSeconds;
+            }
+        }
 
-		}
+        public bool Persistent = true;
 
-		public virtual DataNodeGroup Serialize(bool netsync = false)
-		{
-			FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-			DataNodeGroup obj = null;
-			if (Persistent || netsync)
-			{
-				obj = new DataNodeGroup();
-				foreach (var field in fields)
-				{
-					if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || netsync && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0)))
-					{
-						//This is for debug purposes 
-						//if (!netsync)
-						//{
-						//    Console.WriteLine(field.FieldType.FullName + "Name: " + field.Name);
-						//}
-						obj.SetValue(field.Name, ((IWorldObject)field.GetValue(this)).Serialize(netsync));
-					}
-				}
-				DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
-				obj.SetValue("referenceID", Refid);
-			}
-			return obj;
-		}
+        NetPointer IWorldObject.ReferenceID
+        {
+            get
+            {
+                return ReferenceID;
+            }
+        }
 
-		public virtual void DeSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
-		{
+        [NoShow]
+        [NoSync]
+        [NoSave]
+        World IWorldObject.World
+        {
+            get
+            {
+                return World;
+            }
+        }
 
-			if (data == null)
-			{
-				world.worldManager.engine.logger.Log("Node did not exsets When loading Node: " + this.GetType().FullName);
-				return;
-			}
-			if (NewRefIDs)
-			{
-				if (newRefID == null)
-				{
-					Console.WriteLine("Problem With " + this.GetType().FullName);
-				}
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), referenceID.getID());
-				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
-				{
-					foreach (RefIDResign func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
-					{
-						func(referenceID.getID());
-					}
-				}
-			}
-			else
-			{
-				referenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
-				if (referenceID.id == new NetPointer(0).id)
-				{
-					logger.Log(this.GetType().FullName + " RefID null");
-				}
-				else
-				{
-					world.AddWorldObj(this);
-				}
-			}
+        [NoShow]
+        [NoSync]
+        [NoSave]
+        IWorldObject IWorldObject.Parent
+        {
+            get
+            {
+                return parent;
+            }
+        }
 
-			FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-			foreach (var field in fields)
-			{
-				if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || !NewRefIDs && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0)))
-				{
-					if (((IWorldObject)field.GetValue(this)) == null)
-					{
-						throw new Exception("Sync not initialized on " + this.GetType().FullName + " Field: " + field.Name);
-					}
-					((IWorldObject)field.GetValue(this)).DeSerialize((DataNodeGroup)data.GetValue(field.Name), onload, NewRefIDs, newRefID, latterResign);
-				}
-			}
-			if (typeof(IRenderObject).IsAssignableFrom(this.GetType()))
-			{
-				onload.Add(onLoaded);
-			}
-			else
-			{
-				onload.Insert(0, onLoaded);
-			}
-		}
+        bool IWorldObject.IsLocalObject
+        {
+            get
+            {
+                return false;
+            }
+        }
 
-	}
+        bool IWorldObject.IsPersistent
+        {
+            get
+            {
+                return Persistent;
+            }
+        }
+
+        public bool IsRemoved { get; private set; } = false;
+
+        public void Destroy()
+        {
+            Dispose();
+        }
+        public Worker()
+        {
+
+        }
+        public Worker(World _world, IWorldObject _parent, bool newRefID = true, bool childlisten = true)
+        {
+            Initialize(_world, _parent, newRefID, childlisten);
+        }
+
+        public virtual void Initialize(World _world, IWorldObject _parent, bool newRefID = true, bool childlisten = true)
+        {
+            World = _world;
+            parent = _parent;
+            parent.AddDisposable(this);
+            InturnalSyncObjs(newRefID);
+            BuildSyncObjs(newRefID);
+            if (childlisten)
+            {
+                var fields = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                foreach (var field in fields)
+                {
+                    if (typeof(IChangeable).IsAssignableFrom(field.FieldType) && ((IChangeable)field.GetValue(this)) != null)
+                    {
+                        ((IChangeable)field.GetValue(this)).Changed += OnChangeInternal;
+
+                    }
+                }
+            }
+            if (newRefID)
+            {
+                ReferenceID = _world.BuildRefID();
+                _world.AddWorldObj(this);
+            }
+        }
+
+
+        public virtual void InturnalSyncObjs(bool newRefIds)
+        {
+
+        }
+
+
+        public virtual void BuildSyncObjs(bool newRefIds)
+        {
+
+        }
+
+        public virtual void OnLoaded()
+        {
+
+        }
+
+        public virtual void OnUpdate()
+        {
+
+        }
+
+        public void OnChangeInternal(IChangeable newValue)
+        {
+            Changed?.Invoke(this);
+            OnChanged();
+        }
+        public virtual void OnChanged()
+        {
+
+        }
+        public virtual void Removed()
+        {
+
+        }
+
+        public virtual void CommonUpdate()
+        {
+
+        }
+
+        public virtual void OnUserJoined(User user)
+        {
+
+        }
+
+
+        public virtual void Dispose()
+        {
+            Removed();
+            World.RemoveWorldObj(this);
+            OnDispose?.Invoke(this);
+            foreach (var dep in _disposables)
+            {
+                dep.Dispose();
+            }
+            IsRemoved = true;
+        }
+
+
+        public virtual DataNodeGroup Serialize(WorkerSerializerObject serializerObject)
+        {
+            return serializerObject.CommonWorkerSerialize(this);
+        }
+
+        public virtual void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
+        {
+
+            if (data == null)
+            {
+                World.worldManager.engine.logger.Log("Node did not exsets When loading Node: " + GetType().FullName);
+                return;
+            }
+            if (NewRefIDs)
+            {
+                if (newRefID == null)
+                {
+                    Console.WriteLine("Problem With " + GetType().FullName);
+                }
+                newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
+                if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
+                {
+                    foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
+                    {
+                        func(ReferenceID.getID());
+                    }
+                }
+            }
+            else
+            {
+                ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
+                if (ReferenceID.id == new NetPointer(0).id)
+                {
+                    Logger.Log(GetType().FullName + " RefID null");
+                }
+                else
+                {
+                    World.AddWorldObj(this);
+                }
+            }
+
+            var fields = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            foreach (var field in fields)
+            {
+                if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || (!NewRefIDs && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))))
+                {
+                    if (((IWorldObject)field.GetValue(this)) == null)
+                    {
+                        throw new Exception("Sync not initialized on " + GetType().FullName + " Field: " + field.Name);
+                    }
+                    ((IWorldObject)field.GetValue(this)).DeSerialize((DataNodeGroup)data.GetValue(field.Name), onload, NewRefIDs, newRefID, latterResign);
+                }
+            }
+            if (typeof(IRenderObject).IsAssignableFrom(GetType()))
+            {
+                onload.Add(OnLoaded);
+            }
+            else
+            {
+                onload.Insert(0, OnLoaded);
+            }
+        }
+
+    }
 }

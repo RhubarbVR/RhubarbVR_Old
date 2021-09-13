@@ -15,16 +15,16 @@ namespace RhubarbEngine.Render.Material.Fields
 	public class Texture2DField : MaterialField, IWorldObject
 	{
 		public AssetRef<RTexture2D> field;
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			field = new AssetRef<RTexture2D>(this, newRefIds);
 			field.loadChange += assetChange;
 		}
 
-		public override void onUpdate()
+		public override void OnUpdate()
 		{
-			base.onUpdate();
-			if (input.mainWindows.GetKey(Key.F3))
+			base.OnUpdate();
+			if (Input.mainWindows.GetKey(Key.F3))
 			{
 				loadTextureView(true);
 			}
@@ -60,17 +60,17 @@ namespace RhubarbEngine.Render.Material.Fields
 					}
 					else
 					{
-						SetResource(engine.renderManager.nulview);
+						SetResource(Engine.renderManager.nulview);
 					}
 				}
 				else
 				{
-					SetResource(engine.renderManager.nulview);
+					SetResource(Engine.renderManager.nulview);
 				}
 			}
 			else
 			{
-				SetResource(engine.renderManager.solidview);
+				SetResource(Engine.renderManager.solidview);
 			}
 
 		}

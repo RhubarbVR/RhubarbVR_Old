@@ -35,20 +35,20 @@ namespace RhubarbEngine.Components.ImGUI
 		public SyncDelegate action;
 		private TextureView view;
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
+			base.OnLoaded();
 			loadTextureView();
 		}
 
 		private void test()
 		{
-			logger.Log("This is a test of test in test");
+			Logger.Log("This is a test of test in test");
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 
 			texture = new AssetRef<RTexture2D>(this, newRefIds);
 			texture.loadChange += assetChange;
@@ -88,17 +88,17 @@ namespace RhubarbEngine.Components.ImGUI
 					}
 					else
 					{
-						SetResource(engine.renderManager.nulview);
+						SetResource(Engine.renderManager.nulview);
 					}
 				}
 				else
 				{
-					SetResource(engine.renderManager.nulview);
+					SetResource(Engine.renderManager.nulview);
 				}
 			}
 			else
 			{
-				SetResource(engine.renderManager.nulview);
+				SetResource(Engine.renderManager.nulview);
 			}
 
 		}
@@ -126,7 +126,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				tintval *= 0.8f;
 			}
-			if (ImGui.ImageButton(imGuiRenderer.GetOrCreateImGuiBinding(engine.renderManager.gd.ResourceFactory, view), new Vector2(size.Value.x, size.Value.y), new Vector2(UV0.Value.x, UV0.Value.y), new Vector2(UV1.Value.x, UV1.Value.y), padding.Value, big.Value.ToRGBA().ToSystem(), tintval.ToRGBA().ToSystem()))
+			if (ImGui.ImageButton(imGuiRenderer.GetOrCreateImGuiBinding(Engine.renderManager.gd.ResourceFactory, view), new Vector2(size.Value.x, size.Value.y), new Vector2(UV0.Value.x, UV0.Value.y), new Vector2(UV1.Value.x, UV1.Value.y), padding.Value, big.Value.ToRGBA().ToSystem(), tintval.ToRGBA().ToSystem()))
 			{
 				if (TintOnClick.Value)
 				{

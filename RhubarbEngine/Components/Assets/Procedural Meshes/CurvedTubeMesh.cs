@@ -30,7 +30,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public Sync<bool> WantUVs;
 		public Sync<bool> ClosedLoop;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
             Endpoint = new Sync<Vector3d>(this, newRefIds)
             {
@@ -68,7 +68,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			ClosedLoop = new Sync<bool>(this, newRefIds);
 		}
 
-		public override void onChanged()
+		public override void OnChanged()
 		{
 			UpdateMesh();
 		}
@@ -101,10 +101,10 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			LoadCurve();
 			var newmesh = _generator.Generate();
 			_kite = new RMesh(newmesh.MakeSimpleMesh());
-			_kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
+			_kite.createMeshesBuffers(World.worldManager.engine.renderManager.gd);
 			load(_kite, true);
 		}
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
 			UpdateMesh();
 		}

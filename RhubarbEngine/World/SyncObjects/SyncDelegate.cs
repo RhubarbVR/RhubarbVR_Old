@@ -60,7 +60,7 @@ namespace RhubarbEngine.World
                     {
                         throw new Exception("Delegate doesn't belong to a WorldObject");
                     }
-                    if (worldObject.World != world)
+                    if (worldObject.World != World)
 					{
 						throw new Exception("Delegate owner belongs to a different world");
 					}
@@ -124,7 +124,7 @@ namespace RhubarbEngine.World
 			}
 			catch (Exception e)
 			{
-				logger.Log($"Failed To load Delegate Type {_type}  Method {_method} Error" + e.ToString());
+				Logger.Log($"Failed To load Delegate Type {_type}  Method {_method} Error" + e.ToString());
 				_type = null;
 				_method = "";
 				base.Target = null;

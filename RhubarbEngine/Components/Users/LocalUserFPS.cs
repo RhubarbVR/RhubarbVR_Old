@@ -22,11 +22,11 @@ namespace RhubarbEngine.Components.Users
 		{
 			if (fps.Linked)
 			{
-				fps.Drivevalue = world.worldManager.engine.platformInfo.FrameRate;
+				fps.Drivevalue = World.worldManager.engine.platformInfo.FrameRate;
 			}
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			fps = new Driver<float>(this, newRefIds);
 		}

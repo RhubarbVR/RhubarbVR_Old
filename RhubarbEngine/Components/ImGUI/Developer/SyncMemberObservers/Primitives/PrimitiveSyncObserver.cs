@@ -23,9 +23,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<IPrimitiveEditable> target;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<IPrimitiveEditable>(this, newRefIds);
 			fieldName = new Sync<string>(this, newRefIds);
 		}
@@ -52,13 +52,13 @@ namespace RhubarbEngine.Components.ImGUI
 			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
-					source = world.LeftLaserGrabbableHolder;
+					source = World.LeftLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.RightLaser:
-					source = world.RightLaserGrabbableHolder;
+					source = World.RightLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.HeadLaser:
-					source = world.HeadLaserGrabbableHolder;
+					source = World.HeadLaserGrabbableHolder;
 					break;
 				default:
 					break;
@@ -77,7 +77,7 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
 			string val = target.Target?.primitiveString ?? "null";
-			if (ImGui.InputText((fieldName.Value ?? "null") + $"##{referenceID.id}", ref val, (uint)val.Length + 255, ImGuiInputTextFlags.EnterReturnsTrue))
+			if (ImGui.InputText((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref val, (uint)val.Length + 255, ImGuiInputTextFlags.EnterReturnsTrue))
 			{
 				if (target.Target != null)
 					target.Target.primitiveString = val;

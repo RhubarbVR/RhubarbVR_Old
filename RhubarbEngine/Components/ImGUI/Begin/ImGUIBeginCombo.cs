@@ -27,9 +27,9 @@ namespace RhubarbEngine.Components.ImGUI
 		public Sync<ImGuiComboFlags> comboflag;
 
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			label = new Sync<string>(this, newRefIds);
 			preview = new Sync<string>(this, newRefIds);
             comboflag = new Sync<ImGuiComboFlags>(this, newRefIds)

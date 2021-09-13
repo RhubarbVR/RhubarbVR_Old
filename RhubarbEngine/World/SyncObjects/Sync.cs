@@ -79,7 +79,7 @@ namespace RhubarbEngine.World
 					UpdateValue();
 				}
 				UpdatedValue();
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 		}
 
@@ -129,7 +129,7 @@ namespace RhubarbEngine.World
 				Value = new DataNode<T>(_value);
 			}
 			obj.SetValue("Value", Value);
-			world.NetModule?.AddToQueue(Net.ReliabilityLevel.LatestOnly, obj, referenceID.id);
+			World.NetModule?.AddToQueue(Net.ReliabilityLevel.LatestOnly, obj, ReferenceID.id);
 		}
 
 		public Sync(World _world, IWorldObject _parent, bool newref = true, T val = default) : base(_world, _parent, newref)
@@ -142,27 +142,14 @@ namespace RhubarbEngine.World
 			Value = val;
 		}
 
-		public virtual T SaveToBytes(bool netsync)
-		{
-			return _value;
-		}
+        public virtual T SaveToBytes()
+        {
+            return _value;
+        }
 
-        public override DataNodeGroup Serialize(bool netsync = false)
+        public override DataNodeGroup Serialize(WorkerSerializerObject workerSerializerObject)
 		{
-			var obj = new DataNodeGroup();
-			var Refid = new DataNode<NetPointer>(referenceID);
-			obj.SetValue("referenceID", Refid);
-			IDataNode Value;
-			if (typeof(T).IsEnum)
-			{
-				Value = new DataNode<int>((int)(object)SaveToBytes(netsync));
-			}
-			else
-			{
-				Value = new DataNode<T>(SaveToBytes(netsync));
-			}
-			obj.SetValue("Value", Value);
-			return obj;
+            return workerSerializerObject.CommonValueSerialize(this, SaveToBytes());
 		}
 
 		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
@@ -170,24 +157,24 @@ namespace RhubarbEngine.World
 			_value = Defalut();
 			if (data == null)
 			{
-				world.worldManager.engine.logger.Log($"Node did not exsets When loading Sync Value { GetType().FullName}");
+				World.worldManager.engine.logger.Log($"Node did not exsets When loading Sync Value { GetType().FullName}");
 				return;
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), referenceID.getID());
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
 				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
 				{
 					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
 					{
-						func(referenceID.getID());
+						func(ReferenceID.getID());
 					}
 				}
 			}
 			else
 			{
-				referenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
-				world.AddWorldObj(this);
+				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
+				World.AddWorldObj(this);
 			}
 			if (typeof(T).IsEnum)
 			{
@@ -205,12 +192,12 @@ namespace RhubarbEngine.World
 			if (typeof(T).IsEnum)
 			{
 				_value = (T)(object)((DataNode<int>)data.GetValue("Value")).Value;
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 			else
 			{
 				_value = ((DataNode<T>)data.GetValue("Value")).Value;
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 		}
 	}

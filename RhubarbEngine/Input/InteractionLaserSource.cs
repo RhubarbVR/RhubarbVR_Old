@@ -101,7 +101,7 @@ namespace RhubarbEngine.Input
 			try
 			{
 				var inputPlane = ((MeshInputPlane)cb.CollisionObject.UserObject);
-				System.Numerics.Matrix4x4.Decompose(inputPlane.entity.GlobalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
+				System.Numerics.Matrix4x4.Decompose(inputPlane.Entity.GlobalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
 				var pixsize = inputPlane.pixelSize.Value;
 
 				var hit = cb.HitPointWorld;
@@ -170,7 +170,7 @@ namespace RhubarbEngine.Input
 			try
 			{
 				var inputPlane = ((InputPlane)cb.CollisionObject.UserObject);
-				System.Numerics.Matrix4x4.Decompose(inputPlane.entity.GlobalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
+				System.Numerics.Matrix4x4.Decompose(inputPlane.Entity.GlobalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
 				var size = inputPlane.size.Value;
 				var pixsize = inputPlane.pixelSize.Value;
 
@@ -232,7 +232,7 @@ namespace RhubarbEngine.Input
 			{
 				return false;
 			}
-			Entity ent = col.entity;
+			Entity ent = col.Entity;
 			if (HasClicked())
 			{
 				ent.SendClick(true);
@@ -252,7 +252,7 @@ namespace RhubarbEngine.Input
 				{
 					ent.SendSecondary(input.mainWindows.GetMouseButton(MouseButton.Middle));
 					ent.SendPrimary(input.mainWindows.GetMouseButton(MouseButton.Left));
-					ent.SendGrip(true, col.world.HeadLaserGrabbableHolder, input.mainWindows.GetMouseButton(MouseButton.Right));
+					ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, input.mainWindows.GetMouseButton(MouseButton.Right));
 				}
 				switch (source)
 				{
@@ -262,7 +262,7 @@ namespace RhubarbEngine.Input
 						ent.SendTriggerTouching(input.TriggerTouching(Input.Creality.Left));
 						ent.SendSecondary(input.SecondaryPress(Input.Creality.Left));
 						ent.SendPrimary(input.PrimaryPress(Input.Creality.Left));
-						ent.SendGrip(true, col.world.LeftLaserGrabbableHolder, input.GrabPress(Input.Creality.Left));
+						ent.SendGrip(true, col.World.LeftLaserGrabbableHolder, input.GrabPress(Input.Creality.Left));
 						break;
 					case InteractionSource.LeftFinger:
 						break;
@@ -270,14 +270,14 @@ namespace RhubarbEngine.Input
 						ent.SendTriggerTouching(input.TriggerTouching(Input.Creality.Right));
 						ent.SendSecondary(input.SecondaryPress(Input.Creality.Right));
 						ent.SendPrimary(input.PrimaryPress(Input.Creality.Right));
-						ent.SendGrip(true, col.world.RightLaserGrabbableHolder, input.GrabPress(Input.Creality.Right));
+						ent.SendGrip(true, col.World.RightLaserGrabbableHolder, input.GrabPress(Input.Creality.Right));
 						break;
 					case InteractionSource.RightFinger:
 						break;
 					case InteractionSource.HeadLaser:
 						ent.SendSecondary(input.mainWindows.GetMouseButton(MouseButton.Middle));
 						ent.SendPrimary(input.mainWindows.GetMouseButton(MouseButton.Left));
-						ent.SendGrip(true, col.world.HeadLaserGrabbableHolder, input.mainWindows.GetMouseButton(MouseButton.Right));
+						ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, input.mainWindows.GetMouseButton(MouseButton.Right));
 						break;
 					case InteractionSource.HeadFinger:
 						break;

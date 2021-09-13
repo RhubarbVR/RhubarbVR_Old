@@ -28,19 +28,19 @@ namespace RhubarbEngine.Components.Users
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (!world.userLoaded)
+			if (!World.userLoaded)
 			{
 				return;
 			}
-			if (world.LocalUser.userroot.Target == null)
+			if (World.LocalUser.userroot.Target == null)
 			{
-				Entity rootent = world.RootEntity.AddChild();
-				rootent.name.Value = $"{world.LocalUser.username.Value} (ID:{world.LocalUser.referenceID.id.ToHexString()})";
+				Entity rootent = World.RootEntity.AddChild();
+				rootent.name.Value = $"{World.LocalUser.username.Value} (ID:{World.LocalUser.ReferenceID.id.ToHexString()})";
 				rootent.persistence.Value = false;
-				rootent.Manager = world.LocalUser;
+				rootent.Manager = World.LocalUser;
 				UserRoot userRoot = rootent.AttachComponent<UserRoot>();
-				userRoot.user.Target = world.LocalUser;
-				world.LocalUser.userroot.Target = userRoot;
+				userRoot.user.Target = World.LocalUser;
+				World.LocalUser.userroot.Target = userRoot;
 				Entity head = rootent.AddChild("Head");
 				head.AttachComponent<Head>().userroot.Target = userRoot;
 				var grabHolder = head.AddChild("GrabHolder").AttachComponent<GrabbableHolder>();
@@ -54,15 +54,15 @@ namespace RhubarbEngine.Components.Users
 				userRoot.RightHand.Target = right;
 				Hand leftcomp = left.AttachComponent<Hand>();
 				leftcomp.userroot.Target = userRoot;
-				leftcomp.creality.Value = Input.Creality.Left;
+				leftcomp.creality.Value = RhubarbEngine.Input.Creality.Left;
 				Hand rightcomp = right.AttachComponent<Hand>();
-				rightcomp.creality.Value = Input.Creality.Right;
+				rightcomp.creality.Value = RhubarbEngine.Input.Creality.Right;
 				rightcomp.userroot.Target = userRoot;
 
 
-				Entity obj = world.worldManager.AddMesh<ArrowMesh>(left);
-				Entity obj2 = world.worldManager.AddMesh<ArrowMesh>(right);
-				Entity obj3 = world.worldManager.AddMesh<ArrowMesh>(head);
+				Entity obj = World.worldManager.AddMesh<ArrowMesh>(left);
+				Entity obj2 = World.worldManager.AddMesh<ArrowMesh>(right);
+				Entity obj3 = World.worldManager.AddMesh<ArrowMesh>(head);
 
 				var ileft = left.AttachComponent<GrabbableHolder>();
 				var iright = right.AttachComponent<GrabbableHolder>();
@@ -74,11 +74,11 @@ namespace RhubarbEngine.Components.Users
 				obj2.scale.Value = new Vector3f(0.2f);
 				obj.rotation.Value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
 				obj2.rotation.Value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
-				logger.Log("SpawnedUser");
+				Logger.Log("SpawnedUser");
 			}
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 		}
 

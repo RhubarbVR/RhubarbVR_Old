@@ -57,7 +57,7 @@ namespace RhubarbEngine.World
 		public User Add(bool Refid = true)
 		{
 			User a = new User();
-			a.initialize(this.world, this, Refid);
+			a.Initialize(this.World, this, Refid);
 			_synclist.SafeAdd(a);
 			if (Refid)
 			{
@@ -76,16 +76,16 @@ namespace RhubarbEngine.World
 		{
 			DataNodeGroup send = new DataNodeGroup();
 			send.SetValue("Type", new DataNode<byte>(0));
-			DataNodeGroup tip = val.Serialize(true);
+			DataNodeGroup tip = val.Serialize(new WorkerSerializerObject(true));
 			send.SetValue("Value", tip);
-			world.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, ReferenceID.id);
 		}
 
 		private void netClear()
 		{
 			DataNodeGroup send = new DataNodeGroup();
 			send.SetValue("Type", new DataNode<byte>(1));
-			world.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, ReferenceID.id);
 		}
 
 		public void ReceiveData(DataNodeGroup data, Peer peer)
@@ -97,7 +97,7 @@ namespace RhubarbEngine.World
 			else
 			{
 				User a = new User();
-				a.initialize(this.world, this, false);
+				a.Initialize(this.World, this, false);
 				List<Action> actions = new List<Action>();
 				a.DeSerialize(((DataNodeGroup)data.GetValue("Value")), actions, false);
 				_synclist.SafeAdd(a);
@@ -108,45 +108,32 @@ namespace RhubarbEngine.World
 			}
 		}
 
-		public override DataNodeGroup Serialize(bool netsync = false)
+		public override DataNodeGroup Serialize(WorkerSerializerObject workerSerializerObject)
 		{
-			DataNodeGroup obj = new DataNodeGroup();
-			DataNode<NetPointer> Refid = new DataNode<NetPointer>(referenceID);
-			obj.SetValue("referenceID", Refid);
-			DataNodeList list = new DataNodeList();
-			foreach (User val in _synclist)
-			{
-				DataNodeGroup tip = val.Serialize(netsync);
-				if (tip != null)
-				{
-					list.Add(tip);
-				}
-			}
-			obj.SetValue("list", list);
-			return obj;
+			return workerSerializerObject.CommonListSerialize(this,_synclist.Cast<IWorldObject>());
 		}
 		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
 		{
 			if (data == null)
 			{
-				world.worldManager.engine.logger.Log("Node did not exsets When loading SyncUserList");
+				World.worldManager.engine.logger.Log("Node did not exsets When loading SyncUserList");
 				return;
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), referenceID.getID());
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
 				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
 				{
 					foreach (RefIDResign func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
 					{
-						func(referenceID.getID());
+						func(ReferenceID.getID());
 					}
 				}
 			}
 			else
 			{
-				referenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
-				world.AddWorldObj(this);
+				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
+				World.AddWorldObj(this);
 			}
 			foreach (DataNodeGroup val in ((DataNodeList)data.GetValue("list")))
 			{

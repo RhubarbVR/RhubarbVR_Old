@@ -39,24 +39,24 @@ namespace RhubarbEngine.Components.Interaction
 
 		public void initializeGrabHolder(InteractionSource _source)
 		{
-			user.Target = world.LocalUser;
+			user.Target = World.LocalUser;
 			source.Value = _source;
 			switch (_source)
 			{
 				case InteractionSource.None:
 					break;
 				case InteractionSource.LeftLaser:
-					world.LeftLaserGrabbableHolder = this;
+					World.LeftLaserGrabbableHolder = this;
 					break;
 				case InteractionSource.LeftFinger:
 					break;
 				case InteractionSource.RightLaser:
-					world.RightLaserGrabbableHolder = this;
+					World.RightLaserGrabbableHolder = this;
 					break;
 				case InteractionSource.RightFinger:
 					break;
 				case InteractionSource.HeadLaser:
-					world.HeadLaserGrabbableHolder = this;
+					World.HeadLaserGrabbableHolder = this;
 					break;
 				case InteractionSource.HeadFinger:
 					break;
@@ -75,16 +75,16 @@ namespace RhubarbEngine.Components.Interaction
 				return;
 			if (holder.Target == null)
 				return;
-			if (user.Target != world.LocalUser)
+			if (user.Target != World.LocalUser)
 				return;
 			if (source.Value == InteractionSource.HeadLaser)
 			{
-				var mousepos = engine.inputManager.mainWindows.MousePosition;
-				var size = new System.Numerics.Vector2(engine.windowManager.mainWindow.width, engine.windowManager.mainWindow.height);
+				var mousepos = Engine.inputManager.mainWindows.MousePosition;
+				var size = new System.Numerics.Vector2(Engine.windowManager.mainWindow.width, Engine.windowManager.mainWindow.height);
 				float x = 2.0f * mousepos.X / size.X - 1.0f;
 				float y = 2.0f * mousepos.Y / size.Y - 1.0f;
 				float ar = size.X / size.Y;
-				float tan = (float)Math.Tan(engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
+				float tan = (float)Math.Tan(Engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
 				Vector3f vectforward = new Vector3f(-x * tan * ar, y * tan, 1);
 				Vector3f vectup = new Vector3f(0, 1, 0);
 				holder.Target.rotation.Value = Quaternionf.LookRotation(vectforward, vectup);
@@ -105,13 +105,13 @@ namespace RhubarbEngine.Components.Interaction
 					switch (source.Value)
 					{
 						case InteractionSource.LeftLaser:
-							input.LeftLaser.unLock();
+							Input.LeftLaser.unLock();
 							break;
 						case InteractionSource.RightLaser:
-							input.RightLaser.unLock();
+							Input.RightLaser.unLock();
 							break;
 						case InteractionSource.HeadLaser:
-							input.RightLaser.unLock();
+							Input.RightLaser.unLock();
 							break;
 						default:
 							break;
@@ -119,7 +119,7 @@ namespace RhubarbEngine.Components.Interaction
 				}
 				else
 				{
-					world.lastHolder = this;
+					World.lastHolder = this;
 				}
 			}
 			if (Referencer.Target == null)
@@ -136,24 +136,24 @@ namespace RhubarbEngine.Components.Interaction
 
 		private bool onGriping()
 		{
-			if ((engine.outputType == VirtualReality.OutputType.Screen) && (source.Value == InteractionSource.RightLaser))
+			if ((Engine.outputType == VirtualReality.OutputType.Screen) && (source.Value == InteractionSource.RightLaser))
 			{
-				return engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right);
+				return Engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right);
 			}
 			switch (source.Value)
 			{
 				case InteractionSource.None:
 					break;
 				case InteractionSource.LeftLaser:
-					return input.GrabPress(Input.Creality.Left);
+					return Input.GrabPress(RhubarbEngine.Input.Creality.Left);
 				case InteractionSource.LeftFinger:
 					break;
 				case InteractionSource.RightLaser:
-					return input.GrabPress(Input.Creality.Right);
+					return Input.GrabPress(RhubarbEngine.Input.Creality.Right);
 				case InteractionSource.RightFinger:
 					break;
 				case InteractionSource.HeadLaser:
-					return engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right);
+					return Engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right);
 				case InteractionSource.HeadFinger:
 					break;
 				default:
@@ -165,12 +165,12 @@ namespace RhubarbEngine.Components.Interaction
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			holder.Target = entity.AddChild("Holder");
+			holder.Target = Entity.AddChild("Holder");
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			holder = new SyncRef<Entity>(this, newRefIds);
 			user = new SyncRef<User>(this, newRefIds);
 			source = new Sync<InteractionSource>(this, newRefIds);

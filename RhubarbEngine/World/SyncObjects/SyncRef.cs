@@ -42,7 +42,7 @@ namespace RhubarbEngine.World
 		{
 			get
 			{
-				if (this._target == null || this._target.IsRemoved || this._target.World != world)
+				if (this._target == null || this._target.IsRemoved || this._target.World != World)
 				{
 					return null;
 				}
@@ -62,7 +62,7 @@ namespace RhubarbEngine.World
 				Bind();
 				UpdateNetValue();
 				Change();
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 		}
 
@@ -78,7 +78,7 @@ namespace RhubarbEngine.World
 				var send = new DataNodeGroup();
 				send.SetValue("Value", new DataNode<NetPointer>(_targetRefID));
 				UpdateNetIngect(send);
-				world.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+				World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, ReferenceID.id);
 			}
 		}
 
@@ -99,14 +99,14 @@ namespace RhubarbEngine.World
 			try
 			{
 				_targetRefID = thing;
-				_target = (T)world.GetWorldObj(thing);
+				_target = (T)World.GetWorldObj(thing);
 				Bind();
 			}
 			catch
 			{
 				_target = null;
 			}
-			onChangeInternal(this);
+			OnChangeInternal(this);
 		}
 		public virtual NetPointer Value
 		{
@@ -119,7 +119,7 @@ namespace RhubarbEngine.World
 				try
 				{
 					_targetRefID = value;
-					_target = (T)world.GetWorldObj(value);
+					_target = (T)World.GetWorldObj(value);
 					Bind();
 					UpdateNetValue();
 				}
@@ -127,7 +127,7 @@ namespace RhubarbEngine.World
 				{
 					_target = null;
 				}
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 		}
 
@@ -147,15 +147,15 @@ namespace RhubarbEngine.World
 				try
 				{
 					_targetRefID = value;
-					_target = (T)world.GetWorldObj(value);
+					_target = (T)World.GetWorldObj(value);
 					Bind();
 				}
 				catch
 				{
-					logger.Log("Failed To loaded" + _targetRefID.id.ToString());
+					Logger.Log("Failed To loaded" + _targetRefID.id.ToString());
 					_target = null;
 				}
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 		}
 
@@ -176,14 +176,10 @@ namespace RhubarbEngine.World
 		{
 
 		}
-		public override DataNodeGroup Serialize(bool netsync = false)
+		public override DataNodeGroup Serialize(WorkerSerializerObject workerSerializerObject)
 		{
-			var obj = new DataNodeGroup();
-			var Refid = new DataNode<NetPointer>(referenceID);
-			obj.SetValue("referenceID", Refid);
-			var Value = new DataNode<NetPointer>(_targetRefID);
-			obj.SetValue("targetRefID", Value);
-			UpdateNetIngect(obj);
+            var obj = workerSerializerObject.CommonRefSerialize(this, _targetRefID);
+            UpdateNetIngect(obj);
 			return obj;
 		}
 
@@ -203,18 +199,18 @@ namespace RhubarbEngine.World
 		{
 			if (data == null)
 			{
-				world.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
+				World.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
 				return;
 			}
 			_temp = ((DataNode<NetPointer>)data.GetValue("targetRefID")).Value;
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), referenceID.getID());
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
 				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
 				{
 					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
 					{
-						func(referenceID.getID());
+						func(ReferenceID.getID());
 					}
 				}
 				if (newRefID.ContainsKey(_temp.getID()))
@@ -233,8 +229,8 @@ namespace RhubarbEngine.World
 			}
 			else
 			{
-				referenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
-				world.AddWorldObj(this);
+				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
+				World.AddWorldObj(this);
 			}
 			onload.Insert(0, LoadRefPoint);
 			ReceiveDataIngect(data);

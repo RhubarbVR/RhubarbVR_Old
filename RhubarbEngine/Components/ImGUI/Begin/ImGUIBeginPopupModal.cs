@@ -24,9 +24,9 @@ namespace RhubarbEngine.Components.ImGUI
 		public Sync<bool> open;
 		public Sync<ImGuiWindowFlags> windowflag;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			name = new Sync<string>(this, newRefIds);
 			windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
 			windowflag.Value = ImGuiWindowFlags.None;

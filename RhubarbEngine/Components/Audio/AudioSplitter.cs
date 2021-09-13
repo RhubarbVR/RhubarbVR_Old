@@ -51,9 +51,9 @@ namespace RhubarbEngine.Components.Audio
 
 			public byte[] FrameInputBuffer => audioParent.getData(getPos());
 
-			public override void onLoaded()
+			public override void OnLoaded()
 			{
-				base.onLoaded();
+				base.OnLoaded();
 				try
 				{
 					audioParent = (AudioSplitter)(parent.Parent);
@@ -64,9 +64,9 @@ namespace RhubarbEngine.Components.Audio
 				}
 			}
 
-			public override void buildSyncObjs(bool newRefIds)
+			public override void BuildSyncObjs(bool newRefIds)
 			{
-				base.buildSyncObjs(newRefIds);
+				base.BuildSyncObjs(newRefIds);
 				active = new Sync<bool>(this, newRefIds);
 				active.Value = true;
 			}
@@ -90,7 +90,7 @@ namespace RhubarbEngine.Components.Audio
 			{
 				data = audioSource.Target.FrameInputBuffer;
 			}
-			var returnData = new byte[engine.audioManager.AudioFrameSizeInBytes];
+			var returnData = new byte[Engine.audioManager.AudioFrameSizeInBytes];
 			int index = 0;
 			for (int i = 0; i < data.Length; i += 8)
 			{
@@ -114,9 +114,9 @@ namespace RhubarbEngine.Components.Audio
 			return (outputs.Count() == audioSource.Target.ChannelCount);
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			outputs = new SyncObjList<AudioSplits>(this, newRefIds);
 			audioSource = new SyncRef<IAudioSource>(this, newRefIds);
 		}

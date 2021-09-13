@@ -19,7 +19,7 @@ namespace RhubarbEngine.World
 			if (worker != null)
 			{
 				var createWorld = worldObject.World.worldManager.FocusedWorld ?? worldObject.World;
-				var User = createWorld.UserRoot.entity;
+				var User = createWorld.UserRoot.Entity;
 				var par = User.parent.Target;
 				var (cube, _, comp) = Helpers.MeshHelper.AttachWindow<Components.ImGUI.WorkerObserver>(par);
 				var headPos = createWorld.UserRoot.Headpos;
@@ -102,7 +102,7 @@ namespace RhubarbEngine.World
 		bool IsPersistent { get; }
 
 		bool IsRemoved { get; }
-		DataNodeGroup Serialize(bool netsync = false);
+		DataNodeGroup Serialize(WorkerSerializerObject serializerObject);
 
 		void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default);
 

@@ -32,7 +32,7 @@ namespace RhubarbEngine.Components.Assets
 
 		public SyncAssetRefList<T> targets;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			index = new Sync<int>(this, newRefIds);
 			index.Changed += Index_Changed;
@@ -50,9 +50,9 @@ namespace RhubarbEngine.Components.Assets
 			UpdateProvider();
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
+			base.OnLoaded();
 			UpdateProvider();
 		}
 

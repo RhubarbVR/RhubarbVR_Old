@@ -16,20 +16,22 @@ namespace RhubarbEngine.World.ECS
 		[NoShow]
 		[NoSync]
 		[NoSave]
-		public Entity entity { get { return _entity; } }
+		public Entity Entity { get { return _entity; } }
 
-		public override void inturnalSyncObjs(bool newRefIds)
+		public override void InturnalSyncObjs(bool newRefIds)
 		{
-			enabled = new Sync<bool>(this, newRefIds);
-			enabled.Value = true;
-			_entity = (Entity)(parent.Parent);
+            enabled = new Sync<bool>(this, newRefIds)
+            {
+                Value = true
+            };
+            _entity = (Entity)(parent.Parent);
 			LoadToWorld();
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
-			ListObject(entity.IsEnabled);
+			base.OnLoaded();
+			ListObject(Entity.IsEnabled);
 		}
 
 		public virtual void LoadToWorld()
@@ -77,9 +79,9 @@ namespace RhubarbEngine.World.ECS
 		{
 		}
 
-		public override void initialize(World _world, IWorldObject _parent, bool newRefID = true)
+		public override void Initialize(World _world, IWorldObject _parent, bool newRefID = true, bool childlisten = true)
 		{
-			base.initialize(_world, _parent, newRefID);
+			base.Initialize(_world, _parent, newRefID, childlisten);
 			_entity = (Entity)(_parent.Parent);
 		}
 

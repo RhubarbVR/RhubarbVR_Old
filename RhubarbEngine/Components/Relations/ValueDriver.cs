@@ -18,7 +18,7 @@ namespace RhubarbEngine.Components.Relations
 
 		public SyncRef<ValueSource<T>> source;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			driver = new Driver<T>(this, newRefIds);
 			source = new SyncRef<ValueSource<T>>(this, newRefIds);

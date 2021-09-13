@@ -35,12 +35,12 @@ namespace RhubarbEngine.Components.Assets
     {
         public Sync<string> Url;
 
-        public override void onLoaded()
+        public override void OnLoaded()
         {
             UpdateImg().ConfigureAwait(false);
         }
 
-        public override void buildSyncObjs(bool newRefIds)
+        public override void BuildSyncObjs(bool newRefIds)
         {
             Url = new Sync<string>(this, newRefIds)
             {
@@ -55,21 +55,21 @@ namespace RhubarbEngine.Components.Assets
 
         public async Task UpdateImg()
         {
-            logger.Log("Loading img URL:" + Url.Value);
+            Logger.Log("Loading img URL:" + Url.Value);
             using var client = new HttpClient();
-            logger.Log("Client");
+            Logger.Log("Client");
             using var response = await client.GetAsync(Url.Value);
             using var streamToReadFrom = await response.Content.ReadAsStreamAsync();
 
             try
             {
-                logger.Log("Downloaded");
-                var _texture = new ImageSharpTexture(streamToReadFrom, true, true).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-                load(new RTexture2D(engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture)), true);
+                Logger.Log("Downloaded");
+                var _texture = new ImageSharpTexture(streamToReadFrom, true, true).CreateDeviceTexture(Engine.renderManager.gd, Engine.renderManager.gd.ResourceFactory);
+                load(new RTexture2D(Engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture)), true);
             }
             catch (Exception e)
             {
-                Logger.Log($"Failed to Initialize image Error:{e}", true);
+                RhubarbEngine.Logger.Log($"Failed to Initialize image Error:{e}", true);
             }
 
 

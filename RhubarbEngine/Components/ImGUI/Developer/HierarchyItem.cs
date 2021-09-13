@@ -33,9 +33,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private bool _bound;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			dropedDown = new Sync<bool>(this, newRefIds);
 			dropedDown.Changed += DropedDown_Changed;
 			target = new SyncRef<Entity>(this, newRefIds);
@@ -45,7 +45,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void DropedDown_Changed(IChangeable obj)
 		{
-			if (entity.Manager != world.LocalUser)
+			if (Entity.Manager != World.LocalUser)
             {
                 return;
             }
@@ -71,7 +71,7 @@ namespace RhubarbEngine.Components.ImGUI
             var index = 0;
 			foreach (var item in target.Target._children)
 			{
-				var newHierarchyItem = entity.AttachComponent<HierarchyItem>();
+				var newHierarchyItem = Entity.AttachComponent<HierarchyItem>();
 				children.Add().Target = newHierarchyItem;
 				newHierarchyItem.target.Target = item;
 				index++;
@@ -80,7 +80,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void Target_Changed(IChangeable obj)
 		{
-			if (entity.Manager != world.LocalUser)
+			if (Entity.Manager != World.LocalUser)
             {
                 return;
             }
@@ -91,7 +91,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void Bind()
 		{
-			if (entity.Manager != world.LocalUser)
+			if (Entity.Manager != World.LocalUser)
             {
                 return;
             }
@@ -118,7 +118,7 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
 			base.CommonUpdate(startTime, Frame);
-			if (entity.Manager == world.LocalUser)
+			if (Entity.Manager == World.LocalUser)
             {
                 return;
             }
@@ -134,7 +134,7 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			var val = dropedDown.Value;
 			ImGui.SetNextItemOpen(val);
-			if (ImGui.TreeNodeEx($"{target.Target?.name.Value ?? "null"}##{referenceID.id.ToString()}", ImGuiTreeNodeFlags.OpenOnArrow))
+			if (ImGui.TreeNodeEx($"{target.Target?.name.Value ?? "null"}##{ReferenceID.id.ToString()}", ImGuiTreeNodeFlags.OpenOnArrow))
 			{
 				foreach (var item in children)
 				{
@@ -157,13 +157,13 @@ namespace RhubarbEngine.Components.ImGUI
 			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
-					source = world.LeftLaserGrabbableHolder;
+					source = World.LeftLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.RightLaser:
-					source = world.RightLaserGrabbableHolder;
+					source = World.RightLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.HeadLaser:
-					source = world.HeadLaserGrabbableHolder;
+					source = World.HeadLaserGrabbableHolder;
 					break;
 				default:
 					break;
@@ -187,9 +187,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void Clicked()
 		{
-			if (world.lastEntityObserver != null)
+			if (World.lastEntityObserver != null)
             {
-                world.lastEntityObserver.target.Target = target.Target;
+                World.lastEntityObserver.target.Target = target.Target;
             }
         }
 		private void Grabbed(Interaction.GrabbableHolder source)

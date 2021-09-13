@@ -22,11 +22,11 @@ namespace RhubarbEngine.Components.Physics.Colliders
 		public Sync<double> radius;
 		public Sync<double> height;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			// Change the default values I guess
 
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			radius = new Sync<double>(this, newRefIds);
 			radius.Value = 0.5;
 			radius.Changed += UpdateChange;
@@ -41,9 +41,9 @@ namespace RhubarbEngine.Components.Physics.Colliders
 			BuildShape();
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
+			base.OnLoaded();
 			BuildShape();
 		}
 		public override void BuildShape()

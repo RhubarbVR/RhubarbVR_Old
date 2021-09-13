@@ -27,9 +27,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<Entity> childrenHolder;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<ISyncList>(this, newRefIds);
 			target.Changed += Target_Changed;
 			fieldName = new Sync<string>(this, newRefIds);
@@ -45,7 +45,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void Target_Changed(IChangeable obj)
 		{
-			if (entity.Manager != world.LocalUser)
+			if (Entity.Manager != World.LocalUser)
 				return;
 			foreach (var item in children)
 			{
@@ -56,7 +56,7 @@ namespace RhubarbEngine.Components.ImGUI
 				return;
 			if (childrenHolder.Target == null)
 			{
-				childrenHolder.Target = entity.AddChild(fieldName.Value + "Holder");
+				childrenHolder.Target = Entity.AddChild(fieldName.Value + "Holder");
 			}
 			int index = 0;
 			foreach (var item in target.Target)
@@ -88,7 +88,7 @@ namespace RhubarbEngine.Components.ImGUI
 				if (removeable)
 				{
 					ImGui.SameLine();
-					if (ImGui.Button("X##" + referenceID.id.ToString()))
+					if (ImGui.Button("X##" + ReferenceID.id.ToString()))
 					{
 						target.Target?.Remove(index);
 					}

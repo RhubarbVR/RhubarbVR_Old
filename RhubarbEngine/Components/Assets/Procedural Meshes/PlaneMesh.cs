@@ -22,7 +22,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public Sync<Index2i> IndicesMap;
 		public Sync<TrivialRectGenerator.UVModes> UVMode;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			Width = new Sync<float>(this, newRefIds);
 			Width.Value = 1f;
@@ -35,7 +35,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			UVMode = new Sync<TrivialRectGenerator.UVModes>(this, newRefIds);
 			UVMode.Value = TrivialRectGenerator.UVModes.FullUVSquare;
 		}
-		public override void onChanged()
+		public override void OnChanged()
 		{
 			updateMesh();
 		}
@@ -49,10 +49,10 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			_generator.UVMode = UVMode.Value;
 			MeshGenerator newmesh = _generator.Generate();
 			RMesh kite = new RMesh(newmesh.MakeDMesh());
-			kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
+			kite.createMeshesBuffers(World.worldManager.engine.renderManager.gd);
 			load(kite, true);
 		}
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
 			updateMesh();
 		}

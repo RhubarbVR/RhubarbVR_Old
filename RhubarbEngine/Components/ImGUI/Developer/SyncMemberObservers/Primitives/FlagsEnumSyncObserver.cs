@@ -21,9 +21,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<IPrimitiveEditable> target;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<IPrimitiveEditable>(this, newRefIds);
 			fieldName = new Sync<string>(this, newRefIds);
 		}
@@ -61,7 +61,7 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 0.5f, 0, 0)).ToSystem());
 			}
 			int c = Array.IndexOf(ve, Enum.GetName(typeof(T), (((Sync<T>)target.Target).Value)));
-			ImGui.Combo((fieldName.Value ?? "null") + $"##{referenceID.id}", ref c, ve, ve.Length);
+			ImGui.Combo((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref c, ve, ve.Length);
 			if (c != (int)(object)(((Sync<T>)target.Target).Value))
 			{
 				((Sync<T>)target.Target).Value = Enum.GetValues<T>()[c];

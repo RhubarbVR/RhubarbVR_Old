@@ -34,12 +34,12 @@ namespace RhubarbEngine.Components.Assets
 	public class CursorsTextue2D : AssetProvider<RTexture2D>, IAsset
 	{
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			load(new RTexture2D(engine.renderManager.nulview));
+			load(new RTexture2D(Engine.renderManager.nulview));
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 
 		}

@@ -29,9 +29,9 @@ namespace RhubarbEngine.Components.Assets
 	public class OverLayedUnlitShader : AssetProvider<RShader>, IAsset
 	{
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			logger.Log("Loadded Shader");
+			Logger.Log("Loadded Shader");
 			RShader shader = new RShader();
 			shader.addUniform("Texture", Render.Shader.ShaderValueType.Val_texture2D, Render.Shader.ShaderType.MainFrag);
 			shader.addUniform("Zpos", Render.Shader.ShaderValueType.Val_float, Render.Shader.ShaderType.MainFrag);
@@ -55,11 +55,11 @@ void main()
     fsout_Color0 = texture(sampler2D(Texture, Sampler), uv) * TintColor;
 }
 ";
-			shader.LoadShader(engine.renderManager.gd, logger);
+			shader.LoadShader(Engine.renderManager.gd, Logger);
 			load(shader);
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 
 		}

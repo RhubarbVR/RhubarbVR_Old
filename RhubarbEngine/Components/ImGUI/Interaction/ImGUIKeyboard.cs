@@ -54,9 +54,9 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			rowOne = new SyncRef<ImGUIButtonRow>(this, newRefIds);
 			rowTwo = new SyncRef<ImGUIButtonRow>(this, newRefIds);
 			rowThree = new SyncRef<ImGUIButtonRow>(this, newRefIds);
@@ -90,7 +90,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				mkey |= ModifierKeys.Gui;
 			}
-			var i = input.mainWindows.FrameSnapshot;
+			var i = Input.mainWindows.FrameSnapshot;
 			if (key.Length > 1)
 			{
 				switch (key)
@@ -151,10 +151,10 @@ namespace RhubarbEngine.Components.ImGUI
 						ReloadKeyboard();
 						break;
 					case "Enter":
-						input.mainWindows.FrameSnapshot.PressChar('\n', mkey);
+						Input.mainWindows.FrameSnapshot.PressChar('\n', mkey);
 						break;
 					case "Space":
-						input.mainWindows.FrameSnapshot.PressChar(' ', mkey);
+						Input.mainWindows.FrameSnapshot.PressChar(' ', mkey);
 						break;
 					case "Caps\nLock":
 						i.PressKey(Key.F1, mkey);
@@ -187,7 +187,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			else
 			{
-				input.mainWindows.FrameSnapshot.PressChar(key.ToCharArray()[0], mkey);
+				Input.mainWindows.FrameSnapshot.PressChar(key.ToCharArray()[0], mkey);
 			}
 
 		}
@@ -195,12 +195,12 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			rowOne.Target = entity.AttachComponent<ImGUIButtonRow>();
-			rowTwo.Target = entity.AttachComponent<ImGUIButtonRow>();
-			rowThree.Target = entity.AttachComponent<ImGUIButtonRow>();
-			rowFour.Target = entity.AttachComponent<ImGUIButtonRow>();
-			rowFive.Target = entity.AttachComponent<ImGUIButtonRow>();
-			rowSix.Target = entity.AttachComponent<ImGUIButtonRow>();
+			rowOne.Target = Entity.AttachComponent<ImGUIButtonRow>();
+			rowTwo.Target = Entity.AttachComponent<ImGUIButtonRow>();
+			rowThree.Target = Entity.AttachComponent<ImGUIButtonRow>();
+			rowFour.Target = Entity.AttachComponent<ImGUIButtonRow>();
+			rowFive.Target = Entity.AttachComponent<ImGUIButtonRow>();
+			rowSix.Target = Entity.AttachComponent<ImGUIButtonRow>();
 			rowOne.Target.action.Target = clickKey;
 			rowTwo.Target.action.Target = clickKey;
 			rowThree.Target.action.Target = clickKey;

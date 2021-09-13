@@ -63,14 +63,14 @@ namespace RhubarbEngine.Components.Interaction
 
 		public void Dock(Window window, DockPos pos)
 		{
-			if (world.grabedWindow == this)
+			if (World.grabedWindow == this)
 			{
-				world.grabedWindow = null;
+				World.grabedWindow = null;
 			}
 			window.ChildDock.Target = this;
 			ParentDock.Target = this;
 			window.ChildDocPos.Value = pos;
-			entity.SetParent(window.entity, false, true);
+			Entity.SetParent(window.Entity, false, true);
 			sizeUpdate();
 		}
 
@@ -78,7 +78,7 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			if (ParentDock.Target == null)
 				return;
-			entity.SetParent(ParentDock.Target.entity.parent.Target, false, true);
+			Entity.SetParent(ParentDock.Target.Entity.parent.Target, false, true);
 			sizeUpdate();
 		}
 
@@ -87,28 +87,28 @@ namespace RhubarbEngine.Components.Interaction
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
 			var pos = ImGui.GetCursorPos();
-			if ((world.grabedWindow != this) && (world.grabedWindow != null) && (ChildDock.Target == null))
+			if ((World.grabedWindow != this) && (World.grabedWindow != null) && (ChildDock.Target == null))
 			{
 				var size = ImGui.GetWindowSize() / 2;
 				ImGui.SetCursorPos(size + new Vector2(-20, 0));
-				if (ImGui.ArrowButton("left" + referenceID.ToString(), ImGuiDir.Left))
+				if (ImGui.ArrowButton("left" + ReferenceID.ToString(), ImGuiDir.Left))
 				{
-					world.grabedWindow.Dock(this, DockPos.Left);
+					World.grabedWindow.Dock(this, DockPos.Left);
 				}
 				ImGui.SetCursorPos(size + new Vector2(20, 0));
-				if (ImGui.ArrowButton("right" + referenceID.ToString(), ImGuiDir.Right))
+				if (ImGui.ArrowButton("right" + ReferenceID.ToString(), ImGuiDir.Right))
 				{
-					world.grabedWindow.Dock(this, DockPos.Right);
+					World.grabedWindow.Dock(this, DockPos.Right);
 				}
 				ImGui.SetCursorPos(size + new Vector2(0, -20));
-				if (ImGui.ArrowButton("up" + referenceID.ToString(), ImGuiDir.Up))
+				if (ImGui.ArrowButton("up" + ReferenceID.ToString(), ImGuiDir.Up))
 				{
-					world.grabedWindow.Dock(this, DockPos.Up);
+					World.grabedWindow.Dock(this, DockPos.Up);
 				}
 				ImGui.SetCursorPos(size + new Vector2(0, 20));
-				if (ImGui.ArrowButton("down" + referenceID.ToString(), ImGuiDir.Down))
+				if (ImGui.ArrowButton("down" + ReferenceID.ToString(), ImGuiDir.Down))
 				{
-					world.grabedWindow.Dock(this, DockPos.Down);
+					World.grabedWindow.Dock(this, DockPos.Down);
 				}
 				ImGui.SetCursorPos(pos);
 			}
@@ -145,7 +145,7 @@ namespace RhubarbEngine.Components.Interaction
 				if (flip)
 				{
 					ImGui.SetCursorPos(pos);
-					if (ImGui.BeginChildFrame((uint)referenceID.id, parentsize))
+					if (ImGui.BeginChildFrame((uint)ReferenceID.id, parentsize))
 					{
 						element.Target?.ImguiRender(imGuiRenderer, canvas);
 						ImGui.EndChildFrame();
@@ -167,10 +167,10 @@ namespace RhubarbEngine.Components.Interaction
 						}
 						ImGui.SetNextItemWidth((size.X / 2));
 					}
-					if (ImGui.CollapsingHeader(ChildDock.Target.entity.name.Value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.AllowItemOverlap))
+					if (ImGui.CollapsingHeader(ChildDock.Target.Entity.name.Value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.AllowItemOverlap))
 					{
 						clapsed = false;
-						if (ImGui.BeginChildFrame((uint)referenceID.id + 1, parentsize))
+						if (ImGui.BeginChildFrame((uint)ReferenceID.id + 1, parentsize))
 						{
 							ChildDock.Target?.ImguiRender(imGuiRenderer, canvas);
 							ImGui.EndChildFrame();
@@ -199,7 +199,7 @@ namespace RhubarbEngine.Components.Interaction
 					{
 						ImGui.SetCursorPos(pos + new Vector2(0f, titleBarHeight));
 					}
-					if (ImGui.BeginChildFrame((uint)referenceID.id, parentsize))
+					if (ImGui.BeginChildFrame((uint)ReferenceID.id, parentsize))
 					{
 						element.Target?.ImguiRender(imGuiRenderer, canvas);
 						ImGui.EndChildFrame();
@@ -207,11 +207,11 @@ namespace RhubarbEngine.Components.Interaction
 					ImGui.SetCursorPos(pos);
 					bool e = true;
 					ImGui.SetNextItemWidth(parentsize.X);
-					if (ImGui.CollapsingHeader(ChildDock.Target.entity.name.Value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.AllowItemOverlap))
+					if (ImGui.CollapsingHeader(ChildDock.Target.Entity.name.Value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.AllowItemOverlap))
 					{
 						ImGui.SetNextItemWidth(parentsize.X);
 						clapsed = false;
-						if (ImGui.BeginChildFrame((uint)referenceID.id + 1, parentsize))
+						if (ImGui.BeginChildFrame((uint)ReferenceID.id + 1, parentsize))
 						{
 							ChildDock.Target?.ImguiRender(imGuiRenderer, canvas);
 							ImGui.EndChildFrame();
@@ -247,7 +247,7 @@ namespace RhubarbEngine.Components.Interaction
 			}
 			if (labelDriver.Linked)
 			{
-				labelDriver.Drivevalue = entity.name.Value;
+				labelDriver.Drivevalue = Entity.name.Value;
 			}
 			if (meshWidth.Linked)
 			{
@@ -279,22 +279,22 @@ namespace RhubarbEngine.Components.Interaction
 
 		private void AttachBackGround()
 		{
-			entity.AttachComponent<Grabbable>();
-			var col = entity.AttachComponent<BoxCollider>();
-			var (e, mesh, mit) = Helpers.MeshHelper.AddMesh<BoxMesh>(entity, world.staticAssets.basicUnlitShader, "UIBackGround", 2147483646);
+			Entity.AttachComponent<Grabbable>();
+			var col = Entity.AttachComponent<BoxCollider>();
+			var (e, mesh, mit) = Helpers.MeshHelper.AddMesh<BoxMesh>(Entity, World.staticAssets.basicUnlitShader, "UIBackGround", 2147483646);
 			BackGround.SetDriveTarget(mesh.Extent);
 			colBackGround.SetDriveTarget(col.boxExtents);
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
-			entity.OnDrop += Entity_onDrop;
+			base.OnLoaded();
+			Entity.OnDrop += Entity_onDrop;
 		}
 
 		private void Entity_onDrop(GrabbableHolder obj, bool laser)
 		{
-			world.grabedWindow = null;
+			World.grabedWindow = null;
 		}
 
 		private void OnGrabHeader()
@@ -303,26 +303,26 @@ namespace RhubarbEngine.Components.Interaction
 			{
 				unDock();
 			}
-			foreach (var grab in entity.GetAllComponents<Grabbable>())
+			foreach (var grab in Entity.GetAllComponents<Grabbable>())
 			{
 				grab.RemoteGrab();
 			}
-			world.grabedWindow = this;
+			World.grabedWindow = this;
 		}
 
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			PlaneMesh mesh = entity.AttachComponent<PlaneMesh>();
+			PlaneMesh mesh = Entity.AttachComponent<PlaneMesh>();
 			meshWidth.SetDriveTarget(mesh.Width);
 			meshHeight.SetDriveTarget(mesh.Height);
-			var UIRender = entity.AddChild("UIRender");
+			var UIRender = Entity.AddChild("UIRender");
 			renderEnableDriver.SetDriveTarget(UIRender.enabled);
 			AttachBackGround();
 			InputPlane col = UIRender.AttachComponent<InputPlane>();
 			colDriver.SetDriveTarget(col.size);
 			colPixelsizeDriver.SetDriveTarget(col.pixelSize);
-			RMaterial mit = entity.AttachComponent<RMaterial>();
+			RMaterial mit = Entity.AttachComponent<RMaterial>();
 			MeshRender meshRender = UIRender.AttachComponent<MeshRender>();
 			UIRender.position.Value = new Vector3f(0f, -0.012f, 0f);
 			ImGUICanvas imGUICanvas = UIRender.AttachComponent<ImGUICanvas>();
@@ -333,7 +333,7 @@ namespace RhubarbEngine.Components.Interaction
 			labelDriver.SetDriveTarget(imGUICanvas.name);
 			imGUICanvas.element.Target = this;
 			canvasPixelsizeDriver.SetDriveTarget(imGUICanvas.scale);
-			mit.Shader.Target = world.staticAssets.basicUnlitShader;
+			mit.Shader.Target = World.staticAssets.basicUnlitShader;
 			canvas.Target = imGUICanvas;
 			Render.Material.Fields.Texture2DField field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
 			field.field.Target = imGUICanvas;
@@ -344,12 +344,12 @@ namespace RhubarbEngine.Components.Interaction
 
 		public void Close()
 		{
-			entity.Destroy();
+			Entity.Destroy();
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			element = new SyncRef<IUIElement>(this, newRefIds);
 			canvas = new SyncRef<ImGUICanvas>(this, newRefIds);
 			size = new Sync<Vector2f>(this, newRefIds);

@@ -29,10 +29,10 @@ namespace RhubarbEngine.Components.Assets
 	public class TilledUnlitShader : AssetProvider<RShader>, IAsset
 	{
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			logger.Log("Loadded Shader");
-			RShader shader = new RShader();
+			Logger.Log("Loadded Shader");
+			var shader = new RShader();
 			shader.addUniform("Texture", Render.Shader.ShaderValueType.Val_texture2D, Render.Shader.ShaderType.MainFrag);
 			//shader.addUniform("rambow", Render.Shader.ShaderValueType.Val_color, Render.Shader.ShaderType.MainFrag);
 			shader.addUniform("Tile", Render.Shader.ShaderValueType.Val_vec2, Render.Shader.ShaderType.MainFrag);
@@ -55,11 +55,11 @@ void main()
 }
 ";
 			;
-			shader.LoadShader(engine.renderManager.gd, logger);
+			shader.LoadShader(Engine.renderManager.gd, Logger);
 			load(shader);
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 
 		}

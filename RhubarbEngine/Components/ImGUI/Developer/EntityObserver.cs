@@ -26,9 +26,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRefList<IObserver> children;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<Entity>(this, newRefIds);
 			target.Changed += Target_Changed;
 			children = new SyncRefList<IObserver>(this, newRefIds);
@@ -36,7 +36,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void Target_Changed(IChangeable obj)
 		{
-			if (entity.Manager != world.LocalUser)
+			if (Entity.Manager != World.LocalUser)
             {
                 return;
             }
@@ -81,7 +81,7 @@ namespace RhubarbEngine.Components.ImGUI
 				//This is a temp fix
 				if (_e == null)
 				{
-					_e = entity.AddChild("Entity Children");
+					_e = Entity.AddChild("Entity Children");
 					_e.persistence.Value = false;
 				}
 				//I should remove on change update before initialized or add a on initialized check inside this function
@@ -102,9 +102,9 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void Dispose()
 		{
 			base.Dispose();
-			if (world.lastEntityObserver == this)
+			if (World.lastEntityObserver == this)
 			{
-				world.lastEntityObserver = null;
+				World.lastEntityObserver = null;
 			}
 		}
 
@@ -114,18 +114,18 @@ namespace RhubarbEngine.Components.ImGUI
 			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
-					source = world.LeftLaserGrabbableHolder;
+					source = World.LeftLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.RightLaser:
-					source = world.RightLaserGrabbableHolder;
+					source = World.RightLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.HeadLaser:
-					source = world.HeadLaserGrabbableHolder;
+					source = World.HeadLaserGrabbableHolder;
 					break;
 				default:
 					break;
 			}
-			ImGui.Text($"{target.Target?.name.Value ?? "null"} ID:({target.Target?.referenceID.id.ToHexString() ?? "null"})");
+			ImGui.Text($"{target.Target?.name.Value ?? "null"} ID:({target.Target?.ReferenceID.id.ToHexString() ?? "null"})");
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				if (source != null)
@@ -134,14 +134,14 @@ namespace RhubarbEngine.Components.ImGUI
 				}
 			}
 			ImGui.SameLine();
-			if (ImGui.Button("X##" + referenceID.id.ToString()))
+			if (ImGui.Button("X##" + ReferenceID.id.ToString()))
 			{
 				var e = target.Target?.parent.Target;
 				target.Target?.Destroy();
 				target.Target = e;
 			}
 			ImGui.SameLine();
-			if (ImGui.Button("+##" + referenceID.id.ToString()))
+			if (ImGui.Button("+##" + ReferenceID.id.ToString()))
 			{
 				var e = target.Target?.AddChild();
 				if (e != null)
@@ -150,7 +150,7 @@ namespace RhubarbEngine.Components.ImGUI
                 }
             }
 			ImGui.SameLine();
-			if (ImGui.ArrowButton(referenceID.id.ToString(), ImGuiDir.Up))
+			if (ImGui.ArrowButton(ReferenceID.id.ToString(), ImGuiDir.Up))
 			{
 				var c = target.Target.parent.Target.AddChild(target.Target.name.Value + "Parent");
 				if (target.Target != null)
@@ -170,7 +170,7 @@ namespace RhubarbEngine.Components.ImGUI
 			ImGui.EndChild();
 			if (ImGui.IsMouseClicked(ImGuiMouseButton.COUNT))
 			{
-				world.lastEntityObserver = this;
+				World.lastEntityObserver = this;
 			}
 		}
 	}

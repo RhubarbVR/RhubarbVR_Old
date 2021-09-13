@@ -33,7 +33,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 		public SyncRef<ImGUICanvas> startcanvas;
 		public Driver<string> dateTextDriver;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			root = new SyncRef<Entity>(this, newRefIds);
 			startMenu = new SyncRef<Entity>(this, newRefIds);
@@ -68,7 +68,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 		private void BuildStartMenu(Entity e)
 		{
 			startMenu.Target = e;
-			var shader = world.staticAssets.basicUnlitShader;
+			var shader = World.staticAssets.basicUnlitShader;
 			var bmesh = e.AttachComponent<PlaneMesh>();
 			bmesh.Height.Value = 0.30f;
 			bmesh.Width.Value = 0.30f;
@@ -117,37 +117,37 @@ namespace RhubarbEngine.Components.PrivateSpace
 
 		private void CreateWindow()
 		{
-			logger.Log("Create Window");
-			var createWorld = world.worldManager.FocusedWorld ?? world;
-			var User = createWorld.UserRoot.entity;
+			Logger.Log("Create Window");
+			var createWorld = World.worldManager.FocusedWorld ?? World;
+			var User = createWorld.UserRoot.Entity;
 			var par = User.parent.Target;
 			var (cube, _, comp) = Helpers.MeshHelper.AttachWindow<HierarchyRoot>(par);
 			var headPos = createWorld.UserRoot.Headpos;
 			var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 2, 0.5f)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric());
 			cube.SetGlobalTrans(move * headPos);
-			comp.Initialize(world.worldManager.FocusedWorld.RootEntity);
+			comp.Initialize(World.worldManager.FocusedWorld.RootEntity);
 
 		}
 
 		private void CreateWindow2()
 		{
-			logger.Log("Create Window2");
-			var createWorld = world.worldManager.FocusedWorld ?? world;
-			var User = createWorld.UserRoot.entity;
+			Logger.Log("Create Window2");
+			var createWorld = World.worldManager.FocusedWorld ?? World;
+			var User = createWorld.UserRoot.Entity;
 			var par = User.parent.Target;
 			var (cube, _, comp) = Helpers.MeshHelper.AttachWindow<EntityObserver>(par);
 			var headPos = createWorld.UserRoot.Headpos;
 			var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 2, 0.5f)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric());
 			cube.SetGlobalTrans(move * headPos);
-			comp.target.Target = world.worldManager.FocusedWorld.RootEntity;
+			comp.target.Target = World.worldManager.FocusedWorld.RootEntity;
 
 		}
 
 		private void CreateCube()
 		{
-			logger.Log("Create Cube");
-			var createWorld = world.worldManager.FocusedWorld ?? world;
-			var User = createWorld.UserRoot.entity;
+			Logger.Log("Create Cube");
+			var createWorld = World.worldManager.FocusedWorld ?? World;
+			var User = createWorld.UserRoot.Entity;
 			var par = User.parent.Target;
 			var (cube, _) = Helpers.MeshHelper.AddMesh<BoxMesh>(par, "Cube");
 			var headPos = createWorld.UserRoot.Headpos;
@@ -160,9 +160,9 @@ namespace RhubarbEngine.Components.PrivateSpace
 		}
 		private void CreateSphere()
 		{
-			logger.Log("Create Sphere");
-			var createWorld = world.worldManager.FocusedWorld ?? world;
-            var User = createWorld.UserRoot.entity;
+			Logger.Log("Create Sphere");
+			var createWorld = World.worldManager.FocusedWorld ?? World;
+            var User = createWorld.UserRoot.Entity;
             var par = User.parent.Target;
 			var (cube, _) = Helpers.MeshHelper.AddMesh<SphereMesh>(par, "Sphere");
 			var headPos = createWorld.UserRoot.Headpos;
@@ -175,12 +175,12 @@ namespace RhubarbEngine.Components.PrivateSpace
 		}
 		public override void OnAttach()
 		{
-			var e = entity.AddChild("TaskBar");
+			var e = Entity.AddChild("TaskBar");
 			root.Target = e;
-			var shader = world.staticAssets.basicUnlitShader;
+			var shader = World.staticAssets.basicUnlitShader;
 			var bmesh = e.AttachComponent<CurvedPlaneMesh>();
-			bmesh.BottomRadius.Value = engine.settingsObject.UISettings.TaskBarCurve;
-			bmesh.TopRadius.Value = engine.settingsObject.UISettings.TaskBarCurve + 10f;
+			bmesh.BottomRadius.Value = Engine.settingsObject.UISettings.TaskBarCurve;
+			bmesh.TopRadius.Value = Engine.settingsObject.UISettings.TaskBarCurve + 10f;
 			bmesh.Height.Value = 0.12f;
 			bmesh.Width.Value = 0.95f;
 			var bmeshcol = e.AttachComponent<MeshInputPlane>();
@@ -195,7 +195,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 			var meshRender = TaskBar.AttachComponent<MeshRender>();
 			meshRender.RenderOrderOffset.Value = 20;
 			var imGUICanvas = TaskBar.AttachComponent<ImGUICanvas>();
-			imGUICanvas.scale.Value = bmeshcol.pixelSize.Value = new Vector2u(((uint)(7.69 * engine.settingsObject.UISettings.TaskBarCurve)) * 2, 76 * 2);
+			imGUICanvas.scale.Value = bmeshcol.pixelSize.Value = new Vector2u(((uint)(7.69 * Engine.settingsObject.UISettings.TaskBarCurve)) * 2, 76 * 2);
 			imGUICanvas.imputPlane.Target = bmeshcol;
 			mit.Shader.Target = shader;
 			meshRender.Materials.Add().Target = mit;
@@ -231,22 +231,22 @@ namespace RhubarbEngine.Components.PrivateSpace
 				var now = DateTime.Now;
 				dateTextDriver.Drivevalue = $"{((now.Hour > 12) ? $"pm {now.Hour - 12}" : ((now.Hour == 0) ? "pm 12" : $"am {now.Hour}"))}:{((now.Minute < 10) ? $"0{now.Minute}" : now.Minute)}\n";
 				dateTextDriver.Drivevalue += $"{now.Month}/{((now.Day < 10) ? $"0{now.Day}" : now.Day)}/{now.Year}\n";
-				dateTextDriver.Drivevalue += $"FPS {engine.platformInfo.AvrageFrameRate}";
+				dateTextDriver.Drivevalue += $"FPS {Engine.platformInfo.AvrageFrameRate}";
 			}
 			if (DateTime.UtcNow <= _opened + new TimeSpan(0, 0, 1))
             {
                 return;
             }
 
-            if (((input.mainWindows.GetKey(Veldrid.Key.ControlLeft) || input.mainWindows.GetKey(Veldrid.Key.ControlLeft)) && input.mainWindows.GetKey(Veldrid.Key.Space)) || input.mainWindows.GetKeyDown(Veldrid.Key.Escape))
+            if (((Input.mainWindows.GetKey(Veldrid.Key.ControlLeft) || Input.mainWindows.GetKey(Veldrid.Key.ControlLeft)) && Input.mainWindows.GetKey(Veldrid.Key.Space)) || Input.mainWindows.GetKeyDown(Veldrid.Key.Escape))
 			{
-				entity.enabled.Value = !entity.enabled.Value;
+				Entity.enabled.Value = !Entity.enabled.Value;
 				_opened = DateTime.UtcNow;
 			}
-			if (input.MenuPress(Input.Creality.None))
+			if (Input.MenuPress(RhubarbEngine.Input.Creality.None))
 			{
-				entity.enabled.Value = !entity.enabled.Value;
-				_opened = DateTime.UtcNow;
+                Entity.enabled.Value = !Entity.enabled.Value;
+                _opened = DateTime.UtcNow;
 			}
 		}
 

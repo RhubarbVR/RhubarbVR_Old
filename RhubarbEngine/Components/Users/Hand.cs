@@ -27,33 +27,33 @@ namespace RhubarbEngine.Components.Users
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			posDriver.SetDriveTarget(entity.position);
-			rotDriver.SetDriveTarget(entity.rotation);
-			scaleDriver.SetDriveTarget(entity.scale);
+			posDriver.SetDriveTarget(Entity.position);
+			rotDriver.SetDriveTarget(Entity.rotation);
+			scaleDriver.SetDriveTarget(Entity.scale);
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (world.Userspace)
+			if (World.Userspace)
 			{
-				Matrix4x4 val = input.GetPos(creality.Value);
-				entity.SetLocalTrans(val);
+				Matrix4x4 val = Input.GetPos(creality.Value);
+				Entity.SetLocalTrans(val);
 				return;
 			}
 			if (userroot.Target == null)
 			{
 				return;
 			}
-			if (userroot.Target.user.Target == world.LocalUser)
+			if (userroot.Target.user.Target == World.LocalUser)
 			{
-				Matrix4x4 val = input.GetPos(creality.Value);
-				entity.SetLocalTrans(val);
-				var userpos = world.LocalUser.FindOrCreateUserStream<SyncStream<Vector3f>>($"Hand{creality.Value}Pos");
-				var userrot = world.LocalUser.FindOrCreateUserStream<SyncStream<Quaternionf>>($"Hand{creality.Value}Rot");
-				var userscale = world.LocalUser.FindOrCreateUserStream<SyncStream<Vector3f>>($"Hand{creality.Value}Scale");
-				userpos.Value = entity.position.Value;
-				userrot.Value = entity.rotation.Value;
-				userscale.Value = entity.scale.Value;
+				Matrix4x4 val = Input.GetPos(creality.Value);
+				Entity.SetLocalTrans(val);
+				var userpos = World.LocalUser.FindOrCreateUserStream<SyncStream<Vector3f>>($"Hand{creality.Value}Pos");
+				var userrot = World.LocalUser.FindOrCreateUserStream<SyncStream<Quaternionf>>($"Hand{creality.Value}Rot");
+				var userscale = World.LocalUser.FindOrCreateUserStream<SyncStream<Vector3f>>($"Hand{creality.Value}Scale");
+				userpos.Value = Entity.position.Value;
+				userrot.Value = Entity.rotation.Value;
+				userscale.Value = Entity.scale.Value;
 			}
 			else
 			{
@@ -67,7 +67,7 @@ namespace RhubarbEngine.Components.Users
 					try
 					{
 						Matrix4x4 value = Matrix4x4.CreateScale(userscale.Value.ToSystemNumrics()) * Matrix4x4.CreateFromQuaternion(userrot.Value.ToSystemNumric()) * Matrix4x4.CreateTranslation(userpos.Value.ToSystemNumrics());
-						entity.SetLocalTrans(value);
+						Entity.SetLocalTrans(value);
 					}
 					catch
 					{
@@ -78,7 +78,7 @@ namespace RhubarbEngine.Components.Users
 			}
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			creality = new Sync<Creality>(this, newRefIds);
 			userroot = new SyncRef<UserRoot>(this, newRefIds);

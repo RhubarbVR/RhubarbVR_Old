@@ -33,7 +33,7 @@ namespace RhubarbEngine.Components.Transform
 
 		public Sync<LookAtPace> positionSource;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			driver = new Driver<Vector3f>(this, newRefIds);
 			offset = new Sync<Vector3f>(this, newRefIds);
@@ -58,27 +58,27 @@ namespace RhubarbEngine.Components.Transform
 				switch (positionSource.Value)
 				{
 					case LookAtPace.Root:
-						tagetPos = world.LocalUser.userroot.Target?.entity.GlobalPos();
+						tagetPos = World.LocalUser.userroot.Target?.Entity.GlobalPos();
 						break;
 					case LookAtPace.Head:
-						tagetPos = world.LocalUser.userroot.Target?.Head.Target?.GlobalPos();
+						tagetPos = World.LocalUser.userroot.Target?.Head.Target?.GlobalPos();
 						break;
 					case LookAtPace.LeftController:
-						tagetPos = world.LocalUser.userroot.Target?.LeftHand.Target?.GlobalPos();
+						tagetPos = World.LocalUser.userroot.Target?.LeftHand.Target?.GlobalPos();
 						break;
 					case LookAtPace.RightController:
-						tagetPos = world.LocalUser.userroot.Target?.RightHand.Target?.GlobalPos();
+						tagetPos = World.LocalUser.userroot.Target?.RightHand.Target?.GlobalPos();
 						break;
 					default:
 						tagetPos = null;
 						break;
 				}
-				var dist = Math.Pow((entity.GlobalPos().Distance((tagetPos ?? Vector3f.Zero) + positionOffset.Value) * scale.Value), pow.Value);
-				driver.Drivevalue = entity.GlobalScaleToLocal((new Vector3f(Math.Clamp(dist, min.Value, max.Value)) + offset.Value), false);
+				var dist = Math.Pow((Entity.GlobalPos().Distance((tagetPos ?? Vector3f.Zero) + positionOffset.Value) * scale.Value), pow.Value);
+				driver.Drivevalue = Entity.GlobalScaleToLocal((new Vector3f(Math.Clamp(dist, min.Value, max.Value)) + offset.Value), false);
 			}
 			else
 			{
-				driver.Target = entity.scale;
+				driver.Target = Entity.scale;
 			}
 		}
 		public DistanceScaler(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

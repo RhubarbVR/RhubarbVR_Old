@@ -18,7 +18,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public Sync<bool> NoSharedVertices;
 
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			Curve = new SyncValueList<Vector3d>(this, newRefIds);
 			Curve.Add().Value = new Vector3d(1.0f, 0.25f, 0.0f);
@@ -33,11 +33,11 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			Capped.Value = false;
 			NoSharedVertices = new Sync<bool>(this, newRefIds);
 		}
-		public override void onChanged()
+		public override void OnChanged()
 		{
 			updateMesh();
 		}
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
 			Vector3d[] tempArray = new Vector3d[Curve.Count];
 			for (int i = 0; i < Curve.Count; i++)
@@ -54,7 +54,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		private void updateMesh()
 		{
 			RMesh tempMesh = new RMesh(_generator.Generate().MakeDMesh());
-			tempMesh.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
+			tempMesh.createMeshesBuffers(World.worldManager.engine.renderManager.gd);
 			load(tempMesh, true);
 		}
 

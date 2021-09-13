@@ -23,9 +23,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<Sync<Colorf>> target;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<Sync<Colorf>>(this, newRefIds);
 			fieldName = new Sync<string>(this, newRefIds);
 		}
@@ -52,13 +52,13 @@ namespace RhubarbEngine.Components.ImGUI
 			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
-					source = world.LeftLaserGrabbableHolder;
+					source = World.LeftLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.RightLaser:
-					source = world.RightLaserGrabbableHolder;
+					source = World.RightLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.HeadLaser:
-					source = world.HeadLaserGrabbableHolder;
+					source = World.HeadLaserGrabbableHolder;
 					break;
 				default:
 					break;
@@ -77,7 +77,7 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
 			Vector4 val = target.Target?.Value.ToRGBA().ToSystem() ?? Vector4.Zero;
-			if (ImGui.ColorEdit4((fieldName.Value ?? "null") + $"##{referenceID.id}", ref val))
+			if (ImGui.ColorEdit4((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref val))
 			{
 				if (target.Target != null)
 					target.Target.Value = (Colorf)(Vector4f)val;

@@ -40,13 +40,13 @@ namespace RhubarbEngine.Components.ImGUI
 			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
-					source = world.LeftLaserGrabbableHolder;
+					source = World.LeftLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.RightLaser:
-					source = world.RightLaserGrabbableHolder;
+					source = World.RightLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.HeadLaser:
-					source = world.HeadLaserGrabbableHolder;
+					source = World.HeadLaserGrabbableHolder;
 					break;
 				default:
 					break;
@@ -73,12 +73,12 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				val = $"{target.Target?.TargetIWorldObject.GetNameString() ?? ""} ID:({target.Target?.TargetIWorldObject?.ReferenceID.id.ToHexString() ?? "null"})";
 			}
-			if (ImGui.Button("^##" + referenceID.id.ToString()))
+			if (ImGui.Button("^##" + ReferenceID.id.ToString()))
 			{
 				target.Target.TargetIWorldObject?.OpenWindow();
 			}
 			ImGui.SameLine();
-			if (ImGui.Button("X##" + referenceID.id.ToString()))
+			if (ImGui.Button("X##" + ReferenceID.id.ToString()))
 			{
 				if (target.Target != null)
                 {
@@ -87,7 +87,7 @@ namespace RhubarbEngine.Components.ImGUI
             }
 			ImGui.SameLine();
 			ImGui.SetNextItemWidth(ImGui.CalcItemWidth() - 45);
-			ImGui.InputText((fieldName.Value ?? "null") + $"##{referenceID.id}", ref val, (uint)val.Length + 255, ImGuiInputTextFlags.ReadOnly);
+			ImGui.InputText((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref val, (uint)val.Length + 255, ImGuiInputTextFlags.ReadOnly);
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				if (source != null)
@@ -138,9 +138,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<ISyncRef> target;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<ISyncRef>(this, newRefIds);
 			fieldName = new Sync<string>(this, newRefIds);
 		}

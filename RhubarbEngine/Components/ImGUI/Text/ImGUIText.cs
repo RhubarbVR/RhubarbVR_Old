@@ -33,9 +33,9 @@ namespace RhubarbEngine.Components.ImGUI
 		public Sync<string> text;
 		public Sync<TextType> textType;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			text = new Sync<string>(this, newRefIds);
 			textType = new Sync<TextType>(this, newRefIds);
 			textType.Value = TextType.Normal;

@@ -13,7 +13,7 @@ namespace RhubarbEngine.World
 	{
 		public Sync<string> name;
 
-		public override void inturnalSyncObjs(bool newRefIds)
+		public override void InturnalSyncObjs(bool newRefIds)
 		{
 			name = new Sync<string>(this, newRefIds);
 		}

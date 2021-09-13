@@ -49,7 +49,7 @@ namespace RhubarbEngine.World
 		{
 			base.Target = Target;
 		}
-		public override void onChanged()
+		public override void OnChanged()
 		{
 			if (Target != null)
 			{

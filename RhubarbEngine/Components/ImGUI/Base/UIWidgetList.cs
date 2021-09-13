@@ -19,9 +19,9 @@ namespace RhubarbEngine.Components.ImGUI
 	{
 		public SyncRefList<IUIElement> children;
 
-		public override void inturnalSyncObjs(bool newRefIds)
+		public override void InturnalSyncObjs(bool newRefIds)
 		{
-			base.inturnalSyncObjs(newRefIds);
+			base.InturnalSyncObjs(newRefIds);
 			children = new SyncRefList<IUIElement>(this, newRefIds);
 		}
 

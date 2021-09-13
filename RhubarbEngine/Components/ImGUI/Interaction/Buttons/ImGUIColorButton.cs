@@ -26,9 +26,9 @@ namespace RhubarbEngine.Components.ImGUI
 		public Sync<ImGuiColorEditFlags> imGuiColorEditFlags;
 
 		public SyncDelegate action;
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			color = new Sync<Colorf>(this, newRefIds);
 			id = new Sync<string>(this, newRefIds);
 			imGuiColorEditFlags = new Sync<ImGuiColorEditFlags>(this, newRefIds);

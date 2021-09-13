@@ -46,7 +46,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			var (renderentity, mesh, mit) = MeshHelper.AddMesh<PlaneMesh>(entity, world.staticAssets.overLayedUnlitShader, "RenderEntity", 10);
+			var (renderentity, mesh, mit) = MeshHelper.AddMesh<PlaneMesh>(Entity, World.staticAssets.overLayedUnlitShader, "RenderEntity", 10);
 			renderEntity.Target = renderentity;
 			mesh.Width.Value = 0.5f;
 			mesh.Height.Value = 0.5f;
@@ -71,7 +71,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 		}
 
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			side = new Sync<Creality>(this, newRefIds);
 			renderEntity = new SyncRef<Entity>(this, newRefIds);
@@ -102,24 +102,24 @@ namespace RhubarbEngine.Components.PrivateSpace
 		private void Alline()
 		{
 			var trans = Matrix4x4.CreateScale(1);
-			if (engine.outputType == VirtualReality.OutputType.Screen)
+			if (Engine.outputType == VirtualReality.OutputType.Screen)
 			{
 				if (side.Value == Creality.Left)
                 {
                     return;
                 }
 
-                trans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 1, 0)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric()) * world.UserRoot.Head.Target.GlobalTrans();
+                trans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 1, 0)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric()) * World.UserRoot.Head.Target.GlobalTrans();
 			}
 			else
 			{
 				switch (side.Value)
 				{
 					case Creality.Left:
-						trans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 0.5f, 0)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric()) * world.UserRoot.LeftHand.Target.GlobalTrans();
+						trans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 0.5f, 0)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric()) * World.UserRoot.LeftHand.Target.GlobalTrans();
 						break;
 					case Creality.Right:
-						trans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 0.5f, 0)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric()) * world.UserRoot.RightHand.Target.GlobalTrans();
+						trans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 0.5f, 0)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric()) * World.UserRoot.RightHand.Target.GlobalTrans();
 						break;
 					default:
 						break;
@@ -140,11 +140,11 @@ namespace RhubarbEngine.Components.PrivateSpace
 		}
 		private bool ProssesOpenKey()
 		{
-			if (engine.outputType == VirtualReality.OutputType.Screen)
+			if (Engine.outputType == VirtualReality.OutputType.Screen)
 			{
-                return side.Value != Creality.Left && input.mainWindows.GetKeyDown(Key.F);
+                return side.Value != Creality.Left && Input.mainWindows.GetKeyDown(Key.F);
             }
-            return input.MenuPress(side.Value);
+            return Input.MenuPress(side.Value);
 		}
 
 		public ContextMenu(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

@@ -65,7 +65,7 @@ namespace RhubarbEngine.World
 				{
 					UpdateValue();
 				}
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 		}
 
@@ -82,7 +82,7 @@ namespace RhubarbEngine.World
 				Value = new DataNode<T>(_value);
 			}
 			obj.SetValue("Value", Value);
-			world.NetModule?.AddToQueue(Net.ReliabilityLevel.Unreliable, obj, referenceID.id);
+			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Unreliable, obj, ReferenceID.id);
 		}
 		public SyncStream()
 		{
@@ -99,22 +99,10 @@ namespace RhubarbEngine.World
 
 		}
 
-		public override DataNodeGroup Serialize(bool netsync = false)
+		public override DataNodeGroup Serialize(WorkerSerializerObject workerSerializerObject)
 		{
-			var obj = new DataNodeGroup();
-			var Refid = new DataNode<NetPointer>(referenceID);
-			obj.SetValue("referenceID", Refid);
-			IDataNode Value;
-			if (typeof(T).IsEnum)
-			{
-				Value = new DataNode<int>((int)(object)_value);
-			}
-			else
-			{
-				Value = new DataNode<T>(_value);
-			}
-			obj.SetValue("Value", Value);
-			obj.SetValue("Name", name.Serialize());
+            var obj = workerSerializerObject.CommonValueSerialize(this, _value);
+			obj.SetValue("Name", name.Serialize(new WorkerSerializerObject()));
 			return obj;
 		}
 
@@ -122,24 +110,24 @@ namespace RhubarbEngine.World
 		{
 			if (data == null)
 			{
-				world.worldManager.engine.logger.Log($"Node did not exsets When loading Sync Value { GetType().FullName}");
+				World.worldManager.engine.logger.Log($"Node did not exsets When loading Sync Value { GetType().FullName}");
 				return;
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), referenceID.getID());
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
 				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
 				{
 					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
 					{
-						func(referenceID.getID());
+						func(ReferenceID.getID());
 					}
 				}
 			}
 			else
 			{
-				referenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
-				world.AddWorldObj(this);
+				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
+				World.AddWorldObj(this);
 			}
 			if (typeof(T).IsEnum)
 			{

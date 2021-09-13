@@ -35,7 +35,7 @@ namespace RhubarbEngine.Components.Assets
 	{
 		public Sync<bool> solid;
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
 			LoadRhubarbTexture();
 		}
@@ -44,22 +44,22 @@ namespace RhubarbEngine.Components.Assets
 		{
 			if (solid.Value)
 			{
-				load(new RTexture2D(engine.renderManager.rhubarbSolidview));
+				load(new RTexture2D(Engine.renderManager.rhubarbSolidview));
 			}
 			else
 			{
-				load(new RTexture2D(engine.renderManager.rhubarbview));
+				load(new RTexture2D(Engine.renderManager.rhubarbview));
 			}
 
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			solid = new Sync<bool>(this, newRefIds);
 		}
-		public override void onChanged()
+		public override void OnChanged()
 		{
-			base.onChanged();
+			base.OnChanged();
 			LoadRhubarbTexture();
 		}
 

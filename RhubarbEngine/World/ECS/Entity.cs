@@ -23,7 +23,7 @@ namespace RhubarbEngine.World.ECS
         {
             get
             {
-                return world.users[(int)referenceID.getOwnerID()];
+                return World.users[(int)ReferenceID.getOwnerID()];
             }
         }
 
@@ -45,7 +45,7 @@ namespace RhubarbEngine.World.ECS
 				}
 				if (retur == null)
 				{
-					retur = world.HostUser;
+					retur = World.HostUser;
 				}
 				return retur;
 			}
@@ -187,7 +187,7 @@ namespace RhubarbEngine.World.ECS
         {
             get
             {
-                return _internalParent?._children ?? (IWorldObject)world;
+                return _internalParent?._children ?? (IWorldObject)World;
             }
         }
 
@@ -331,9 +331,9 @@ namespace RhubarbEngine.World.ECS
 		{
 			base.Persistent = persistence.Value;
 		}
-		public override void inturnalSyncObjs(bool newRefIds)
+		public override void InturnalSyncObjs(bool newRefIds)
 		{
-			world.AddWorldEntity(this);
+			World.AddWorldEntity(this);
 		}
 
 		public Vector3f GlobalPos()
@@ -419,7 +419,7 @@ namespace RhubarbEngine.World.ECS
 			UpdateGlobalTrans();
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			position = new Sync<Vector3f>(this, newRefIds);
             scale = new Sync<Vector3f>(this, newRefIds)
@@ -455,7 +455,7 @@ namespace RhubarbEngine.World.ECS
 
 		private void Parent_Changed(IChangeable obj)
 		{
-			if (world.RootEntity == this)
+			if (World.RootEntity == this)
             {
                 return;
             }
@@ -473,12 +473,12 @@ namespace RhubarbEngine.World.ECS
 			}
 			if (parent.Target == null)
 			{
-				parent.Target = world.RootEntity;
+				parent.Target = World.RootEntity;
 				return;
 			}
-			if (world != parent.Target.world)
+			if (World != parent.Target.World)
 			{
-				logger.Log("tried to set parent from another world");
+				Logger.Log("tried to set parent from another world");
 				return;
 			}
 			if (!parent.Target.CheckIfParented(this))
@@ -512,7 +512,7 @@ namespace RhubarbEngine.World.ECS
 
 		private void OnEnableChange(IChangeable newValue)
 		{
-			if (!enabled.Value && (world.RootEntity == this))
+			if (!enabled.Value && (World.RootEntity == this))
 			{ enabled.Value = true; };
 			foreach (var item in _children)
 			{
@@ -565,9 +565,9 @@ namespace RhubarbEngine.World.ECS
 			}
 			catch (Exception e)
 			{
-				Logger.Log("Failed To run Attach On Component" + typeof(T).Name + " Error:" + e.ToString());
+                RhubarbEngine.Logger.Log("Failed To run Attach On Component" + typeof(T).Name + " Error:" + e.ToString());
 			}
-			newcomp.onLoaded();
+			newcomp.OnLoaded();
 			return newcomp;
 		}
 
@@ -584,15 +584,15 @@ namespace RhubarbEngine.World.ECS
 			}
 			catch (Exception e)
 			{
-				Logger.Log("Failed To run Attach On Component" + type.Name + " Error:" + e.ToString());
+                RhubarbEngine.Logger.Log("Failed To run Attach On Component" + type.Name + " Error:" + e.ToString());
 			}
-			newcomp.onLoaded();
+			newcomp.OnLoaded();
 			return newcomp;
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
+			base.OnLoaded();
 			UpdateGlobalTrans();
 		}
 		[NoShow]
@@ -642,9 +642,9 @@ namespace RhubarbEngine.World.ECS
 
 		public override void Dispose()
 		{
-			logger.Log("Entity Remove");
+			Logger.Log("Entity Remove");
 			base.Dispose();
-			world.RemoveWorldEntity(this);
+			World.RemoveWorldEntity(this);
 		}
 
 		public void Update(DateTime startTime, DateTime Frame)
@@ -656,7 +656,7 @@ namespace RhubarbEngine.World.ECS
 
             foreach (var comp in _components)
 			{
-				if (comp.enabled.Value && !comp.IsRemoved && world.Focus != World.FocusLevel.Background)
+				if (comp.enabled.Value && !comp.IsRemoved && World.Focus != World.FocusLevel.Background)
 				{
 					comp.CommonUpdate(startTime, Frame);
 				}

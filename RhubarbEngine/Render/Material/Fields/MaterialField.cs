@@ -30,11 +30,11 @@ namespace RhubarbEngine.Render.Material.Fields
 		[NoSync]
 		public RMaterial rMaterial => (RMaterial)parent.Parent;
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
-			createDeviceResource(engine.renderManager.gd.ResourceFactory);
-			updateBuffer(engine.renderManager.gd);
+			base.OnLoaded();
+			createDeviceResource(Engine.renderManager.gd.ResourceFactory);
+			updateBuffer(Engine.renderManager.gd);
 		}
 
 		public virtual void setValue(Object val)
@@ -42,7 +42,7 @@ namespace RhubarbEngine.Render.Material.Fields
 
 		}
 
-		public override void inturnalSyncObjs(bool newRefIds)
+		public override void InturnalSyncObjs(bool newRefIds)
 		{
 			shaderType = new Sync<ShaderType>(this, newRefIds);
 			fieldName = new Sync<string>(this, newRefIds);

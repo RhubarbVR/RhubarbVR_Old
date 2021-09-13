@@ -32,11 +32,11 @@ namespace RhubarbEngine.Components.Physics
 
 		public SyncDelegate onFocusLost;
 
-		public IReadOnlyList<KeyEvent> KeyEvents { get { return !focused ? new List<KeyEvent>() : input.mainWindows.FrameSnapshot.KeyEvents; } }
+		public IReadOnlyList<KeyEvent> KeyEvents { get { return !focused ? new List<KeyEvent>() : Input.mainWindows.FrameSnapshot.KeyEvents; } }
 
-		public IReadOnlyList<MouseEvent> MouseEvents { get { return IsNotTakingInput ? new List<MouseEvent>() : input.mainWindows.FrameSnapshot.MouseEvents; } }
+		public IReadOnlyList<MouseEvent> MouseEvents { get { return IsNotTakingInput ? new List<MouseEvent>() : Input.mainWindows.FrameSnapshot.MouseEvents; } }
 
-		public IReadOnlyList<char> KeyCharPresses { get { return !focused ? new List<char>() : input.mainWindows.FrameSnapshot.KeyCharPresses; } }
+		public IReadOnlyList<char> KeyCharPresses { get { return !focused ? new List<char>() : Input.mainWindows.FrameSnapshot.KeyCharPresses; } }
 
 		private Vector2 _mousePosition = Vector2.Zero;
 
@@ -55,13 +55,13 @@ namespace RhubarbEngine.Components.Physics
 				switch (source)
 				{
 					case InteractionSource.LeftLaser:
-						input.LeftLaser.cursor = cursor;
+						Input.LeftLaser.cursor = cursor;
 						break;
 					case InteractionSource.RightLaser:
-						input.RightLaser.cursor = cursor;
+						Input.RightLaser.cursor = cursor;
 						break;
 					case InteractionSource.HeadLaser:
-						input.RightLaser.cursor = cursor;
+						Input.RightLaser.cursor = cursor;
 						break;
 					default:
 						break;
@@ -83,7 +83,7 @@ namespace RhubarbEngine.Components.Physics
                 return;
             }
 
-            if (!_focused && !input.IsKeyboardinuse)
+            if (!_focused && !Input.IsKeyboardinuse)
 			{
 				Setfocused();
 				StopMousePos = false;
@@ -101,7 +101,7 @@ namespace RhubarbEngine.Components.Physics
 		{
 			get
 			{
-                return IsNotTakingInput ? 0f : input.mainWindows.FrameSnapshot.WheelDelta;
+                return IsNotTakingInput ? 0f : Input.mainWindows.FrameSnapshot.WheelDelta;
             }
         }
 
@@ -123,7 +123,7 @@ namespace RhubarbEngine.Components.Physics
         {
             get
             {
-                return input.IsKeyboardinuse ? _focused : !IsNotTakingInput;
+                return Input.IsKeyboardinuse ? _focused : !IsNotTakingInput;
             }
         }
 
@@ -131,9 +131,9 @@ namespace RhubarbEngine.Components.Physics
 
 		public bool StopMouse { get { return StopMousePos; } set { StopMousePos = value; } }
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
             pixelSize = new Sync<Vector2u>(this, newRefIds)
             {
                 Value = new Vector2u(600, 600)
@@ -142,12 +142,12 @@ namespace RhubarbEngine.Components.Physics
 			onFocusLost = new SyncDelegate(this, newRefIds);
 			mesh = new AssetRef<RMesh>(this, newRefIds);
 			mesh.loadChange += Mesh_loadChange;
-			entity.EnabledChanged += Entity_enabledChanged;
+			Entity.EnabledChanged += Entity_enabledChanged;
 		}
 
 		private void Entity_enabledChanged()
 		{
-			if ((!entity.IsEnabled) && focused)
+			if ((!Entity.IsEnabled) && focused)
 			{
 				Removefocused();
 			}
@@ -158,9 +158,9 @@ namespace RhubarbEngine.Components.Physics
 			BuildShape();
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
+			base.OnLoaded();
 			BuildShape();
 		}
 		private void GoNull()
@@ -226,9 +226,9 @@ namespace RhubarbEngine.Components.Physics
                 return false;
             }
 
-            if (engine.outputType == VirtualReality.OutputType.Screen)
+            if (Engine.outputType == VirtualReality.OutputType.Screen)
 			{
-				return engine.inputManager.mainWindows.GetMouseButton(button);
+				return Engine.inputManager.mainWindows.GetMouseButton(button);
 			}
 			switch (source)
 			{
@@ -239,11 +239,11 @@ namespace RhubarbEngine.Components.Physics
 					{
 						case MouseButton.Left:
 							// need to make not pur frame
-							return input.PrimaryPress(Input.Creality.Left);
+							return Input.PrimaryPress(RhubarbEngine.Input.Creality.Left);
 						case MouseButton.Middle:
-							return input.SecondaryPress(Input.Creality.Left);
+							return Input.SecondaryPress(RhubarbEngine.Input.Creality.Left);
 						case MouseButton.Right:
-							return input.GrabPress(Input.Creality.Left);
+							return Input.GrabPress(RhubarbEngine.Input.Creality.Left);
 						case MouseButton.Button1:
 							break;
 						case MouseButton.Button2:
@@ -274,11 +274,11 @@ namespace RhubarbEngine.Components.Physics
 					switch (button)
 					{
 						case MouseButton.Left:
-							return input.PrimaryPress(Input.Creality.Right);
+							return Input.PrimaryPress(RhubarbEngine.Input.Creality.Right);
 						case MouseButton.Middle:
-							return input.SecondaryPress(Input.Creality.Right);
+							return Input.SecondaryPress(RhubarbEngine.Input.Creality.Right);
 						case MouseButton.Right:
-							return input.GrabPress(Input.Creality.Right);
+							return Input.GrabPress(RhubarbEngine.Input.Creality.Right);
 						case MouseButton.Button1:
 							break;
 						case MouseButton.Button2:
@@ -306,7 +306,7 @@ namespace RhubarbEngine.Components.Physics
 				case InteractionSource.RightFinger:
 					break;
 				case InteractionSource.HeadLaser:
-					return engine.inputManager.mainWindows.GetMouseButton(button);
+					return Engine.inputManager.mainWindows.GetMouseButton(button);
 				case InteractionSource.HeadFinger:
 					break;
 				default:
@@ -324,15 +324,15 @@ namespace RhubarbEngine.Components.Physics
 			_focused = true;
 			if (!FocusedOverride.Value)
 			{
-				input.InvokeRemoveFocus();
+				Input.InvokeRemoveFocus();
 			}
-			input.RemoveFocus += Removefocused;
+			Input.RemoveFocus += Removefocused;
 		}
 
 		public void Removefocused()
 		{
 			onFocusLost.Target?.Invoke();
-			input.RemoveFocus -= Removefocused;
+			Input.RemoveFocus -= Removefocused;
 			_focused = false;
 		}
 

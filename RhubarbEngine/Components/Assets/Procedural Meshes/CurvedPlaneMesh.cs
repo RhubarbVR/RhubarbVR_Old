@@ -23,7 +23,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public Sync<float> Height;
 		public Sync<float> Width;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			TopRadius = new Sync<float>(this, newRefIds);
 			TopRadius.Value = 180f;
@@ -37,7 +37,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			Slices.Value = 10;
 		}
 
-		public override void onChanged()
+		public override void OnChanged()
 		{
 			updateMesh();
 		}
@@ -51,10 +51,10 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			_generator.Width = Width.Value;
 			MeshGenerator newmesh = _generator.Generate();
 			RMesh kite = new RMesh(newmesh.MakeDMesh());
-			kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
+			kite.createMeshesBuffers(World.worldManager.engine.renderManager.gd);
 			load(kite, true);
 		}
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
 			updateMesh();
 		}

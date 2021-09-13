@@ -28,9 +28,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRefList<IObserver> children;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<Component>(this, newRefIds);
 			target.Changed += Target_Changed;
 			root = new SyncRef<IObserver>(this, newRefIds);
@@ -39,7 +39,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void Target_Changed(IChangeable obj)
 		{
-			if (entity.Manager != world.LocalUser)
+			if (Entity.Manager != World.LocalUser)
             {
                 return;
             }
@@ -75,7 +75,7 @@ namespace RhubarbEngine.Components.ImGUI
 				{
 					if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
 					{
-						var obs = entity.AttachComponent<WorkerObserver>();
+						var obs = Entity.AttachComponent<WorkerObserver>();
 						obs.fieldName.Value = field.Name;
 						obs.target.Target = ((Worker)field.GetValue(target.Target));
 						children.Add().Target = obs;
@@ -99,7 +99,7 @@ namespace RhubarbEngine.Components.ImGUI
 			var open = true;
 			Vector2 max;
 			Vector2 min;
-			if (ImGui.CollapsingHeader($"{target.Target?.GetType().GetFormattedName() ?? "null"} ID:({target.Target?.referenceID.id.ToHexString() ?? "null"}) ##{referenceID.id}", ref open))
+			if (ImGui.CollapsingHeader($"{target.Target?.GetType().GetFormattedName() ?? "null"} ID:({target.Target?.ReferenceID.id.ToHexString() ?? "null"}) ##{ReferenceID.id}", ref open))
 			{
 				max = ImGui.GetItemRectMax();
 				min = ImGui.GetItemRectMin();
@@ -119,13 +119,13 @@ namespace RhubarbEngine.Components.ImGUI
 				switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
 				{
 					case Interaction.InteractionSource.LeftLaser:
-						source = world.LeftLaserGrabbableHolder;
+						source = World.LeftLaserGrabbableHolder;
 						break;
 					case Interaction.InteractionSource.RightLaser:
-						source = world.RightLaserGrabbableHolder;
+						source = World.RightLaserGrabbableHolder;
 						break;
 					case Interaction.InteractionSource.HeadLaser:
-						source = world.HeadLaserGrabbableHolder;
+						source = World.HeadLaserGrabbableHolder;
 						break;
 					default:
 						break;

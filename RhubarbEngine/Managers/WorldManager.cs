@@ -225,7 +225,7 @@ namespace RhubarbEngine.Managers
         public ImGUICanvas BuildUI(Entity e)
 		{
 
-			var shader = e.world.staticAssets.basicUnlitShader;
+			var shader = e.World.staticAssets.basicUnlitShader;
 			var bmesh = e.AttachComponent<PlaneMesh>();
 			var bmeshcol = e.AttachComponent<InputPlane>();
 			//e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
@@ -246,7 +246,7 @@ namespace RhubarbEngine.Managers
 
 		public WebBrowser BuildWebBrowser(Entity e, Vector2u pixsize, Vector2f size, bool globalAudio = false)
 		{
-			var shader = e.world.staticAssets.basicUnlitShader;
+			var shader = e.World.staticAssets.basicUnlitShader;
 			var bmesh = e.AttachComponent<PlaneMesh>();
 			var bmeshcol = e.AttachComponent<InputPlane>();
 			bmesh.Width.Value = size.x;
@@ -340,7 +340,7 @@ namespace RhubarbEngine.Managers
 			group61.AttachComponent<Spinner>().speed.Value = new Vector3f(-speed, 0, -speed);
 
 
-			var shader = root.world.staticAssets.basicUnlitShader;
+			var shader = root.World.staticAssets.basicUnlitShader;
 			var bmesh = root.AttachComponent<BoxMesh>();
 			var mit = root.AttachComponent<RMaterial>();
 			mit.Shader.Target = shader;
@@ -391,7 +391,7 @@ namespace RhubarbEngine.Managers
 		public Entity AddMesh<T>(Entity ea) where T : ProceduralMesh
 		{
 			var e = ea.AddChild();
-			var shader = e.world.staticAssets.basicUnlitShader;
+			var shader = e.World.staticAssets.basicUnlitShader;
 			var bmesh = e.AttachComponent<T>();
 			var mit = e.AttachComponent<RMaterial>();
 			var meshRender = e.AttachComponent<MeshRender>();
