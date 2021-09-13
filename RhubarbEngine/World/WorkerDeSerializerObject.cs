@@ -10,10 +10,10 @@ namespace RhubarbEngine.World
 {
     public class WorkerDeSerializerObject
     {
-        DataNodeGroup data;
-        List<Action> onload;
-        bool NewRefIDs = false;
-        Dictionary<ulong, ulong> newRefID = default;
-        Dictionary<ulong, List<RefIDResign>> latterResign;
+        //DataNodeGroup data;
+        //List<Action> onload;
+        //bool NewRefIDs = false;
+        //Dictionary<ulong, ulong> newRefID = default;
+        //Dictionary<ulong, List<RefIDResign>> latterResign;
     }
 }
