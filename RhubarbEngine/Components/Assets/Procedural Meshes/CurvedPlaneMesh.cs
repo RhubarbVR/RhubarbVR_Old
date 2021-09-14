@@ -16,7 +16,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 {
 	public class CurvedPlaneMesh : ProceduralMesh
 	{
-		private readonly CurvedPlaneMeshGenerator _generator = new CurvedPlaneMeshGenerator();
+        private readonly CurvedPlaneMeshGenerator _generator = new();
 		public Sync<float> TopRadius;
 		public Sync<float> BottomRadius;
 		public Sync<int> Slices;
@@ -25,38 +25,48 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
-			TopRadius = new Sync<float>(this, newRefIds);
-			TopRadius.Value = 180f;
-			BottomRadius = new Sync<float>(this, newRefIds);
-			BottomRadius.Value = 180f;
-			Width = new Sync<float>(this, newRefIds);
-			Width.Value = 1.0f;
-			Height = new Sync<float>(this, newRefIds);
-			Height.Value = 1.0f;
-			Slices = new Sync<int>(this, newRefIds);
-			Slices.Value = 10;
-		}
+            TopRadius = new Sync<float>(this, newRefIds)
+            {
+                Value = 180f
+            };
+            BottomRadius = new Sync<float>(this, newRefIds)
+            {
+                Value = 180f
+            };
+            Width = new Sync<float>(this, newRefIds)
+            {
+                Value = 1.0f
+            };
+            Height = new Sync<float>(this, newRefIds)
+            {
+                Value = 1.0f
+            };
+            Slices = new Sync<int>(this, newRefIds)
+            {
+                Value = 10
+            };
+        }
 
 		public override void OnChanged()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 
-		private void updateMesh()
+        private void UpdateMesh()
 		{
 			_generator.bRadius = BottomRadius.Value;
 			_generator.tRadius = TopRadius.Value;
 			_generator.Height = Height.Value;
 			_generator.Slices = Slices.Value;
 			_generator.Width = Width.Value;
-			MeshGenerator newmesh = _generator.Generate();
-			RMesh kite = new RMesh(newmesh.MakeDMesh());
+			var newmesh = _generator.Generate();
+			var kite = new RMesh(newmesh.MakeDMesh());
 			kite.createMeshesBuffers(World.worldManager.engine.renderManager.gd);
 			load(kite, true);
 		}
 		public override void OnLoaded()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 		public CurvedPlaneMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{

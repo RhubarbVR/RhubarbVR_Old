@@ -32,9 +32,11 @@ namespace RhubarbEngine.Components.ImGUI
 			id = new Sync<string>(this, newRefIds);
 			size = new Sync<Vector2f>(this, newRefIds);
 			border = new Sync<bool>(this, newRefIds);
-			windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
-			windowflag.Value = ImGuiWindowFlags.None;
-		}
+            windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds)
+            {
+                Value = ImGuiWindowFlags.None
+            };
+        }
 
 		public ImGUIBeginChild(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{

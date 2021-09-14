@@ -32,7 +32,7 @@ namespace RhubarbEngine.Components.Assets
 		public override void OnLoaded()
 		{
 			Logger.Log("Loadded Shader");
-			RShader shader = new RShader();
+			var shader = new RShader();
 			shader.addUniform("Texture", Render.Shader.ShaderValueType.Val_texture2D, Render.Shader.ShaderType.MainFrag);
 			shader.addUniform("TintColor", Render.Shader.ShaderValueType.Val_color, Render.Shader.ShaderType.MainFrag);
 			shader.mainFragCode.userCode = @"

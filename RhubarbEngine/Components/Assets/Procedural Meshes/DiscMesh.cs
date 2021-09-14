@@ -15,7 +15,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 	[Category(new string[] { "Assets/Procedural Meshes" })]
 	public class DiscMesh : ProceduralMesh
 	{
-		private readonly TrivialDiscGenerator _generator = new TrivialDiscGenerator();
+		private readonly TrivialDiscGenerator _generator = new();
 
 		public Sync<float> Radius;
 		public Sync<float> StartAngleDeg;
@@ -24,38 +24,46 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
-			Radius = new Sync<float>(this, newRefIds);
-			Radius.Value = 1.0f;
+            Radius = new Sync<float>(this, newRefIds)
+            {
+                Value = 1.0f
+            };
 
-			StartAngleDeg = new Sync<float>(this, newRefIds);
-			StartAngleDeg.Value = 0.0f;
+            StartAngleDeg = new Sync<float>(this, newRefIds)
+            {
+                Value = 0.0f
+            };
 
-			EndAngleDeg = new Sync<float>(this, newRefIds);
-			EndAngleDeg.Value = 360.0f;
+            EndAngleDeg = new Sync<float>(this, newRefIds)
+            {
+                Value = 360.0f
+            };
 
-			Slices = new Sync<int>(this, newRefIds);
-			Slices.Value = 32;
-		}
+            Slices = new Sync<int>(this, newRefIds)
+            {
+                Value = 32
+            };
+        }
 
 		public override void OnChanged()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 
-		private void updateMesh()
+		private void UpdateMesh()
 		{
 			_generator.Radius = Radius.Value;
 			_generator.StartAngleDeg = StartAngleDeg.Value;
 			_generator.EndAngleDeg = EndAngleDeg.Value;
 			_generator.Slices = Slices.Value;
-			MeshGenerator newmesh = _generator.Generate();
-			RMesh kite = new RMesh(newmesh.MakeDMesh());
+			var newmesh = _generator.Generate();
+			var kite = new RMesh(newmesh.MakeDMesh());
 			kite.createMeshesBuffers(World.worldManager.engine.renderManager.gd);
 			load(kite, true);
 		}
 		public override void OnLoaded()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 		public DiscMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{

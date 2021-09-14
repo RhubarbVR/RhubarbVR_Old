@@ -28,9 +28,11 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			base.BuildSyncObjs(newRefIds);
 			name = new Sync<string>(this, newRefIds);
-			windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
-			windowflag.Value = ImGuiWindowFlags.None;
-		}
+            windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds)
+            {
+                Value = ImGuiWindowFlags.None
+            };
+        }
 
 		public ImGUIBeginPopupModal(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
@@ -42,7 +44,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			bool lopen = open.Value;
+			var lopen = open.Value;
 
 			if (ImGui.BeginPopupModal(name.Value ?? "", ref lopen, windowflag.Value))
 			{

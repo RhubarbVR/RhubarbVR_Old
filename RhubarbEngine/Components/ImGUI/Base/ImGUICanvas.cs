@@ -115,7 +115,7 @@ namespace RhubarbEngine.Components.ImGUI
                 return;
             }
 
-            if (((_framebuffer != null) && (_igr != null) && _uIloaded))
+            if ((_framebuffer != null) && (_igr != null) && _uIloaded)
 			{
 				_uIloaded = false;
 				load(null);
@@ -229,15 +229,8 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			bool val;
 			var e = true;
-			if (!noCloseing.Value)
-			{
-				val = ImGui.Begin(name.Value ?? "Null", ref e, ui);
-			}
-			else
-			{
-				val = ImGui.Begin(name.Value ?? "Null", ui);
-			}
-			if (val)
+            val = !noCloseing.Value ? ImGui.Begin(name.Value ?? "Null", ref e, ui) : ImGui.Begin(name.Value ?? "Null", ui);
+            if (val)
 			{
 				ImGui.SetWindowPos(Vector2.Zero);
 				ImGui.SetWindowSize(new Vector2(scale.Value.x, scale.Value.y));
@@ -313,16 +306,8 @@ namespace RhubarbEngine.Components.ImGUI
 
             try
 			{
-				InputSnapshot inputSnapshot;
-				if (imputPlane.Target == null)
-				{
-					inputSnapshot = fakeInputSnapshot;
-				}
-				else
-				{
-					inputSnapshot = imputPlane.Target;
-				}
-				_igr.Update((float)Engine.platformInfo.deltaSeconds, inputSnapshot);
+				var inputSnapshot = imputPlane.Target == null ? fakeInputSnapshot : (InputSnapshot)imputPlane.Target;
+                _igr.Update((float)Engine.platformInfo.deltaSeconds, inputSnapshot);
 				ImGuiUpdate();
 				_uIcommandList.Begin();
 				_uIcommandList.SetFramebuffer(_framebuffer);

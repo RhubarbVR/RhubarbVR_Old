@@ -50,7 +50,7 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 		}
 
-		string[] ve = Enum.GetNames(typeof(T));
+        readonly string[] _ve = Enum.GetNames(typeof(T));
 
 		public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
@@ -60,9 +60,9 @@ namespace RhubarbEngine.Components.ImGUI
 				var vec = (Vector4f)(*e);
 				ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 0.5f, 0, 0)).ToSystem());
 			}
-			int c = Array.IndexOf(ve, Enum.GetName(typeof(T), (((Sync<T>)target.Target).Value)));
-			ImGui.Combo((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref c, ve, ve.Length);
-			if (c != (int)(object)(((Sync<T>)target.Target).Value))
+			var c = Array.IndexOf(_ve, Enum.GetName(typeof(T), (((Sync<T>)target.Target).Value)));
+			ImGui.Combo((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref c, _ve, _ve.Length);
+			if (c != (int)(object)((Sync<T>)target.Target).Value)
 			{
 				((Sync<T>)target.Target).Value = Enum.GetValues<T>()[c];
 			}

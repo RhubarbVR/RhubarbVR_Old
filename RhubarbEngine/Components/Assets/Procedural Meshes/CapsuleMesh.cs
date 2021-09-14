@@ -10,7 +10,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 	[Category(new string[] { "Assets/Procedural Meshes" })]
 	public class CapsuleMesh : ProceduralMesh
 	{
-		private readonly CapsuleGenerator _generator = new CapsuleGenerator();
+		private readonly CapsuleGenerator _generator = new();
 
 		public Sync<int> Longitudes;
 		public Sync<int> Latitudes;
@@ -21,25 +21,37 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
-			Longitudes = new Sync<int>(this, newRefIds);
-			Longitudes.Value = 32;
-			Latitudes = new Sync<int>(this, newRefIds);
-			Latitudes.Value = 16;
-			Rings = new Sync<int>(this, newRefIds);
-			Rings.Value = 0;
-			Depth = new Sync<float>(this, newRefIds);
-			Depth.Value = 1.0f;
-			Radius = new Sync<float>(this, newRefIds);
-			Radius.Value = 0.5f;
-			Profile = new Sync<CapsuleGenerator.UvProfile>(this, newRefIds);
-			Profile.Value = CapsuleGenerator.UvProfile.Aspect;
-		}
+            Longitudes = new Sync<int>(this, newRefIds)
+            {
+                Value = 32
+            };
+            Latitudes = new Sync<int>(this, newRefIds)
+            {
+                Value = 16
+            };
+            Rings = new Sync<int>(this, newRefIds)
+            {
+                Value = 0
+            };
+            Depth = new Sync<float>(this, newRefIds)
+            {
+                Value = 1.0f
+            };
+            Radius = new Sync<float>(this, newRefIds)
+            {
+                Value = 0.5f
+            };
+            Profile = new Sync<CapsuleGenerator.UvProfile>(this, newRefIds)
+            {
+                Value = CapsuleGenerator.UvProfile.Aspect
+            };
+        }
 		public override void OnChanged()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 
-		private void updateMesh()
+		private void UpdateMesh()
 		{
 			_generator.Longitudes = Longitudes.Value;
 			_generator.Latitudes = Latitudes.Value;
@@ -47,14 +59,14 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			_generator.Depth = Depth.Value;
 			_generator.Radius = Radius.Value;
 			_generator.Profile = Profile.Value;
-			MeshGenerator newmesh = _generator.Generate();
-			RMesh kite = new RMesh(newmesh.MakeDMesh());
+			var newmesh = _generator.Generate();
+			var kite = new RMesh(newmesh.MakeDMesh());
 			kite.createMeshesBuffers(World.worldManager.engine.renderManager.gd);
 			load(kite, true);
 		}
 		public override void OnLoaded()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 		public CapsuleMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{

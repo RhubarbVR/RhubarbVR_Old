@@ -28,9 +28,11 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			base.BuildSyncObjs(newRefIds);
 			name = new Sync<string>(this, newRefIds);
-			windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds);
-			windowflag.Value = ImGuiWindowFlags.None;
-			open = new Sync<bool>(this, newRefIds);
+            windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds)
+            {
+                Value = ImGuiWindowFlags.None
+            };
+            open = new Sync<bool>(this, newRefIds);
 		}
 
 		public ImGUIBegin(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -43,7 +45,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			bool lopen = open.Value;
+			var lopen = open.Value;
 			if (ImGui.Begin(name.Value ?? "", ref lopen, windowflag.Value))
 			{
 				foreach (var item in children)

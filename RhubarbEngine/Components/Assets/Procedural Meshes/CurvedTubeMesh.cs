@@ -13,7 +13,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 	[Category(new string[] { "Assets/Procedural Meshes" })]
 	public class CurvedTubeMesh : ProceduralMesh
 	{
-		private readonly TubeGenerator _generator = new TubeGenerator();
+        private readonly TubeGenerator _generator = new();
 
 		public Sync<double> Radius;
 		public Sync<int> Steps;

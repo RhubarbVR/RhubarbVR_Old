@@ -10,7 +10,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 	[Category(new string[] { "Assets/Procedural Meshes" })]
 	public class ArrowMesh : ProceduralMesh
 	{
-		private readonly Radial3DArrowGenerator _generator = new Radial3DArrowGenerator();
+		private readonly Radial3DArrowGenerator _generator = new();
 
 		public Sync<float> StickRadius;
 		public Sync<float> StickLength;
@@ -21,30 +21,42 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
-			StickRadius = new Sync<float>(this, newRefIds);
-			StickRadius.Value = 0.5f;
+            StickRadius = new Sync<float>(this, newRefIds)
+            {
+                Value = 0.5f
+            };
 
-			StickLength = new Sync<float>(this, newRefIds);
-			StickLength.Value = 1.0f;
+            StickLength = new Sync<float>(this, newRefIds)
+            {
+                Value = 1.0f
+            };
 
-			HeadBaseRadius = new Sync<float>(this, newRefIds);
-			HeadBaseRadius.Value = 1.0f;
+            HeadBaseRadius = new Sync<float>(this, newRefIds)
+            {
+                Value = 1.0f
+            };
 
-			TipRadius = new Sync<float>(this, newRefIds);
-			TipRadius.Value = 0.0f;
+            TipRadius = new Sync<float>(this, newRefIds)
+            {
+                Value = 0.0f
+            };
 
-			HeadLength = new Sync<float>(this, newRefIds);
-			HeadLength.Value = 0.5f;
+            HeadLength = new Sync<float>(this, newRefIds)
+            {
+                Value = 0.5f
+            };
 
-			DoubleSided = new Sync<bool>(this, newRefIds);
-			DoubleSided.Value = false;
-		}
+            DoubleSided = new Sync<bool>(this, newRefIds)
+            {
+                Value = false
+            };
+        }
 		public override void OnChanged()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 
-		private void updateMesh()
+		private void UpdateMesh()
 		{
 			_generator.StickRadius = StickRadius.Value;
 			_generator.StickLength = StickLength.Value;
@@ -52,14 +64,14 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			_generator.TipRadius = TipRadius.Value;
 			_generator.HeadLength = HeadLength.Value;
 			_generator.DoubleSided = DoubleSided.Value;
-			MeshGenerator newmesh = _generator.Generate();
-			RMesh kite = new RMesh(newmesh.MakeDMesh());
+			var newmesh = _generator.Generate();
+			var kite = new RMesh(newmesh.MakeDMesh());
 			kite.createMeshesBuffers(World.worldManager.engine.renderManager.gd);
 			load(kite, true);
 		}
 		public override void OnLoaded()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 		public ArrowMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{

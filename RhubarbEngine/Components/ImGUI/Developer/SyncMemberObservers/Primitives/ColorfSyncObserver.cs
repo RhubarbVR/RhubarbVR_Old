@@ -41,7 +41,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			bool Changeboarder = false;
+            var Changeboarder = false;
 			if (target.Target?.Driven ?? false)
 			{
 				var e = ImGui.GetStyleColorVec4(ImGuiCol.FrameBg);
@@ -76,12 +76,14 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 3);
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
-			Vector4 val = target.Target?.Value.ToRGBA().ToSystem() ?? Vector4.Zero;
+			var val = target.Target?.Value.ToRGBA().ToSystem() ?? Vector4.Zero;
 			if (ImGui.ColorEdit4((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref val))
 			{
 				if (target.Target != null)
-					target.Target.Value = (Colorf)(Vector4f)val;
-			}
+                {
+                    target.Target.Value = (Colorf)(Vector4f)val;
+                }
+            }
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				if (source != null)
@@ -97,10 +99,13 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-					Sync<Colorf> e = (Sync<Colorf>)source.Referencer.Target;
+                    var e = (Sync<Colorf>)source.Referencer.Target;
 					if (target.Target != null)
-						target.Target.Value = e.Value;
-					source.Referencer.Target = null;
+                    {
+                        target.Target.Value = e.Value;
+                    }
+
+                    source.Referencer.Target = null;
 				}
 				ImGui.PopStyleVar();
 				ImGui.PopStyleColor();

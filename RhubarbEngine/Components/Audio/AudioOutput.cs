@@ -27,44 +27,57 @@ namespace RhubarbEngine.Components.Audio
 
 		public IPL.AudioBuffer iplOutputBuffer;
 
-		private IPL._IPLBinauralEffect_t iplBinauralEffect;
-		private IPL.AudioBuffer iplInputBuffer;
+		private IPL._IPLBinauralEffect_t _iplBinauralEffect;
+		private IPL.AudioBuffer _iplInputBuffer;
 
-		public bool isNotCulled
+		public bool IsNotCulled
 		{
 			get
 			{
 				if (audioSource.Target == null)
-					return false;
-				if (!audioSource.Target.IsActive)
-					return false;
-				if (audioSource.Target.ChannelCount != 1)
-					return false;
-				float e = Entity.GlobalPos().Distance(World.HeadTrans.Translation);
-				return (e <= cullingDistance.Value);
+                {
+                    return false;
+                }
+
+                if (!audioSource.Target.IsActive)
+                {
+                    return false;
+                }
+
+                if (audioSource.Target.ChannelCount != 1)
+                {
+                    return false;
+                }
+
+                var e = Entity.GlobalPos().Distance(World.HeadTrans.Translation);
+				return e <= cullingDistance.Value;
 			}
 		}
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			audioSource = new SyncRef<IAudioSource>(this, newRefIds);
-			spatialBlend = new Sync<float>(this, newRefIds);
-			spatialBlend.Value = 1f;
-			cullingDistance = new Sync<float>(this, newRefIds);
-			cullingDistance.Value = 100f;
-		}
+            spatialBlend = new Sync<float>(this, newRefIds)
+            {
+                Value = 1f
+            };
+            cullingDistance = new Sync<float>(this, newRefIds)
+            {
+                Value = 100f
+            };
+        }
 
 		public override void OnLoaded()
 		{
 			base.OnLoaded();
 
-			IPL.AudioBufferAllocate(Engine.audioManager.iplContext, 1, Engine.audioManager.AudioFrameSize, ref iplInputBuffer);
+			IPL.AudioBufferAllocate(Engine.audioManager.iplContext, 1, Engine.audioManager.AudioFrameSize, ref _iplInputBuffer);
 
 			IPL.AudioBufferAllocate(Engine.audioManager.iplContext, 2, Engine.audioManager.AudioFrameSize, ref iplOutputBuffer);
 
 			var setings = new IPL.BinauralEffectSettings { hrtf = Engine.audioManager.hrtf };
 
-			var error = IPL.BinauralEffectCreate(Engine.audioManager.iplContext, ref Engine.audioManager.iplAudioSettings, ref setings, out iplBinauralEffect);
+			var error = IPL.BinauralEffectCreate(Engine.audioManager.iplContext, ref Engine.audioManager.iplAudioSettings, ref setings, out _iplBinauralEffect);
 			if (error != IPL.Error.Success)
 			{
 				Logger.Log("There is a prolem with BinauralEffectCreate");
@@ -92,33 +105,45 @@ namespace RhubarbEngine.Components.Audio
 		}
 		public unsafe void AudioUpdate()
 		{
-			if (iplBinauralEffect == default)
-				return;
-			if (!audioSource.Target.IsActive)
-				return;
-			var data = audioSource.Target.FrameInputBuffer;
+			if (_iplBinauralEffect == default)
+            {
+                return;
+            }
+
+            if (!audioSource.Target.IsActive)
+            {
+                return;
+            }
+
+            var data = audioSource.Target.FrameInputBuffer;
 			if (data == null)
-				return;
-			if (data.Length < Engine.audioManager.AudioFrameSizeInBytes)
-				return;
-			Matrix4x4.Decompose(World.HeadTrans, out Vector3 sc, out Quaternion ret, out Vector3 trans);
-			var position = Vector3.Transform((Entity.GlobalPos().ToSystemNumrics() - trans), Quaternion.Inverse(ret));
+            {
+                return;
+            }
+
+            if (data.Length < Engine.audioManager.AudioFrameSizeInBytes)
+            {
+                return;
+            }
+
+            Matrix4x4.Decompose(World.HeadTrans, out var sc, out var ret, out var trans);
+			var position = Vector3.Transform(Entity.GlobalPos().ToSystemNumrics() - trans, Quaternion.Inverse(ret));
 			var e = new IPL.Vector3(position.X, position.Y, position.Z);
 			fixed (byte* ptr = data)
 			{
 				var prams = new IPL.BinauralEffectParams { direction = e, interpolation = IPL.HRTFInterpolation.Nearest, spatialBlend = spatialBlend.Value, hrtf = Engine.audioManager.hrtf };
-				IPL.AudioBufferDeinterleave(Engine.audioManager.iplContext, (IntPtr)ptr, ref iplInputBuffer);
-				IPL.BinauralEffectApply(iplBinauralEffect, ref prams, ref iplInputBuffer, ref iplOutputBuffer);
+				IPL.AudioBufferDeinterleave(Engine.audioManager.iplContext, (IntPtr)ptr, ref _iplInputBuffer);
+				IPL.BinauralEffectApply(_iplBinauralEffect, ref prams, ref _iplInputBuffer, ref iplOutputBuffer);
 			}
 		}
 
-		public override void Dispose()
+        public override void Dispose()
 		{
-			base.Dispose();
-			IPL.AudioBufferFree(Engine.audioManager.iplContext, ref iplInputBuffer);
-		}
+			IPL.AudioBufferFree(Engine.audioManager.iplContext, ref _iplInputBuffer);
+            base.Dispose();
+        }
 
-		public AudioOutput(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public AudioOutput(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}

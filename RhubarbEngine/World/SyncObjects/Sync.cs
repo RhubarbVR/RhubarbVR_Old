@@ -11,12 +11,14 @@ namespace RhubarbEngine.World
 {
 	public class Sync<T> : Worker, DriveMember<T>, IPrimitiveEditable where T : IConvertible
 	{
+
 		public IDriver drivenFromobj;
+
 		public NetPointer drivenFrom { get { return drivenFromobj.ReferenceID; } }
 
 		public bool isDriven { get; private set; }
 
-		private readonly List<Driveable> _driven = new List<Driveable>();
+		private readonly List<Driveable> _driven = new();
 
 		public override void Removed()
 		{
@@ -119,16 +121,8 @@ namespace RhubarbEngine.World
 		private void UpdateValue()
 		{
 			var obj = new DataNodeGroup();
-			IDataNode Value;
-			if (typeof(T).IsEnum)
-			{
-				Value = new DataNode<int>((int)(object)_value);
-			}
-			else
-			{
-				Value = new DataNode<T>(_value);
-			}
-			obj.SetValue("Value", Value);
+			var Value = typeof(T).IsEnum ? new DataNode<int>((int)(object)_value) : (IDataNode)new DataNode<T>(_value);
+            obj.SetValue("Value", Value);
 			World.NetModule?.AddToQueue(Net.ReliabilityLevel.LatestOnly, obj, ReferenceID.id);
 		}
 
@@ -176,15 +170,8 @@ namespace RhubarbEngine.World
 				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
 				World.AddWorldObj(this);
 			}
-			if (typeof(T).IsEnum)
-			{
-				_value = (T)(object)((DataNode<int>)data.GetValue("Value")).Value;
-			}
-			else
-			{
-				_value = ((DataNode<T>)data.GetValue("Value")).Value;
-			}
-			LoadedFromBytes(NewRefIDs);
+			_value = typeof(T).IsEnum ? (T)(object)((DataNode<int>)data.GetValue("Value")).Value : ((DataNode<T>)data.GetValue("Value")).Value;
+            LoadedFromBytes(NewRefIDs);
 		}
 
 		public void ReceiveData(DataNodeGroup data, Peer peer)

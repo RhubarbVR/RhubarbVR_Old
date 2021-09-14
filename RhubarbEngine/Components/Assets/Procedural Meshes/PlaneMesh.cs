@@ -14,7 +14,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 {
 	public class PlaneMesh : ProceduralMesh
 	{
-		private readonly TrivialRectGenerator _generator = new TrivialRectGenerator();
+		private readonly TrivialRectGenerator _generator = new();
 
 		public Sync<float> Width;
 		public Sync<float> Height;
@@ -24,37 +24,47 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
-			Width = new Sync<float>(this, newRefIds);
-			Width.Value = 1f;
-			Height = new Sync<float>(this, newRefIds);
-			Height.Value = 1f;
-			Normal = new Sync<Vector3f>(this, newRefIds);
-			Normal.Value = Vector3f.AxisZ;
-			IndicesMap = new Sync<Index2i>(this, newRefIds);
-			IndicesMap.Value = new Index2i(1, 3);
-			UVMode = new Sync<TrivialRectGenerator.UVModes>(this, newRefIds);
-			UVMode.Value = TrivialRectGenerator.UVModes.FullUVSquare;
-		}
+            Width = new Sync<float>(this, newRefIds)
+            {
+                Value = 1f
+            };
+            Height = new Sync<float>(this, newRefIds)
+            {
+                Value = 1f
+            };
+            Normal = new Sync<Vector3f>(this, newRefIds)
+            {
+                Value = Vector3f.AxisZ
+            };
+            IndicesMap = new Sync<Index2i>(this, newRefIds)
+            {
+                Value = new Index2i(1, 3)
+            };
+            UVMode = new Sync<TrivialRectGenerator.UVModes>(this, newRefIds)
+            {
+                Value = TrivialRectGenerator.UVModes.FullUVSquare
+            };
+        }
 		public override void OnChanged()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 
-		private void updateMesh()
+		private void UpdateMesh()
 		{
 			_generator.Width = Width.Value;
 			_generator.Height = Height.Value;
 			_generator.Normal = Normal.Value;
 			_generator.IndicesMap = IndicesMap.Value;
 			_generator.UVMode = UVMode.Value;
-			MeshGenerator newmesh = _generator.Generate();
-			RMesh kite = new RMesh(newmesh.MakeDMesh());
+			var newmesh = _generator.Generate();
+			var kite = new RMesh(newmesh.MakeDMesh());
 			kite.createMeshesBuffers(World.worldManager.engine.renderManager.gd);
 			load(kite, true);
 		}
 		public override void OnLoaded()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 		public PlaneMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
