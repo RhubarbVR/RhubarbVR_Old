@@ -51,7 +51,7 @@ namespace RhubarbEngine.Components.ImGUI
 			base.BuildSyncObjs(newRefIds);
 
 			texture = new AssetRef<RTexture2D>(this, newRefIds);
-			texture.loadChange += AssetChange;
+			texture.LoadChange += AssetChange;
             size = new Sync<Vector2f>(this, newRefIds)
             {
                 Value = new Vector2f(100, 100)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.VirtualReality.Oculus
 {
-	internal enum ovrResult
+	internal enum OvrResult
 	{
 		Success = 0,
 

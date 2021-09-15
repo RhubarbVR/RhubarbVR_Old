@@ -18,63 +18,134 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
 		public readonly OpenVRContext openVRContext;
 
 		public readonly string ControllerName;
-		string IController.ControllerName => ControllerName;
+        string IController.ControllerName
+        {
+            get
+            {
+                return ControllerName;
+            }
+        }
 
-		public Creality Creality;
-		Creality IController.Creality => Creality;
+        public Creality Creality;
+        Creality IController.Creality
+        {
+            get
+            {
+                return Creality;
+            }
+        }
 
-		InputDigitalActionData_t PrimaryPressData = new InputDigitalActionData_t();
-		ulong GeneralmPrimaryPressHandle = 0;
-		bool IController.PrimaryPress => PrimaryPressData.bState;
+        InputDigitalActionData_t _primaryPressData = new();
+        private readonly ulong _generalmPrimaryPressHandle = 0;
+        bool IController.PrimaryPress
+        {
+            get
+            {
+                return _primaryPressData.bState;
+            }
+        }
 
-		InputDigitalActionData_t TriggerTouchingData = new InputDigitalActionData_t();
-		private ulong GeneralmTriggerTouchingHandle = 0;
-		bool IController.TriggerTouching => TriggerTouchingData.bState;
+        InputDigitalActionData_t _triggerTouchingData = new();
+        private readonly ulong _generalmTriggerTouchingHandle = 0;
+        bool IController.TriggerTouching
+        {
+            get
+            {
+                return _triggerTouchingData.bState;
+            }
+        }
 
-		InputDigitalActionData_t AxisTouchingData = new InputDigitalActionData_t();
-		private ulong GeneralmAxisTouchingHandle = 0;
-		bool IController.AxisTouching => AxisTouchingData.bState;
+        InputDigitalActionData_t _axisTouchingData = new();
+		private readonly ulong _generalmAxisTouchingHandle = 0;
+        bool IController.AxisTouching
+        {
+            get
+            {
+                return _axisTouchingData.bState;
+            }
+        }
 
-		InputDigitalActionData_t GeneralmSystemPressData = new InputDigitalActionData_t();
-		private ulong GeneralmSystemPressHandle = 0;
-		bool IController.SystemPress => GeneralmSystemPressData.bState;
+        InputDigitalActionData_t _generalmSystemPressData = new();
+		private readonly ulong _generalmSystemPressHandle = 0;
+        bool IController.SystemPress
+        {
+            get
+            {
+                return _generalmSystemPressData.bState;
+            }
+        }
 
-		InputDigitalActionData_t GeneralmMenuPressData = new InputDigitalActionData_t();
-		private ulong GeneralmMenuPressHandle = 0;
-		bool IController.MenuPress => GeneralmMenuPressData.bState;
+        InputDigitalActionData_t _generalmMenuPressData = new();
+		private readonly ulong _generalmMenuPressHandle = 0;
+        bool IController.MenuPress
+        {
+            get
+            {
+                return _generalmMenuPressData.bState;
+            }
+        }
 
-		InputDigitalActionData_t GeneralmGrabPressData = new InputDigitalActionData_t();
-		private ulong GeneralmGrabPressHandle = 0;
-		bool IController.GrabPress => GeneralmGrabPressData.bState;
+        InputDigitalActionData_t _generalmGrabPressData = new();
+		private readonly ulong _generalmGrabPressHandle = 0;
+        bool IController.GrabPress
+        {
+            get
+            {
+                return _generalmGrabPressData.bState;
+            }
+        }
 
-		InputDigitalActionData_t GeneralmSecondaryPressData = new InputDigitalActionData_t();
-		private ulong GeneralmSecondaryPressHandle = 0;
-		bool IController.SecondaryPress => GeneralmSecondaryPressData.bState;
+        InputDigitalActionData_t _generalmSecondaryPressData = new();
+		private readonly ulong _generalmSecondaryPressHandle = 0;
+        bool IController.SecondaryPress
+        {
+            get
+            {
+                return _generalmSecondaryPressData.bState;
+            }
+        }
 
-		InputAnalogActionData_t GeneralmAxisData = new InputAnalogActionData_t();
-		private ulong GeneralmAxisHandle = 0;
-		Vector2f IController.Axis => new Vector2f(MakeGoodFloat(GeneralmAxisData.x), MakeGoodFloat(GeneralmAxisData.y));
+        InputAnalogActionData_t _generalmAxisData = new();
+		private readonly ulong _generalmAxisHandle = 0;
+        Vector2f IController.Axis
+        {
+            get
+            {
+                return new Vector2f(MakeGoodFloat(_generalmAxisData.x), MakeGoodFloat(_generalmAxisData.y));
+            }
+        }
 
+        InputAnalogActionData_t _generalmTriggerAixData = new();
+		private readonly ulong _generalmTriggerAixHandle = 0;
+        float IController.TriggerAix
+        {
+            get
+            {
+                return MakeGoodFloat(_generalmTriggerAixData.x);
+            }
+        }
 
-		InputAnalogActionData_t GeneralmTriggerAixData = new InputAnalogActionData_t();
-		private ulong GeneralmTriggerAixHandle = 0;
-		float IController.TriggerAix => MakeGoodFloat(GeneralmTriggerAixData.x);
+        InputPoseActionData_t _generalmPosistionData = new();
+		private readonly ulong _generalmPosistionHandle = 0;
+        Matrix4x4 IController.Posistion
+        {
+            get
+            {
+                return PosHelp(_generalmPosistionData.pose.mDeviceToAbsoluteTracking);
+            }
+        }
 
-		InputPoseActionData_t GeneralmPosistionData = new InputPoseActionData_t();
-		private ulong GeneralmPosistionHandle = 0;
-		Matrix4x4 IController.Posistion => posHelp(GeneralmPosistionData.pose.mDeviceToAbsoluteTracking);
-
-		public uint deviceindex;
+        public uint deviceindex;
 
 		public ulong handle;
-		private static Matrix4x4 ToSysMatrix(HmdMatrix34_t hmdMat)
-		{
-			return new Matrix4x4(
-				hmdMat.m0, hmdMat.m4, hmdMat.m8, 0f,
-				hmdMat.m1, hmdMat.m5, hmdMat.m9, 0f,
-				hmdMat.m2, hmdMat.m6, hmdMat.m10, 0f,
-				hmdMat.m3, hmdMat.m7, hmdMat.m11, 1f);
-		}
+		//private static Matrix4x4 ToSysMatrix(HmdMatrix34_t hmdMat)
+		//{
+		//	return new Matrix4x4(
+		//		hmdMat.m0, hmdMat.m4, hmdMat.m8, 0f,
+		//		hmdMat.m1, hmdMat.m5, hmdMat.m9, 0f,
+		//		hmdMat.m2, hmdMat.m6, hmdMat.m10, 0f,
+		//		hmdMat.m3, hmdMat.m7, hmdMat.m11, 1f);
+		//}
 
 
 		public static Quaternion QuaternionFromMatrix(HmdMatrix34_t m)
@@ -90,10 +161,10 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
 		}
 		public static float MakeGoodFloat(float val)
 		{
-			return ((val == float.NaN) || (float.IsInfinity(val))) ? 0f : val;
+			return (float.IsNaN(val) || float.IsInfinity(val)) ? 0f : val;
 		}
 
-		public static Matrix4x4 posHelp(HmdMatrix34_t pos)
+		public static Matrix4x4 PosHelp(HmdMatrix34_t pos)
 		{
 			return Matrix4x4.CreateScale(1) * Matrix4x4.CreateFromQuaternion(QuaternionFromMatrix(pos)) * Matrix4x4.CreateTranslation(new Vector3(pos.m3, pos.m7, pos.m11));
 		}
@@ -114,72 +185,72 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
 			this.Creality = Creality;
 			this.handle = Handle;
 
-			OVR.Input.GetActionHandle("/actions/General/in/Trigger_Touching", ref GeneralmTriggerTouchingHandle);
+			OVR.Input.GetActionHandle("/actions/General/in/Trigger_Touching", ref _generalmTriggerTouchingHandle);
 
-			OVR.Input.GetActionHandle("/actions/General/in/Axis_Touching", ref GeneralmAxisTouchingHandle);
-			OVR.Input.GetActionHandle("/actions/General/in/Primary_Pressed", ref GeneralmPrimaryPressHandle);
-			OVR.Input.GetActionHandle("/actions/General/in/Secondary_Pressed", ref GeneralmSecondaryPressHandle);
-			OVR.Input.GetActionHandle("/actions/General/in/Menu_Pressed", ref GeneralmMenuPressHandle);
-			OVR.Input.GetActionHandle("/actions/General/in/System", ref GeneralmSystemPressHandle);
-			OVR.Input.GetActionHandle("/actions/General/in/Grab_Pressed", ref GeneralmGrabPressHandle);
-			OVR.Input.GetActionHandle("/actions/General/in/Axis", ref GeneralmAxisHandle);
-			OVR.Input.GetActionHandle("/actions/General/in/Trigger_Aix", ref GeneralmTriggerAixHandle);
-			OVR.Input.GetActionHandle("/actions/General/in/Pose", ref GeneralmPosistionHandle);
+			OVR.Input.GetActionHandle("/actions/General/in/Axis_Touching", ref _generalmAxisTouchingHandle);
+			OVR.Input.GetActionHandle("/actions/General/in/Primary_Pressed", ref _generalmPrimaryPressHandle);
+			OVR.Input.GetActionHandle("/actions/General/in/Secondary_Pressed", ref _generalmSecondaryPressHandle);
+			OVR.Input.GetActionHandle("/actions/General/in/Menu_Pressed", ref _generalmMenuPressHandle);
+			OVR.Input.GetActionHandle("/actions/General/in/System", ref _generalmSystemPressHandle);
+			OVR.Input.GetActionHandle("/actions/General/in/Grab_Pressed", ref _generalmGrabPressHandle);
+			OVR.Input.GetActionHandle("/actions/General/in/Axis", ref _generalmAxisHandle);
+			OVR.Input.GetActionHandle("/actions/General/in/Trigger_Aix", ref _generalmTriggerAixHandle);
+			OVR.Input.GetActionHandle("/actions/General/in/Pose", ref _generalmPosistionHandle);
 
 		}
 
-		public void update()
+		public void Update()
 		{
-			uint Digsize = (uint)Marshal.SizeOf(typeof(InputDigitalActionData_t));
-			uint Possize = (uint)Marshal.SizeOf(typeof(InputPoseActionData_t));
-			uint Analogsize = (uint)Marshal.SizeOf(typeof(InputAnalogActionData_t));
+			var Digsize = (uint)Marshal.SizeOf(typeof(InputDigitalActionData_t));
+            var Possize = (uint)Marshal.SizeOf(typeof(InputPoseActionData_t));
+            var Analogsize = (uint)Marshal.SizeOf(typeof(InputAnalogActionData_t));
 
-			var error = OVR.Input.GetDigitalActionData(GeneralmTriggerTouchingHandle, ref TriggerTouchingData, Digsize, handle);
+			var error = OVR.Input.GetDigitalActionData(_generalmTriggerTouchingHandle, ref _triggerTouchingData, Digsize, handle);
 			if (error != 0)
 			{
 				Logger.Log(error.ToString());
 			}
-			var errora = OVR.Input.GetDigitalActionData(GeneralmAxisTouchingHandle, ref AxisTouchingData, Digsize, handle);
+			var errora = OVR.Input.GetDigitalActionData(_generalmAxisTouchingHandle, ref _axisTouchingData, Digsize, handle);
 			if (errora != 0)
 			{
 				Logger.Log(error.ToString());
 			}
-			var errorb = OVR.Input.GetDigitalActionData(GeneralmPrimaryPressHandle, ref PrimaryPressData, Digsize, handle);
+			var errorb = OVR.Input.GetDigitalActionData(_generalmPrimaryPressHandle, ref _primaryPressData, Digsize, handle);
 			if (errorb != 0)
 			{
 				Logger.Log(error.ToString());
 			}
-			var errorc = OVR.Input.GetDigitalActionData(GeneralmSecondaryPressHandle, ref GeneralmSecondaryPressData, Digsize, handle);
+			var errorc = OVR.Input.GetDigitalActionData(_generalmSecondaryPressHandle, ref _generalmSecondaryPressData, Digsize, handle);
 			if (errorc != 0)
 			{
 				Logger.Log(error.ToString());
 			}
-			var errord = OVR.Input.GetDigitalActionData(GeneralmMenuPressHandle, ref GeneralmMenuPressData, Digsize, handle);
+			var errord = OVR.Input.GetDigitalActionData(_generalmMenuPressHandle, ref _generalmMenuPressData, Digsize, handle);
 			if (errord != 0)
 			{
 				Logger.Log(error.ToString());
 			}
-			var errore = OVR.Input.GetDigitalActionData(GeneralmSystemPressHandle, ref GeneralmSystemPressData, Digsize, handle);
-			if (error != 0)
+			var errore = OVR.Input.GetDigitalActionData(_generalmSystemPressHandle, ref _generalmSystemPressData, Digsize, handle);
+			if (errore != 0)
 			{
 				Logger.Log(error.ToString());
 			}
-			var errori = OVR.Input.GetDigitalActionData(GeneralmGrabPressHandle, ref GeneralmGrabPressData, Digsize, handle);
+			var errori = OVR.Input.GetDigitalActionData(_generalmGrabPressHandle, ref _generalmGrabPressData, Digsize, handle);
 			if (errori != 0)
 			{
 				Logger.Log(error.ToString());
 			}
-			var errorf = OVR.Input.GetAnalogActionData(GeneralmAxisHandle, ref GeneralmAxisData, Analogsize, handle);
+			var errorf = OVR.Input.GetAnalogActionData(_generalmAxisHandle, ref _generalmAxisData, Analogsize, handle);
 			if (errorf != 0)
 			{
 				Logger.Log(error.ToString());
 			}
-			var errorg = OVR.Input.GetAnalogActionData(GeneralmTriggerAixHandle, ref GeneralmTriggerAixData, Analogsize, handle);
+			var errorg = OVR.Input.GetAnalogActionData(_generalmTriggerAixHandle, ref _generalmTriggerAixData, Analogsize, handle);
 			if (errorg != 0)
 			{
 				Logger.Log(error.ToString());
 			}
-			var errorh = OVR.Input.GetPoseActionDataRelativeToNow(GeneralmPosistionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0f, ref GeneralmPosistionData, Possize, handle);
+			var errorh = OVR.Input.GetPoseActionDataRelativeToNow(_generalmPosistionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0f, ref _generalmPosistionData, Possize, handle);
 			if (errorh != 0)
 			{
 				Logger.Log(error.ToString());
@@ -187,103 +258,396 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
 		}
 
 
-		Vector2f ICosmosController.Joystick_Aixs => throw new NotImplementedException();
+        Vector2f ICosmosController.Joystick_Aixs
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool ICosmosController.Joystick_Touched => throw new NotImplementedException();
+        bool ICosmosController.Joystick_Touched
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool ICosmosController.Joystick_Clicked => throw new NotImplementedException();
+        bool ICosmosController.Joystick_Clicked
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		float ICosmosController.Trigger_Aix => throw new NotImplementedException();
+        float ICosmosController.Trigger_Aix
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool ICosmosController.Trigger_Touched => throw new NotImplementedException();
+        bool ICosmosController.Trigger_Touched
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool ICosmosController.Trigger_Clicked => throw new NotImplementedException();
+        bool ICosmosController.Trigger_Clicked
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool ICosmosController.Grip_Clicked => throw new NotImplementedException();
+        bool ICosmosController.Grip_Clicked
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool ICosmosController.Menu_Pressed => throw new NotImplementedException();
+        bool ICosmosController.Menu_Pressed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool ICosmosController.AX_Pressed => throw new NotImplementedException();
+        bool ICosmosController.AX_Pressed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool ICosmosController.BY_Pressed => throw new NotImplementedException();
+        bool ICosmosController.BY_Pressed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool ICosmosController.Bumper => throw new NotImplementedException();
+        bool ICosmosController.Bumper
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IKnucklesController.Grip_Touch => throw new NotImplementedException();
+        bool IKnucklesController.Grip_Touch
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IKnucklesController.A_Pressed => throw new NotImplementedException();
+        bool IKnucklesController.A_Pressed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IKnucklesController.B_Pressed => throw new NotImplementedException();
+        bool IKnucklesController.B_Pressed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IKnucklesController.A_Touch => throw new NotImplementedException();
+        bool IKnucklesController.A_Touch
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IKnucklesController.B_Touch => throw new NotImplementedException();
+        bool IKnucklesController.B_Touch
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		float IKnucklesController.Trigger => throw new NotImplementedException();
+        float IKnucklesController.Trigger
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IKnucklesController.Trigger_Touched => throw new NotImplementedException();
+        bool IKnucklesController.Trigger_Touched
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IKnucklesController.Trigger_Click => throw new NotImplementedException();
+        bool IKnucklesController.Trigger_Click
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IKnucklesController.Joystick_Clicked => throw new NotImplementedException();
+        bool IKnucklesController.Joystick_Clicked
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		Vector2f IKnucklesController.Touchpad_Aixs => throw new NotImplementedException();
+        Vector2f IKnucklesController.Touchpad_Aixs
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IKnucklesController.Touchpad_Touched => throw new NotImplementedException();
+        bool IKnucklesController.Touchpad_Touched
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IKnucklesController.Youchpad_Pressed => throw new NotImplementedException();
+        bool IKnucklesController.Youchpad_Pressed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		Vector2f IKnucklesController.Joystick_Axis => throw new NotImplementedException();
+        Vector2f IKnucklesController.Joystick_Axis
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IKnucklesController.Joystick_Touched => throw new NotImplementedException();
+        bool IKnucklesController.Joystick_Touched
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IKnucklesController.Grip_Click => throw new NotImplementedException();
+        bool IKnucklesController.Grip_Click
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		float IKnucklesController.Touchpad_Force => throw new NotImplementedException();
+        float IKnucklesController.Touchpad_Force
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IOculusTouchController.YB_Pressed => throw new NotImplementedException();
+        bool IOculusTouchController.YB_Pressed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IOculusTouchController.XA_Pressed => throw new NotImplementedException();
+        bool IOculusTouchController.XA_Pressed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IOculusTouchController.YB_Touched => throw new NotImplementedException();
+        bool IOculusTouchController.YB_Touched
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IOculusTouchController.XA_Touched => throw new NotImplementedException();
+        bool IOculusTouchController.XA_Touched
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		Vector2f IOculusTouchController.Joystick_Aixs => throw new NotImplementedException();
+        Vector2f IOculusTouchController.Joystick_Aixs
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IOculusTouchController.Joystick_Touch => throw new NotImplementedException();
+        bool IOculusTouchController.Joystick_Touch
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IOculusTouchController.Joystick_Click => throw new NotImplementedException();
+        bool IOculusTouchController.Joystick_Click
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IOculusTouchController.Thumb_Rest_Touched => throw new NotImplementedException();
+        bool IOculusTouchController.Thumb_Rest_Touched
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		float IOculusTouchController.Grip_Aix => throw new NotImplementedException();
+        float IOculusTouchController.Grip_Aix
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IOculusTouchController.Grip_Click => throw new NotImplementedException();
+        bool IOculusTouchController.Grip_Click
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		float IOculusTouchController.Trigger => throw new NotImplementedException();
+        float IOculusTouchController.Trigger
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IOculusTouchController.Trigger_Touch => throw new NotImplementedException();
+        bool IOculusTouchController.Trigger_Touch
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IOculusTouchController.Trigger_Click => throw new NotImplementedException();
+        bool IOculusTouchController.Trigger_Click
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IViveController.Touchpad_Touch => throw new NotImplementedException();
+        bool IViveController.Touchpad_Touch
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IViveController.Touchpad_Click => throw new NotImplementedException();
+        bool IViveController.Touchpad_Click
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		Vector2f IViveController.Touchpad_Aixs => throw new NotImplementedException();
+        Vector2f IViveController.Touchpad_Aixs
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IViveController.Trigger_Hair => throw new NotImplementedException();
+        bool IViveController.Trigger_Hair
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IViveController.Trigger_Click => throw new NotImplementedException();
+        bool IViveController.Trigger_Click
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		float IViveController.Trigger => throw new NotImplementedException();
+        float IViveController.Trigger
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IViveController.Grip => throw new NotImplementedException();
+        bool IViveController.Grip
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IViveController.System => throw new NotImplementedException();
+        bool IViveController.System
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		bool IViveController.App => throw new NotImplementedException();
-
-	}
+        bool IViveController.App
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
 }

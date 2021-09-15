@@ -76,12 +76,12 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 3);
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
-			var val = target.Target?.primitiveString ?? "null";
+			var val = target.Target?.PrimitiveString ?? "null";
 			if (ImGui.InputText((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref val, (uint)val.Length + 255, ImGuiInputTextFlags.EnterReturnsTrue))
 			{
 				if (target.Target != null)
                 {
-                    target.Target.primitiveString = val;
+                    target.Target.PrimitiveString = val;
                 }
             }
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
@@ -102,7 +102,7 @@ namespace RhubarbEngine.Components.ImGUI
                     var e = (IPrimitiveEditable)source.Referencer.Target;
 					if (target.Target != null)
                     {
-                        target.Target.primitiveString = e.primitiveString;
+                        target.Target.PrimitiveString = e.PrimitiveString;
                     }
 
                     source.Referencer.Target = null;

@@ -8,7 +8,7 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-	public class Driver<T> : SyncRef<DriveMember<T>>, IDriver where T : IConvertible
+	public class Driver<T> : SyncRef<IDriveMember<T>>, IDriver where T : IConvertible
 	{
         public T Drivevalue
 		{
@@ -22,11 +22,11 @@ namespace RhubarbEngine.World
 			}
 		}
 
-		private Driveable _driven;
+		private IDriveable _driven;
 
-		public bool Linked { get { return (_driven != null); } }
+		public bool Linked { get { return _driven != null; } }
 
-		public void SetDriveLocation(Driveable val)
+		public void SetDriveLocation(IDriveable val)
 		{
 			if (Target == val)
 			{
@@ -45,7 +45,7 @@ namespace RhubarbEngine.World
 		{
 			_driven = null;
 		}
-		public void SetDriveTarget(DriveMember<T> Target)
+		public void SetDriveTarget(IDriveMember<T> Target)
 		{
 			base.Target = Target;
 		}
@@ -62,13 +62,13 @@ namespace RhubarbEngine.World
 			{
 				UnLink();
 			}
-			Target.drive(this);
+			Target.Drive(this);
 		}
 		private void UnLink()
 		{
 			if (_driven != null)
 			{
-				_driven.killDrive();
+				_driven.KillDrive();
 			}
 		}
 		public Driver(World _world, IWorldObject _parent) : base(_world, _parent)

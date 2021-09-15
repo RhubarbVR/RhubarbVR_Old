@@ -46,7 +46,7 @@ namespace RhubarbEngine.World
 
     public class Worker : IWorker
     {
-        private readonly List<IDisposable> _disposables = new List<IDisposable>();
+        private readonly List<IDisposable> _disposables = new();
         public void AddDisposable(IDisposable add)
         {
             try

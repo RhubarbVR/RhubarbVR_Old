@@ -35,13 +35,9 @@ namespace RhubarbEngine.World
         {
 			get
 			{
-				if (base.Target != null && base.Target.IsRemoved)
-				{
-					return null;
-				}
-				return _delegateTarget;
-			}
-			set
+                return base.Target != null && base.Target.IsRemoved ? null : _delegateTarget;
+            }
+            set
 			{
 				if (value == Target)
 				{
@@ -99,15 +95,8 @@ namespace RhubarbEngine.World
 		{
 			_method = ((DataNode<string>)data.GetValue("Method")).Value;
 			var hello = ((DataNode<string>)data.GetValue("Type")).Value;
-			if (hello == "")
-			{
-				_type = null;
-			}
-			else
-			{
-				_type = Type.GetType(hello);
-			}
-			BuildDelegate();
+			_type = hello == "" ? null : Type.GetType(hello);
+            BuildDelegate();
 		}
 
 		public void BuildDelegate()

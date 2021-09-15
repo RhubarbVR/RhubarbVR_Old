@@ -20,13 +20,13 @@ namespace RhubarbEngine.World.Asset
 {
 	public class RShader : IAsset
 	{
-		public MainFragShader mainFragCode = new MainFragShader();
+		public MainFragShader mainFragCode = new();
 
-		public ShadowFragShader shadowFragCode = new ShadowFragShader();
+		public ShadowFragShader shadowFragCode = new();
 
-		public MainVertShader mainVertCode = new MainVertShader();
+		public MainVertShader mainVertCode = new();
 
-		public ShadowVertShader shadowVertCode = new ShadowVertShader();
+		public ShadowVertShader shadowVertCode = new();
 
 		public Veldrid.Shader mainVertShader;
 
@@ -42,13 +42,13 @@ namespace RhubarbEngine.World.Asset
 
 		public bool shaderLoaded;
 
-		public List<ShaderUniform> Fields = new List<ShaderUniform>();
+		public List<ShaderUniform> Fields = new();
 
-		public List<IDisposable> disposable = new List<IDisposable>();
+		public List<IDisposable> disposable = new();
 		public void Dispose()
 		{
 			shaderLoaded = false;
-			foreach (IDisposable dep in disposable)
+			foreach (var dep in disposable)
 			{
 				dep.Dispose();
 			}
@@ -57,12 +57,12 @@ namespace RhubarbEngine.World.Asset
 		}
 		public void BuildCode()
 		{
-			int loc = 2;
-			string mvert = "";
-			string mfrag = "";
-			string svert = "";
-			string sfrag = "";
-			foreach (ShaderUniform field in Fields)
+			var loc = 2;
+			var mvert = "";
+			var mfrag = "";
+			var svert = "";
+			var sfrag = "";
+			foreach (var field in Fields)
 			{
 				switch (field.shaderType)
 				{
@@ -90,27 +90,27 @@ namespace RhubarbEngine.World.Asset
 		}
 
 
-		public void createResourceLayouts(ResourceFactory factory)
+		public void CreateResourceLayouts(ResourceFactory factory)
 		{
 			if (mainresourceLayout != null || shadowresourceLayout != null)
 			{
 				throw new Exception("Resource Layout already Created");
 			}
-			ResourceLayoutDescription main = new ResourceLayoutDescription();
-			ResourceLayoutDescription shadow = new ResourceLayoutDescription();
+			var main = new ResourceLayoutDescription();
+			var shadow = new ResourceLayoutDescription();
 
-			List<ResourceLayoutElementDescription> mainElements = new List<ResourceLayoutElementDescription>();
-			List<ResourceLayoutElementDescription> shadowElements = new List<ResourceLayoutElementDescription>();
+			var mainElements = new List<ResourceLayoutElementDescription>();
+			var shadowElements = new List<ResourceLayoutElementDescription>();
 
-			ResourceLayoutElementDescription uboelement = new ResourceLayoutElementDescription("WVP", ResourceKind.UniformBuffer, ShaderStages.Vertex);
+			var uboelement = new ResourceLayoutElementDescription("WVP", ResourceKind.UniformBuffer, ShaderStages.Vertex);
 			mainElements.Add(uboelement);
 			shadowElements.Add(uboelement);
 
-			ResourceLayoutElementDescription Sampler = new ResourceLayoutElementDescription("Sampler", ResourceKind.Sampler, ShaderStages.Fragment);
+			var Sampler = new ResourceLayoutElementDescription("Sampler", ResourceKind.Sampler, ShaderStages.Fragment);
 			mainElements.Add(Sampler);
 			shadowElements.Add(Sampler);
 
-			foreach (ShaderUniform field in Fields)
+			foreach (var field in Fields)
 			{
 				if ((int)field.shaderType <= 2)
 				{
@@ -130,16 +130,16 @@ namespace RhubarbEngine.World.Asset
 			disposable.Add(shadowresourceLayout);
 		}
 
-		public ShaderUniform addUniform(string name, ShaderValueType vType, ShaderType stype)
+		public ShaderUniform AddUniform(string name, ShaderValueType vType, ShaderType stype)
 		{
-			ShaderUniform e = new ShaderUniform(name, vType, stype);
+			var e = new ShaderUniform(name, vType, stype);
 			Fields.Add(e);
 			return e;
 		}
 
-		public void removeUniform(string name, ShaderValueType vType, ShaderType stype)
+		public void RemoveUniform(string name, ShaderValueType vType, ShaderType stype)
 		{
-			ShaderUniform e = new ShaderUniform(name, vType, stype);
+			var e = new ShaderUniform(name, vType, stype);
 			Fields.Remove(e);
 		}
 		public void LoadShader(GraphicsDevice gd, UnitLogs log)
@@ -150,21 +150,21 @@ namespace RhubarbEngine.World.Asset
 
 				BuildCode();
 
-				string mainFragShader_Code = mainFragCode.getCode();
-				string shadowFragShader_Code = shadowFragCode.getCode();
-				string mainVertShader_Code = mainVertCode.getCode();
-				string shadowVertShader_Code = shadowVertCode.getCode();
+				var mainFragShader_Code = mainFragCode.getCode();
+				var shadowFragShader_Code = shadowFragCode.getCode();
+				var mainVertShader_Code = mainVertCode.getCode();
+				var shadowVertShader_Code = shadowVertCode.getCode();
 
 				//log.Log("Comnpileing ShaderCode MainFragSgader: \n" + mainFragShader_Code + " ShadowFragSgader: \n" + shadowFragShader_Code + " MainVertexSgader: \n" + mainVertShader_Code + " ShadowVertexSgader: \n" + shadowVertShader_Code);
 
-				Shader[] mainshaders = gd.ResourceFactory.CreateFromSpirv(
-					createShaderDescription(ShaderStages.Vertex, mainVertShader_Code),
-				  createShaderDescription(ShaderStages.Fragment, mainFragShader_Code)
+				var mainshaders = gd.ResourceFactory.CreateFromSpirv(
+                    CreateShaderDescription(ShaderStages.Vertex, mainVertShader_Code),
+                  CreateShaderDescription(ShaderStages.Fragment, mainFragShader_Code)
 				   );
 
-				Shader[] shadowshaders = gd.ResourceFactory.CreateFromSpirv(
-					  createShaderDescription(ShaderStages.Vertex, shadowVertShader_Code),
-					  createShaderDescription(ShaderStages.Fragment, shadowFragShader_Code));
+				var shadowshaders = gd.ResourceFactory.CreateFromSpirv(
+                      CreateShaderDescription(ShaderStages.Vertex, shadowVertShader_Code),
+                      CreateShaderDescription(ShaderStages.Fragment, shadowFragShader_Code));
 
 				mainFragShader = mainshaders[0];
 				shadowFragShader = shadowshaders[0];
@@ -176,7 +176,7 @@ namespace RhubarbEngine.World.Asset
 				disposable.Add(shadowVertShader);
 
 				log.Log("creating shader ResourceLayouts");
-				createResourceLayouts(gd.ResourceFactory);
+				CreateResourceLayouts(gd.ResourceFactory);
 
 				log.Log("Loadded Shader");
 				shaderLoaded = true;
@@ -187,7 +187,7 @@ namespace RhubarbEngine.World.Asset
 				log.Log("Failed to load shader" + e.ToString(), true);
 			}
 		}
-		public ShaderDescription createShaderDescription(ShaderStages stage, string _shaderCode)
+		public static ShaderDescription CreateShaderDescription(ShaderStages stage, string _shaderCode)
 		{
 			return new ShaderDescription(stage, Encoding.ASCII.GetBytes(_shaderCode), "main");
 		}

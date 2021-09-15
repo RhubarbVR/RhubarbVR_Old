@@ -10,10 +10,10 @@ namespace RhubarbEngine.World
 {
 	public class StaticAssets
 	{
-		private World _world;
+		private readonly World _world;
 
 		private TilledUnlitShader _tilledUnlitShader;
-		public TilledUnlitShader tilledUnlitShader
+		public TilledUnlitShader TilledUnlitShader
 		{
 			get
 			{
@@ -31,7 +31,7 @@ namespace RhubarbEngine.World
 		}
 
 		private BasicUnlitShader _basicUnlitShader;
-		public BasicUnlitShader basicUnlitShader
+		public BasicUnlitShader BasicUnlitShader
 		{
 			get
 			{
@@ -50,7 +50,7 @@ namespace RhubarbEngine.World
 
 
 		private OverLayedUnlitShader _overLayedUnlitShader;
-		public OverLayedUnlitShader overLayedUnlitShader
+		public OverLayedUnlitShader OverLayedUnlitShader
 		{
 			get
 			{

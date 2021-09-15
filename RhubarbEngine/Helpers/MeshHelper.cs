@@ -53,7 +53,7 @@ namespace RhubarbEngine.Helpers
 		public static (Entity, T) AddMesh<T>(Entity ea, string name = "Entity") where T : ProceduralMesh
 		{
 			var e = ea.AddChild(name);
-			var shader = e.World.staticAssets.basicUnlitShader;
+			var shader = e.World.staticAssets.BasicUnlitShader;
 			var bmesh = e.AttachComponent<T>();
 			var mit = e.AttachComponent<RMaterial>();
 			var meshRender = e.AttachComponent<MeshRender>();

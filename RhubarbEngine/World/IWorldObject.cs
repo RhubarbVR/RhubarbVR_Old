@@ -33,22 +33,12 @@ namespace RhubarbEngine.World
 		{
 			try
 			{
-				if (allowSyncVals)
-				{
-					return (Worker)worldObject;
-				}
-				else
-				{
-					if (typeof(ISyncMember).IsAssignableFrom(worldObject.GetType()))
-					{
-						return worldObject.Parent?.GetClosedWorker(allowSyncVals);
-					}
-					else
-					{
-						return (Worker)worldObject;
-					}
-				}
-			}
+                return allowSyncVals
+                    ? (Worker)worldObject
+                    : typeof(ISyncMember).IsAssignableFrom(worldObject.GetType())
+                        ? (worldObject.Parent?.GetClosedWorker(allowSyncVals))
+                        : (Worker)worldObject;
+            }
 			catch
 			{
 				return worldObject.Parent?.GetClosedWorker(allowSyncVals);

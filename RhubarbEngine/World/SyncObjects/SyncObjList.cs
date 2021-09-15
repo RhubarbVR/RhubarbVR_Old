@@ -12,7 +12,7 @@ namespace RhubarbEngine.World
 {
 	public class SyncObjList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : Worker, new()
 	{
-		private readonly SynchronizedCollection<T> _synclist = new SynchronizedCollection<T>(25);
+		private readonly SynchronizedCollection<T> _synclist = new(25);
 
 		public T this[int i]
 		{

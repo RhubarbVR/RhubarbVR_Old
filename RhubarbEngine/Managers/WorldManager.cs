@@ -152,7 +152,7 @@ namespace RhubarbEngine.Managers
 			if (FocusedWorld != null)
 			{
 				var node = world.Serialize();
-				val = node.getByteArray();
+				val = node.GetByteArray();
 			}
 			return val;
 		}
@@ -225,7 +225,7 @@ namespace RhubarbEngine.Managers
         public static ImGUICanvas BuildUI(Entity e)
 		{
 
-			var shader = e.World.staticAssets.basicUnlitShader;
+			var shader = e.World.staticAssets.BasicUnlitShader;
 			var bmesh = e.AttachComponent<PlaneMesh>();
 			var bmeshcol = e.AttachComponent<InputPlane>();
 			//e.attachComponent<Spinner>().speed.value = new Vector3f(10f);
@@ -246,7 +246,7 @@ namespace RhubarbEngine.Managers
 
 		public static WebBrowser BuildWebBrowser(Entity e, Vector2u pixsize, Vector2f size, bool globalAudio = false)
 		{
-			var shader = e.World.staticAssets.basicUnlitShader;
+			var shader = e.World.staticAssets.BasicUnlitShader;
 			var bmesh = e.AttachComponent<PlaneMesh>();
 			var bmeshcol = e.AttachComponent<InputPlane>();
 			bmesh.Width.Value = size.x;
@@ -282,7 +282,7 @@ namespace RhubarbEngine.Managers
 			world.RootEntity.AttachComponent<SimpleSpawn>();
 			var floor = world.RootEntity.AddChild("Floor");
 			var mit = floor.AttachComponent<RMaterial>();
-			mit.Shader.Target = world.staticAssets.tilledUnlitShader;
+			mit.Shader.Target = world.staticAssets.TilledUnlitShader;
 			var planemesh = floor.AttachComponent<PlaneMesh>();
 			var planecol = floor.AttachComponent<BoxCollider>();
 			planemesh.Width.Value = 1000f;
@@ -340,7 +340,7 @@ namespace RhubarbEngine.Managers
 			group61.AttachComponent<Spinner>().speed.Value = new Vector3f(-speed, 0, -speed);
 
 
-			var shader = root.World.staticAssets.basicUnlitShader;
+			var shader = root.World.staticAssets.BasicUnlitShader;
 			var bmesh = root.AttachComponent<BoxMesh>();
 			var mit = root.AttachComponent<RMaterial>();
 			mit.Shader.Target = shader;
@@ -391,7 +391,7 @@ namespace RhubarbEngine.Managers
 		public static Entity AddMesh<T>(Entity ea) where T : ProceduralMesh
 		{
 			var e = ea.AddChild();
-			var shader = e.World.staticAssets.basicUnlitShader;
+			var shader = e.World.staticAssets.BasicUnlitShader;
 			var bmesh = e.AttachComponent<T>();
 			var mit = e.AttachComponent<RMaterial>();
 			var meshRender = e.AttachComponent<MeshRender>();

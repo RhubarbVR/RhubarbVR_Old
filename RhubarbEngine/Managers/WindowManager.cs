@@ -48,7 +48,7 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return MainWindow.windowOpen;
+                return MainWindow.WindowOpen;
             }
         }
     }

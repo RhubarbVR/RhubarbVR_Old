@@ -33,9 +33,9 @@ namespace RhubarbEngine.Components.Assets
 		{
 			Logger.Log("Loadded Shader");
 			var shader = new RShader();
-			shader.addUniform("Texture", Render.Shader.ShaderValueType.Val_texture2D, Render.Shader.ShaderType.MainFrag);
-			shader.addUniform("Zpos", Render.Shader.ShaderValueType.Val_float, Render.Shader.ShaderType.MainFrag);
-			shader.addUniform("TintColor", Render.Shader.ShaderValueType.Val_color, Render.Shader.ShaderType.MainFrag);
+			shader.AddUniform("Texture", Render.Shader.ShaderValueType.Val_texture2D, Render.Shader.ShaderType.MainFrag);
+			shader.AddUniform("Zpos", Render.Shader.ShaderValueType.Val_float, Render.Shader.ShaderType.MainFrag);
+			shader.AddUniform("TintColor", Render.Shader.ShaderValueType.Val_color, Render.Shader.ShaderType.MainFrag);
 			shader.mainFragCode.userCode = @"
 
 layout(location = 0) in vec2 fsin_UV;
@@ -56,7 +56,7 @@ void main()
 }
 ";
 			shader.LoadShader(Engine.renderManager.gd, Logger);
-			load(shader);
+			Load(shader);
 		}
 
 		public override void BuildSyncObjs(bool newRefIds)

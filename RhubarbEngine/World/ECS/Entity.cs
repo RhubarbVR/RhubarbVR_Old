@@ -34,16 +34,8 @@ namespace RhubarbEngine.World.ECS
 		{
 			get
 			{
-				User retur;
-				if (_manager.Target == null)
-				{
-					retur = parent.Target?.NullableManager;
-				}
-				else
-				{
-					retur = _manager.Target;
-				}
-				if (retur == null)
+				var retur = _manager.Target ?? (parent.Target?.NullableManager);
+                if (retur == null)
 				{
 					retur = World.HostUser;
 				}
@@ -58,16 +50,8 @@ namespace RhubarbEngine.World.ECS
 		{
 			get
 			{
-				User retur;
-				if (_manager.Target == null)
-				{
-					retur = parent.Target?.Manager;
-				}
-				else
-				{
-					retur = _manager.Target;
-				}
-				return retur;
+				var retur = _manager.Target ?? (parent.Target?.Manager);
+                return retur;
 			}
 		}
 
@@ -102,16 +86,8 @@ namespace RhubarbEngine.World.ECS
 		public Vector3f GlobalPointToLocal(Vector3f point, bool Child = true)
 		{
 			var newtrans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromYawPitchRoll(0f, 0f, 0f) * Matrix4x4.CreateTranslation(point.ToSystemNumrics());
-            Matrix4x4 parentMatrix;
-			if (Child)
-			{
-				parentMatrix = _cashedGlobalTrans;
-			}
-			else
-			{
-				parentMatrix = parent.Target._cashedGlobalTrans;
-			}
-			Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
+            var parentMatrix = Child ? _cashedGlobalTrans : parent.Target._cashedGlobalTrans;
+            Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
 			var newlocal = newtrans * invparentMatrix;
 			Matrix4x4.Decompose(newlocal, out _, out _, out var newtranslation);
 			return (Vector3f)newtranslation;
@@ -119,16 +95,8 @@ namespace RhubarbEngine.World.ECS
 		public Vector3f GlobalScaleToLocal(Vector3f Scale, bool Child = true)
 		{
 			var newtrans = Matrix4x4.CreateScale((Vector3)Scale) * Matrix4x4.CreateFromYawPitchRoll(0f, 0f, 0f) * Matrix4x4.CreateTranslation(0, 0, 0);
-			Matrix4x4 parentMatrix;
-			if (Child)
-			{
-				parentMatrix = _cashedGlobalTrans;
-			}
-			else
-			{
-				parentMatrix = parent.Target._cashedGlobalTrans;
-			}
-			Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
+			var parentMatrix = Child ? _cashedGlobalTrans : parent.Target._cashedGlobalTrans;
+            Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
 			var newlocal = newtrans * invparentMatrix;
 			Matrix4x4.Decompose(newlocal, out var newscale, out _, out _);
 			return (Vector3f)newscale;
@@ -136,16 +104,8 @@ namespace RhubarbEngine.World.ECS
 		public Quaternionf GlobalRotToLocal(Quaternionf Rot, bool Child = true)
 		{
 			var newtrans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion((Quaternion)Rot) * Matrix4x4.CreateTranslation(0, 0, 0);
-			Matrix4x4 parentMatrix;
-			if (Child)
-			{
-				parentMatrix = _cashedGlobalTrans;
-			}
-			else
-			{
-				parentMatrix = parent.Target._cashedGlobalTrans;
-			}
-			Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
+			var parentMatrix = Child ? _cashedGlobalTrans : parent.Target._cashedGlobalTrans;
+            Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
 			var newlocal = newtrans * invparentMatrix;
 			Matrix4x4.Decompose(newlocal, out _, out var newrotation, out _);
 			return (Quaternionf)newrotation;
@@ -168,7 +128,7 @@ namespace RhubarbEngine.World.ECS
 		[NoShow]
 		[NoSave]
 		[NoSync]
-		public List<IPhysicsDisableder> physicsDisableders = new List<IPhysicsDisableder>();
+		public List<IPhysicsDisableder> physicsDisableders = new();
         [NoShow]
         [NoSave]
         [NoSync]
@@ -496,15 +456,8 @@ namespace RhubarbEngine.World.ECS
 		}
 		public bool CheckIfParented(Entity entity)
 		{
-			if (entity == this)
-			{
-				return true;
-			}
-			else
-			{
-				return _internalParent?.CheckIfParented(entity) ?? false;
-			}
-		}
+            return entity == this || (_internalParent?.CheckIfParented(entity) ?? false);
+        }
 		private void OnTransChange(IChangeable newValue)
 		{
 			UpdateGlobalTrans();
@@ -633,7 +586,7 @@ namespace RhubarbEngine.World.ECS
 			{
 				try
 				{
-					gu.Add(((Renderable)comp), playpos, ref frustum, view);
+					gu.Add((Renderable)comp, playpos, ref frustum, view);
 				}
 				catch
 				{ }

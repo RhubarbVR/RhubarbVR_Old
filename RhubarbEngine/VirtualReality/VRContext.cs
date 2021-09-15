@@ -23,7 +23,7 @@ namespace RhubarbEngine.VirtualReality
 		public bool Disposed;
 
 		public abstract Matrix4x4 Headpos { get; }
-		public abstract IController leftController { get; }
+		public abstract IController LeftController { get; }
 
 		public abstract IController RightController { get; }
 

@@ -68,7 +68,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 		private void BuildStartMenu(Entity e)
 		{
 			startMenu.Target = e;
-			var shader = World.staticAssets.basicUnlitShader;
+			var shader = World.staticAssets.BasicUnlitShader;
 			var bmesh = e.AttachComponent<PlaneMesh>();
 			bmesh.Height.Value = 0.30f;
 			bmesh.Width.Value = 0.30f;
@@ -177,7 +177,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 		{
 			var e = Entity.AddChild("TaskBar");
 			root.Target = e;
-			var shader = World.staticAssets.basicUnlitShader;
+			var shader = World.staticAssets.BasicUnlitShader;
 			var bmesh = e.AttachComponent<CurvedPlaneMesh>();
 			bmesh.BottomRadius.Value = Engine.settingsObject.UISettings.TaskBarCurve;
 			bmesh.TopRadius.Value = Engine.settingsObject.UISettings.TaskBarCurve + 10f;

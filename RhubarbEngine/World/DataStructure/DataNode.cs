@@ -13,18 +13,18 @@ namespace RhubarbEngine.World.DataStructure
 {
 	public class DataNode<T> : IDataNode
 	{
-		public DataNode(T def = default(T))
+		public DataNode(T def = default)
 		{
 			Value = def;
 		}
 
 		public DataNode()
 		{
-			Value = default(T);
+			Value = default;
 		}
 		public T Value;
 
-		public byte[] getByteArray()
+		public byte[] GetByteArray()
 		{
 			try
 			{
@@ -37,7 +37,7 @@ namespace RhubarbEngine.World.DataStructure
 			}
 		}
 
-		public void setByteArray(byte[] arrBytes)
+		public void SetByteArray(byte[] arrBytes)
 		{
 			try
 			{

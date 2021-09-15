@@ -118,7 +118,7 @@ namespace RhubarbEngine.Components.ImGUI
             if ((_framebuffer != null) && (_igr != null) && _uIloaded)
 			{
 				_uIloaded = false;
-				load(null);
+				Load(null);
 				_framebuffer.Dispose();
 				_igr.Dispose();
 				LoadUI();
@@ -163,7 +163,7 @@ namespace RhubarbEngine.Components.ImGUI
 				_igr = new ImGuiRenderer(Engine.renderManager.gd, _framebuffer.OutputDescription, (int)scale.Value.x, (int)scale.Value.y, ColorSpaceHandling.Linear);
 				var target = _framebuffer.ColorTargets[0].Target;
 				var view = Engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
-				load(new RTexture2D(view));
+				Load(new RTexture2D(view));
 				_uIloaded = true;
 			}
 			catch (Exception e)

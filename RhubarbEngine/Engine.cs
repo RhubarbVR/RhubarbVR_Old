@@ -90,7 +90,7 @@ namespace RhubarbEngine
 
 			verbose = _verbose;
 			logger = new UnitLogs(this);
-			Logger.init(this);
+			Logger.Init(this);
 			engineInitializer = new EngineInitializer(this);
 			logger.Log("Loading Arguments:", true);
 			engineInitializer.LoadArguments(_args);
@@ -119,17 +119,9 @@ namespace RhubarbEngine
 			}
 			foreach (var item in engineInitializer.settings)
 			{
-				string text;
-				if (File.Exists(item))
-				{
-					text = File.ReadAllText(item);
-				}
-				else
-				{
-					text = item;
-				}
-				try
-				{
+				var text = File.Exists(item) ? File.ReadAllText(item) : item;
+                try
+                {
 					var liet = SettingsManager.getDataFromJson(text);
 					lists.Add(liet);
 				}
@@ -138,28 +130,14 @@ namespace RhubarbEngine
 					logger.Log("Error loading settings ERROR:" + e.ToString(), true);
 				}
 			}
-			if (lists.Count == 0)
-			{
-				settingsObject = new MainSettingsObject();
-			}
-			else
-			{
-				settingsObject = SettingsManager.loadSettingsObject<MainSettingsObject>(lists.ToArray());
-			}
-			engineInitializer.InitializeManagers();
+			settingsObject = lists.Count == 0 ? new MainSettingsObject() : SettingsManager.loadSettingsObject<MainSettingsObject>(lists.ToArray());
+            engineInitializer.InitializeManagers();
 		}
 
 		public void StartUpdateLoop()
 		{
-			if (engineInitializer.Initialised)
-			{
-				engineInitializer = null;
-			}
-			else
-			{
-				throw new Exception("Engine not Initialised");
-			}
-			while (windowManager.MainWindowOpen)
+			engineInitializer = engineInitializer.Initialised ? null : throw new Exception("Engine not Initialised");
+            while (windowManager.MainWindowOpen)
 			{
 				Loop(platformInfo.startTime, platformInfo.Frame);
 				platformInfo.Frame = DateTime.UtcNow;

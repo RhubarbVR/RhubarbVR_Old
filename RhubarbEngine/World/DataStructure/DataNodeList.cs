@@ -13,22 +13,22 @@ namespace RhubarbEngine.World.DataStructure
 	public class DataNodeList : IDataNode
 	{
 
-		private List<IDataNode> NodeGroup = new List<IDataNode>();
-		public byte[] getByteArray()
+		private readonly List<IDataNode> _nodeGroup = new();
+		public byte[] GetByteArray()
 		{
 			try
 			{
-				List<byte[]> keyValuePairs = new List<byte[]>();
-				for (int index = 0; index < NodeGroup.Count; index++)
+				var keyValuePairs = new List<byte[]>();
+				for (var index = 0; index < _nodeGroup.Count; index++)
 				{
-					var item = NodeGroup[index];
+					var item = _nodeGroup[index];
 					if (item == null)
 					{
-						Console.WriteLine(NodeGroup[0].GetType().ToString() + NodeGroup[1].GetType().ToString());
-						Console.WriteLine("okay" + index.ToString() + " hi: " + NodeGroup.Count.ToString());
+						Console.WriteLine(_nodeGroup[0].GetType().ToString() + _nodeGroup[1].GetType().ToString());
+						Console.WriteLine("okay" + index.ToString() + " hi: " + _nodeGroup.Count.ToString());
 					}
-					byte type = (byte)Array.IndexOf(DatatNodeTools.dataNode, item.GetType());
-					List<byte> value = new List<byte>(item.getByteArray());
+					var type = (byte)Array.IndexOf(DatatNodeTools.dataNode, item.GetType());
+					var value = new List<byte>(item.GetByteArray());
 					value.Insert(0, type);
 					keyValuePairs.Add(value.ToArray());
 				}
@@ -43,7 +43,7 @@ namespace RhubarbEngine.World.DataStructure
 
 		public IEnumerator<IDataNode> GetEnumerator()
 		{
-			for (int i = 0; i < NodeGroup.Count; i++)
+			for (var i = 0; i < _nodeGroup.Count; i++)
 			{
 				yield return this[i];
 			}
@@ -53,33 +53,33 @@ namespace RhubarbEngine.World.DataStructure
 		{
 			get
 			{
-				return NodeGroup[i];
+				return _nodeGroup[i];
 			}
 			set
 			{
-				NodeGroup[i] = value;
+				_nodeGroup[i] = value;
 			}
 		}
 
 		public void Add(IDataNode val)
 		{
-			NodeGroup.Add(val);
+			_nodeGroup.Add(val);
 		}
-		public void setByteArray(byte[] arrBytes)
+		public void SetByteArray(byte[] arrBytes)
 		{
-			NodeGroup.Clear();
+			_nodeGroup.Clear();
 			try
 			{
-				List<byte[]> keyValuePairs = MessagePackSerializer.Deserialize<List<byte[]>>(arrBytes);
+				var keyValuePairs = MessagePackSerializer.Deserialize<List<byte[]>>(arrBytes);
 
 				foreach (var item in keyValuePairs)
 				{
-					Type type = DatatNodeTools.dataNode[item[0]];
-					IDataNode obj = (IDataNode)Activator.CreateInstance(type);
-					List<byte> val = new List<byte>(item);
+					var type = DatatNodeTools.dataNode[item[0]];
+					var obj = (IDataNode)Activator.CreateInstance(type);
+					var val = new List<byte>(item);
 					val.RemoveAt(0);
-					obj.setByteArray(val.ToArray());
-					NodeGroup.Add(obj);
+					obj.SetByteArray(val.ToArray());
+					_nodeGroup.Add(obj);
 				}
 			}
 			catch (Exception e)
@@ -96,7 +96,7 @@ namespace RhubarbEngine.World.DataStructure
 
 		public DataNodeList(byte[] data)
 		{
-			setByteArray(data);
+			SetByteArray(data);
 		}
 	}
 }

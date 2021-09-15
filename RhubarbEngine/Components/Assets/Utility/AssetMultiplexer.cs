@@ -60,11 +60,11 @@ namespace RhubarbEngine.Components.Assets
 		{
 			if (index.Value >= targets.Length)
 			{
-				load(null);
+				Load(null);
 			}
 			else
 			{
-				load(targets[index.Value]?.Asset);
+				Load(targets[index.Value]?.Asset);
 			}
 		}
 

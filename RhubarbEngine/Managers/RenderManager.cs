@@ -17,7 +17,7 @@ using Veldrid.ImageSharp;
 
 namespace RhubarbEngine.Managers
 {
-	public class RenderManager : IManager
+    public class RenderManager : IManager
 	{
         public float FieldOfView
         {
@@ -31,7 +31,7 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return _engine.windowManager.MainWindow.aspectRatio;
+                return _engine.windowManager.MainWindow.AspectRatio;
             }
         }
 

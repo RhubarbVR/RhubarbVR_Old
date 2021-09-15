@@ -22,13 +22,13 @@ namespace RhubarbEngine.World
 		public IWorldObject TargetIWorldObject { get; set; }
 	}
 
-	public class SyncRef<T> : Worker, ISyncRef, DriveMember<NetPointer>, IWorldObject, ISyncMember where T : class, IWorldObject
+	public class SyncRef<T> : Worker, ISyncRef, IDriveMember<NetPointer>, IWorldObject, ISyncMember where T : class, IWorldObject
 	{
         public bool Driven
         {
             get
             {
-                return isDriven;
+                return IsDriven;
             }
         }
 
@@ -42,24 +42,13 @@ namespace RhubarbEngine.World
 		{
 			get
 			{
-				if (this._target == null || this._target.IsRemoved || this._target.World != World)
-				{
-					return null;
-				}
-				return this._target;
-			}
-			set
+                return this._target == null || this._target.IsRemoved || this._target.World != World ? null : this._target;
+            }
+            set
 			{
 				_target = value;
-				if (value == null)
-				{
-					_targetRefID = default;
-				}
-				else
-				{
-					_targetRefID = value.ReferenceID;
-				}
-				Bind();
+				_targetRefID = value == null ? default : value.ReferenceID;
+                Bind();
 				UpdateNetValue();
 				Change();
 				OnChangeInternal(this);
@@ -73,7 +62,7 @@ namespace RhubarbEngine.World
 
 		private void UpdateNetValue()
 		{
-			if (!isDriven)
+			if (!IsDriven)
 			{
 				var send = new DataNodeGroup();
 				send.SetValue("Value", new DataNode<NetPointer>(_targetRefID));
@@ -136,7 +125,7 @@ namespace RhubarbEngine.World
 
 		}
 
-		private NetPointer Netvalue
+        private NetPointer Netvalue
 		{
 			get
 			{
@@ -178,7 +167,7 @@ namespace RhubarbEngine.World
 		}
 		public override DataNodeGroup Serialize(WorkerSerializerObject workerSerializerObject)
 		{
-            var obj = workerSerializerObject.CommonRefSerialize(this, _targetRefID);
+            var obj = WorkerSerializerObject.CommonRefSerialize(this, _targetRefID);
             UpdateNetIngect(obj);
 			return obj;
 		}
@@ -237,42 +226,42 @@ namespace RhubarbEngine.World
 		}
 
 		public IDriver drivenFromobj;
-		public NetPointer drivenFrom { get { return drivenFromobj.ReferenceID; } }
+		public NetPointer DrivenFrom { get { return drivenFromobj.ReferenceID; } }
 
-		public bool isDriven { get; private set; }
+		public bool IsDriven { get; private set; }
 
-		private readonly List<Driveable> _driven = new List<Driveable>();
+		private readonly List<IDriveable> _driven = new();
 
 		public override void Removed()
 		{
 			foreach (var dev in _driven)
 			{
-				dev.killDrive();
+				dev.KillDrive();
 			}
 		}
 
-		public void killDrive()
+		public void KillDrive()
 		{
 			drivenFromobj.RemoveDriveLocation();
-			isDriven = false;
+			IsDriven = false;
 		}
 
-		public void drive(IDriver value)
+		public void Drive(IDriver value)
 		{
-			if (!isDriven)
+			if (!IsDriven)
 			{
-				forceDrive(value);
+				ForceDrive(value);
 			}
 		}
-		public void forceDrive(IDriver value)
+		public void ForceDrive(IDriver value)
 		{
-			if (isDriven)
+			if (IsDriven)
 			{
-				killDrive();
+				KillDrive();
 			}
 			value.SetDriveLocation(this);
 			drivenFromobj = value;
-			isDriven = true;
+			IsDriven = true;
 		}
 
 

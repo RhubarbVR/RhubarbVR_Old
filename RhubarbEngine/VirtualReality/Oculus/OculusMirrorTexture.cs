@@ -11,11 +11,10 @@ namespace RhubarbEngine.VirtualReality.Oculus
 {
 	internal class OculusMirrorTexture : IDisposable
 	{
-		public static readonly Guid s_d3d11Tex2DGuid = new Guid("6f15aaf2-d208-4e89-9ab4-489535d34f9c");
+		public static readonly Guid s_d3d11Tex2DGuid = new("6f15aaf2-d208-4e89-9ab4-489535d34f9c");
 
 		private readonly OculusContext _context;
-		private readonly Dictionary<OutputDescription, TextureBlitter> _blitters
-			= new Dictionary<OutputDescription, TextureBlitter>();
+		private readonly Dictionary<OutputDescription, TextureBlitter> _blitters = new();
 
 		private (uint width, uint height, MirrorTextureEyeSource source) _texProperties;
 		private ovrMirrorTexture _ovrMirrorTex;
@@ -64,7 +63,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
 		private unsafe void CreateMirrorTextureGL(uint width, uint height, MirrorTextureEyeSource source)
 		{
-			GraphicsDevice gd = _context.GraphicsDevice;
+			var gd = _context.GraphicsDevice;
 
 			uint glID = default;
 
@@ -81,11 +80,11 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
 			gd.GetOpenGLInfo().ExecuteOnGLThread(() =>
 			{
-				ovrMirrorTextureDesc localDesc = desc;
-				localDesc.MiscFlags = localDesc.MiscFlags & ~(ovrTextureMiscFlags.DX_Typeless | ovrTextureMiscFlags.AllowGenerateMips);
+				var localDesc = desc;
+				localDesc.MiscFlags &= ~(ovrTextureMiscFlags.DX_Typeless | ovrTextureMiscFlags.AllowGenerateMips);
 				ovrMirrorTexture localTex;
 				var result = ovr_CreateMirrorTextureWithOptionsGL(_context.Session, &localDesc, &localTex);
-				if (result != ovrResult.Success)
+				if (result != OvrResult.Success)
 				{
 					return;
 				}
@@ -93,7 +92,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
 				uint localID;
 				result = ovr_GetMirrorTextureBufferGL(_context.Session, _ovrMirrorTex, &localID);
-				if (result != ovrResult.Success)
+				if (result != OvrResult.Success)
 				{
 					return;
 				}
@@ -113,7 +112,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
 		private unsafe void CreateMirrorTextureVulkan(uint width, uint height, MirrorTextureEyeSource source)
 		{
-			GraphicsDevice gd = _context.GraphicsDevice;
+			var gd = _context.GraphicsDevice;
 
 			ovrMirrorTextureDesc desc;
 			desc.Format = ovrTextureFormat.R8G8B8A8_UNORM_SRGB;
@@ -126,15 +125,15 @@ namespace RhubarbEngine.VirtualReality.Oculus
 					? ovrMirrorOptions.RightEyeOnly
 					: ovrMirrorOptions.Default;
 
-			desc.MiscFlags = desc.MiscFlags & ~(ovrTextureMiscFlags.DX_Typeless);
+			desc.MiscFlags &= ~ovrTextureMiscFlags.DX_Typeless;
 
 			ovrMirrorTexture mirrorTex;
-			ovrResult result = ovr_CreateMirrorTextureWithOptionsVk(
+			var result = ovr_CreateMirrorTextureWithOptionsVk(
 				_context.Session,
 				gd.GetVulkanInfo().Device,
 				&desc,
 				&mirrorTex);
-			if (result != ovrResult.Success)
+			if (result != OvrResult.Success)
 			{
 				throw new VeldridException($"Failed to create Vulkan mirror texture: {result}");
 			}
@@ -142,7 +141,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
 			ulong vkImage;
 			result = ovr_GetMirrorTextureBufferVk(_context.Session, mirrorTex, &vkImage);
-			if (result != ovrResult.Success)
+			if (result != OvrResult.Success)
 			{
 				throw new VeldridException($"Failed to get Vulkan Mirror Texture image: {result}.");
 			}
@@ -177,12 +176,12 @@ namespace RhubarbEngine.VirtualReality.Oculus
 					: ovrMirrorOptions.Default;
 
 			ovrMirrorTexture mirrorTexture;
-			ovrResult result = ovr_CreateMirrorTextureWithOptionsDX(
+			var result = ovr_CreateMirrorTextureWithOptionsDX(
 				_context.Session,
 				_context.GraphicsDevice.GetD3D11Info().Device,
 				&desc,
 				&mirrorTexture);
-			if (result != ovrResult.Success)
+			if (result != OvrResult.Success)
 			{
 				throw new VeldridException($"Failed to create DX mirror texture: {result}");
 			}
@@ -190,7 +189,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
 			IntPtr mirrord3d11Tex;
 			result = ovr_GetMirrorTextureBufferDX(_context.Session, mirrorTexture, s_d3d11Tex2DGuid, &mirrord3d11Tex);
-			if (result != ovrResult.Success)
+			if (result != OvrResult.Success)
 			{
 				throw new VeldridException($"Failed to get D3D11 mirror texture handle: {result}");
 			}
@@ -204,8 +203,8 @@ namespace RhubarbEngine.VirtualReality.Oculus
 		public void Render(CommandList cl, Framebuffer fb, MirrorTextureEyeSource source)
 		{
 			EnsureMirrorTexture(fb.Width, fb.Height, source);
-			TextureBlitter blitter = GetBlitter(fb.OutputDescription);
-			ResourceSet set = GetResourceSet(blitter);
+			var blitter = GetBlitter(fb.OutputDescription);
+			var set = GetResourceSet(blitter);
 
 			if (_vkTrueMirrorTex != null)
 			{
@@ -237,7 +236,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
 		private TextureBlitter GetBlitter(OutputDescription outputDescription)
 		{
-			if (!_blitters.TryGetValue(outputDescription, out TextureBlitter ret))
+            if (!_blitters.TryGetValue(outputDescription, out var ret))
 			{
 				ret = new TextureBlitter(
 					_context.GraphicsDevice,
@@ -253,7 +252,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
 		public void Dispose()
 		{
-			foreach (KeyValuePair<OutputDescription, TextureBlitter> kvp in _blitters)
+			foreach (var kvp in _blitters)
 			{
 				kvp.Value.Dispose();
 			}

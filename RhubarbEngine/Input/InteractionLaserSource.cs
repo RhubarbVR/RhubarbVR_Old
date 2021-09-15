@@ -121,9 +121,9 @@ namespace RhubarbEngine.Input
 
 				if (inputPlane.mesh.Asset != null)
 				{
-					var hittry = inputPlane.mesh.Asset.meshes[0].InsideTry(trans);
-					var tryangle = inputPlane.mesh.Asset.meshes[0].GetTriangle(hittry);
-					var mesh = inputPlane.mesh.Asset.meshes[0];
+					var hittry = inputPlane.mesh.Asset.Meshes[0].InsideTry(trans);
+					var tryangle = inputPlane.mesh.Asset.Meshes[0].GetTriangle(hittry);
+					var mesh = inputPlane.mesh.Asset.Meshes[0];
 					var p1 = mesh.GetVertexAll(tryangle.a);
 					var p2 = mesh.GetVertexAll(tryangle.b);
 					var p3 = mesh.GetVertexAll(tryangle.c);

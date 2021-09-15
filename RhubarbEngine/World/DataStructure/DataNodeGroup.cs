@@ -12,8 +12,8 @@ namespace RhubarbEngine.World.DataStructure
     public class DataNodeGroup : IDataNode
     {
 
-        private readonly Dictionary<string, IDataNode> _nodeGroup = new Dictionary<string, IDataNode>();
-        public byte[] getByteArray()
+        private readonly Dictionary<string, IDataNode> _nodeGroup = new();
+        public byte[] GetByteArray()
         {
             try
             {
@@ -21,14 +21,14 @@ namespace RhubarbEngine.World.DataStructure
                 foreach (var item in _nodeGroup.Keys)
                 {
                     int typeint = (byte)Array.IndexOf(DatatNodeTools.dataNode, _nodeGroup[item].GetType());
-                    if (typeint == -1 || typeint >= DatatNodeTools.dataNode.Count())
+                    if (typeint == -1 || typeint >= DatatNodeTools.dataNode.Length)
                     {
                         throw new Exception("Error not Assinded Type " + _nodeGroup[item].GetType().FullName);
                     }
                     var type = (byte)typeint;
                     var e = new List<byte>(Packer(item));
                     e.Insert(0, type);
-                    keyValuePairs.Add(e.ToArray(), _nodeGroup[item].getByteArray());
+                    keyValuePairs.Add(e.ToArray(), _nodeGroup[item].GetByteArray());
                 }
                 var ps = new List<(byte[], byte[])>();
                 foreach (var item in keyValuePairs.Keys)
@@ -40,26 +40,21 @@ namespace RhubarbEngine.World.DataStructure
             catch (Exception e)
             {
                 Console.WriteLine("Failed to serialize. Group Reason: " + e.Message);
-                return new byte[] { };
+                return Array.Empty<byte>();
             }
         }
         //31 max hardpack values
-        public static string[] HardPack = new string[] { "", "Value", "referenceID", "targetRefID", "list", "enabled", "updateOrder", "remderlayer", "parent", "_children", "name", "rotation", "scale", "position", "Type", "_components", "persistence" };
 
-        public string UnPacker(byte[] inputeval)
+        private static readonly string[] _hARD_PACK = new string[] { "", "Value", "referenceID", "targetRefID", "list", "enabled", "updateOrder", "remderlayer", "parent", "_children", "name", "rotation", "scale", "position", "Type", "_components", "persistence" };
+
+
+        public static string UnPacker(byte[] inputeval)
         {
             try
             {
                 var ascii = new ASCIIEncoding();
                 var hardPackval = inputeval[0] - 1;
-                if (hardPackval < HardPack.Length)
-                {
-                    return HardPack[hardPackval];
-                }
-                else
-                {
-                    return ascii.GetString(inputeval);
-                }
+                return hardPackval < _hARD_PACK.Length ? _hARD_PACK[hardPackval] : ascii.GetString(inputeval);
             }
             catch (Exception e)
             {
@@ -67,13 +62,13 @@ namespace RhubarbEngine.World.DataStructure
             }
         }
 
-        public byte[] Packer(string inputeval)
+        public static byte[] Packer(string inputeval)
         {
             try
             {
                 var ascii = new ASCIIEncoding();
                 var val = inputeval;
-                var hardpackvalue = Array.IndexOf(HardPack, inputeval);
+                var hardpackvalue = Array.IndexOf(_hARD_PACK, inputeval);
                 if (hardpackvalue > 0)
                 {
                     hardpackvalue++;
@@ -101,14 +96,14 @@ namespace RhubarbEngine.World.DataStructure
         {
             _nodeGroup.Add(key, obj);
         }
-        public void setByteArray(byte[] arrBytes)
+        public void SetByteArray(byte[] arrBytes)
         {
             _nodeGroup.Clear();
             try
             {
                 var temp = MessagePackSerializer.Deserialize<(byte[], byte[])[]>(arrBytes);
                 var data = new Dictionary<byte[], byte[]>();
-                for (var i = 0; i < temp.Count(); i++)
+                for (var i = 0; i < temp.Length; i++)
                 {
                     data.Add(temp[i].Item1, temp[i].Item2);
                 }
@@ -117,7 +112,7 @@ namespace RhubarbEngine.World.DataStructure
 
                     var type = DatatNodeTools.dataNode[item[0]];
                     var obj = (IDataNode)Activator.CreateInstance(type);
-                    obj.setByteArray(data[item]);
+                    obj.SetByteArray(data[item]);
                     var key = new List<byte>(item);
                     key.RemoveAt(0);
                     var keyval = UnPacker(key.ToArray());
@@ -139,7 +134,7 @@ namespace RhubarbEngine.World.DataStructure
 
         public DataNodeGroup(byte[] data)
         {
-            setByteArray(data);
+            SetByteArray(data);
         }
     }
 }

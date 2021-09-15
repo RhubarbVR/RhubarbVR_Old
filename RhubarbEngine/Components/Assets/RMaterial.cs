@@ -47,7 +47,7 @@ namespace RhubarbEngine.Components.Assets
 		public override void OnLoaded()
 		{
 			//Logger.Log("Loaded Material");
-			load(this);
+			Load(this);
 		}
 
 		public void GetBindableResources(List<BindableResource> BindableResources, bool shadow = false)
@@ -255,14 +255,14 @@ namespace RhubarbEngine.Components.Assets
 					CreateField(item.fieldName, item.shaderType, item.valueType);
 				}
 			}
-			load(this);
+			Load(this);
 		}
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			Shader = new AssetRef<RShader>(this, newRefIds);
 			Fields = new SyncAbstractObjList<MaterialField>(this, newRefIds);
-			Shader.loadChange += LoadChange;
+			Shader.LoadChange += LoadChange;
 		}
 		public RMaterial(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{

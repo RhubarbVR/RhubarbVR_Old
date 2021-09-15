@@ -36,11 +36,11 @@ using RhubarbEngine.Render;
 namespace RhubarbEngine.Components.Interaction
 {
 
-	/// <summary>
-	/// Default implementation of <see cref="IRenderHandler"/>, this class handles Offscreen Rendering (OSR).
-	/// Upstream documentation at http://magpcss.org/ceforum/apidocs3/projects/(default)/CefRenderHandler.html
-	/// </summary>
-	public class RenderHandler : IRenderHandler
+    /// <summary>
+    /// Default implementation of <see cref="IRenderHandler"/>, this class handles Offscreen Rendering (OSR).
+    /// Upstream documentation at http://magpcss.org/ceforum/apidocs3/projects/(default)/CefRenderHandler.html
+    /// </summary>
+    public class RenderHandler : IRenderHandler
 	{
 		private ChromiumWebBrowser _browser;
 
@@ -356,7 +356,7 @@ namespace RhubarbEngine.Components.Interaction
 		public override void Dispose()
 		{
 
-            load(null, true);
+            Load(null, true);
             _browser?.Dispose();
             base.Dispose();
 		}
@@ -616,9 +616,9 @@ namespace RhubarbEngine.Components.Interaction
                     _target = new UpdateDatingTexture2D();
 					_view = _target.InitializeView(((RenderHandler)_browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(Engine.renderManager.gd, Engine.renderManager.gd.ResourceFactory), Engine.renderManager.gd);
 					var e = new RTexture2D(_view);
-					e.addDisposable(_target);
-					e.addDisposable(_view);
-					load(e, true);
+					e.AddDisposable(_target);
+					e.AddDisposable(_view);
+					Load(e, true);
 				}
 				else
 				{

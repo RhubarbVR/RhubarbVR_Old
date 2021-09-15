@@ -24,7 +24,7 @@ namespace RhubarbEngine.World.ECS
             {
                 Value = true
             };
-            _entity = (Entity)(parent.Parent);
+            _entity = (Entity)parent.Parent;
 			LoadToWorld();
 		}
 

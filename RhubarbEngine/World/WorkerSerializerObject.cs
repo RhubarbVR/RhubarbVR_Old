@@ -13,20 +13,20 @@ namespace RhubarbEngine.World
 {
     public class WorkerSerializerObject
     {
-        bool netsync = false;
+        readonly bool _netsync = false;
         public WorkerSerializerObject(bool netsync = false)
         {
-            this.netsync = netsync;
+            _netsync = netsync;
         }
 
-        public DataNodeGroup CommonSerialize(IWorldObject @object)
+        public static DataNodeGroup CommonSerialize(IWorldObject @object)
         {
             var obj = new DataNodeGroup();
             var Refid = new DataNode<NetPointer>(@object.ReferenceID);
             obj.SetValue("referenceID", Refid);
             return obj;
         }
-        public DataNodeGroup CommonRefSerialize(IWorldObject @object, NetPointer target)
+        public static DataNodeGroup CommonRefSerialize(IWorldObject @object, NetPointer target)
         {
             var obj = new DataNodeGroup();
             var Refid = new DataNode<NetPointer>(@object.ReferenceID);
@@ -40,12 +40,12 @@ namespace RhubarbEngine.World
         {
             var fields = @object.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
             DataNodeGroup obj = null;
-            if (@object.IsPersistent || netsync)
+            if (@object.IsPersistent || _netsync)
             {
                 obj = new DataNodeGroup();
                 foreach (var field in fields)
                 {
-                    if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || (netsync && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))))
+                    if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || (_netsync && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))))
                     {
                         //This is for debug purposes 
                         //if (!netsync)
@@ -101,20 +101,12 @@ namespace RhubarbEngine.World
             return obj;
         }
 
-        public DataNodeGroup CommonValueSerialize<T>(IWorldObject @object,T value)where T:IConvertible
+        public static DataNodeGroup CommonValueSerialize<T>(IWorldObject @object,T value)where T:IConvertible
         {
             var obj = new DataNodeGroup();
             var Refid = new DataNode<NetPointer>(@object.ReferenceID);
             obj.SetValue("referenceID", Refid);
-            IDataNode Value;
-            if (typeof(T).IsEnum)
-            {
-                Value = new DataNode<int>((int)(object)value);
-            }
-            else
-            {
-                Value = new DataNode<T>(value);
-            }
+            var Value = typeof(T).IsEnum ? new DataNode<int>((int)(object)value) : (IDataNode)new DataNode<T>(value);
             obj.SetValue("Value", Value);
             return obj;
         }

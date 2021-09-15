@@ -81,7 +81,7 @@ namespace RhubarbEngine.Managers
 			return this;
 		}
 		long _currentFrameTicks;
-        readonly float _vsync;
+        readonly float _vsync = 0;
         public void Update()
 		{
 			previousFrameTicks = _currentFrameTicks;

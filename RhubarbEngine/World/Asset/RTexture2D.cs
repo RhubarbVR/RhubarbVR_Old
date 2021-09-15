@@ -20,19 +20,19 @@ namespace RhubarbEngine.World.Asset
 	public class RTexture2D : IAsset
 	{
 
-		public List<IDisposable> disposables = new List<IDisposable>();
+		public List<IDisposable> disposables = new();
 
 		public TextureView view;
 
 		public void Dispose()
 		{
-			foreach (IDisposable dep in disposables)
+			foreach (var dep in disposables)
 			{
 				dep.Dispose();
 			}
 		}
 
-		public void addDisposable(IDisposable val)
+		public void AddDisposable(IDisposable val)
 		{
 			disposables.Add(val);
 		}

@@ -46,7 +46,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			var (renderentity, mesh, mit) = MeshHelper.AddMesh<PlaneMesh>(Entity, World.staticAssets.overLayedUnlitShader, "RenderEntity", 10);
+			var (renderentity, mesh, mit) = MeshHelper.AddMesh<PlaneMesh>(Entity, World.staticAssets.OverLayedUnlitShader, "RenderEntity", 10);
 			renderEntity.Target = renderentity;
 			mesh.Width.Value = 0.5f;
 			mesh.Height.Value = 0.5f;

@@ -14,6 +14,12 @@ using Valve.VR;
 #if UNITY_5_3_OR_NEWER
 using UnityEngine;
 #endif
+#pragma warning disable IDE1006 // Naming Styles
+#pragma warning disable IDE0025 // Use block body for properties
+#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable IDE0007 // Use implicit type
+#pragma warning disable IDE0011 // Add braces
+#pragma warning disable IDE0078 // Use pattern matching
 
 namespace Valve.VR
 {
@@ -2009,8 +2015,8 @@ namespace Valve.VR
 			}
 
 			int size = System.Text.Encoding.UTF8.GetByteCount(managedString) + 1;
-			if (buffer.Length < size)
-				buffer = new byte[size];
+            if (buffer.Length < size)
+                buffer = new byte[size];
 			int written = System.Text.Encoding.UTF8.GetBytes(managedString, 0, managedString.Length, buffer, 0);
 			buffer[written] = 0x00; // null terminate
 			IntPtr nativeUtf8 = Marshal.AllocHGlobal(written + 1);
@@ -2237,9 +2243,9 @@ namespace Valve.VR
 		public bool GetControllerState(uint unControllerDeviceIndex, ref VRControllerState_t pControllerState, uint unControllerStateSize)
 		{
 #if !UNITY_METRO
-			if ((System.Environment.OSVersion.Platform == System.PlatformID.MacOSX) ||
+            if ((System.Environment.OSVersion.Platform == System.PlatformID.MacOSX) ||
 					(System.Environment.OSVersion.Platform == System.PlatformID.Unix))
-			{
+            {
 				GetControllerStateUnion u;
 				VRControllerState_t_Packed state_packed = new VRControllerState_t_Packed(pControllerState);
 				u.pGetControllerStatePacked = null;
@@ -8323,3 +8329,9 @@ namespace Valve.VR
 }
 #endif
 
+#pragma warning restore IDE1006 // Naming Styles
+#pragma warning restore IDE0025 // Use block body for properties
+#pragma warning restore IDE0044 // Add readonly modifier
+#pragma warning restore IDE0007 // Use implicit type
+#pragma warning restore IDE0011 // Add braces
+#pragma warning restore IDE0078 // Use pattern matching

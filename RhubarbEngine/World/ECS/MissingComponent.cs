@@ -74,7 +74,7 @@ namespace RhubarbEngine.World.ECS
 			if (((DataNode<string>)data.GetValue("type")) != null)
 			{
 				temptype = ((DataNode<string>)data.GetValue("type")).Value;
-				tempdata = ((DataNodeGroup)data.GetValue("Data"));
+				tempdata = (DataNodeGroup)data.GetValue("Data");
 			}
 			else
 			{

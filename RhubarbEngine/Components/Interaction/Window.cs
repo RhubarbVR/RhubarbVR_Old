@@ -284,7 +284,7 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			Entity.AttachComponent<Grabbable>();
 			var col = Entity.AttachComponent<BoxCollider>();
-            var (_, mesh, _) = Helpers.MeshHelper.AddMesh<BoxMesh>(Entity, World.staticAssets.basicUnlitShader, "UIBackGround", 2147483646);
+            var (_, mesh, _) = Helpers.MeshHelper.AddMesh<BoxMesh>(Entity, World.staticAssets.BasicUnlitShader, "UIBackGround", 2147483646);
 			BackGround.SetDriveTarget(mesh.Extent);
 			colBackGround.SetDriveTarget(col.boxExtents);
 		}
@@ -336,7 +336,7 @@ namespace RhubarbEngine.Components.Interaction
 			labelDriver.SetDriveTarget(imGUICanvas.name);
 			imGUICanvas.element.Target = this;
 			canvasPixelsizeDriver.SetDriveTarget(imGUICanvas.scale);
-			mit.Shader.Target = World.staticAssets.basicUnlitShader;
+			mit.Shader.Target = World.staticAssets.BasicUnlitShader;
 			canvas.Target = imGUICanvas;
 			var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
 			field.field.Target = imGUICanvas;

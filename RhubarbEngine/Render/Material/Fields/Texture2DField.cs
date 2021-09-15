@@ -18,7 +18,7 @@ namespace RhubarbEngine.Render.Material.Fields
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			field = new AssetRef<RTexture2D>(this, newRefIds);
-			field.loadChange += assetChange;
+			field.LoadChange += assetChange;
 		}
 
 		public override void OnUpdate()

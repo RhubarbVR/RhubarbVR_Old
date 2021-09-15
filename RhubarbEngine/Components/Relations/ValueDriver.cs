@@ -16,12 +16,12 @@ namespace RhubarbEngine.Components.Relations
 	{
 		public Driver<T> driver;
 
-		public SyncRef<ValueSource<T>> source;
+		public SyncRef<IValueSource<T>> source;
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			driver = new Driver<T>(this, newRefIds);
-			source = new SyncRef<ValueSource<T>>(this, newRefIds);
+			source = new SyncRef<IValueSource<T>>(this, newRefIds);
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)

@@ -13,7 +13,7 @@ namespace RhubarbEngine.World
 {
 	public class SyncAbstractObjList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : Worker
 	{
-		private readonly SynchronizedCollection<T> _synclist = new SynchronizedCollection<T>(25);
+		private readonly SynchronizedCollection<T> _synclist = new(25);
 
 		public T this[int i]
 		{
@@ -200,7 +200,7 @@ namespace RhubarbEngine.World
 				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
 				World.AddWorldObj(this);
 			}
-			foreach (DataNodeGroup val in ((DataNodeList)data.GetValue("list")))
+			foreach (DataNodeGroup val in (DataNodeList)data.GetValue("list"))
 			{
 				var ty = Type.GetType(((DataNode<string>)val.GetValue("Type")).Value);
 				if (ty == typeof(MissingComponent))
@@ -214,10 +214,10 @@ namespace RhubarbEngine.World
 					}
 					else
 					{
-						if ((ty).IsAssignableFrom(typeof(T)))
+						if (ty.IsAssignableFrom(typeof(T)))
 						{
 							var obj = (T)Activator.CreateInstance(ty);
-							Add(obj, NewRefIDs).DeSerialize(((DataNodeGroup)((DataNodeGroup)val.GetValue("Value")).GetValue("Data")), onload, NewRefIDs, newRefID, latterResign);
+							Add(obj, NewRefIDs).DeSerialize((DataNodeGroup)((DataNodeGroup)val.GetValue("Value")).GetValue("Data"), onload, NewRefIDs, newRefID, latterResign);
 						}
 						else
 						{

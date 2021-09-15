@@ -95,8 +95,8 @@ namespace RhubarbEngine.World
 		public Sync<int> channels;
         private OpusEncoder _encoder;
 		private OpusDecoder _decoder;
-		private readonly CodecStatistics _statistics = new CodecStatistics();
-		private readonly Stopwatch _timer = new Stopwatch();
+		private readonly CodecStatistics _statistics = new();
+		private readonly Stopwatch _timer = new();
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
@@ -136,8 +136,8 @@ namespace RhubarbEngine.World
 		public void Update()
 		{
 			_encoder = OpusEncoder.Create(Engine.audioManager.SamplingRate, channels.Value, OpusApplication.OPUS_APPLICATION_AUDIO);
-			_encoder.Bitrate = (bitrate.Value * 1024);
-			_encoder.Complexity = (complexity.Value);
+			_encoder.Bitrate = bitrate.Value * 1024;
+			_encoder.Complexity = complexity.Value;
 			_encoder.UseVBR = vbr.Value;
 			_encoder.UseConstrainedVBR = cvbr.Value;
 			_encoder.EnableAnalysis = true;

@@ -46,7 +46,7 @@ namespace RhubarbEngine.Components.Rendering
 		{
 			Mesh = new AssetRef<RMesh>(this, newRefIds);
 			Materials = new SyncAssetRefList<RMaterial>(this, newRefIds);
-			Mesh.loadChange += LoadMesh;
+			Mesh.LoadChange += LoadMesh;
 			Materials.loadChange += LoadMaterial;
             RenderOrderOffset = new Sync<uint>(this, newRefIds)
             {
@@ -66,14 +66,14 @@ namespace RhubarbEngine.Components.Rendering
 				Logger.Log("no mesh provider");
 				return;
 			}
-			if (Mesh.Target.value == null)
+			if (Mesh.Target.Value == null)
 			{
 				Logger.Log("no mesh to load");
 				Logger.Log($"{Mesh.Value.getID()}");
 			}
 			else
 			{
-				_meshPieces = Mesh.Asset.meshPieces.ToArray();
+				_meshPieces = Mesh.Asset.MeshPieces.ToArray();
 			}
 			CheckIsLoaded();
 		}
@@ -197,7 +197,7 @@ namespace RhubarbEngine.Components.Rendering
                 return;
             }
 
-            var mitindex = Materials.indexOf(mit);
+            var mitindex = Materials.IndexOf(mit);
 			if (mitindex == -1)
 			{
 				mit.BindableResourcesReload -= ReloadResorseSet;

@@ -13,8 +13,8 @@ namespace RNumerics
 
 		public static List<T> List<T>(IEnumerable<T> Input) where T : IDuplicatable<T>
 		{
-			List<T> result = new List<T>();
-			foreach (T val in Input)
+			var result = new List<T>();
+			foreach (var val in Input)
 			{
 				result.Add(val.Duplicate());
 			}
@@ -24,12 +24,15 @@ namespace RNumerics
 
 		public static T[] Array<T>(IEnumerable<T> Input) where T : IDuplicatable<T>
 		{
-			int count = Input.Count();
-			T[] a = new T[count];
-			int i = 0;
-			foreach (T val in Input)
-				a[i++] = val.Duplicate();
-			return a;
+			var count = Input.Count();
+			var a = new T[count];
+			var i = 0;
+			foreach (var val in Input)
+            {
+                a[i++] = val.Duplicate();
+            }
+
+            return a;
 		}
 
 	}

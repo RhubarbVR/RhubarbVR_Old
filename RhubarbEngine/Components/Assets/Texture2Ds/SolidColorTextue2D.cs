@@ -30,7 +30,7 @@ using System.Net.Http;
 
 namespace RhubarbEngine.Components.Assets
 {
-	[Category(new string[] { "Assets/Texture2Ds" })]
+    [Category(new string[] { "Assets/Texture2Ds" })]
 	public class SolidColorTextue2D : AssetProvider<RTexture2D>, IAsset
 	{
 		public Sync<Colorf> color;
@@ -42,7 +42,7 @@ namespace RhubarbEngine.Components.Assets
 		{
 			_texture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, color.Value), false).CreateDeviceTexture(Engine.renderManager.gd, Engine.renderManager.gd.ResourceFactory);
 			_view = Engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture);
-			load(new RTexture2D(_view));
+			Load(new RTexture2D(_view));
 		}
 
 		public override void BuildSyncObjs(bool newRefIds)

@@ -11,7 +11,7 @@ namespace RhubarbEngine.World
 {
 	public class SyncPlayback : Sync<Playback>
 	{
-		public event Func<double> stateChange;
+		public event Func<double> StateChange;
 
 		public override Playback Defalut()
 		{
@@ -20,7 +20,7 @@ namespace RhubarbEngine.World
 
 		public override void UpdatedValue()
 		{
-			ClipLength = stateChange?.Invoke() ?? double.NegativeInfinity;
+			ClipLength = StateChange?.Invoke() ?? double.NegativeInfinity;
 		}
 
 		public double ClipLength { get; set; } = double.NegativeInfinity;
@@ -34,35 +34,22 @@ namespace RhubarbEngine.World
 			}
 		}
 
-		public bool Playing => (((RawPos() < ClipLength) || Looping) || Stream) && Value.Playing;
+        public bool Playing
+        {
+            get
+            {
+                return ((RawPos() < ClipLength) || Looping || Stream) && Value.Playing;
+            }
+        }
 
-		public bool Stream { get { return ClipLength >= double.PositiveInfinity; } }
+        public bool Stream { get { return ClipLength >= double.PositiveInfinity; } }
 
 		public double ProccessPosition()
 		{
-			if (Value.Playing)
-			{
-				if (Stream)
-				{
-					return 1f;
-				}
-				if (Looping)
-				{
-					return RawPos() % ClipLength;
-				}
-				if (RawPos() > ClipLength)
-				{
-					return ClipLength;
-				}
-				else
-				{
-					return RawPos();
-				}
-			}
-			return Value.Position;
-		}
+            return Value.Playing ? Stream ? 1f : Looping ? RawPos() % ClipLength : RawPos() > ClipLength ? ClipLength : RawPos() : Value.Position;
+        }
 
-		public double RawPos()
+        public double RawPos()
 		{
 			return ((Value.Offset - World.WorldTime) * Speed) + Value.Position;
 		}

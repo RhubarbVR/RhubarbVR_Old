@@ -102,7 +102,7 @@ namespace RhubarbEngine.Components.ImGUI
 					var e = (IPrimitiveEditable)source.Referencer.Target;
 					if (target.Target != null)
                     {
-                        target.Target.primitiveString = e.primitiveString;
+                        target.Target.PrimitiveString = e.PrimitiveString;
                     }
 
                     source.Referencer.Target = null;

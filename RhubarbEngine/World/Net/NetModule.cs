@@ -47,7 +47,7 @@ namespace RhubarbEngine.World.Net
 			_noq = noq;
 		}
 
-		public List<NetData> NetQueue = new List<NetData>();
+		public List<NetData> NetQueue = new();
 
 		public virtual void DropQ()
 		{

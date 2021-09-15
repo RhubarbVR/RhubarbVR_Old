@@ -9,47 +9,47 @@ using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
-	public class Sync<T> : Worker, DriveMember<T>, IPrimitiveEditable where T : IConvertible
+	public class Sync<T> : Worker, IDriveMember<T>, IPrimitiveEditable where T : IConvertible
 	{
 
 		public IDriver drivenFromobj;
 
-		public NetPointer drivenFrom { get { return drivenFromobj.ReferenceID; } }
+		public NetPointer DrivenFrom { get { return drivenFromobj.ReferenceID; } }
 
-		public bool isDriven { get; private set; }
+		public bool IsDriven { get; private set; }
 
-		private readonly List<Driveable> _driven = new();
+		private readonly List<IDriveable> _driven = new();
 
 		public override void Removed()
 		{
 			foreach (var dev in _driven)
 			{
-				dev.killDrive();
+				dev.KillDrive();
 			}
 		}
 
-		public void killDrive()
+		public void KillDrive()
 		{
 			drivenFromobj.RemoveDriveLocation();
-			isDriven = false;
+			IsDriven = false;
 		}
 
-		public void drive(IDriver value)
+		public void Drive(IDriver value)
 		{
-			if (!isDriven)
+			if (!IsDriven)
 			{
-				forceDrive(value);
+				ForceDrive(value);
 			}
 		}
-		public void forceDrive(IDriver value)
+		public void ForceDrive(IDriver value)
 		{
-			if (isDriven)
+			if (IsDriven)
 			{
-				killDrive();
+				KillDrive();
 			}
 			value.SetDriveLocation(this);
 			drivenFromobj = value;
-			isDriven = true;
+			IsDriven = true;
 		}
 
 		public virtual T Defalut()
@@ -76,7 +76,7 @@ namespace RhubarbEngine.World
 			set
 			{
 				_value = value;
-				if (!isDriven)
+				if (!IsDriven)
 				{
 					UpdateValue();
 				}
@@ -85,13 +85,13 @@ namespace RhubarbEngine.World
 			}
 		}
 
-		public string primitiveString { get { return Value.ToString(); } set { SetValueAsString(value); } }
+		public string PrimitiveString { get { return Value.ToString(); } set { SetValueAsString(value); } }
 
         public bool Driven
         {
             get
             {
-                return isDriven;
+                return IsDriven;
             }
         }
 
@@ -111,7 +111,7 @@ namespace RhubarbEngine.World
 		public void SetValueNoOnChange(T value)
 		{
 			_value = value;
-			if (!isDriven)
+			if (!IsDriven)
 			{
 				UpdateValue();
 			}
@@ -143,7 +143,7 @@ namespace RhubarbEngine.World
 
         public override DataNodeGroup Serialize(WorkerSerializerObject workerSerializerObject)
 		{
-            return workerSerializerObject.CommonValueSerialize(this, SaveToBytes());
+            return WorkerSerializerObject.CommonValueSerialize(this, SaveToBytes());
 		}
 
 		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)

@@ -42,11 +42,11 @@ namespace Veldrid
 
 		// Image trackers
 		private readonly Dictionary<TextureView, ResourceSetInfo> _setsByView
-			= new Dictionary<TextureView, ResourceSetInfo>();
+            = new();
 		private readonly Dictionary<Texture, TextureView> _autoViewsByTexture
-			= new Dictionary<Texture, TextureView>();
-		private readonly Dictionary<IntPtr, ResourceSetInfo> _viewsById = new Dictionary<IntPtr, ResourceSetInfo>();
-		private readonly List<IDisposable> _ownedResources = new List<IDisposable>();
+            = new();
+		private readonly Dictionary<IntPtr, ResourceSetInfo> _viewsById = new();
+		private readonly List<IDisposable> _ownedResources = new();
 		private int _lastAssignedID = 100;
 		private bool _frameBegun;
 
@@ -218,15 +218,12 @@ namespace Veldrid
 		/// </summary>
 		public ResourceSet GetImageResourceSet(IntPtr imGuiBinding)
 		{
-			if (!_viewsById.TryGetValue(imGuiBinding, out var rsi))
-			{
-				throw new InvalidOperationException("No registered ImGui binding with id " + imGuiBinding.ToString());
-			}
+            return !_viewsById.TryGetValue(imGuiBinding, out var rsi)
+                ?             throw new InvalidOperationException("No registered ImGui binding with id " + imGuiBinding.ToString())
+                : rsi.ResourceSet;
+        }
 
-			return rsi.ResourceSet;
-		}
-
-		public void ClearCachedImageResources()
+        public void ClearCachedImageResources()
 		{
 			foreach (var resource in _ownedResources)
 			{
@@ -286,21 +283,17 @@ namespace Veldrid
 
 		private string GetEmbeddedResourceText(string resourceName)
 		{
-			using (var sr = new StreamReader(_assembly.GetManifestResourceStream(resourceName)))
-			{
-				return sr.ReadToEnd();
-			}
-		}
+            using var sr = new StreamReader(_assembly.GetManifestResourceStream(resourceName));
+            return sr.ReadToEnd();
+        }
 
 		private byte[] GetEmbeddedResourceBytes(string resourceName)
 		{
-			using (var s = _assembly.GetManifestResourceStream(resourceName))
-			{
-				var ret = new byte[s.Length];
-				s.Read(ret, 0, (int)s.Length);
-				return ret;
-			}
-		}
+            using var s = _assembly.GetManifestResourceStream(resourceName);
+            var ret = new byte[s.Length];
+            s.Read(ret, 0, (int)s.Length);
+            return ret;
+        }
 
 		/// <summary>
 		/// Recreates the device texture used to render text.

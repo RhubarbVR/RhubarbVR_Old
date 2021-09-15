@@ -12,20 +12,26 @@ namespace RhubarbEngine.World
 {
 	public class SyncValueList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : IConvertible
 	{
-		private SynchronizedCollection<Sync<T>> _synclist = new SynchronizedCollection<Sync<T>>(5);
+		private readonly SynchronizedCollection<Sync<T>> _synclist = new(5);
 
-		public int Count => _synclist.Count;
+        public int Count
+        {
+            get
+            {
+                return _synclist.Count;
+            }
+        }
 
-		public IEnumerator<T> GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
 		{
-			for (int i = 0; i < _synclist.Count; i++)
+			for (var i = 0; i < _synclist.Count; i++)
 			{
 				yield return this[i].Value;
 			}
 		}
 		public IEnumerator<Sync<T>> GetSyncEnumerator()
 		{
-			for (int i = 0; i < _synclist.Count; i++)
+			for (var i = 0; i < _synclist.Count; i++)
 			{
 				yield return this[i];
 			}
@@ -40,29 +46,29 @@ namespace RhubarbEngine.World
 
 		public Sync<T> Add(bool Refid = true)
 		{
-			var val = new Sync<T>(this.World, this, Refid);
+			var val = new Sync<T>(World, this, Refid);
 			_synclist.SafeAdd(val);
 			val.Changed += Val_Changed;
 			if (Refid)
 			{
-				netAdd(val);
+				NetAdd(val);
 			}
 			return val;
 		}
 
 
-		private void netAdd(Sync<T> val)
+		private void NetAdd(Sync<T> val)
 		{
-			DataNodeGroup send = new DataNodeGroup();
+			var send = new DataNodeGroup();
 			send.SetValue("Type", new DataNode<byte>(0));
-			DataNodeGroup tip = val.Serialize(new WorkerSerializerObject(true));
+			var tip = val.Serialize(new WorkerSerializerObject(true));
 			send.SetValue("Data", tip);
 			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, ReferenceID.id);
 		}
 
-		private void netClear()
+		private void NetClear()
 		{
-			DataNodeGroup send = new DataNodeGroup();
+			var send = new DataNodeGroup();
 			send.SetValue("Type", new DataNode<byte>(1));
 			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, ReferenceID.id);
 		}
@@ -76,8 +82,8 @@ namespace RhubarbEngine.World
 			}
 			else
 			{
-				Sync<T> a = new Sync<T>(this, false);
-				List<Action> actions = new List<Action>();
+				var a = new Sync<T>(this, false);
+				var actions = new List<Action>();
 				a.Changed += Val_Changed;
 				a.DeSerialize((DataNodeGroup)data.GetValue("Value"), actions, false);
 				foreach (var item in actions)
@@ -97,7 +103,7 @@ namespace RhubarbEngine.World
 		public void Clear()
 		{
 			_synclist.Clear();
-			netClear();
+			NetClear();
 		}
 		public SyncValueList(World _world, IWorldObject _parent) : base(_world, _parent)
 		{
@@ -111,7 +117,7 @@ namespace RhubarbEngine.World
 		{
 			return workerSerializerObject.CommonListSerialize(this, _synclist.Cast<IWorldObject>());
 		}
-		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default(List<Action>), bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default(Dictionary<ulong, ulong>), Dictionary<ulong, List<RefIDResign>> latterResign = default(Dictionary<ulong, List<RefIDResign>>))
+		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
 		{
 			if (data == null)
 			{
@@ -123,7 +129,7 @@ namespace RhubarbEngine.World
 				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
 				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
 				{
-					foreach (RefIDResign func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
+					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
 					{
 						func(ReferenceID.getID());
 					}
@@ -134,7 +140,7 @@ namespace RhubarbEngine.World
 				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
 				World.AddWorldObj(this);
 			}
-			foreach (DataNodeGroup val in ((DataNodeList)data.GetValue("list")))
+			foreach (DataNodeGroup val in (DataNodeList)data.GetValue("list"))
 			{
 				Add(NewRefIDs).DeSerialize(val, onload, NewRefIDs, newRefID, latterResign);
 			}
@@ -142,7 +148,7 @@ namespace RhubarbEngine.World
 
 		int ISyncList.Count()
 		{
-			return this.Count();
+			return Count;
 		}
 
 		public bool TryToAddToSyncList()

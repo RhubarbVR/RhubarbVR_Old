@@ -344,7 +344,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			else if (typeof(Driver<>).IsAssignableFrom(typeg))
 			{
-				var a = typeof(DriveMember<>).MakeGenericType(type.GetGenericArguments()[0]);
+				var a = typeof(IDriveMember<>).MakeGenericType(type.GetGenericArguments()[0]);
 				BuildSyncRef(a);
 			}
 			else if (typeof(SyncRef<>).IsAssignableFrom(typeg))

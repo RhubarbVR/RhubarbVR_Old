@@ -65,7 +65,7 @@ namespace RhubarbEngine.Components.Assets
             {
                 Logger.Log("Downloaded");
                 var _texture = new ImageSharpTexture(streamToReadFrom, true, true).CreateDeviceTexture(Engine.renderManager.gd, Engine.renderManager.gd.ResourceFactory);
-                load(new RTexture2D(Engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture)), true);
+                Load(new RTexture2D(Engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture)), true);
             }
             catch (Exception e)
             {

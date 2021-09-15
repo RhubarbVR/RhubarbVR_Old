@@ -93,7 +93,7 @@ namespace RhubarbEngine
 
 		public string session;
 
-		public IEnumerable<string> settings = new string[] { };
+		public IEnumerable<string> settings = Array.Empty<string>();
 
 		public void LoadArguments(string[] _args)
 		{
@@ -104,27 +104,27 @@ namespace RhubarbEngine
 			Parser.Default.ParseArguments<CommandLineOptions>(_args)
 				.WithParsed<CommandLineOptions>(o =>
 				{
-					if (o.verbose)
+					if (o.Verbose)
 					{
 						_engine.verbose = true;
 					}
-					if (o.datapath != null)
+					if (o.Datapath != null)
 					{
-						_engine.dataPath = o.datapath;
+						_engine.dataPath = o.Datapath;
 					}
-				    _engine.backend = o.graphicsBackend;
-				    _engine.outputType = o.outputType;
-					if (o.settings != null)
+				    _engine.backend = o.GraphicsBackend;
+				    _engine.outputType = o.OutputType;
+					if (o.Settings != null)
 					{
-						settings = o.settings;
+						settings = o.Settings;
 					}
-					if (o.token != null)
+					if (o.Token != null)
 					{
-						token = o.token;
+						token = o.Token;
 					}
-					if (o.sessionID != null)
+					if (o.SessionID != null)
 					{
-						session = o.sessionID;
+						session = o.SessionID;
 					}
 				});
 		}

@@ -75,7 +75,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 				var imGUIText = e.AttachComponent<ImGUIKeyboard>();
 				imGUICanvas.imputPlane.Target = bmeshcol;
 				imGUICanvas.element.Target = imGUIText;
-				mit.Shader.Target = World.staticAssets.basicUnlitShader;
+				mit.Shader.Target = World.staticAssets.BasicUnlitShader;
 				meshRender.Materials.Add().Target = mit;
 				meshRender.Mesh.Target = bmesh;
 				imGUICanvas.noCloseing.Value = true;

@@ -39,8 +39,8 @@ namespace RhubarbEngine.Components.PrivateSpace
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			var (curs, _, cmit) = MeshHelper.AddMesh<PlaneMesh>(Entity, World.staticAssets.overLayedUnlitShader, "Currsor", 0);
-			var (Lasere, lmesh, mit) = MeshHelper.AddMesh<CurvedTubeMesh>(Entity, World.staticAssets.overLayedUnlitShader, "Laser", 3);
+			var (curs, _, cmit) = MeshHelper.AddMesh<PlaneMesh>(Entity, World.staticAssets.OverLayedUnlitShader, "Currsor", 0);
+			var (Lasere, lmesh, mit) = MeshHelper.AddMesh<CurvedTubeMesh>(Entity, World.staticAssets.OverLayedUnlitShader, "Laser", 3);
 			Laser.Target = Lasere;
 			Lasere.rotation.Value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
 			LaserMesh.Target = lmesh;
@@ -185,7 +185,7 @@ namespace RhubarbEngine.Components.PrivateSpace
                 planeColorField.Target.field.Value = color;
             }
 
-            load(new RTexture2D(Engine.renderManager.cursors[(int)newcursor]));
+            Load(new RTexture2D(Engine.renderManager.cursors[(int)newcursor]));
 		}
 
 		public override void OnLoaded()

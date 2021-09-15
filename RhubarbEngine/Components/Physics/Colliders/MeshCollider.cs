@@ -26,7 +26,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
 		{
 			base.BuildSyncObjs(newRefIds);
 			mesh = new AssetRef<RMesh>(this, newRefIds);
-			mesh.loadChange += Mesh_loadChange;
+			mesh.LoadChange += Mesh_loadChange;
 		}
 
 		private void Mesh_loadChange(RMesh obj)
@@ -55,15 +55,15 @@ namespace RhubarbEngine.Components.Physics.Colliders
 			if (!mesh.Target?.loaded ?? false)
 			{ GoNull(); return; };
 			// Initialize TriangleIndexVertexArray with Vector3 array
-			vertices = new BulletSharp.Math.Vector3[mesh.Asset.meshes[0].VertexCount];
+			vertices = new BulletSharp.Math.Vector3[mesh.Asset.Meshes[0].VertexCount];
 			for (var i = 0; i < vertices.Length; i++)
 			{
 				vertices[i] = new BulletSharp.Math.Vector3(
-					mesh.Asset.meshes[0].GetVertex(i).x,
-					mesh.Asset.meshes[0].GetVertex(i).y,
-					mesh.Asset.meshes[0].GetVertex(i).z);
+					mesh.Asset.Meshes[0].GetVertex(i).x,
+					mesh.Asset.Meshes[0].GetVertex(i).y,
+					mesh.Asset.Meshes[0].GetVertex(i).z);
 			}
-			var e = mesh.Asset.meshes[0].RenderIndices().ToArray();
+			var e = mesh.Asset.Meshes[0].RenderIndices().ToArray();
 
 			// Initialize TriangleIndexIndexArray with int array
 			var index = new int[e.Length];

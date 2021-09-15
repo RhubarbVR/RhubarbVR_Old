@@ -83,9 +83,9 @@ namespace RhubarbEngine.Utilities
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ContainmentType Contains(Vector3 point)
 		{
-			Plane* planes = (Plane*)Unsafe.AsPointer(ref _planes); // Is this safe?
+			var planes = (Plane*)Unsafe.AsPointer(ref _planes); // Is this safe?
 
-			for (int i = 0; i < 6; i++)
+			for (var i = 0; i < 6; i++)
 			{
 				if (Plane.DotCoordinate(planes[i], point) < 0)
 				{
@@ -99,9 +99,9 @@ namespace RhubarbEngine.Utilities
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ContainmentType Contains(Vector3* point)
 		{
-			Plane* planes = (Plane*)Unsafe.AsPointer(ref _planes); // Is this safe?
+			var planes = (Plane*)Unsafe.AsPointer(ref _planes); // Is this safe?
 
-			for (int i = 0; i < 6; i++)
+			for (var i = 0; i < 6; i++)
 			{
 				if (Plane.DotCoordinate(planes[i], *point) < 0)
 				{
@@ -114,12 +114,12 @@ namespace RhubarbEngine.Utilities
 
 		public ContainmentType Contains(BoundingSphere sphere)
 		{
-			Plane* planes = (Plane*)Unsafe.AsPointer(ref _planes);
+			var planes = (Plane*)Unsafe.AsPointer(ref _planes);
 
-			ContainmentType result = ContainmentType.Contains;
-			for (int i = 0; i < 6; i++)
+			var result = ContainmentType.Contains;
+			for (var i = 0; i < 6; i++)
 			{
-				float distance = Plane.DotCoordinate(planes[i], sphere.Center);
+				var distance = Plane.DotCoordinate(planes[i], sphere.Center);
 				if (distance < -sphere.Radius)
 				{
 					return ContainmentType.Disjoint;
@@ -138,17 +138,17 @@ namespace RhubarbEngine.Utilities
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ContainmentType Contains(ref BoundingBox box)
 		{
-			Plane* planes = (Plane*)Unsafe.AsPointer(ref _planes);
+			var planes = (Plane*)Unsafe.AsPointer(ref _planes);
 
-			ContainmentType result = ContainmentType.Contains;
-			for (int i = 0; i < 6; i++)
+			var result = ContainmentType.Contains;
+			for (var i = 0; i < 6; i++)
 			{
-				Plane plane = planes[i];
+				var plane = planes[i];
 
 				// Approach: http://zach.in.tu-clausthal.de/teaching/cg_literatur/lighthouse3d_view_frustum_culling/index.html
 
-				Vector3 positive = new Vector3(box.Min.X, box.Min.Y, box.Min.Z);
-				Vector3 negative = new Vector3(box.Max.X, box.Max.Y, box.Max.Z);
+				var positive = new Vector3(box.Min.X, box.Min.Y, box.Min.Z);
+				var negative = new Vector3(box.Max.X, box.Max.Y, box.Max.Z);
 
 				if (plane.Normal.X >= 0)
 				{
@@ -167,7 +167,7 @@ namespace RhubarbEngine.Utilities
 				}
 
 				// If the positive vertex is outside (behind plane), the box is disjoint.
-				float positiveDistance = Plane.DotCoordinate(plane, positive);
+				var positiveDistance = Plane.DotCoordinate(plane, positive);
 				if (positiveDistance < 0)
 				{
 					return ContainmentType.Disjoint;
@@ -176,7 +176,7 @@ namespace RhubarbEngine.Utilities
 				// If the negative vertex is outside (behind plane), the box is intersecting.
 				// Because the above check failed, the positive vertex is in front of the plane,
 				// and the negative vertex is behind. Thus, the box is intersecting this plane.
-				float negativeDistance = Plane.DotCoordinate(plane, negative);
+				var negativeDistance = Plane.DotCoordinate(plane, negative);
 				if (negativeDistance < 0)
 				{
 					result = ContainmentType.Intersects;
@@ -189,10 +189,10 @@ namespace RhubarbEngine.Utilities
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public unsafe ContainmentType Contains(ref BoundingFrustum other)
 		{
-			int pointsContained = 0;
-			FrustumCorners corners = other.GetCorners();
-			Vector3* cornersPtr = (Vector3*)&corners;
-			for (int i = 0; i < 8; i++)
+			var pointsContained = 0;
+			var corners = other.GetCorners();
+			var cornersPtr = (Vector3*)&corners;
+			for (var i = 0; i < 8; i++)
 			{
 				if (Contains(&cornersPtr[i]) != ContainmentType.Disjoint)
 				{
@@ -200,25 +200,13 @@ namespace RhubarbEngine.Utilities
 				}
 			}
 
-			if (pointsContained == 8)
-			{
-				return ContainmentType.Contains;
-			}
-			else if (pointsContained == 0)
-			{
-				return ContainmentType.Disjoint;
-			}
-			else
-			{
-				return ContainmentType.Intersects;
-			}
-		}
+            return pointsContained == 8 ? ContainmentType.Contains : pointsContained == 0 ? ContainmentType.Disjoint : ContainmentType.Intersects;
+        }
 
 		public FrustumCorners GetCorners()
 		{
-			FrustumCorners corners;
-			GetCorners(out corners);
-			return corners;
+            GetCorners(out var corners);
+            return corners;
 		}
 
 		public void GetCorners(out FrustumCorners corners)

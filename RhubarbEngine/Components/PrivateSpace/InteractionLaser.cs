@@ -80,7 +80,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 				if (source.Value == InteractionSource.HeadLaser)
 				{
 					var mousepos = Engine.inputManager.mainWindows.MousePosition;
-					var size = new System.Numerics.Vector2(Engine.windowManager.MainWindow.width, Engine.windowManager.MainWindow.height);
+					var size = new System.Numerics.Vector2(Engine.windowManager.MainWindow.Width, Engine.windowManager.MainWindow.Height);
 					var x = (2.0f * mousepos.X / size.X) - 1.0f;
 					var y = (2.0f * mousepos.Y / size.Y) - 1.0f;
 					var ar = size.X / size.Y;

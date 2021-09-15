@@ -58,8 +58,8 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			_generator.Slices = Slices.Value;
 			var newmesh = _generator.Generate();
 			var kite = new RMesh(newmesh.MakeDMesh());
-			kite.createMeshesBuffers(World.worldManager.engine.renderManager.gd);
-			load(kite, true);
+			kite.CreateMeshesBuffers(World.worldManager.engine.renderManager.gd);
+			Load(kite, true);
 		}
 		public override void OnLoaded()
 		{

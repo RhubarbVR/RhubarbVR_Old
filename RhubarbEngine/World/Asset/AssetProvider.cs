@@ -13,24 +13,16 @@ namespace RhubarbEngine.World.Asset
 {
 	public abstract class AssetProvider<A> : Component where A : IAsset
 	{
-		private A _value;
+        public event Action<A> OnLoadedCall;
 
-		public event Action<A> onLoadedCall;
+        public A Value { get; private set; }
 
-		public A value
+        public void Load(A data, bool desposeold = false)
 		{
-			get
-			{
-				return _value;
-			}
-		}
-
-		public void load(A data, bool desposeold = false)
-		{
-			var temp = _value;
-			_value = data;
-			loaded = (data != null);
-			onLoadedCall?.Invoke(data);
+			var temp = Value;
+			Value = data;
+			loaded = data != null;
+			OnLoadedCall?.Invoke(data);
 			if (temp != null && desposeold)
 			{
 				temp.Dispose();

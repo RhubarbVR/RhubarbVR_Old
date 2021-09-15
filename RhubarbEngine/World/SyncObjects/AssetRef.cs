@@ -15,37 +15,33 @@ namespace RhubarbEngine.World
 		{
 			get
 			{
-				if (base.Target == null)
-				{
-					return default(T);
-				}
-				return base.Target.value;
-			}
-		}
+                return base.Target == null ? default : base.Target.Value;
+            }
+        }
 
-		public event Action<T> loadChange;
+		public event Action<T> LoadChange;
 
-		public void loadedCall(T newAsset)
+		public void LoadedCall(T newAsset)
 		{
-			loadChange?.Invoke(newAsset);
+			LoadChange?.Invoke(newAsset);
 		}
 
 		public override void Bind()
 		{
 			base.Bind();
-			base.Target.onLoadedCall += loadedCall;
+			base.Target.OnLoadedCall += LoadedCall;
 			if (base.Target.loaded)
 			{
-				loadedCall(Target.value);
+				LoadedCall(Target.Value);
 			}
 		}
 		public override void OnLoaded()
 		{
 			base.OnLoaded();
-			base.Target.onLoadedCall += loadedCall;
+			base.Target.OnLoadedCall += LoadedCall;
 			if (base.Target.loaded)
 			{
-				loadedCall(base.Target.value);
+				LoadedCall(base.Target.Value);
 			}
 		}
 		public AssetRef(IWorldObject _parent, bool newrefid = true) : base(_parent, newrefid)

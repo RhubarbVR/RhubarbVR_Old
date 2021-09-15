@@ -34,11 +34,8 @@ namespace gs
 		public double FalloffT(double t)
 		{
 			t = MathUtil.Clamp(t, 0.0, 1.0);
-			if (ConstantRange <= 0)
-				return 1.0 - t;
-			else
-				return (t < ConstantRange) ? 1.0 : 1.0 - ((t - ConstantRange) / (1 - ConstantRange));
-		}
+            return ConstantRange <= 0 ? 1.0 - t : (t < ConstantRange) ? 1.0 : 1.0 - ((t - ConstantRange) / (1 - ConstantRange));
+        }
 
 
 		public IFalloffFunction Duplicate()
@@ -62,11 +59,8 @@ namespace gs
 		public double FalloffT(double t)
 		{
 			t = MathUtil.Clamp(t, 0.0, 1.0);
-			if (ConstantRange <= 0)
-				return MathUtil.WyvillFalloff01(t);
-			else
-				return MathUtil.WyvillFalloff(t, ConstantRange, 1.0);
-		}
+            return ConstantRange <= 0 ? MathUtil.WyvillFalloff01(t) : MathUtil.WyvillFalloff(t, ConstantRange, 1.0);
+        }
 
 
 		public IFalloffFunction Duplicate()

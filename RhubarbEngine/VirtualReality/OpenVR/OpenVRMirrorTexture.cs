@@ -10,11 +10,11 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 {
 	internal class OpenVRMirrorTexture : IDisposable
 	{
-		private readonly List<IDisposable> _disposables = new List<IDisposable>();
+		private readonly List<IDisposable> _disposables = new();
 		private readonly Dictionary<OutputDescription, TextureBlitter> _blitters
-			= new Dictionary<OutputDescription, TextureBlitter>();
+			= new();
 
-		private OpenVRContext _context;
+		private readonly OpenVRContext _context;
 		private ResourceSet _leftSet;
 		private ResourceSet _rightSet;
 
@@ -26,12 +26,12 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 		public void Render(CommandList cl, Framebuffer fb, MirrorTextureEyeSource source)
 		{
 			cl.SetFramebuffer(fb);
-			TextureBlitter blitter = GetBlitter(fb.OutputDescription);
+			var blitter = GetBlitter(fb.OutputDescription);
 
 			switch (source)
 			{
 				case MirrorTextureEyeSource.BothEyes:
-					float width = fb.Width * 0.5f;
+                    var width = fb.Width * 0.5f;
 					cl.SetViewport(0, new Viewport(0, 0, width, fb.Height, 0, 1));
 					BlitLeftEye(cl, blitter, width / fb.Height);
 					cl.SetViewport(0, new Viewport(width, 0, width, fb.Height, 0, 1));
@@ -50,22 +50,22 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 		private void BlitLeftEye(CommandList cl, TextureBlitter blitter, float viewportAspect)
 		{
-			GetSampleRatio(_context.LeftEyeFramebuffer, viewportAspect, out Vector2 minUV, out Vector2 maxUV);
-			ResourceSet leftEyeSet = GetLeftEyeSet(blitter.ResourceLayout);
+            GetSampleRatio(_context.LeftEyeFramebuffer, viewportAspect, out var minUV, out var maxUV);
+			var leftEyeSet = GetLeftEyeSet(blitter.ResourceLayout);
 			blitter.Render(cl, leftEyeSet, minUV, maxUV);
 		}
 
 		private void BlitRightEye(CommandList cl, TextureBlitter blitter, float viewportAspect)
 		{
-			GetSampleRatio(_context.RightEyeFramebuffer, viewportAspect, out Vector2 minUV, out Vector2 maxUV);
-			ResourceSet rightEyeSet = GetRightEyeSet(blitter.ResourceLayout);
+            GetSampleRatio(_context.RightEyeFramebuffer, viewportAspect, out var minUV, out var maxUV);
+			var rightEyeSet = GetRightEyeSet(blitter.ResourceLayout);
 			blitter.Render(cl, rightEyeSet, minUV, maxUV);
 		}
 
-		private void GetSampleRatio(Framebuffer eyeFB, float viewportAspect, out Vector2 minUV, out Vector2 maxUV)
+		private static void GetSampleRatio(Framebuffer eyeFB, float viewportAspect, out Vector2 minUV, out Vector2 maxUV)
 		{
-			uint eyeWidth = eyeFB.Width;
-			uint eyeHeight = eyeFB.Height;
+			var eyeWidth = eyeFB.Width;
+			var eyeHeight = eyeFB.Height;
 
 			uint sampleWidth, sampleHeight;
 			if (viewportAspect > 1)
@@ -79,15 +79,15 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 				sampleWidth = (uint)(eyeHeight / (1 / viewportAspect));
 			}
 
-			float sampleUVWidth = (float)sampleWidth / eyeWidth;
-			float sampleUVHeight = (float)sampleHeight / eyeHeight;
+			var sampleUVWidth = (float)sampleWidth / eyeWidth;
+			var sampleUVHeight = (float)sampleHeight / eyeHeight;
 
-			float max = (float)Math.Max(sampleUVWidth, sampleUVHeight);
+			var max = (float)Math.Max(sampleUVWidth, sampleUVHeight);
 			sampleUVWidth /= max;
 			sampleUVHeight /= max;
 
-			minUV = new Vector2(0.5f - sampleUVWidth / 2f, 0.5f - sampleUVHeight / 2f);
-			maxUV = new Vector2(0.5f + sampleUVWidth / 2f, 0.5f + sampleUVHeight / 2f);
+			minUV = new Vector2(0.5f - (sampleUVWidth / 2f), 0.5f - (sampleUVHeight / 2f));
+			maxUV = new Vector2(0.5f + (sampleUVWidth / 2f), 0.5f + (sampleUVHeight / 2f));
 		}
 
 		private ResourceSet GetLeftEyeSet(ResourceLayout rl)
@@ -112,11 +112,11 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 		private ResourceSet CreateColorTargetSet(ResourceLayout rl, Framebuffer fb)
 		{
-			ResourceFactory factory = _context.GraphicsDevice.ResourceFactory;
-			Texture target = fb.ColorTargets[0].Target;
-			TextureView view = factory.CreateTextureView(target);
+			var factory = _context.GraphicsDevice.ResourceFactory;
+			var target = fb.ColorTargets[0].Target;
+			var view = factory.CreateTextureView(target);
 			_disposables.Add(view);
-			ResourceSet rs = factory.CreateResourceSet(new ResourceSetDescription(rl, view, _context.GraphicsDevice.PointSampler));
+			var rs = factory.CreateResourceSet(new ResourceSetDescription(rl, view, _context.GraphicsDevice.PointSampler));
 			_disposables.Add(rs);
 
 			return rs;
@@ -124,7 +124,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 		private TextureBlitter GetBlitter(OutputDescription outputDescription)
 		{
-			if (!_blitters.TryGetValue(outputDescription, out TextureBlitter ret))
+            if (!_blitters.TryGetValue(outputDescription, out var ret))
 			{
 				ret = new TextureBlitter(
 					_context.GraphicsDevice,
@@ -140,11 +140,11 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 		public void Dispose()
 		{
-			foreach (IDisposable disposable in _disposables)
+			foreach (var disposable in _disposables)
 			{
 				disposable.Dispose();
 			}
-			foreach (KeyValuePair<OutputDescription, TextureBlitter> kvp in _blitters)
+			foreach (var kvp in _blitters)
 			{
 				kvp.Value.Dispose();
 			}

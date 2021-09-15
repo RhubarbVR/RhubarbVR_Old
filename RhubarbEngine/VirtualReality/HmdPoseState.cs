@@ -35,38 +35,32 @@ namespace RhubarbEngine.VirtualReality
 
 		public Vector3 GetEyePosition(VREye eye)
 		{
-			switch (eye)
-			{
-				case VREye.Left:
-					return LeftEyePosition;
-				case VREye.Right:
-					return RightEyePosition;
-				default:
-					throw new VeldridException($"Invalid {nameof(VREye)}: {eye}.");
-			}
-		}
+            return eye switch
+            {
+                VREye.Left => LeftEyePosition,
+                VREye.Right => RightEyePosition,
+                _ => throw new VeldridException($"Invalid {nameof(VREye)}: {eye}."),
+            };
+        }
 
 		public Quaternion GetEyeRotation(VREye eye)
 		{
-			switch (eye)
-			{
-				case VREye.Left:
-					return LeftEyeRotation;
-				case VREye.Right:
-					return RightEyeRotation;
-				default:
-					throw new VeldridException($"Invalid {nameof(VREye)}: {eye}.");
-			}
-		}
+            return eye switch
+            {
+                VREye.Left => LeftEyeRotation,
+                VREye.Right => RightEyeRotation,
+                _ => throw new VeldridException($"Invalid {nameof(VREye)}: {eye}."),
+            };
+        }
 
 		public Matrix4x4 CreateView(VREye eye, Matrix4x4 worldpos, Vector3 forward, Vector3 up)
 		{
-			Quaternion E = GetEyeRotation(eye);
-			Vector3 eyPos = GetEyePosition(eye);
-			Matrix4x4 eyematrix = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(E) * Matrix4x4.CreateTranslation(eyPos);
-			Matrix4x4.Decompose(eyematrix * worldpos, out Vector3 scale, out Quaternion eyeQuat, out Vector3 eyePos);
-			Vector3 forwardTransformed = Vector3.Transform(forward, eyeQuat);
-			Vector3 upTransformed = Vector3.Transform(up, eyeQuat);
+			var E = GetEyeRotation(eye);
+			var eyPos = GetEyePosition(eye);
+			var eyematrix = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(E) * Matrix4x4.CreateTranslation(eyPos);
+			Matrix4x4.Decompose(eyematrix * worldpos, out _, out var eyeQuat, out var eyePos);
+			var forwardTransformed = Vector3.Transform(forward, eyeQuat);
+			var upTransformed = Vector3.Transform(up, eyeQuat);
 			return Matrix4x4.CreateLookAt(eyePos, eyePos + forwardTransformed, upTransformed);
 		}
 	}

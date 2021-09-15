@@ -19,29 +19,29 @@ namespace RhubarbEngine.World.Asset
 	public class RMesh : IAsset
 	{
 
-		public List<IMesh> meshes { get; private set; } = new List<IMesh>();
+		public List<IMesh> Meshes { get; private set; } = new List<IMesh>();
 
-		public List<MeshPiece> meshPieces { get; private set; } = new List<MeshPiece>();
+		public List<MeshPiece> MeshPieces { get; private set; } = new List<MeshPiece>();
 
-		public List<IDisposable> disposables = new List<IDisposable>();
-		public virtual int layerCount
+		public List<IDisposable> disposables = new();
+		public virtual int LayerCount
 		{
 			get
 			{
-				return meshes.Count;
+				return Meshes.Count;
 			}
 		}
 
 		public BoundingBox boundingBox;
 
 
-		public void createMeshesBuffers(GraphicsDevice _gd)
+		public void CreateMeshesBuffers(GraphicsDevice _gd)
 		{
-			foreach (IMesh mesh in meshes)
+			foreach (var mesh in Meshes)
 			{
 				IList<Vector3> Vertices = new List<Vector3>(mesh.VertexCount);
 				IList<Vector2> UV = new List<Vector2>(mesh.VertexCount);
-				for (int i = 0; i < mesh.VertexCount; i++)
+				for (var i = 0; i < mesh.VertexCount; i++)
 				{
 					var e = mesh.GetVertexAll(i);
 					Vertices.Add(e.v);
@@ -50,46 +50,46 @@ namespace RhubarbEngine.World.Asset
 
 				var verts = Vertices.ToArray();
 				boundingBox = BoundingBox.Combine(boundingBox, BoundingBox.CreateFromVertices(verts));
-				DeviceBuffer positions = CreateDeviceBuffer(_gd, verts, BufferUsage.VertexBuffer);
-				DeviceBuffer texCoords = CreateDeviceBuffer(_gd,
+				var positions = CreateDeviceBuffer(_gd, verts, BufferUsage.VertexBuffer);
+				var texCoords = CreateDeviceBuffer(_gd,
 					UV.ToArray(),
 					BufferUsage.VertexBuffer);
-				DeviceBuffer indices = CreateDeviceBuffer(_gd, mesh.RenderIndices().ToArray(), BufferUsage.IndexBuffer);
+				var indices = CreateDeviceBuffer(_gd, mesh.RenderIndices().ToArray(), BufferUsage.IndexBuffer);
 				var pic = new MeshPiece(positions, texCoords, indices);
-				addDisposable(pic);
-				meshPieces.Add(pic);
+				AddDisposable(pic);
+				MeshPieces.Add(pic);
 
 			}
 		}
 
 		public void Dispose()
 		{
-			foreach (IDisposable dep in disposables)
+			foreach (var dep in disposables)
 			{
 				dep.Dispose();
 			}
 		}
 
-		public void addDisposable(IDisposable val)
+		public void AddDisposable(IDisposable val)
 		{
 			disposables.Add(val);
 		}
-		public DeviceBuffer CreateDeviceBuffer<T>(GraphicsDevice _gd, IList<T> list, BufferUsage usage) where T : unmanaged
+		public static DeviceBuffer CreateDeviceBuffer<T>(GraphicsDevice _gd, IList<T> list, BufferUsage usage) where T : unmanaged
 		{
-			DeviceBuffer buffer = _gd.ResourceFactory.CreateBuffer(new BufferDescription((uint)(Unsafe.SizeOf<T>() * list.Count), usage));
+			var buffer = _gd.ResourceFactory.CreateBuffer(new BufferDescription((uint)(Unsafe.SizeOf<T>() * list.Count), usage));
 			_gd.UpdateBuffer(buffer, 0, list.ToArray());
 			return buffer;
 		}
 		public virtual IMesh GetLayer(int mitlayer)
 		{
-			return meshes[mitlayer];
+			return Meshes[mitlayer];
 		}
 
 		public RMesh(params IMesh[] single)
 		{
 			foreach (var item in single)
 			{
-				meshes.Add(item);
+				Meshes.Add(item);
 			}
 		}
 		public RMesh()

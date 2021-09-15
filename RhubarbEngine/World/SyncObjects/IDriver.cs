@@ -10,7 +10,7 @@ namespace RhubarbEngine.World
 {
 	public interface IDriver : IWorldObject
 	{
-		void SetDriveLocation(Driveable val);
+		void SetDriveLocation(IDriveable val);
 
 		void RemoveDriveLocation();
 	}

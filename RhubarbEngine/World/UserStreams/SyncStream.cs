@@ -9,45 +9,45 @@ using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
-	public class SyncStream<T> : UserStream, DriveMember<T>, IWorldObject, ISyncMember where T : IConvertible
+	public class SyncStream<T> : UserStream, IDriveMember<T>, IWorldObject, ISyncMember where T : IConvertible
 	{
 		public IDriver drivenFromobj;
-		public NetPointer drivenFrom { get { return drivenFromobj.ReferenceID; } }
+		public NetPointer DrivenFrom { get { return drivenFromobj.ReferenceID; } }
 
-		public bool isDriven { get; private set; }
+		public bool IsDriven { get; private set; }
 
-		private readonly List<Driveable> _driven = new List<Driveable>();
+		private readonly List<IDriveable> _driven = new();
 
 		public override void Removed()
 		{
 			foreach (var dev in _driven)
 			{
-				dev.killDrive();
+				dev.KillDrive();
 			}
 		}
 
-		public void killDrive()
+		public void KillDrive()
 		{
 			drivenFromobj.RemoveDriveLocation();
-			isDriven = false;
+			IsDriven = false;
 		}
 
-		public void drive(IDriver value)
+		public void Drive(IDriver value)
 		{
-			if (!isDriven)
+			if (!IsDriven)
 			{
-				forceDrive(value);
+				ForceDrive(value);
 			}
 		}
-		public void forceDrive(IDriver value)
+		public void ForceDrive(IDriver value)
 		{
-			if (isDriven)
+			if (IsDriven)
 			{
-				killDrive();
+				KillDrive();
 			}
 			value.SetDriveLocation(this);
 			drivenFromobj = value;
-			isDriven = true;
+			IsDriven = true;
 		}
 		private T _value;
 
@@ -61,7 +61,7 @@ namespace RhubarbEngine.World
 			set
 			{
 				_value = value;
-				if (!isDriven)
+				if (!IsDriven)
 				{
 					UpdateValue();
 				}
@@ -72,16 +72,8 @@ namespace RhubarbEngine.World
 		private void UpdateValue()
 		{
 			var obj = new DataNodeGroup();
-			IDataNode Value;
-			if (typeof(T).IsEnum)
-			{
-				Value = new DataNode<int>((int)(object)_value);
-			}
-			else
-			{
-				Value = new DataNode<T>(_value);
-			}
-			obj.SetValue("Value", Value);
+			var Value = typeof(T).IsEnum ? new DataNode<int>((int)(object)_value) : (IDataNode)new DataNode<T>(_value);
+            obj.SetValue("Value", Value);
 			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Unreliable, obj, ReferenceID.id);
 		}
 		public SyncStream()
@@ -101,7 +93,7 @@ namespace RhubarbEngine.World
 
 		public override DataNodeGroup Serialize(WorkerSerializerObject workerSerializerObject)
 		{
-            var obj = workerSerializerObject.CommonValueSerialize(this, _value);
+            var obj = WorkerSerializerObject.CommonValueSerialize(this, _value);
 			obj.SetValue("Name", name.Serialize(new WorkerSerializerObject()));
 			return obj;
 		}
@@ -129,29 +121,15 @@ namespace RhubarbEngine.World
 				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
 				World.AddWorldObj(this);
 			}
-			if (typeof(T).IsEnum)
-			{
-				_value = (T)(object)((DataNode<int>)data.GetValue("Value")).Value;
-			}
-			else
-			{
-				_value = ((DataNode<T>)data.GetValue("Value")).Value;
-			}
-			var dataNode = (DataNodeGroup)data.GetValue("Name");
+			_value = typeof(T).IsEnum ? (T)(object)((DataNode<int>)data.GetValue("Value")).Value : ((DataNode<T>)data.GetValue("Value")).Value;
+            var dataNode = (DataNodeGroup)data.GetValue("Name");
 			name.DeSerialize(dataNode, onload, NewRefIDs, newRefID, latterResign);
 
 		}
 
         void ISyncMember.ReceiveData(DataNodeGroup data, Peer peer)
 		{
-			if (typeof(T).IsEnum)
-			{
-				_value = (T)(object)((DataNode<int>)data.GetValue("Value")).Value;
-			}
-			else
-			{
-				_value = ((DataNode<T>)data.GetValue("Value")).Value;
-			}
-		}
+			_value = typeof(T).IsEnum ? (T)(object)((DataNode<int>)data.GetValue("Value")).Value : ((DataNode<T>)data.GetValue("Value")).Value;
+        }
 	}
 }
