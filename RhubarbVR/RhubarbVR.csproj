@@ -23,9 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Quincas Moreira - Moskito.raw">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="StaticAssets\Cursors\Alias.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
