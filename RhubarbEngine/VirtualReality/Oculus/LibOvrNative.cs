@@ -13,19 +13,19 @@ namespace RhubarbEngine.VirtualReality.Oculus
 {
 	internal static unsafe class LibOvrNative
 	{
-		private const string LibName32 = "LibOVRRT32_1.dll";
-		private const string LibName64 = "LibOVRRT64_1.dll";
+		private const string LIB_NAME_32 = "LibOVRRT32_1.dll";
+        private const string LIB_NAME_64 = "LibOVRRT64_1.dll";
 
-		private static readonly NativeLibraryLoader.NativeLibrary s_libovrrt = LoadLibAndFunctions();
+		private static readonly NativeLibraryLoader.NativeLibrary _libovrrt = LoadLibAndFunctions();
 
-		internal static bool LibOvrLoadedSuccessfully() => s_libovrrt != null;
+		internal static bool LibOvrLoadedSuccessfully() => _libovrrt != null;
 
 		private static NativeLibraryLoader.NativeLibrary LoadLibAndFunctions()
 		{
-			string libName = Environment.Is64BitProcess ? LibName64 : LibName32;
+			var libName = Environment.Is64BitProcess ? LIB_NAME_64 : LIB_NAME_32;
 			try
 			{
-				NativeLibraryLoader.NativeLibrary lib = new NativeLibraryLoader.NativeLibrary(libName);
+				var lib = new NativeLibraryLoader.NativeLibrary(libName);
 
 				p_ovr_Initialize = lib.LoadFunction<ovr_Initialize_t>("ovr_Initialize");
 				p_ovr_Shutdown = lib.LoadFunction<ovr_Shutdown_t>("ovr_Shutdown");

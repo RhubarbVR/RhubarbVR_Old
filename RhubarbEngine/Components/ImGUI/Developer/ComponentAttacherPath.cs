@@ -40,8 +40,8 @@ namespace RhubarbEngine.Components.ImGUI
 				{
 					if (target.Target != null)
 					{
-						string news = "/";
-						string temp = "";
+						var news = "/";
+						var temp = "";
 						foreach (var item in target.Target.path.Value.Split('/', '\\'))
 						{
 							if (!string.IsNullOrEmpty(item))
@@ -50,21 +50,16 @@ namespace RhubarbEngine.Components.ImGUI
 								temp = item;
 							}
 						}
-						if (target.Target.path.Value.Contains("`1"))
-						{
-							target.Target.path.Value = target.Target.path.Value.Replace("`1", "");
-						}
-						else
-						{
-							target.Target.path.Value = news;
-						}
-					}
+						target.Target.path.Value = target.Target.path.Value.Contains("`1") ? target.Target.path.Value.Replace("`1", "") : news;
+                    }
 				}
 				else
 				{
 					if (target.Target != null)
-						target.Target.path.Value += path.Value;
-				}
+                    {
+                        target.Target.path.Value += path.Value;
+                    }
+                }
 			}
 		}
 	}

@@ -22,7 +22,7 @@ namespace RhubarbEngine.Components.Physics
 {
 
 	[Category(new string[] { "Physics/Intraction" })]
-	public class MeshInputPlane : Collider, IinputPlane
+	public class MeshInputPlane : Collider, IInputPlane
 	{
 		public AssetRef<RMesh> mesh;
 
@@ -32,11 +32,11 @@ namespace RhubarbEngine.Components.Physics
 
 		public SyncDelegate onFocusLost;
 
-		public IReadOnlyList<KeyEvent> KeyEvents { get { return !focused ? new List<KeyEvent>() : Input.mainWindows.FrameSnapshot.KeyEvents; } }
+		public IReadOnlyList<KeyEvent> KeyEvents { get { return !Focused ? new List<KeyEvent>() : Input.mainWindows.FrameSnapshot.KeyEvents; } }
 
 		public IReadOnlyList<MouseEvent> MouseEvents { get { return IsNotTakingInput ? new List<MouseEvent>() : Input.mainWindows.FrameSnapshot.MouseEvents; } }
 
-		public IReadOnlyList<char> KeyCharPresses { get { return !focused ? new List<char>() : Input.mainWindows.FrameSnapshot.KeyCharPresses; } }
+		public IReadOnlyList<char> KeyCharPresses { get { return !Focused ? new List<char>() : Input.mainWindows.FrameSnapshot.KeyCharPresses; } }
 
 		private Vector2 _mousePosition = Vector2.Zero;
 
@@ -52,16 +52,16 @@ namespace RhubarbEngine.Components.Physics
 		{
 			if (!IsNotTakingInput)
 			{
-				switch (source)
+				switch (Source)
 				{
 					case InteractionSource.LeftLaser:
-						Input.LeftLaser.cursor = cursor;
+						Input.LeftLaser.Cursor = cursor;
 						break;
 					case InteractionSource.RightLaser:
-						Input.RightLaser.cursor = cursor;
+						Input.RightLaser.Cursor = cursor;
 						break;
 					case InteractionSource.HeadLaser:
-						Input.RightLaser.cursor = cursor;
+						Input.RightLaser.Cursor = cursor;
 						break;
 					default:
 						break;
@@ -71,14 +71,14 @@ namespace RhubarbEngine.Components.Physics
 		public void Click(Vector2 pos, InteractionSource sourc)
 		{
 			Setfocused();
-			source = sourc;
+			Source = sourc;
 			_mousePosition = pos;
 			StopMousePos = false;
 		}
 
 		public void UpdatePos(Vector2 pos, InteractionSource sourc)
 		{
-			if (sourc != source)
+			if (sourc != Source)
             {
                 return;
             }
@@ -105,7 +105,7 @@ namespace RhubarbEngine.Components.Physics
             }
         }
 
-        public InteractionSource source { get; private set; } = InteractionSource.RightLaser;
+        public InteractionSource Source { get; private set; } = InteractionSource.RightLaser;
 
         public bool IsNotTakingInput
         {
@@ -119,7 +119,7 @@ namespace RhubarbEngine.Components.Physics
 
 		private bool _focused = false;
 
-        public bool focused
+        public bool Focused
         {
             get
             {
@@ -147,7 +147,7 @@ namespace RhubarbEngine.Components.Physics
 
 		private void Entity_enabledChanged()
 		{
-			if ((!Entity.IsEnabled) && focused)
+			if ((!Entity.IsEnabled) && Focused)
 			{
 				Removefocused();
 			}
@@ -167,8 +167,8 @@ namespace RhubarbEngine.Components.Physics
 		{
 			BuildCollissionObject(null);
 		}
-		public int[] index = new int[] { };
-		public BulletSharp.Math.Vector3[] vertices = new BulletSharp.Math.Vector3[] { };
+		public int[] index = Array.Empty<int>();
+		public BulletSharp.Math.Vector3[] vertices = Array.Empty<BulletSharp.Math.Vector3>();
 
 
 		public unsafe override void BuildShape()
@@ -230,7 +230,7 @@ namespace RhubarbEngine.Components.Physics
 			{
 				return Engine.inputManager.mainWindows.GetMouseButton(button);
 			}
-			switch (source)
+			switch (Source)
 			{
 				case InteractionSource.None:
 					break;

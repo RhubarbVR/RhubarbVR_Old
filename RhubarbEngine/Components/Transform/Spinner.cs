@@ -25,9 +25,11 @@ namespace RhubarbEngine.Components.Transform
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			driver = new Driver<Quaternionf>(this, newRefIds);
-			speed = new Sync<Vector3f>(this, newRefIds);
-			offset = new Sync<Quaternionf>(this, newRefIds);
-			speed.Value = new Vector3f(1f, 0f, 0f);
+            speed = new Sync<Vector3f>(this, newRefIds)
+            {
+                Value = new Vector3f(1f, 0f, 0f)
+            };
+            offset = new Sync<Quaternionf>(this, newRefIds);
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)

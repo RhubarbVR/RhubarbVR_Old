@@ -159,7 +159,7 @@ namespace RhubarbEngine
 			{
 				throw new Exception("Engine not Initialised");
 			}
-			while (windowManager.mainWindowOpen)
+			while (windowManager.MainWindowOpen)
 			{
 				Loop(platformInfo.startTime, platformInfo.Frame);
 				platformInfo.Frame = DateTime.UtcNow;

@@ -31,7 +31,7 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return _engine.windowManager.mainWindow.aspectRatio;
+                return _engine.windowManager.MainWindow.aspectRatio;
             }
         }
 
@@ -83,7 +83,7 @@ namespace RhubarbEngine.Managers
             }
         }
 
-        public IManager initialize(Engine _engine)
+        public IManager Initialize(Engine _engine)
 		{
 			this._engine = _engine;
 			var backend = this._engine.backend;
@@ -119,13 +119,13 @@ namespace RhubarbEngine.Managers
 			}
 			this._engine.logger.Log("Output Device:" + this._engine.outputType.ToString(), true);
 			vrContext = BuildVRContext();
-			(gd, sc) = this._engine.windowManager.mainWindow.CreateScAndGD(vrContext, backend);
+			(gd, sc) = this._engine.windowManager.MainWindow.CreateScAndGD(vrContext, backend);
 			this._engine.backend = backend;
 			vrContext.Initialize(gd);
 			windowCL = gd.ResourceFactory.CreateCommandList();
 			_eyesCL = gd.ResourceFactory.CreateCommandList();
 			_mainQueue = new RenderQueue();
-			this._engine.windowManager.mainWindow.window.Resized += Window_Resized;
+			this._engine.windowManager.MainWindow.window.Resized += Window_Resized;
 			Window_Resized();
 			var _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "nulltexture.jpg"), false, true).CreateDeviceTexture(this._engine.renderManager.gd, this._engine.renderManager.gd.ResourceFactory);
             nulview = this._engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture);
@@ -163,7 +163,7 @@ namespace RhubarbEngine.Managers
 		{
 			if (_engine.settingsObject.RenderSettings.DesktopRenderSettings.auto)
 			{
-				sc.Resize((uint)_engine.windowManager.mainWindow.window.Width, (uint)_engine.windowManager.mainWindow.window.Height);
+				sc.Resize((uint)_engine.windowManager.MainWindow.window.Width, (uint)_engine.windowManager.MainWindow.window.Height);
 			}
 			else
 			{
@@ -177,18 +177,14 @@ namespace RhubarbEngine.Managers
 			{
 				EyeFramebufferSampleCount = TextureSampleCount.Count1
 			};
-			switch (_engine.outputType)
-			{
-				case OutputType.Screen:
-					return VRContext.CreateScreen(options, _engine);
-				case OutputType.SteamVR:
-					return VRContext.CreateOpenVR(options, (_engine.settingsObject.VRSettings.StartAsOverlay) ? Valve.VR.EVRApplicationType.VRApplication_Scene : Valve.VR.EVRApplicationType.VRApplication_Scene);
-				case OutputType.OculusVR:
-					return VRContext.CreateOculus(options);
-				default:
-					return VRContext.CreateScreen(options, _engine);
-			}
-		}
+            return _engine.outputType switch
+            {
+                OutputType.Screen => VRContext.CreateScreen(options, _engine),
+                OutputType.SteamVR => VRContext.CreateOpenVR(options, _engine.settingsObject.VRSettings.StartAsOverlay ? Valve.VR.EVRApplicationType.VRApplication_Scene : Valve.VR.EVRApplicationType.VRApplication_Scene),
+                OutputType.OculusVR => VRContext.CreateOculus(options),
+                _ => VRContext.CreateScreen(options, _engine),
+            };
+        }
 
 #pragma warning disable IDE0060 // Remove unused parameter
         private void BuildMainRenderQueue(Matrix4x4 leftp, Matrix4x4 leftv, Matrix4x4 rightp, Matrix4x4 rightv)
@@ -234,7 +230,7 @@ namespace RhubarbEngine.Managers
 
 		}
 
-		private void RenderNoneThreadedRenderObjectsInWorld(World.World world)
+		private static void RenderNoneThreadedRenderObjectsInWorld(World.World world)
 		{
 			try
 			{
@@ -253,11 +249,11 @@ namespace RhubarbEngine.Managers
 			catch { }
 		}
 
-		private void RenderRenderObjectsInWorld(World.World world)
+		private static void RenderRenderObjectsInWorld(World.World world)
 		{
 			try
 			{
-				RenderNoneThreadedRenderObjectsInWorld(world);
+                RenderNoneThreadedRenderObjectsInWorld(world);
 				Parallel.ForEach(world.updateLists.trenderObject, obj =>
 				{
 					try
@@ -282,7 +278,7 @@ namespace RhubarbEngine.Managers
 			{
 				if (world.Focus != World.World.FocusLevel.Background)
 				{
-					RenderRenderObjectsInWorld(world);
+                    RenderRenderObjectsInWorld(world);
 				}
 			}
 		}
@@ -353,7 +349,7 @@ namespace RhubarbEngine.Managers
 			{
 				Console.WriteLine("Render Error " + e.ToString());
 			}
-			if (_engine.windowManager.mainWindowOpen)
+			if (_engine.windowManager.MainWindowOpen)
 			{
 				windowCL.Begin();
 				windowCL.SetFramebuffer(sc.Framebuffer);

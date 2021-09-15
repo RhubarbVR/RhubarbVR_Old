@@ -65,12 +65,12 @@ namespace RhubarbEngine.Components.PrivateSpace
                 return;
             }
 
-            if (((Engine.outputType == VirtualReality.OutputType.Screen) && (source.Value != InteractionSource.HeadLaser)))
+            if ((Engine.outputType == VirtualReality.OutputType.Screen) && (source.Value != InteractionSource.HeadLaser))
             {
                 return;
             }
 
-            if (((Engine.outputType != VirtualReality.OutputType.Screen) && (source.Value == InteractionSource.HeadLaser)))
+            if ((Engine.outputType != VirtualReality.OutputType.Screen) && (source.Value == InteractionSource.HeadLaser))
             {
                 return;
             }
@@ -80,7 +80,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 				if (source.Value == InteractionSource.HeadLaser)
 				{
 					var mousepos = Engine.inputManager.mainWindows.MousePosition;
-					var size = new System.Numerics.Vector2(Engine.windowManager.mainWindow.width, Engine.windowManager.mainWindow.height);
+					var size = new System.Numerics.Vector2(Engine.windowManager.MainWindow.width, Engine.windowManager.MainWindow.height);
 					var x = (2.0f * mousepos.X / size.X) - 1.0f;
 					var y = (2.0f * mousepos.Y / size.Y) - 1.0f;
 					var ar = size.X / size.Y;

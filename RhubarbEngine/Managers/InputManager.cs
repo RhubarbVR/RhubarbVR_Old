@@ -29,7 +29,7 @@ namespace RhubarbEngine.Managers
             }
         }
 
-        public InputTracker mainWindows = new InputTracker();
+        public InputTracker mainWindows = new();
 
 		public event Action RemoveFocus;
 
@@ -75,136 +75,105 @@ namespace RhubarbEngine.Managers
 		}
 		public bool PrimaryPress(Creality side = Creality.None)
 		{
-			switch (side)
-			{
-				case Creality.Left:
-					return (LeftController != null) && LeftController.PrimaryPress;
-				case Creality.Right:
-					return (RightController != null) && RightController.PrimaryPress;
-				default:
-					return (RightController != null) ? RightController.PrimaryPress : (false || (LeftController != null)) && LeftController.PrimaryPress;
-			}
-		}
+            return side switch
+            {
+                Creality.Left => (LeftController != null) && LeftController.PrimaryPress,
+                Creality.Right => (RightController != null) && RightController.PrimaryPress,
+                _ => (RightController != null) ? RightController.PrimaryPress : (false || (LeftController != null)) && LeftController.PrimaryPress,
+            };
+        }
 
 		public bool TriggerTouching(Creality side = Creality.None)
 		{
-			switch (side)
-			{
-				case Creality.Left:
-					return (LeftController != null) && LeftController.TriggerTouching;
-				case Creality.Right:
-					return (RightController != null) && RightController.TriggerTouching;
-				default:
-					return (RightController != null) ? RightController.TriggerTouching : (false || (LeftController != null)) && LeftController.TriggerTouching;
-			}
-		}
+            return side switch
+            {
+                Creality.Left => (LeftController != null) && LeftController.TriggerTouching,
+                Creality.Right => (RightController != null) && RightController.TriggerTouching,
+                _ => (RightController != null) ? RightController.TriggerTouching : (false || (LeftController != null)) && LeftController.TriggerTouching,
+            };
+        }
 
 		public bool AxisTouching(Creality side = Creality.None)
 		{
-			switch (side)
-			{
-				case Creality.Left:
-					return (LeftController != null) && LeftController.AxisTouching;
-				case Creality.Right:
-					return (RightController != null) && RightController.AxisTouching;
-				default:
-					return (RightController != null) ? RightController.AxisTouching : (false || (LeftController != null)) && LeftController.AxisTouching;
-			}
-		}
+            return side switch
+            {
+                Creality.Left => (LeftController != null) && LeftController.AxisTouching,
+                Creality.Right => (RightController != null) && RightController.AxisTouching,
+                _ => (RightController != null) ? RightController.AxisTouching : (false || (LeftController != null)) && LeftController.AxisTouching,
+            };
+        }
 
 		public bool SystemPress(Creality side = Creality.None)
 		{
-			switch (side)
-			{
-				case Creality.Left:
-					return (LeftController != null) && LeftController.SystemPress;
-				case Creality.Right:
-					return (RightController != null) && RightController.SystemPress;
-				default:
-					return (RightController != null) ? RightController.SystemPress : (false || (LeftController != null)) && LeftController.SystemPress;
-			}
-		}
+            return side switch
+            {
+                Creality.Left => (LeftController != null) && LeftController.SystemPress,
+                Creality.Right => (RightController != null) && RightController.SystemPress,
+                _ => (RightController != null) ? RightController.SystemPress : (false || (LeftController != null)) && LeftController.SystemPress,
+            };
+        }
 
 		public bool MenuPress(Creality side = Creality.None)
 		{
-			switch (side)
-			{
-				case Creality.Left:
-					return (LeftController != null) && LeftController.MenuPress;
-				case Creality.Right:
-					return (RightController != null) && RightController.MenuPress;
-				default:
-					return (RightController != null) ? RightController.MenuPress : (false || (LeftController != null)) && LeftController.MenuPress;
-			}
-		}
+            return side switch
+            {
+                Creality.Left => (LeftController != null) && LeftController.MenuPress,
+                Creality.Right => (RightController != null) && RightController.MenuPress,
+                _ => (RightController != null) ? RightController.MenuPress : (false || (LeftController != null)) && LeftController.MenuPress,
+            };
+        }
 
 		public bool GrabPress(Creality side = Creality.None)
 		{
-			switch (side)
-			{
-				case Creality.Left:
-
-					return (LeftController != null) && LeftController.GrabPress;
-				case Creality.Right:
-					return (RightController != null) && RightController.GrabPress;
-				default:
-					return (RightController != null) ? RightController.GrabPress : (false || (LeftController != null)) && LeftController.GrabPress;
-			}
-		}
+            return side switch
+            {
+                Creality.Left => (LeftController != null) && LeftController.GrabPress,
+                Creality.Right => (RightController != null) && RightController.GrabPress,
+                _ => (RightController != null) ? RightController.GrabPress : (false || (LeftController != null)) && LeftController.GrabPress,
+            };
+        }
 
 		public bool SecondaryPress(Creality side = Creality.None)
 		{
-			switch (side)
-			{
-				case Creality.Left:
-					return (LeftController != null) && LeftController.SecondaryPress;
-				case Creality.Right:
-					return (RightController != null) && RightController.SecondaryPress;
-				default:
-					return (RightController != null) ? RightController.SecondaryPress : (false || (LeftController != null)) && LeftController.SecondaryPress;
-			}
-		}
+            return side switch
+            {
+                Creality.Left => (LeftController != null) && LeftController.SecondaryPress,
+                Creality.Right => (RightController != null) && RightController.SecondaryPress,
+                _ => (RightController != null) ? RightController.SecondaryPress : (false || (LeftController != null)) && LeftController.SecondaryPress,
+            };
+        }
 
 		public Vector2f Axis(Creality side = Creality.None)
 		{
-			switch (side)
-			{
-				case Creality.Left:
-					return (LeftController != null) ? LeftController.Axis : Vector2f.Zero;
-				case Creality.Right:
-					return (RightController != null) ? RightController.Axis : Vector2f.Zero;
-				default:
-					return (((RightController != null) ? RightController.Axis : Vector2f.Zero) + ((LeftController != null) ? LeftController.Axis : Vector2f.Zero)) / 2;
-			}
-		}
+            return side switch
+            {
+                Creality.Left => (LeftController != null) ? LeftController.Axis : Vector2f.Zero,
+                Creality.Right => (RightController != null) ? RightController.Axis : Vector2f.Zero,
+                _ => (((RightController != null) ? RightController.Axis : Vector2f.Zero) + ((LeftController != null) ? LeftController.Axis : Vector2f.Zero)) / 2,
+            };
+        }
 
 		public Matrix4x4 GetPos(Creality side = Creality.None)
 		{
-			switch (side)
-			{
-				case Creality.Left:
-					return (LeftController != null) ? LeftController.Posistion : Matrix4x4.CreateScale(1f);
-				case Creality.Right:
-					return (RightController != null) ? RightController.Posistion : Matrix4x4.CreateScale(1f);
-				default:
-					return Matrix4x4.CreateScale(1f);
-			}
-		}
+            return side switch
+            {
+                Creality.Left => (LeftController != null) ? LeftController.Posistion : Matrix4x4.CreateScale(1f),
+                Creality.Right => (RightController != null) ? RightController.Posistion : Matrix4x4.CreateScale(1f),
+                _ => Matrix4x4.CreateScale(1f),
+            };
+        }
 
 		public float TriggerAix(Creality side = Creality.None)
 		{
-			switch (side)
-			{
-				case Creality.Left:
-					return (LeftController != null) ? LeftController.TriggerAix : 0f;
-				case Creality.Right:
-					return (RightController != null) ? RightController.TriggerAix : 0f;
-				default:
-					return (((RightController != null) ? RightController.TriggerAix : 0f) + ((LeftController != null) ? LeftController.TriggerAix : 0f)) / 2;
-			}
-		}
+            return side switch
+            {
+                Creality.Left => (LeftController != null) ? LeftController.TriggerAix : 0f,
+                Creality.Right => (RightController != null) ? RightController.TriggerAix : 0f,
+                _ => (((RightController != null) ? RightController.TriggerAix : 0f) + ((LeftController != null) ? LeftController.TriggerAix : 0f)) / 2,
+            };
+        }
 
-		public IManager initialize(Engine _engine)
+		public IManager Initialize(Engine _engine)
 		{
 			this._engine = _engine;
 

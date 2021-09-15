@@ -33,15 +33,15 @@ namespace RhubarbEngine.Components.ImGUI
 		public Sync<float> TintOnClickTime;
 
 		public SyncDelegate action;
-		private TextureView view;
+		private TextureView _view;
 
 		public override void OnLoaded()
 		{
 			base.OnLoaded();
-			loadTextureView();
+			LoadTextureView();
 		}
 
-		private void test()
+		private void Test()
 		{
 			Logger.Log("This is a test of test in test");
 		}
@@ -51,32 +51,50 @@ namespace RhubarbEngine.Components.ImGUI
 			base.BuildSyncObjs(newRefIds);
 
 			texture = new AssetRef<RTexture2D>(this, newRefIds);
-			texture.loadChange += assetChange;
-			size = new Sync<Vector2f>(this, newRefIds);
-			size.Value = new Vector2f(100, 100);
-			UV0 = new Sync<Vector2f>(this, newRefIds);
-			UV0.Value = new Vector2f(0, 0);
-			UV1 = new Sync<Vector2f>(this, newRefIds);
-			UV1.Value = new Vector2f(1, 1);
-			padding = new Sync<int>(this, newRefIds);
-			padding.Value = 0;
-			tint = new Sync<Colorf>(this, newRefIds);
-			tint.Value = Colorf.White;
-			big = new Sync<Colorf>(this, newRefIds);
-			big.Value = Colorf.White;
-			action = new SyncDelegate(this, newRefIds);
-			action.Target = test;
-			TintOnClick = new Sync<bool>(this, newRefIds);
-			TintOnClick.Value = true;
-			TintOnClickTime = new Sync<float>(this, newRefIds);
-			TintOnClickTime.Value = 0.1f;
-		}
-		public void assetChange(RTexture2D newAsset)
+			texture.loadChange += AssetChange;
+            size = new Sync<Vector2f>(this, newRefIds)
+            {
+                Value = new Vector2f(100, 100)
+            };
+            UV0 = new Sync<Vector2f>(this, newRefIds)
+            {
+                Value = new Vector2f(0, 0)
+            };
+            UV1 = new Sync<Vector2f>(this, newRefIds)
+            {
+                Value = new Vector2f(1, 1)
+            };
+            padding = new Sync<int>(this, newRefIds)
+            {
+                Value = 0
+            };
+            tint = new Sync<Colorf>(this, newRefIds)
+            {
+                Value = Colorf.White
+            };
+            big = new Sync<Colorf>(this, newRefIds)
+            {
+                Value = Colorf.White
+            };
+            action = new SyncDelegate(this, newRefIds)
+            {
+                Target = Test
+            };
+            TintOnClick = new Sync<bool>(this, newRefIds)
+            {
+                Value = true
+            };
+            TintOnClickTime = new Sync<float>(this, newRefIds)
+            {
+                Value = 0.1f
+            };
+        }
+		public void AssetChange(RTexture2D newAsset)
 		{
-			loadTextureView();
+			LoadTextureView();
 		}
 
-		public void loadTextureView()
+		public void LoadTextureView()
 		{
 			if (texture.Target != null)
 			{
@@ -104,9 +122,9 @@ namespace RhubarbEngine.Components.ImGUI
 		}
 		private void SetResource(TextureView res)
 		{
-			if (view != res)
+			if (_view != res)
 			{
-				view = res;
+				_view = res;
 			}
 		}
 
@@ -117,20 +135,20 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 		}
 
-		private DateTime lastClick;
+		private DateTime _lastClick;
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
 			var tintval = tint.Value;
-			if (TintOnClick.Value & (DateTime.UtcNow - lastClick) < new TimeSpan(0, 0, 0, 0, (int)(TintOnClickTime.Value * 1000)))
+			if (TintOnClick.Value & (DateTime.UtcNow - _lastClick) < new TimeSpan(0, 0, 0, 0, (int)(TintOnClickTime.Value * 1000)))
 			{
 				tintval *= 0.8f;
 			}
-			if (ImGui.ImageButton(imGuiRenderer.GetOrCreateImGuiBinding(Engine.renderManager.gd.ResourceFactory, view), new Vector2(size.Value.x, size.Value.y), new Vector2(UV0.Value.x, UV0.Value.y), new Vector2(UV1.Value.x, UV1.Value.y), padding.Value, big.Value.ToRGBA().ToSystem(), tintval.ToRGBA().ToSystem()))
+			if (ImGui.ImageButton(imGuiRenderer.GetOrCreateImGuiBinding(Engine.renderManager.gd.ResourceFactory, _view), new Vector2(size.Value.x, size.Value.y), new Vector2(UV0.Value.x, UV0.Value.y), new Vector2(UV1.Value.x, UV1.Value.y), padding.Value, big.Value.ToRGBA().ToSystem(), tintval.ToRGBA().ToSystem()))
 			{
 				if (TintOnClick.Value)
 				{
-					lastClick = DateTime.UtcNow;
+					_lastClick = DateTime.UtcNow;
 				}
 				action.Target?.Invoke();
 			}

@@ -36,7 +36,7 @@ namespace RhubarbEngine.Components.Users
 		{
 			if (World.Userspace)
 			{
-				Matrix4x4 val = Input.GetPos(creality.Value);
+				var val = Input.GetPos(creality.Value);
 				Entity.SetLocalTrans(val);
 				return;
 			}
@@ -46,7 +46,7 @@ namespace RhubarbEngine.Components.Users
 			}
 			if (userroot.Target.user.Target == World.LocalUser)
 			{
-				Matrix4x4 val = Input.GetPos(creality.Value);
+				var val = Input.GetPos(creality.Value);
 				Entity.SetLocalTrans(val);
 				var userpos = World.LocalUser.FindOrCreateUserStream<SyncStream<Vector3f>>($"Hand{creality.Value}Pos");
 				var userrot = World.LocalUser.FindOrCreateUserStream<SyncStream<Quaternionf>>($"Hand{creality.Value}Rot");
@@ -66,7 +66,7 @@ namespace RhubarbEngine.Components.Users
 
 					try
 					{
-						Matrix4x4 value = Matrix4x4.CreateScale(userscale.Value.ToSystemNumrics()) * Matrix4x4.CreateFromQuaternion(userrot.Value.ToSystemNumric()) * Matrix4x4.CreateTranslation(userpos.Value.ToSystemNumrics());
+						var value = Matrix4x4.CreateScale(userscale.Value.ToSystemNumrics()) * Matrix4x4.CreateFromQuaternion(userrot.Value.ToSystemNumric()) * Matrix4x4.CreateTranslation(userpos.Value.ToSystemNumrics());
 						Entity.SetLocalTrans(value);
 					}
 					catch

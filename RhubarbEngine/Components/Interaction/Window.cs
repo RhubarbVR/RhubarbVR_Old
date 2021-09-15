@@ -71,18 +71,21 @@ namespace RhubarbEngine.Components.Interaction
 			ParentDock.Target = this;
 			window.ChildDocPos.Value = pos;
 			Entity.SetParent(window.Entity, false, true);
-			sizeUpdate();
+			SizeUpdate();
 		}
 
-		public void unDock()
+		public void UnDock()
 		{
 			if (ParentDock.Target == null)
-				return;
-			Entity.SetParent(ParentDock.Target.Entity.parent.Target, false, true);
-			sizeUpdate();
+            {
+                return;
+            }
+
+            Entity.SetParent(ParentDock.Target.Entity.parent.Target, false, true);
+			SizeUpdate();
 		}
 
-		private bool clapsed;
+		private bool _clapsed;
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
@@ -118,26 +121,26 @@ namespace RhubarbEngine.Components.Interaction
 			}
 			else
 			{
-				float titleBarHeight = ImGui.GetFontSize() + ImGui.GetStyle().FramePadding.Y * 2.0f;
-				float framePad = (ImGui.GetStyle().FramePadding.Y * 2.0f) * 8f;
+				var titleBarHeight = ImGui.GetFontSize() + (ImGui.GetStyle().FramePadding.Y * 2.0f);
+				var framePad = ImGui.GetStyle().FramePadding.Y * 2.0f * 8f;
 				var size = ImGui.GetWindowSize();
 				var parentsize = new Vector2();
-				bool flip = false;
+				var flip = false;
 				switch (ChildDocPos.Value)
 				{
 					case DockPos.Up:
-						parentsize = new Vector2(size.X, (clapsed) ? ((size.Y - (titleBarHeight + framePad))) : ((size.Y - (titleBarHeight + framePad)) / 2));
+						parentsize = new Vector2(size.X, _clapsed ? (size.Y - (titleBarHeight + framePad)) : ((size.Y - (titleBarHeight + framePad)) / 2));
 						break;
 					case DockPos.Down:
-						parentsize = new Vector2(size.X, (clapsed) ? ((size.Y - (titleBarHeight + framePad))) : ((size.Y - (titleBarHeight + framePad)) / 2));
+						parentsize = new Vector2(size.X, _clapsed ? (size.Y - (titleBarHeight + framePad)) : ((size.Y - (titleBarHeight + framePad)) / 2));
 						flip = true;
 						break;
 					case DockPos.Left:
-						parentsize = new Vector2((clapsed) ? size.X : (size.X / 2), size.Y - (titleBarHeight * 2));
+						parentsize = new Vector2(_clapsed ? size.X : (size.X / 2), size.Y - (titleBarHeight * 2));
 						flip = true;
 						break;
 					case DockPos.Right:
-						parentsize = new Vector2((clapsed) ? size.X : (size.X / 2), size.Y - (titleBarHeight * 2));
+						parentsize = new Vector2(_clapsed ? size.X : (size.X / 2), size.Y - (titleBarHeight * 2));
 						break;
 					default:
 						break;
@@ -150,14 +153,14 @@ namespace RhubarbEngine.Components.Interaction
 						element.Target?.ImguiRender(imGuiRenderer, canvas);
 						ImGui.EndChildFrame();
 					}
-					bool e = true;
+					var e = true;
 					if ((int)ChildDocPos.Value <= 2)
 					{
 						ImGui.SetCursorPos(pos + new Vector2(0f, parentsize.Y));
 					}
 					else
 					{
-						if (clapsed)
+						if (_clapsed)
 						{
 							ImGui.SetCursorPos(pos + new Vector2(parentsize.X / 2, framePad * 2f));
 						}
@@ -165,11 +168,11 @@ namespace RhubarbEngine.Components.Interaction
 						{
 							ImGui.SetCursorPos(pos + new Vector2(parentsize.X, framePad * 2f));
 						}
-						ImGui.SetNextItemWidth((size.X / 2));
+						ImGui.SetNextItemWidth(size.X / 2);
 					}
 					if (ImGui.CollapsingHeader(ChildDock.Target.Entity.name.Value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.AllowItemOverlap))
 					{
-						clapsed = false;
+						_clapsed = false;
 						if (ImGui.BeginChildFrame((uint)ReferenceID.id + 1, parentsize))
 						{
 							ChildDock.Target?.ImguiRender(imGuiRenderer, canvas);
@@ -178,7 +181,7 @@ namespace RhubarbEngine.Components.Interaction
 					}
 					else
 					{
-						clapsed = true;
+						_clapsed = true;
 					}
 					if (!e)
 					{
@@ -195,7 +198,7 @@ namespace RhubarbEngine.Components.Interaction
 					{
 						ImGui.SetCursorPos(pos + new Vector2(parentsize.X, titleBarHeight));
 					}
-					if (clapsed)
+					if (_clapsed)
 					{
 						ImGui.SetCursorPos(pos + new Vector2(0f, titleBarHeight));
 					}
@@ -205,12 +208,12 @@ namespace RhubarbEngine.Components.Interaction
 						ImGui.EndChildFrame();
 					}
 					ImGui.SetCursorPos(pos);
-					bool e = true;
+					var e = true;
 					ImGui.SetNextItemWidth(parentsize.X);
 					if (ImGui.CollapsingHeader(ChildDock.Target.Entity.name.Value ?? "Null", ref e, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.SpanAvailWidth | ImGuiTreeNodeFlags.AllowItemOverlap))
 					{
 						ImGui.SetNextItemWidth(parentsize.X);
-						clapsed = false;
+						_clapsed = false;
 						if (ImGui.BeginChildFrame((uint)ReferenceID.id + 1, parentsize))
 						{
 							ChildDock.Target?.ImguiRender(imGuiRenderer, canvas);
@@ -219,7 +222,7 @@ namespace RhubarbEngine.Components.Interaction
 					}
 					else
 					{
-						clapsed = true;
+						_clapsed = true;
 					}
 					if (!e)
 					{
@@ -231,7 +234,7 @@ namespace RhubarbEngine.Components.Interaction
 
 		}
 
-		private void sizeUpdate()
+		private void SizeUpdate()
 		{
 			if (renderEnableDriver.Linked)
 			{
@@ -261,7 +264,7 @@ namespace RhubarbEngine.Components.Interaction
 			{
 				colDriver.Drivevalue = size.Value / 2;
 			}
-			Vector2u pixsize = new Vector2u((uint)(size.Value.x * pixelDensity.Value), (uint)(size.Value.y * pixelDensity.Value));
+			var pixsize = new Vector2u((uint)(size.Value.x * pixelDensity.Value), (uint)(size.Value.y * pixelDensity.Value));
 			if (colPixelsizeDriver.Linked)
 			{
 				colPixelsizeDriver.Drivevalue = pixsize;
@@ -281,7 +284,7 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			Entity.AttachComponent<Grabbable>();
 			var col = Entity.AttachComponent<BoxCollider>();
-			var (e, mesh, mit) = Helpers.MeshHelper.AddMesh<BoxMesh>(Entity, World.staticAssets.basicUnlitShader, "UIBackGround", 2147483646);
+            var (_, mesh, _) = Helpers.MeshHelper.AddMesh<BoxMesh>(Entity, World.staticAssets.basicUnlitShader, "UIBackGround", 2147483646);
 			BackGround.SetDriveTarget(mesh.Extent);
 			colBackGround.SetDriveTarget(col.boxExtents);
 		}
@@ -301,7 +304,7 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			if (ParentDock.Target != null)
 			{
-				unDock();
+				UnDock();
 			}
 			foreach (var grab in Entity.GetAllComponents<Grabbable>())
 			{
@@ -313,19 +316,19 @@ namespace RhubarbEngine.Components.Interaction
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			PlaneMesh mesh = Entity.AttachComponent<PlaneMesh>();
+			var mesh = Entity.AttachComponent<PlaneMesh>();
 			meshWidth.SetDriveTarget(mesh.Width);
 			meshHeight.SetDriveTarget(mesh.Height);
 			var UIRender = Entity.AddChild("UIRender");
 			renderEnableDriver.SetDriveTarget(UIRender.enabled);
 			AttachBackGround();
-			InputPlane col = UIRender.AttachComponent<InputPlane>();
+			var col = UIRender.AttachComponent<InputPlane>();
 			colDriver.SetDriveTarget(col.size);
 			colPixelsizeDriver.SetDriveTarget(col.pixelSize);
-			RMaterial mit = Entity.AttachComponent<RMaterial>();
-			MeshRender meshRender = UIRender.AttachComponent<MeshRender>();
+			var mit = Entity.AttachComponent<RMaterial>();
+			var meshRender = UIRender.AttachComponent<MeshRender>();
 			UIRender.position.Value = new Vector3f(0f, -0.012f, 0f);
-			ImGUICanvas imGUICanvas = UIRender.AttachComponent<ImGUICanvas>();
+			var imGUICanvas = UIRender.AttachComponent<ImGUICanvas>();
 			imGUICanvas.onClose.Target = Close;
 			imGUICanvas.imputPlane.Target = col;
 			imGUICanvas.scale.Value = new Vector2u(300);
@@ -335,11 +338,11 @@ namespace RhubarbEngine.Components.Interaction
 			canvasPixelsizeDriver.SetDriveTarget(imGUICanvas.scale);
 			mit.Shader.Target = World.staticAssets.basicUnlitShader;
 			canvas.Target = imGUICanvas;
-			Render.Material.Fields.Texture2DField field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+			var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
 			field.field.Target = imGUICanvas;
 			meshRender.Materials.Add().Target = mit;
 			meshRender.Mesh.Target = mesh;
-			sizeUpdate();
+			SizeUpdate();
 		}
 
 		public void Close()
@@ -352,12 +355,16 @@ namespace RhubarbEngine.Components.Interaction
 			base.BuildSyncObjs(newRefIds);
 			element = new SyncRef<IUIElement>(this, newRefIds);
 			canvas = new SyncRef<ImGUICanvas>(this, newRefIds);
-			size = new Sync<Vector2f>(this, newRefIds);
-			size.Value = new Vector2f(1, 1.5);
-			size.Changed += Size_Changed;
-			pixelDensity = new Sync<uint>(this, newRefIds);
-			pixelDensity.Value = 450;
-			meshWidth = new Driver<float>(this, newRefIds);
+            size = new Sync<Vector2f>(this, newRefIds)
+            {
+                Value = new Vector2f(1, 1.5)
+            };
+            size.Changed += Size_Changed;
+            pixelDensity = new Sync<uint>(this, newRefIds)
+            {
+                Value = 450
+            };
+            meshWidth = new Driver<float>(this, newRefIds);
 			meshHeight = new Driver<float>(this, newRefIds);
 			colDriver = new Driver<Vector2f>(this, newRefIds);
 			colPixelsizeDriver = new Driver<Vector2u>(this, newRefIds);
@@ -373,7 +380,7 @@ namespace RhubarbEngine.Components.Interaction
 
 		private void Size_Changed(IChangeable obj)
 		{
-			sizeUpdate();
+			SizeUpdate();
 		}
 
 		public Window(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

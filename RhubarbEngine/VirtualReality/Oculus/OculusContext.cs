@@ -12,12 +12,10 @@ namespace RhubarbEngine.VirtualReality.Oculus
 {
 	internal unsafe class OculusContext : VRContext
 	{
-		private readonly ovrSession _session;
-		private readonly ovrGraphicsLuid _luid;
+        private readonly ovrGraphicsLuid _luid;
 		private readonly OculusMirrorTexture _mirrorTexture;
 		private readonly VRContextOptions _options;
-		private GraphicsDevice _gd;
-		private ovrHmdDesc _hmdDesc;
+        private ovrHmdDesc _hmdDesc;
 		private string _deviceName;
 		private ovrRecti[] _eyeRenderViewport;
 		private OculusSwapchain[] _eyeSwapchains;
@@ -25,20 +23,20 @@ namespace RhubarbEngine.VirtualReality.Oculus
 		private ovrTimewarpProjectionDesc _posTimewarpProjectionDesc;
 		private double _sensorSampleTime;
 		private EyePair_ovrPosef _eyeRenderPoses;
-		private Quaternion[] _rotations = new Quaternion[2];
-		private Vector3[] _positions = new Vector3[2];
-		private Matrix4x4[] _projections = new Matrix4x4[2];
+		private readonly Quaternion[] _rotations = new Quaternion[2];
+		private readonly Vector3[] _positions = new Vector3[2];
+		private readonly Matrix4x4[] _projections = new Matrix4x4[2];
 
-		private static Lazy<bool> s_isSupported = new Lazy<bool>(CheckSupport);
+		private static readonly Lazy<bool> _isSupported = new Lazy<bool>(CheckSupport);
 		private static bool CheckSupport()
 		{
 			try
 			{
-				ovrInitParams initParams = new ovrInitParams();
+				var initParams = new ovrInitParams();
 				initParams.Flags = ovrInitFlags.RequestVersion | ovrInitFlags.FocusAware | ovrInitFlags.Debug;
 				initParams.RequestedMinorVersion = 30;
 
-				ovrResult result = ovr_Initialize(&initParams);
+				var result = ovr_Initialize(&initParams);
 				if (result != ovrResult.Success)
 				{
 					return false;
@@ -62,32 +60,68 @@ namespace RhubarbEngine.VirtualReality.Oculus
 			}
 		}
 
-		internal static bool IsSupported() => s_isSupported.Value;
+		internal static bool IsSupported() => _isSupported.Value;
 
-		public override string DeviceName => _deviceName;
+        public override string DeviceName
+        {
+            get
+            {
+                return _deviceName;
+            }
+        }
 
-		public override Framebuffer LeftEyeFramebuffer => _eyeSwapchains[0].GetFramebuffer();
+        public override Framebuffer LeftEyeFramebuffer
+        {
+            get
+            {
+                return _eyeSwapchains[0].GetFramebuffer();
+            }
+        }
 
-		public override Framebuffer RightEyeFramebuffer => _eyeSwapchains[1].GetFramebuffer();
+        public override Framebuffer RightEyeFramebuffer
+        {
+            get
+            {
+                return _eyeSwapchains[1].GetFramebuffer();
+            }
+        }
 
-		internal GraphicsDevice GraphicsDevice => _gd;
-		internal ovrSession Session => _session;
+        internal GraphicsDevice GraphicsDevice { get; private set; }
+        internal ovrSession Session { get; }
 
-		public override IController leftController => throw new NotImplementedException();
+        public override IController leftController
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		public override IController RightController => throw new NotImplementedException();
+        public override IController RightController
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		public override Matrix4x4 Headpos => throw new NotImplementedException();
+        public override Matrix4x4 Headpos
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		public OculusContext(VRContextOptions options)
+        public OculusContext(VRContextOptions options)
 		{
 			_options = options;
 
-			ovrInitParams initParams = new ovrInitParams();
+			var initParams = new ovrInitParams();
 			initParams.Flags = ovrInitFlags.RequestVersion | ovrInitFlags.FocusAware | ovrInitFlags.Debug;
 			initParams.RequestedMinorVersion = 30;
 
-			ovrResult result = ovr_Initialize(&initParams);
+			var result = ovr_Initialize(&initParams);
 			if (result != ovrResult.Success)
 			{
 				throw new VeldridException($"Failed to initialize Oculus: {result}");
@@ -101,7 +135,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 				throw new VeldridException($"Failed to create an Oculus session.");
 			}
 
-			_session = session;
+			Session = session;
 			_luid = luid;
 
 			_mirrorTexture = new OculusMirrorTexture(this);
@@ -109,24 +143,24 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
 		public override void Initialize(GraphicsDevice gd)
 		{
-			_gd = gd;
+			GraphicsDevice = gd;
 			if (gd.GetVulkanInfo(out BackendInfoVulkan vkInfo))
 			{
 				IntPtr physicalDevice;
-				ovrResult result = ovr_GetSessionPhysicalDeviceVk(_session, _luid, vkInfo.Instance, &physicalDevice);
+				ovrResult result = ovr_GetSessionPhysicalDeviceVk(Session, _luid, vkInfo.Instance, &physicalDevice);
 				if (result != ovrResult.Success)
 				{
 					throw new VeldridException($"Failed to get Vulkan physical device.");
 				}
 
-				result = ovr_SetSynchonizationQueueVk(_session, vkInfo.GraphicsQueue);
+				result = ovr_SetSynchonizationQueueVk(Session, vkInfo.GraphicsQueue);
 				if (result != ovrResult.Success)
 				{
 					throw new VeldridException($"Failed to set the Oculus session's Vulkan synchronization queue.");
 				}
 			}
 
-			_hmdDesc = ovr_GetHmdDesc(_session);
+			_hmdDesc = ovr_GetHmdDesc(Session);
 			_deviceName = _hmdDesc.ProductName.ToString();
 
 			_eyeRenderViewport = new ovrRecti[2];
@@ -134,13 +168,13 @@ namespace RhubarbEngine.VirtualReality.Oculus
 			for (int eye = 0; eye < 2; ++eye)
 			{
 				ovrSizei idealSize = ovr_GetFovTextureSize(
-					_session,
+					Session,
 					(ovrEyeType)eye,
 					_hmdDesc.DefaultEyeFov[eye],
 					1.0f);
 				_eyeSwapchains[eye] = new OculusSwapchain(
-					_gd,
-					_session,
+					GraphicsDevice,
+					Session,
 					idealSize.w, idealSize.h,
 					Util.GetSampleCount(_options.EyeFramebufferSampleCount),
 					createDepth: true);
@@ -161,7 +195,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 			{
 				return;
 			}
-			if (_gd.GetOpenGLInfo(out BackendInfoOpenGL glInfo))
+			if (GraphicsDevice.GetOpenGLInfo(out BackendInfoOpenGL glInfo))
 			{
 				glInfo.FlushAndFinish();
 			}
@@ -174,7 +208,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 			// Initialize our single full screen Fov layer.
 			ovrLayerEyeFovDepth ld = new ovrLayerEyeFovDepth();
 			ld.Header.Type = ovrLayerType.EyeFovDepth;
-			ld.Header.Flags = _gd.BackendType == GraphicsBackend.OpenGL || _gd.BackendType == GraphicsBackend.OpenGLES
+			ld.Header.Flags = GraphicsDevice.BackendType == GraphicsBackend.OpenGL || GraphicsDevice.BackendType == GraphicsBackend.OpenGLES
 				? ovrLayerFlags.TextureOriginAtBottomLeft
 				: ovrLayerFlags.None;
 			ld.ProjectionDesc = _posTimewarpProjectionDesc;
@@ -190,7 +224,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 			}
 
 			ovrLayerHeader* layers = &ld.Header;
-			ovrResult result = ovr_SubmitFrame(_session, _frameIndex, null, &layers, 1);
+			ovrResult result = ovr_SubmitFrame(Session, _frameIndex, null, &layers, 1);
 			if (result != ovrResult.Success)
 			{
 				throw new VeldridException($"Failed to submit Oculus frame: {result}");
@@ -202,7 +236,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 		public unsafe override HmdPoseState WaitForPoses()
 		{
 			ovrSessionStatus sessionStatus;
-			var result = ovr_GetSessionStatus(_session, &sessionStatus);
+			var result = ovr_GetSessionStatus(Session, &sessionStatus);
 			if (result != ovrResult.Success)
 			{
 				throw new VeldridException($"Failed to retrieve Oculus session status: {result}");
@@ -210,28 +244,28 @@ namespace RhubarbEngine.VirtualReality.Oculus
 
 			if (sessionStatus.ShouldRecenter)
 			{
-				ovr_RecenterTrackingOrigin(_session);
+				ovr_RecenterTrackingOrigin(Session);
 			}
 
 			// Call ovr_GetRenderDesc each frame to get the ovrEyeRenderDesc, as the returned values (e.g. HmdToEyePose) may change at runtime.
 			ovrEyeRenderDesc* eyeRenderDescs = stackalloc ovrEyeRenderDesc[2];
-			eyeRenderDescs[0] = ovr_GetRenderDesc2(_session, ovrEyeType.Left, _hmdDesc.DefaultEyeFov[0]);
-			eyeRenderDescs[1] = ovr_GetRenderDesc2(_session, ovrEyeType.Right, _hmdDesc.DefaultEyeFov[1]);
+			eyeRenderDescs[0] = ovr_GetRenderDesc2(Session, ovrEyeType.Left, _hmdDesc.DefaultEyeFov[0]);
+			eyeRenderDescs[1] = ovr_GetRenderDesc2(Session, ovrEyeType.Right, _hmdDesc.DefaultEyeFov[1]);
 
 			// Get both eye poses simultaneously, with IPD offset already included. 
 			EyePair_ovrPosef hmdToEyePoses = new EyePair_ovrPosef(
 				eyeRenderDescs[0].HmdToEyePose,
 				eyeRenderDescs[1].HmdToEyePose);
 
-			double predictedTime = ovr_GetPredictedDisplayTime(_session, _frameIndex);
+			double predictedTime = ovr_GetPredictedDisplayTime(Session, _frameIndex);
 
-			ovrTrackingState trackingState = ovr_GetTrackingState(_session, predictedTime, true);
+			ovrTrackingState trackingState = ovr_GetTrackingState(Session, predictedTime, true);
 
 			double sensorSampleTime;    // sensorSampleTime is fed into the layer later
 			EyePair_Vector3 hmdToEyeOffset = new EyePair_Vector3(
 				hmdToEyePoses.Left.Position,
 				hmdToEyePoses.Right.Position);
-			ovr_GetEyePoses(_session, _frameIndex, true, &hmdToEyeOffset, out _eyeRenderPoses, &sensorSampleTime);
+			ovr_GetEyePoses(Session, _frameIndex, true, &hmdToEyeOffset, out _eyeRenderPoses, &sensorSampleTime);
 			_sensorSampleTime = sensorSampleTime;
 
 			// Render Scene to Eye Buffers
@@ -259,7 +293,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 			}
 
 			_mirrorTexture.Dispose();
-			ovr_Destroy(_session);
+			ovr_Destroy(Session);
 			ovr_Shutdown();
 		}
 

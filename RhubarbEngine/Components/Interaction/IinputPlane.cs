@@ -19,11 +19,11 @@ namespace RhubarbEngine.Components.Interaction
 		HeadLaser,
 		HeadFinger,
 	}
-	public interface IinputPlane : IWorldObject, InputSnapshot
+	public interface IInputPlane : IWorldObject, InputSnapshot
 	{
-		public InteractionSource source { get; }
+		public InteractionSource Source { get; }
 
-		public bool focused { get; }
+		public bool Focused { get; }
 		public bool StopMouse { get; set; }
 
 		public void Setfocused();

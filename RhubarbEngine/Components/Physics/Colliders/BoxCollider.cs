@@ -24,9 +24,11 @@ namespace RhubarbEngine.Components.Physics.Colliders
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			base.BuildSyncObjs(newRefIds);
-			boxExtents = new Sync<Vector3f>(this, newRefIds);
-			boxExtents.Value = new Vector3f(1f);
-			boxExtents.Changed += UpdateChange;
+            boxExtents = new Sync<Vector3f>(this, newRefIds)
+            {
+                Value = new Vector3f(1f)
+            };
+            boxExtents.Changed += UpdateChange;
 		}
 
 		public void UpdateChange(IChangeable val)

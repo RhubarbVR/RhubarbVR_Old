@@ -41,10 +41,15 @@ namespace RhubarbEngine.Components.ImGUI
 		private void Target_Changed(IChangeable obj)
 		{
 			if (Entity.Manager != World.LocalUser)
-				return;
-			var e = new Thread(BuildView, 1024);
-			e.Priority = ThreadPriority.BelowNormal;
-			e.Start();
+            {
+                return;
+            }
+
+            var e = new Thread(BuildView, 1024)
+            {
+                Priority = ThreadPriority.BelowNormal
+            };
+            e.Start();
 		}
 
 		private void ClearOld()
@@ -62,8 +67,11 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				ClearOld();
 				if (target.Target == null)
-					return;
-				FieldInfo[] fields = target.Target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                {
+                    return;
+                }
+
+                var fields = target.Target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 				foreach (var field in fields)
 				{
 					if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
@@ -93,7 +101,7 @@ namespace RhubarbEngine.Components.ImGUI
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				Interaction.GrabbableHolder source = null;
-				switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
+				switch (canvas.imputPlane.Target?.Source ?? Interaction.InteractionSource.None)
 				{
 					case Interaction.InteractionSource.LeftLaser:
 						source = World.LeftLaserGrabbableHolder;

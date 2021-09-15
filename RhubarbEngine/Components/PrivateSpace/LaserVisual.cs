@@ -88,14 +88,14 @@ namespace RhubarbEngine.Components.PrivateSpace
 			switch (source.Value)
 			{
 				case InteractionSource.LeftLaser:
-					pos = Input.LeftLaser.pos;
+					pos = Input.LeftLaser.Pos;
 					left = true;
 					break;
 				case InteractionSource.RightLaser:
-					pos = Input.RightLaser.pos;
+					pos = Input.RightLaser.Pos;
 					break;
 				case InteractionSource.HeadLaser:
-					pos = Input.RightLaser.pos;
+					pos = Input.RightLaser.Pos;
 					break;
 				default:
 					break;
@@ -104,11 +104,11 @@ namespace RhubarbEngine.Components.PrivateSpace
 			{
 				if (left)
 				{
-					Input.LeftLaser.cursorChange += UpdateCursor;
+					Input.LeftLaser.CursorChange += UpdateCursor;
 				}
 				else
 				{
-					Input.RightLaser.cursorChange += UpdateCursor;
+					Input.RightLaser.CursorChange += UpdateCursor;
 				}
 				_bind = true;
 			}
@@ -116,13 +116,13 @@ namespace RhubarbEngine.Components.PrivateSpace
 			switch (source.Value)
 			{
 				case InteractionSource.LeftLaser:
-					hitvector = Input.LeftLaser.normal;
+					hitvector = Input.LeftLaser.Normal;
 					break;
 				case InteractionSource.RightLaser:
-					hitvector = Input.RightLaser.normal;
+					hitvector = Input.RightLaser.Normal;
 					break;
 				case InteractionSource.HeadLaser:
-					hitvector = Input.RightLaser.normal;
+					hitvector = Input.RightLaser.Normal;
 					break;
 				default:
 					break;
@@ -148,16 +148,16 @@ namespace RhubarbEngine.Components.PrivateSpace
 			switch (source.Value)
 			{
 				case InteractionSource.LeftLaser:
-					Currsor.Target.enabled.Value = Input.LeftLaser.isvisible;
-					Laser.Target.enabled.Value = Input.LeftLaser.isvisible;
+					Currsor.Target.enabled.Value = Input.LeftLaser.Isvisible;
+					Laser.Target.enabled.Value = Input.LeftLaser.Isvisible;
 					break;
 				case InteractionSource.RightLaser:
-					Currsor.Target.enabled.Value = Input.RightLaser.isvisible;
-					Laser.Target.enabled.Value = Input.RightLaser.isvisible;
+					Currsor.Target.enabled.Value = Input.RightLaser.Isvisible;
+					Laser.Target.enabled.Value = Input.RightLaser.Isvisible;
 					break;
 				case InteractionSource.HeadLaser:
-					Currsor.Target.enabled.Value = Input.RightLaser.isvisible;
-					Laser.Target.enabled.Value = Input.RightLaser.isvisible;
+					Currsor.Target.enabled.Value = Input.RightLaser.Isvisible;
+					Laser.Target.enabled.Value = Input.RightLaser.Isvisible;
 					break;
 				default:
 					break;

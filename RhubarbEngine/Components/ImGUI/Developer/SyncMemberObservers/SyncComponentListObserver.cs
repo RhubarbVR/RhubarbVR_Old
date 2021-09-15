@@ -18,7 +18,7 @@ namespace RhubarbEngine.Components.ImGUI
 	[Category("ImGUI/Developer/SyncMemberObservers")]
 	public class SyncComponentListObserver : SyncListBaseObserver, IObserver
 	{
-        public override bool removeable
+        public override bool Removeable
         {
             get
             {

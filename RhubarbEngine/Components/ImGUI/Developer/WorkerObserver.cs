@@ -89,25 +89,25 @@ namespace RhubarbEngine.Components.ImGUI
 				target.Target.OnDispose += Target_onDispose;
 				_lastWorker = target.Target;
 				var type = target.Target.GetType();
-				if ((typeof(Entity).IsAssignableFrom(type)))
+				if (typeof(Entity).IsAssignableFrom(type))
 				{
 					var comp = Entity.AttachComponent<EntityObserver>();
 					comp.target.Target = (Entity)target.Target;
 					root.Target = comp;
 				}
-				else if ((typeof(Component).IsAssignableFrom(type)))
+				else if (typeof(Component).IsAssignableFrom(type))
 				{
 					var comp = Entity.AttachComponent<ComponentObserver>();
 					comp.target.Target = (Component)target.Target;
 					root.Target = comp;
 				}
-				else if ((typeof(Render.Material.Fields.MaterialField).IsAssignableFrom(type)))
+				else if (typeof(Render.Material.Fields.MaterialField).IsAssignableFrom(type))
 				{
 					var comp = Entity.AttachComponent<MaterialFieldObserver>();
 					comp.target.Target = (Render.Material.Fields.MaterialField)target.Target;
 					root.Target = comp;
 				}
-				else if ((typeof(ISyncMember).IsAssignableFrom(type)))
+				else if (typeof(ISyncMember).IsAssignableFrom(type))
 				{
 					BuildSyncMember(type);
 				}
@@ -126,15 +126,15 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void Dispose()
 		{
-			base.Dispose();
-			if (removeChildrenOnDispose.Value)
-			{
-				root.Target?.Dispose();
-				foreach (var item in children)
-				{
-					item.Target?.Dispose();
-				}
-			}
+            if (removeChildrenOnDispose.Value)
+            {
+                root.Target?.Dispose();
+                foreach (var item in children)
+                {
+                    item.Target?.Dispose();
+                }
+            }
+            base.Dispose();
 		}
 
 		[NoSave]
@@ -155,11 +155,11 @@ namespace RhubarbEngine.Components.ImGUI
 			var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 			foreach (var field in fields)
 			{
-				if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
+                if (!(!typeof(Worker).IsAssignableFrom(field.FieldType) || field.GetCustomAttributes(typeof(NoShowAttribute), false).Length > 0))
 				{
 					var obs = _e.AttachComponent<WorkerObserver>();
 					obs.fieldName.Value = field.Name;
-					obs.target.Target = ((Worker)field.GetValue(target.Target));
+					obs.target.Target = (Worker)field.GetValue(target.Target);
 					children.Add().Target = obs;
 				}
 			}
@@ -175,7 +175,7 @@ namespace RhubarbEngine.Components.ImGUI
 					var a = typeof(FlagsEnumSyncObserver<>).MakeGenericType(gType);
 					var obs = (FlagsEnumSyncObserver)Entity.AttachComponent(a);
 					obs.fieldName.Value = fieldName.Value;
-					obs.target.Target = ((IPrimitiveEditable)target.Target);
+					obs.target.Target = (IPrimitiveEditable)target.Target;
 					root.Target = obs;
 				}
 				else
@@ -183,7 +183,7 @@ namespace RhubarbEngine.Components.ImGUI
 					var a = typeof(EnumSyncObserver<>).MakeGenericType(gType);
 					var obs = (EnumSyncObserver)Entity.AttachComponent(a);
 					obs.fieldName.Value = fieldName.Value;
-					obs.target.Target = ((IPrimitiveEditable)target.Target);
+					obs.target.Target = (IPrimitiveEditable)target.Target;
 					root.Target = obs;
 				}
 			}
@@ -191,91 +191,91 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				var obs = Entity.AttachComponent<BoolSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((Sync<bool>)target.Target);
+				obs.target.Target = (Sync<bool>)target.Target;
 				root.Target = obs;
 			}
 			else if (gType == typeof(int))
 			{
 				var obs = Entity.AttachComponent<IntSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((Sync<int>)target.Target);
+				obs.target.Target = (Sync<int>)target.Target;
 				root.Target = obs;
 			}
 			else if (gType == typeof(float))
 			{
 				var obs = Entity.AttachComponent<FloatSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((Sync<float>)target.Target);
+				obs.target.Target = (Sync<float>)target.Target;
 				root.Target = obs;
 			}
 			else if (gType == typeof(double))
 			{
 				var obs = Entity.AttachComponent<DoubleSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((Sync<double>)target.Target);
+				obs.target.Target = (Sync<double>)target.Target;
 				root.Target = obs;
 			}
 			else if (gType == typeof(Colorf))
 			{
 				var obs = Entity.AttachComponent<ColorfSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((Sync<Colorf>)target.Target);
+				obs.target.Target = (Sync<Colorf>)target.Target;
 				root.Target = obs;
 			}
 			else if (gType == typeof(Vector2f))
 			{
 				var obs = Entity.AttachComponent<Vector2fSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((Sync<Vector2f>)target.Target);
+				obs.target.Target = (Sync<Vector2f>)target.Target;
 				root.Target = obs;
 			}
 			else if (gType == typeof(Vector3f))
 			{
 				var obs = Entity.AttachComponent<Vector3fSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((Sync<Vector3f>)target.Target);
+				obs.target.Target = (Sync<Vector3f>)target.Target;
 				root.Target = obs;
 			}
 			else if (gType == typeof(Vector4f))
 			{
 				var obs = Entity.AttachComponent<Vector4fSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((Sync<Vector4f>)target.Target);
+				obs.target.Target = (Sync<Vector4f>)target.Target;
 				root.Target = obs;
 			}
 			else if (gType == typeof(Quaternionf))
 			{
 				var obs = Entity.AttachComponent<QuaternionfSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((Sync<Quaternionf>)target.Target);
+				obs.target.Target = (Sync<Quaternionf>)target.Target;
 				root.Target = obs;
 			}
 			else if (gType == typeof(Vector2d))
 			{
 				var obs = Entity.AttachComponent<Vector2dSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((Sync<Vector2d>)target.Target);
+				obs.target.Target = (Sync<Vector2d>)target.Target;
 				root.Target = obs;
 			}
 			else if (gType == typeof(Vector3d))
 			{
 				var obs = Entity.AttachComponent<Vector3dSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((Sync<Vector3d>)target.Target);
+				obs.target.Target = (Sync<Vector3d>)target.Target;
 				root.Target = obs;
 			}
 			else if (gType == typeof(Vector4d))
 			{
 				var obs = Entity.AttachComponent<Vector4dSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((Sync<Vector4d>)target.Target);
+				obs.target.Target = (Sync<Vector4d>)target.Target;
 				root.Target = obs;
 			}
 			else
 			{
 				var obs = Entity.AttachComponent<PrimitiveSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((IPrimitiveEditable)target.Target);
+				obs.target.Target = (IPrimitiveEditable)target.Target;
 				root.Target = obs;
 			}
 		}
@@ -287,7 +287,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				var obs = Entity.AttachComponent<SyncComponentListObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((ISyncList)target.Target);
+				obs.target.Target = (ISyncList)target.Target;
 				root.Target = obs;
 			}
 			else
@@ -302,14 +302,14 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				var obs = Entity.AttachComponent<SyncListObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((ISyncList)target.Target);
+				obs.target.Target = (ISyncList)target.Target;
 				root.Target = obs;
 			}
 			else
 			{
 				var obs = Entity.AttachComponent<NoAddSyncListObserver>();
 				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = ((ISyncList)target.Target);
+				obs.target.Target = (ISyncList)target.Target;
 				root.Target = obs;
 			}
 		}
@@ -321,11 +321,11 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				typeg = type.GetGenericTypeDefinition();
 			}
-			if ((typeof(Sync<>).IsAssignableFrom(typeg)))
+			if (typeof(Sync<>).IsAssignableFrom(typeg))
 			{
 				BuildBasicSyncMember(type);
 			}
-			else if ((typeof(SyncAbstractObjList<>).IsAssignableFrom(typeg)))
+			else if (typeof(SyncAbstractObjList<>).IsAssignableFrom(typeg))
 			{
 				BuildSyncAbstractObjListMember(type);
 			}
@@ -337,21 +337,21 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 
 			}
-			else if ((typeof(AssetRef<>).IsAssignableFrom(typeg)))
+			else if (typeof(AssetRef<>).IsAssignableFrom(typeg))
 			{
 				var a = typeof(World.Asset.AssetProvider<>).MakeGenericType(type.GetGenericArguments()[0]);
 				BuildSyncRef(a);
 			}
-			else if ((typeof(Driver<>).IsAssignableFrom(typeg)))
+			else if (typeof(Driver<>).IsAssignableFrom(typeg))
 			{
 				var a = typeof(DriveMember<>).MakeGenericType(type.GetGenericArguments()[0]);
 				BuildSyncRef(a);
 			}
-			else if ((typeof(SyncRef<>).IsAssignableFrom(typeg)))
+			else if (typeof(SyncRef<>).IsAssignableFrom(typeg))
 			{
 				BuildSyncRef(type.GetGenericArguments()[0]);
 			}
-			else if ((typeof(SyncUserList).IsAssignableFrom(typeg)))
+			else if (typeof(SyncUserList).IsAssignableFrom(typeg))
 			{
 				BuildSyncObjListMember(false);
 			}
@@ -366,7 +366,7 @@ namespace RhubarbEngine.Components.ImGUI
 			var a = typeof(SyncRefObserver<>).MakeGenericType(type);
 			var obs = (SyncRefObserver)Entity.AttachComponent(a);
 			obs.fieldName.Value = fieldName.Value;
-			obs.target.Target = ((ISyncRef)target.Target);
+			obs.target.Target = (ISyncRef)target.Target;
 			root.Target = obs;
 		}
 

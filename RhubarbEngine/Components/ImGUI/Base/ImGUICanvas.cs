@@ -27,7 +27,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<IUIElement> element;
 
-		public SyncRef<IinputPlane> imputPlane;
+		public SyncRef<IInputPlane> imputPlane;
 
 		public Sync<string> name;
 
@@ -70,7 +70,7 @@ namespace RhubarbEngine.Components.ImGUI
 		}
 
 
-        public RenderFrequency renderFrac
+        public RenderFrequency RenderFrac
         {
             get
             {
@@ -94,7 +94,7 @@ namespace RhubarbEngine.Components.ImGUI
 			scale.Value = new Vector2u(600, 600);
 			scale.Changed += OnScaleChange;
 			element = new SyncRef<IUIElement>(this, newRefIds);
-			imputPlane = new SyncRef<IinputPlane>(this, newRefIds);
+			imputPlane = new SyncRef<IInputPlane>(this, newRefIds);
 			name = new Sync<string>(this, newRefIds);
 			noCloseing = new Sync<bool>(this, newRefIds);
 			noBackground = new Sync<bool>(this, newRefIds);

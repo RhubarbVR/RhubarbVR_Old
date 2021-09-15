@@ -140,14 +140,12 @@ namespace RhubarbEngine.Components.PrivateSpace
 		}
 		private bool ProssesOpenKey()
 		{
-			if (Engine.outputType == VirtualReality.OutputType.Screen)
-			{
-                return side.Value != Creality.Left && Input.mainWindows.GetKeyDown(Key.F);
-            }
-            return Input.MenuPress(side.Value);
-		}
+            return Engine.outputType == VirtualReality.OutputType.Screen
+                ? side.Value != Creality.Left && Input.mainWindows.GetKeyDown(Key.F)
+                : Input.MenuPress(side.Value);
+        }
 
-		public ContextMenu(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public ContextMenu(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}

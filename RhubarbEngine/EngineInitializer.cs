@@ -35,14 +35,14 @@ namespace RhubarbEngine
 				intphase = "Platform Info Manager";
 				_engine.logger.Log("Starting Platform Info Manager:");
 				_engine.platformInfo = new PlatformInfoManager();
-				_engine.platformInfo.initialize(_engine);
+				_engine.platformInfo.Initialize(_engine);
 
 				if (_engine.platformInfo.platform != Platform.Android)
 				{
 					intphase = "Window Manager";
 					_engine.logger.Log("Starting Window Manager:");
 					_engine.windowManager = new Managers.WindowManager();
-					_engine.windowManager.initialize(_engine);
+					_engine.windowManager.Initialize(_engine);
 				}
 				else
 				{
@@ -52,18 +52,18 @@ namespace RhubarbEngine
 				intphase = "Input Manager";
 				_engine.logger.Log("Starting Input Manager:");
 				_engine.inputManager = new Managers.InputManager();
-				_engine.inputManager.initialize(_engine);
+				_engine.inputManager.Initialize(_engine);
 
 				intphase = "Render Manager";
 				_engine.logger.Log("Starting Render Manager:");
 				_engine.renderManager = new Managers.RenderManager();
-				_engine.renderManager.initialize(_engine);
+				_engine.renderManager.Initialize(_engine);
 
 
 				intphase = "Audio Manager";
 				_engine.logger.Log("Starting Audio Manager:");
 				_engine.audioManager = new Managers.AudioManager();
-				_engine.audioManager.initialize(_engine);
+				_engine.audioManager.Initialize(_engine);
 
 				intphase = "Net Api Manager";
 				_engine.logger.Log("Starting Net Api Manager:");
@@ -72,12 +72,12 @@ namespace RhubarbEngine
 				{
 					_engine.netApiManager.token = token;
 				}
-				_engine.netApiManager.initialize(_engine);
+				_engine.netApiManager.Initialize(_engine);
 
 				intphase = "World Manager";
 				_engine.logger.Log("Starting World Manager:");
 				_engine.worldManager = new WorldManager();
-				_engine.worldManager.initialize(_engine);
+				_engine.worldManager.Initialize(_engine);
 
 				_engine.audioManager.task.Start();
 				Initialised = true;

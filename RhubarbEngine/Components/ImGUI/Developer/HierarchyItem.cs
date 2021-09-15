@@ -27,7 +27,7 @@ namespace RhubarbEngine.Components.ImGUI
 		[NoShow]
 		[NoSave]
 		[NoSync]
-		private Entity _last;
+        private Entity _last;
 
 		public SyncRefList<HierarchyItem> children;
 
@@ -134,7 +134,7 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			var val = dropedDown.Value;
 			ImGui.SetNextItemOpen(val);
-			if (ImGui.TreeNodeEx($"{target.Target?.name.Value ?? "null"}##{ReferenceID.id.ToString()}", ImGuiTreeNodeFlags.OpenOnArrow))
+			if (ImGui.TreeNodeEx($"{target.Target?.name.Value ?? "null"}##{ReferenceID.id}", ImGuiTreeNodeFlags.OpenOnArrow))
 			{
 				foreach (var item in children)
 				{
@@ -154,7 +154,7 @@ namespace RhubarbEngine.Components.ImGUI
 				}
 			}
 			Interaction.GrabbableHolder source = null;
-			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
+			switch (canvas.imputPlane.Target?.Source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
 					source = World.LeftLaserGrabbableHolder;

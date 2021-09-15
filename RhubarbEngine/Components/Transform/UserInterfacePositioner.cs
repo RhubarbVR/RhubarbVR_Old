@@ -95,7 +95,7 @@ namespace RhubarbEngine.Components.Transform
 				var mat = World.UserRoot.Entity.GlobalTrans();
 				var e = new Vector3f((mat.M11 * HeadFacingDirection.x) + (mat.M12 * HeadFacingDirection.y) + (mat.M13 * HeadFacingDirection.z), (mat.M21 * HeadFacingDirection.x) + (mat.M22 * HeadFacingDirection.y) + (mat.M23 * HeadFacingDirection.z), (mat.M31 * HeadFacingDirection.x) + (mat.M32 * HeadFacingDirection.y) + (mat.M33 * HeadFacingDirection.z));
 				var headrot = Quaternionf.LookRotation(e, World.UserRoot.Entity.Up);
-				var a2 = (rotateVerticalOnly.Value ? headrot : World.UserRoot.Head.Target?.GlobalRot() ?? Quaternionf.Zero);
+				var a2 = rotateVerticalOnly.Value ? headrot : World.UserRoot.Head.Target?.GlobalRot() ?? Quaternionf.Zero;
 				var b = Entity.GlobalPos();
 				var num = a.Distance(b);
 				var b2 = Entity.GlobalRot();
@@ -119,7 +119,7 @@ namespace RhubarbEngine.Components.Transform
 				var ae = Entity.GlobalRot();
 				var rot = Quaternionf.CreateFromEuler(0f, 0f, 0f);
 				rot.SetToSlerp(ae, _targetRotation, (float)Engine.platformInfo.deltaSeconds * rotationSpeed.Value);
-				Entity.SetGlobalTrans((Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(rot.ToSystemNumric()) * Matrix4x4.CreateTranslation(pos.ToSystemNumrics())));
+				Entity.SetGlobalTrans(Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(rot.ToSystemNumric()) * Matrix4x4.CreateTranslation(pos.ToSystemNumrics()));
 			}
 		}
 

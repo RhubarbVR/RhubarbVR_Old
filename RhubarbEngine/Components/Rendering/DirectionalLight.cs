@@ -28,7 +28,7 @@ namespace RhubarbEngine.Components.Rendering
 	[Category(new string[] { "Rendering" })]
 	public class DirectionalLight : Component, IRenderObject
 	{
-        public RenderFrequency renderFrac
+        public RenderFrequency RenderFrac
         {
             get
             {

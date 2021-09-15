@@ -107,8 +107,8 @@ namespace RhubarbEngine.Components.Users
 
 				var lookRotation = Quaternion.CreateFromYawPitchRoll(leftvraix.x * -5f * deltaSeconds, 0.0f, 0.0f);
 				lookRotation *= Quaternion.CreateFromYawPitchRoll(Rightvraix.x * -5f * deltaSeconds, 0.0f, 0.0f);
-				float e = (World.worldManager.engine.inputManager.mainWindows.GetKey(Key.X)) ? 0 : 1;
-				e += (World.worldManager.engine.inputManager.mainWindows.GetKey(Key.Z)) ? 0 : -1;
+				float e = World.worldManager.engine.inputManager.mainWindows.GetKey(Key.X) ? 0 : 1;
+				e += World.worldManager.engine.inputManager.mainWindows.GetKey(Key.Z) ? 0 : -1;
 				lookRotation *= Quaternion.CreateFromYawPitchRoll(e * -5f * deltaSeconds, 0.0f, 0.0f);
 
 				var temp = World.UserRoot.Head.Target.rotation.Value * Vector3f.AxisZ;
@@ -142,7 +142,7 @@ namespace RhubarbEngine.Components.Users
 				{
 
 					motionDir = Vector3.Transform(motionDir, lookRotation);
-					if ((motionDir.X == float.NaN) || (motionDir.Y == float.NaN) || (motionDir.Z == float.NaN))
+					if (float.IsNaN(motionDir.X) || float.IsNaN(motionDir.Y) || float.IsNaN(motionDir.Z))
 					{
 						return;
 					}

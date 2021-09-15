@@ -29,9 +29,11 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			base.BuildSyncObjs(newRefIds);
-			flags = new Sync<ImGuiInputTextFlags>(this, newRefIds);
-			flags.Value = ImGuiInputTextFlags.None;
-			label = new Sync<string>(this, newRefIds);
+            flags = new Sync<ImGuiInputTextFlags>(this, newRefIds)
+            {
+                Value = ImGuiInputTextFlags.None
+            };
+            label = new Sync<string>(this, newRefIds);
 			text = new Sync<string>(this, newRefIds);
 		}
 
@@ -46,7 +48,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			string val = text.Value ?? "";
+			var val = text.Value ?? "";
 			ImGui.InputText((label.Value ?? "") + $"##{ReferenceID.id}", ref val, (uint)val.Length + 255, flags.Value);
 			if (val != text.Value)
 			{

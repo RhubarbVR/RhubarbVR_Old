@@ -52,18 +52,18 @@ namespace RhubarbEngine.Components.PrivateSpace
             startMenu.Target.enabled.Value = !startMenu.Target.enabled.Value;
 		}
 
-		private void StartMenuFocusLost()
-		{
-			if (startMenu.Target == null)
-            {
-                return;
-            }
+		//private void StartMenuFocusLost()
+		//{
+		//	if (startMenu.Target == null)
+  //          {
+  //              return;
+  //          }
 
-            if (startMenu.Target.enabled.Value)
-			{
-				startMenu.Target.enabled.Value = false;
-			}
-		}
+  //          if (startMenu.Target.enabled.Value)
+		//	{
+		//		startMenu.Target.enabled.Value = false;
+		//	}
+		//}
 
 		private void BuildStartMenu(Entity e)
 		{

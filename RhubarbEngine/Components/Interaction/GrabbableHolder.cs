@@ -35,9 +35,9 @@ namespace RhubarbEngine.Components.Interaction
 
 		public Sync<InteractionSource> source;
 
-		bool gripping = false;
+		bool _gripping = false;
 
-		public void initializeGrabHolder(InteractionSource _source)
+		public void InitializeGrabHolder(InteractionSource _source)
 		{
 			user.Target = World.LocalUser;
 			source.Value = _source;
@@ -65,34 +65,49 @@ namespace RhubarbEngine.Components.Interaction
 			}
 		}
 
-		public bool DropedRef => (timeout <= 16) && (timeout != 0) && !gripping;
+        public bool DropedRef
+        {
+            get
+            {
+                return (_timeout <= 16) && (_timeout != 0) && !_gripping;
+            }
+        }
 
-		byte timeout = 0;
+        byte _timeout = 0;
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
 			base.CommonUpdate(startTime, Frame);
 			if (user.Target == null)
-				return;
-			if (holder.Target == null)
-				return;
-			if (user.Target != World.LocalUser)
-				return;
-			if (source.Value == InteractionSource.HeadLaser)
+            {
+                return;
+            }
+
+            if (holder.Target == null)
+            {
+                return;
+            }
+
+            if (user.Target != World.LocalUser)
+            {
+                return;
+            }
+
+            if (source.Value == InteractionSource.HeadLaser)
 			{
 				var mousepos = Engine.inputManager.mainWindows.MousePosition;
-				var size = new System.Numerics.Vector2(Engine.windowManager.mainWindow.width, Engine.windowManager.mainWindow.height);
-				float x = 2.0f * mousepos.X / size.X - 1.0f;
-				float y = 2.0f * mousepos.Y / size.Y - 1.0f;
-				float ar = size.X / size.Y;
-				float tan = (float)Math.Tan(Engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
-				Vector3f vectforward = new Vector3f(-x * tan * ar, y * tan, 1);
-				Vector3f vectup = new Vector3f(0, 1, 0);
+				var size = new System.Numerics.Vector2(Engine.windowManager.MainWindow.width, Engine.windowManager.MainWindow.height);
+				var x = (2.0f * mousepos.X / size.X) - 1.0f;
+				var y = (2.0f * mousepos.Y / size.Y) - 1.0f;
+				var ar = size.X / size.Y;
+				var tan = (float)Math.Tan(Engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
+				var vectforward = new Vector3f(-x * tan * ar, y * tan, 1);
+				var vectup = new Vector3f(0, 1, 0);
 				holder.Target.rotation.Value = Quaternionf.LookRotation(vectforward, vectup);
 			}
-			if (onGriping() != gripping)
+			if (OnGriping() != _gripping)
 			{
-				gripping = !gripping;
-				if (!gripping)
+				_gripping = !_gripping;
+				if (!_gripping)
 				{
 
 					foreach (var child in holder.Target._children.GetCopy())
@@ -105,13 +120,13 @@ namespace RhubarbEngine.Components.Interaction
 					switch (source.Value)
 					{
 						case InteractionSource.LeftLaser:
-							Input.LeftLaser.unLock();
+							Input.LeftLaser.UnLock();
 							break;
 						case InteractionSource.RightLaser:
-							Input.RightLaser.unLock();
+							Input.RightLaser.UnLock();
 							break;
 						case InteractionSource.HeadLaser:
-							Input.RightLaser.unLock();
+							Input.RightLaser.UnLock();
 							break;
 						default:
 							break;
@@ -123,18 +138,21 @@ namespace RhubarbEngine.Components.Interaction
 				}
 			}
 			if (Referencer.Target == null)
-				return;
-			if (!gripping)
+            {
+                return;
+            }
+
+            if (!_gripping)
 			{
-				timeout++;
-				if (timeout > 16)
+				_timeout++;
+				if (_timeout > 16)
 				{
 					Referencer.Target = null;
 				}
 			}
 		}
 
-		private bool onGriping()
+		private bool OnGriping()
 		{
 			if ((Engine.outputType == VirtualReality.OutputType.Screen) && (source.Value == InteractionSource.RightLaser))
 			{
@@ -180,7 +198,7 @@ namespace RhubarbEngine.Components.Interaction
 
 		private void Referencer_Changed(IChangeable obj)
 		{
-			timeout = 0;
+			_timeout = 0;
 			Console.WriteLine("Changed To " + Referencer.Target?.ReferenceID.id.ToHexString());
 		}
 

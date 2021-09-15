@@ -19,45 +19,51 @@ namespace RhubarbEngine.Input
 	{
 		public Creality side;
 
-		private Engine engine;
+		private readonly Engine _engine;
 
-		private InputManager input => engine.inputManager;
+        private InputManager Input
+        {
+            get
+            {
+                return _engine.inputManager;
+            }
+        }
 
-		public InteractionLaserSource(Creality _side, Engine _engine)
+        public InteractionLaserSource(Creality _side, Engine _engine)
 		{
 			side = _side;
-			engine = _engine;
+			this._engine = _engine;
 		}
 
 		private Cursors _cursor = Cursors.None;
 
-		public event Action<Cursors> cursorChange;
+		public event Action<Cursors> CursorChange;
 
-		public Cursors cursor { get { return _cursor; } set { if (_cursor == value) return; _cursor = value; cursorChange?.Invoke(value); } }
+		public Cursors Cursor { get { return _cursor; } set { if (_cursor == value) { return; } _cursor = value; CursorChange?.Invoke(value); } }
 
 
 
 		private bool HasClicked()
 		{
-			if ((engine.outputType == VirtualReality.OutputType.Screen) && (side == Creality.Right))
+			if ((_engine.outputType == VirtualReality.OutputType.Screen) && (side == Creality.Right))
 			{
-				return (engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right)) | engine.inputManager.mainWindows.GetMouseButton(MouseButton.Left) | engine.inputManager.mainWindows.GetMouseButton(MouseButton.Middle);
+				return (_engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right)) | _engine.inputManager.mainWindows.GetMouseButton(MouseButton.Left) | _engine.inputManager.mainWindows.GetMouseButton(MouseButton.Middle);
 			}
 			switch (side)
 			{
 				case Creality.None:
 					break;
 				case Creality.Left:
-					return input.TriggerTouching(Input.Creality.Left) | input.GrabPress(Input.Creality.Left) | input.PrimaryPress(Input.Creality.Left);
+					return Input.TriggerTouching(RhubarbEngine.Input.Creality.Left) | Input.GrabPress(RhubarbEngine.Input.Creality.Left) | Input.PrimaryPress(RhubarbEngine.Input.Creality.Left);
 				case Creality.Right:
-					return input.TriggerTouching(Input.Creality.Right) | input.GrabPress(Input.Creality.Right) | input.PrimaryPress(Input.Creality.Right);
+					return Input.TriggerTouching(RhubarbEngine.Input.Creality.Right) | Input.GrabPress(RhubarbEngine.Input.Creality.Right) | Input.PrimaryPress(RhubarbEngine.Input.Creality.Right);
 				default:
 					break;
 			}
 			return false;
 		}
 
-		private static Vector2f getUVPosOnTry(Vector3d p1, Vector2f p1uv, Vector3d p2, Vector2f p2uv, Vector3d p3, Vector2f p3uv, Vector3d point)
+		private static Vector2f GetUVPosOnTry(Vector3d p1, Vector2f p1uv, Vector3d p2, Vector2f p2uv, Vector3d p3, Vector2f p3uv, Vector3d point)
 		{
 			var f1 = p1 - point;
 			var f2 = p2 - point;
@@ -66,32 +72,32 @@ namespace RhubarbEngine.Input
 			var a1 = Vector3d.Cross(f2, f3).magnitude / a;
 			var a2 = Vector3d.Cross(f3, f1).magnitude / a;
 			var a3 = Vector3d.Cross(f1, f2).magnitude / a;
-			var uv = (p1uv * (float)a1) + (p2uv * (float)a2) + (p3uv * (float)a3);
+            var uv = (p1uv * (float)a1) + (p2uv * (float)a2) + (p3uv * (float)a3);
 			return uv;
 		}
 
 		private void RightLaser()
 		{
-			var e = Input.Creality.Right;
-			if (input.GrabPress(e))
+			var e = RhubarbEngine.Input.Creality.Right;
+			if (Input.GrabPress(e))
 			{
-				input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Right);
+                Input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Right);
 			}
-			if (input.PrimaryPress(e))
+			if (Input.PrimaryPress(e))
 			{
-				input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Left);
+                Input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Left);
 			}
 		}
 		private void LeftLaser()
 		{
-			var e = Input.Creality.Left;
-			if (input.GrabPress(e))
+			var e = RhubarbEngine.Input.Creality.Left;
+			if (Input.GrabPress(e))
 			{
-				input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Right);
+                Input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Right);
 			}
-			if (input.PrimaryPress(e))
+			if (Input.PrimaryPress(e))
 			{
-				input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Left);
+                Input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Left);
 			}
 		}
 
@@ -100,18 +106,18 @@ namespace RhubarbEngine.Input
 		{
 			try
 			{
-				var inputPlane = ((MeshInputPlane)cb.CollisionObject.UserObject);
-				System.Numerics.Matrix4x4.Decompose(inputPlane.Entity.GlobalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
+				var inputPlane = (MeshInputPlane)cb.CollisionObject.UserObject;
+				System.Numerics.Matrix4x4.Decompose(inputPlane.Entity.GlobalTrans(), out var scale, out var rotation, out var translation);
 				var pixsize = inputPlane.pixelSize.Value;
 
 				var hit = cb.HitPointWorld;
 				var hitnormal = cb.HitNormalWorld;
 
-				var stepone = ((hit - new Vector3(translation.X, translation.Y, translation.Z)) / new Vector3(scale.X, scale.Y, scale.Z));
+				var stepone = (hit - new Vector3(translation.X, translation.Y, translation.Z)) / new Vector3(scale.X, scale.Y, scale.Z);
 				var steptwo = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateTranslation(new System.Numerics.Vector3((float)stepone.X, (float)stepone.Y, (float)stepone.Z));
 				var stepthree = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateFromQuaternion(System.Numerics.Quaternion.Inverse(rotation));
-				var stepfour = (steptwo * stepthree);
-				System.Numerics.Matrix4x4.Decompose(stepfour, out System.Numerics.Vector3 scsdale, out System.Numerics.Quaternion rotatdsion, out System.Numerics.Vector3 trans);
+				var stepfour = steptwo * stepthree;
+				System.Numerics.Matrix4x4.Decompose(stepfour, out var scsdale, out var rotatdsion, out var trans);
 
 				if (inputPlane.mesh.Asset != null)
 				{
@@ -122,7 +128,7 @@ namespace RhubarbEngine.Input
 					var p2 = mesh.GetVertexAll(tryangle.b);
 					var p3 = mesh.GetVertexAll(tryangle.c);
 
-					var uvpos = getUVPosOnTry(p1.v, p1.uv, p2.v, p2.uv, p3.v, p3.uv, new Vector3d(trans.X, trans.Y, trans.Z));
+					var uvpos = GetUVPosOnTry(p1.v, p1.uv, p2.v, p2.uv, p3.v, p3.uv, new Vector3d(trans.X, trans.Y, trans.Z));
 					uvpos.y = (-uvpos.y) + 1;
 					var pospix = uvpos * new Vector2f(pixsize.x, pixsize.y);
 					var pos = (System.Numerics.Vector2)pospix;
@@ -169,21 +175,21 @@ namespace RhubarbEngine.Input
 		{
 			try
 			{
-				var inputPlane = ((InputPlane)cb.CollisionObject.UserObject);
-				System.Numerics.Matrix4x4.Decompose(inputPlane.Entity.GlobalTrans(), out System.Numerics.Vector3 scale, out System.Numerics.Quaternion rotation, out System.Numerics.Vector3 translation);
+				var inputPlane = (InputPlane)cb.CollisionObject.UserObject;
+				System.Numerics.Matrix4x4.Decompose(inputPlane.Entity.GlobalTrans(), out var scale, out var rotation, out var translation);
 				var size = inputPlane.size.Value;
 				var pixsize = inputPlane.pixelSize.Value;
 
 				var hit = cb.HitPointWorld;
 				var hitnormal = cb.HitNormalWorld;
 
-				var stepone = ((hit - new Vector3(translation.X, translation.Y, translation.Z)) / new Vector3(scale.X, scale.Y, scale.Z));
+				var stepone = (hit - new Vector3(translation.X, translation.Y, translation.Z)) / new Vector3(scale.X, scale.Y, scale.Z);
 				var steptwo = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateTranslation(new System.Numerics.Vector3((float)stepone.X, (float)stepone.Y, (float)stepone.Z));
 				var stepthree = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateFromQuaternion(System.Numerics.Quaternion.Inverse(rotation));
-				var stepfour = (steptwo * stepthree);
-				System.Numerics.Matrix4x4.Decompose(stepfour, out System.Numerics.Vector3 scsdale, out System.Numerics.Quaternion rotatdsion, out System.Numerics.Vector3 trans);
+				var stepfour = steptwo * stepthree;
+				System.Numerics.Matrix4x4.Decompose(stepfour, out var scsdale, out var rotatdsion, out var trans);
 				var nonescaleedpos = new Vector2f(trans.X, -trans.Z);
-				var posnopixs = ((nonescaleedpos * (1 / size)) / 2) + 0.5f;
+				var posnopixs = (nonescaleedpos * (1 / size) / 2) + 0.5f;
 
 				var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
 
@@ -227,12 +233,12 @@ namespace RhubarbEngine.Input
 
 		private bool ProssesCollider(ClosestRayResultCallback cb)
 		{
-			Collider col = (Collider)cb.CollisionObject.UserObject;
+			var col = (Collider)cb.CollisionObject.UserObject;
 			if (col == null)
 			{
 				return false;
 			}
-			Entity ent = col.Entity;
+			var ent = col.Entity;
 			if (HasClicked())
 			{
 				ent.SendClick(true);
@@ -248,36 +254,36 @@ namespace RhubarbEngine.Input
 					default:
 						break;
 				}
-				if (engine.outputType == VirtualReality.OutputType.Screen)
+				if (_engine.outputType == VirtualReality.OutputType.Screen)
 				{
-					ent.SendSecondary(input.mainWindows.GetMouseButton(MouseButton.Middle));
-					ent.SendPrimary(input.mainWindows.GetMouseButton(MouseButton.Left));
-					ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, input.mainWindows.GetMouseButton(MouseButton.Right));
+					ent.SendSecondary(Input.mainWindows.GetMouseButton(MouseButton.Middle));
+					ent.SendPrimary(Input.mainWindows.GetMouseButton(MouseButton.Left));
+					ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, Input.mainWindows.GetMouseButton(MouseButton.Right));
 				}
 				switch (source)
 				{
 					case InteractionSource.None:
 						break;
 					case InteractionSource.LeftLaser:
-						ent.SendTriggerTouching(input.TriggerTouching(Input.Creality.Left));
-						ent.SendSecondary(input.SecondaryPress(Input.Creality.Left));
-						ent.SendPrimary(input.PrimaryPress(Input.Creality.Left));
-						ent.SendGrip(true, col.World.LeftLaserGrabbableHolder, input.GrabPress(Input.Creality.Left));
+						ent.SendTriggerTouching(Input.TriggerTouching(RhubarbEngine.Input.Creality.Left));
+						ent.SendSecondary(Input.SecondaryPress(RhubarbEngine.Input.Creality.Left));
+						ent.SendPrimary(Input.PrimaryPress(RhubarbEngine.Input.Creality.Left));
+						ent.SendGrip(true, col.World.LeftLaserGrabbableHolder, Input.GrabPress(RhubarbEngine.Input.Creality.Left));
 						break;
 					case InteractionSource.LeftFinger:
 						break;
 					case InteractionSource.RightLaser:
-						ent.SendTriggerTouching(input.TriggerTouching(Input.Creality.Right));
-						ent.SendSecondary(input.SecondaryPress(Input.Creality.Right));
-						ent.SendPrimary(input.PrimaryPress(Input.Creality.Right));
-						ent.SendGrip(true, col.World.RightLaserGrabbableHolder, input.GrabPress(Input.Creality.Right));
+						ent.SendTriggerTouching(Input.TriggerTouching(RhubarbEngine.Input.Creality.Right));
+						ent.SendSecondary(Input.SecondaryPress(RhubarbEngine.Input.Creality.Right));
+						ent.SendPrimary(Input.PrimaryPress(RhubarbEngine.Input.Creality.Right));
+						ent.SendGrip(true, col.World.RightLaserGrabbableHolder, Input.GrabPress(RhubarbEngine.Input.Creality.Right));
 						break;
 					case InteractionSource.RightFinger:
 						break;
 					case InteractionSource.HeadLaser:
-						ent.SendSecondary(input.mainWindows.GetMouseButton(MouseButton.Middle));
-						ent.SendPrimary(input.mainWindows.GetMouseButton(MouseButton.Left));
-						ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, input.mainWindows.GetMouseButton(MouseButton.Right));
+						ent.SendSecondary(Input.mainWindows.GetMouseButton(MouseButton.Middle));
+						ent.SendPrimary(Input.mainWindows.GetMouseButton(MouseButton.Left));
+						ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, Input.mainWindows.GetMouseButton(MouseButton.Right));
 						break;
 					case InteractionSource.HeadFinger:
 						break;
@@ -290,84 +296,103 @@ namespace RhubarbEngine.Input
 
 		private void ProssecesHitPoint(Vector3d pos, Vector3d normal)
 		{
-			this.pos = pos;
-			this.normal = normal;
-			onHit?.Invoke(pos, normal, ((pos == Vector3d.Zero) && (normal == Vector3d.Zero)));
+			Pos = pos;
+			Normal = normal;
+			OnHit?.Invoke(pos, normal, (pos == Vector3d.Zero) && (normal == Vector3d.Zero));
 		}
 
-		public void unLock()
+		public void UnLock()
 		{
-			isLocked = false;
-			cursor = Cursors.None;
+			IsLocked = false;
+			Cursor = Cursors.None;
 		}
 
 		public void Lock()
 		{
-			isLocked = true;
-			cursor = Cursors.Grabbing;
+			IsLocked = true;
+			Cursor = Cursors.Grabbing;
 		}
 
 		public delegate void ProssecesHitPointAction(Vector3d pos, Vector3d normal, bool Hide);
 
-		public event ProssecesHitPointAction onHit;
+		public event ProssecesHitPointAction OnHit;
 
-		public Vector3d pos { get; private set; }
-		public Vector3d normal { get; private set; }
+		public Vector3d Pos { get; private set; }
+		public Vector3d Normal { get; private set; }
 
-		public bool isLocked { get; private set; }
+		public bool IsLocked { get; private set; }
 
 		public bool HasHit { get; private set; }
 
-		public bool isvisible => activelySnapping || HasHit || isLocked;
+        public bool Isvisible
+        {
+            get
+            {
+                return _activelySnapping || HasHit || IsLocked;
+            }
+        }
 
-		public Vector3 sourcse { get; private set; }
+        public Vector3 Sourcse { get; private set; }
 
-		public Vector3 destination { get; private set; }
+		public Vector3 Destination { get; private set; }
 
-		private float MaxDistinatains = 100;
+		private readonly float _maxDistinatains = 100;
 
-		private Vector3 lastDeriction;
+		private Vector3 _lastDeriction;
 
-		private float SnapDistance => engine.settingsObject.InteractionSettings.SnapDistance / 100;
-		private float Smoothing => engine.settingsObject.InteractionSettings.Smoothing;
+        private float SnapDistance
+        {
+            get
+            {
+                return _engine.settingsObject.InteractionSettings.SnapDistance / 100;
+            }
+        }
 
-		private float LastDistance = 0;
+        private float Smoothing
+        {
+            get
+            {
+                return _engine.settingsObject.InteractionSettings.Smoothing;
+            }
+        }
 
-		private Vector3 LastRayCastDeriction;
-		private Vector3 LastRayCastsourcse;
+        private float _lastDistance;
 
-		private Vector3 IRayCastDeriction;
-		private Vector3 IRayCastsourcse;
+        private Vector3 _lastRayCastDeriction;
+		private Vector3 _lastRayCastsourcse;
 
-		private Vector3 Lerp(Vector3 v1, Vector3 v2, Double pos)
+		private Vector3 _iRayCastDeriction;
+		private Vector3 _iRayCastsourcse;
+
+		private static Vector3 Lerp(Vector3 v1, Vector3 v2, double pos)
 		{
-			return v1 + (v2 - v1) * pos;
+			return v1 + ((v2 - v1) * pos);
 		}
-		private bool Aprogamtly(double v1, double v2, double pos)
+		private static bool Aprogamtly(double v1, double v2, double pos)
 		{
-			return (Math.Abs(v1 - v2) <= pos);
+			return Math.Abs(v1 - v2) <= pos;
 		}
-		private bool Aprogamtly(Vector3 v1, Vector3 v2, double pos)
+		private static bool Aprogamtly(Vector3 v1, Vector3 v2, double pos)
 		{
-			return ((Aprogamtly(v1.X, v2.X, pos) && Aprogamtly(v1.Y, v2.Y, pos) && Aprogamtly(v1.Z, v2.Z, pos)));
+			return Aprogamtly(v1.X, v2.X, pos) && Aprogamtly(v1.Y, v2.Y, pos) && Aprogamtly(v1.Z, v2.Z, pos);
 		}
-		private bool Snaping;
-		private bool activelySnapping;
+		private bool _snaping;
+		private bool _activelySnapping;
 
 		public void SendRayCast(Vector3 _sourcse, Vector3 deriction)
 		{
-			var dist = MaxDistinatains;
+			var dist = _maxDistinatains;
 
 			Vector3 smoothedDeriction;
 			Vector3 smoothedSourcse;
 
 			if (Smoothing != 0)
 			{
-				var poser = (engine.platformInfo.deltaSeconds * 2 * Smoothing);
-				IRayCastDeriction = Lerp(IRayCastDeriction, deriction, poser);
-				IRayCastsourcse = Lerp(IRayCastsourcse, _sourcse, poser);
-				smoothedDeriction = Lerp(LastRayCastDeriction, IRayCastDeriction, poser);
-				smoothedSourcse = Lerp(LastRayCastsourcse, IRayCastsourcse, poser);
+				var poser = _engine.platformInfo.deltaSeconds * 2 * Smoothing;
+				_iRayCastDeriction = Lerp(_iRayCastDeriction, deriction, poser);
+				_iRayCastsourcse = Lerp(_iRayCastsourcse, _sourcse, poser);
+				smoothedDeriction = Lerp(_lastRayCastDeriction, _iRayCastDeriction, poser);
+				smoothedSourcse = Lerp(_lastRayCastsourcse, _iRayCastsourcse, poser);
 			}
 			else
 			{
@@ -375,50 +400,50 @@ namespace RhubarbEngine.Input
 				smoothedSourcse = _sourcse;
 			}
 
-			LastRayCastDeriction = smoothedDeriction;
-			LastRayCastsourcse = smoothedSourcse;
-			var result = Math.Sqrt(Math.Pow(smoothedDeriction.X - lastDeriction.X, 2) + Math.Pow(smoothedDeriction.Y - lastDeriction.Y, 2) + Math.Pow(smoothedDeriction.Z - lastDeriction.Z, 2));
-			if (Aprogamtly(smoothedDeriction, lastDeriction, 0.003))
+			_lastRayCastDeriction = smoothedDeriction;
+			_lastRayCastsourcse = smoothedSourcse;
+			var result = Math.Sqrt(Math.Pow(smoothedDeriction.X - _lastDeriction.X, 2) + Math.Pow(smoothedDeriction.Y - _lastDeriction.Y, 2) + Math.Pow(smoothedDeriction.Z - _lastDeriction.Z, 2));
+			if (Aprogamtly(smoothedDeriction, _lastDeriction, 0.003))
 			{
 				result = 0f;
 			}
-			if (isLocked)
+			if (IsLocked)
 			{
-				var point = smoothedSourcse + (smoothedDeriction * LastDistance);
+				var point = smoothedSourcse + (smoothedDeriction * _lastDistance);
 				ProssecesHitPoint(new Vector3d(point.X, point.Y, point.Z), -new Vector3d(smoothedDeriction.X, smoothedDeriction.Y, smoothedDeriction.Z));
 				return;
 			}
-			if ((result < SnapDistance) && Snaping)
+			if ((result < SnapDistance) && _snaping)
 			{
-				dist = LastDistance + 0.5f;
-				activelySnapping = true;
+				dist = _lastDistance + 0.5f;
+				_activelySnapping = true;
 			}
 			else
-			{ activelySnapping = false; }
+			{ _activelySnapping = false; }
 			ProsscesRayTestHit(smoothedSourcse, (smoothedDeriction * dist) + smoothedSourcse, smoothedDeriction);
 		}
 
 		public void UpdateLaserPos(Vector3 _sourcse, Vector3 _destination)
 		{
-			sourcse = _sourcse;
-			destination = _destination;
+			Sourcse = _sourcse;
+			Destination = _destination;
 		}
 		private void ProsscesRayTestHit(Vector3 _sourcse, Vector3 _destination, Vector3 deriction)
 		{
-			if (!RayTestHitTest(_sourcse, _destination, engine.worldManager.privateOverlay))
+			if (!RayTestHitTest(_sourcse, _destination, _engine.worldManager.privateOverlay))
 			{
-				bool hittestbool = false;
-				foreach (var item in engine.worldManager.worlds)
+				var hittestbool = false;
+				foreach (var item in _engine.worldManager.worlds)
 				{
 					if ((item.Focus == World.World.FocusLevel.Overlay) && !hittestbool)
 					{
 						hittestbool = RayTestHitTest(_sourcse, _destination, item);
 					}
 				}
-				if (!((!RayTestHitTest(_sourcse, _destination, engine.worldManager.FocusedWorld)) && !hittestbool))
+				if (!((!RayTestHitTest(_sourcse, _destination, _engine.worldManager.FocusedWorld)) && !hittestbool))
 				{
 					HasHit = true;
-					lastDeriction = deriction;
+					_lastDeriction = deriction;
 					ProsscesHit();
 				}
 				else
@@ -429,27 +454,27 @@ namespace RhubarbEngine.Input
 			else
 			{
 				HasHit = true;
-				lastDeriction = deriction;
+				_lastDeriction = deriction;
 				ProsscesHit();
 			}
 		}
 
 		private void ProsscesHit()
 		{
-			if (!HitTest(sourcse, destination, engine.worldManager.privateOverlay))
+			if (!HitTest(Sourcse, Destination, _engine.worldManager.privateOverlay))
 			{
-				bool hittestbool = false;
-				foreach (var item in engine.worldManager.worlds)
+				var hittestbool = false;
+				foreach (var item in _engine.worldManager.worlds)
 				{
 					if ((item.Focus == World.World.FocusLevel.Overlay) && !hittestbool)
 					{
-						hittestbool = HitTest(sourcse, destination, item);
+						hittestbool = HitTest(Sourcse, Destination, item);
 					}
 				}
-				if ((!HitTest(sourcse, destination, engine.worldManager.FocusedWorld)) && !hittestbool)
+				if ((!HitTest(Sourcse, Destination, _engine.worldManager.FocusedWorld)) && !hittestbool)
 				{
-					Snaping = false;
-					cursor = Input.Cursors.None;
+					_snaping = false;
+                    Cursor = RhubarbEngine.Input.Cursors.None;
 					ProssecesHitPoint(Vector3d.Zero, Vector3d.Zero);
 				}
 			}
@@ -458,63 +483,65 @@ namespace RhubarbEngine.Input
 		private bool RayTestHitTest(Vector3 sourcse, Vector3 destination, World.World eworld)
 		{
 			if (eworld == null)
-				return false;
-			using (var cb = new ClosestRayResultCallback(ref sourcse, ref destination))
-			{
-				eworld.PhysicsWorld.RayTest(sourcse, destination, cb);
-				if (cb.HasHit)
-				{
-					UpdateLaserPos(cb.HitPointWorld + (cb.HitNormalWorld * 0.01f), cb.HitPointWorld + (cb.HitNormalWorld * -0.02f));
-					var result = Math.Sqrt(Math.Pow(cb.HitPointWorld.X - sourcse.X, 2) + Math.Pow(cb.HitPointWorld.Y - sourcse.Y, 2) + Math.Pow(cb.HitPointWorld.Z - sourcse.Z, 2));
-					LastDistance = (float)result;
-					Type type = cb.CollisionObject.UserObject.GetType();
-					if (type == typeof(InputPlane))
-					{
-						return true;
-					}
-					else if (type == typeof(MeshInputPlane))
-					{
-						return true;
-					}
-					else if (typeof(Collider).IsAssignableFrom(type))
-					{
-						return true;
-					}
-				}
-				return false;
-			}
-		}
+            {
+                return false;
+            }
+
+            using var cb = new ClosestRayResultCallback(ref sourcse, ref destination);
+            eworld.PhysicsWorld.RayTest(sourcse, destination, cb);
+            if (cb.HasHit)
+            {
+                UpdateLaserPos(cb.HitPointWorld + (cb.HitNormalWorld * 0.01f), cb.HitPointWorld + (cb.HitNormalWorld * -0.02f));
+                var result = Math.Sqrt(Math.Pow(cb.HitPointWorld.X - sourcse.X, 2) + Math.Pow(cb.HitPointWorld.Y - sourcse.Y, 2) + Math.Pow(cb.HitPointWorld.Z - sourcse.Z, 2));
+                _lastDistance = (float)result;
+                var type = cb.CollisionObject.UserObject.GetType();
+                if (type == typeof(InputPlane))
+                {
+                    return true;
+                }
+                else if (type == typeof(MeshInputPlane))
+                {
+                    return true;
+                }
+                else if (typeof(Collider).IsAssignableFrom(type))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 		private bool HitTest(Vector3 sourcse, Vector3 destination, World.World eworld)
 		{
 			if (eworld == null)
-				return false;
-			using (var cb = new ClosestRayResultCallback(ref sourcse, ref destination))
-			{
-				eworld.PhysicsWorld.RayTest(sourcse, destination, cb);
-				if (cb.HasHit)
-				{
-					ProssecesHitPoint(new Vector3d(cb.HitPointWorld.X, cb.HitPointWorld.Y, cb.HitPointWorld.Z), new Vector3d(cb.HitNormalWorld.X, cb.HitNormalWorld.Y, cb.HitNormalWorld.Z));
-					Type type = cb.CollisionObject.UserObject.GetType();
-					if (type == typeof(InputPlane))
-					{
-						Snaping = true;
-						return ProossesInputPlane(cb);
-					}
-					else if (type == typeof(MeshInputPlane))
-					{
-						Snaping = true;
-						return ProossesMeshInputPlane(cb);
-					}
-					else if (typeof(Collider).IsAssignableFrom(type))
-					{
-						Snaping = false;
-						return ProssesCollider(cb);
-					}
-				}
-				Snaping = false;
-				return false;
-			}
-		}
+            {
+                return false;
+            }
+
+            using var cb = new ClosestRayResultCallback(ref sourcse, ref destination);
+            eworld.PhysicsWorld.RayTest(sourcse, destination, cb);
+            if (cb.HasHit)
+            {
+                ProssecesHitPoint(new Vector3d(cb.HitPointWorld.X, cb.HitPointWorld.Y, cb.HitPointWorld.Z), new Vector3d(cb.HitNormalWorld.X, cb.HitNormalWorld.Y, cb.HitNormalWorld.Z));
+                var type = cb.CollisionObject.UserObject.GetType();
+                if (type == typeof(InputPlane))
+                {
+                    _snaping = true;
+                    return ProossesInputPlane(cb);
+                }
+                else if (type == typeof(MeshInputPlane))
+                {
+                    _snaping = true;
+                    return ProossesMeshInputPlane(cb);
+                }
+                else if (typeof(Collider).IsAssignableFrom(type))
+                {
+                    _snaping = false;
+                    return ProssesCollider(cb);
+                }
+            }
+            _snaping = false;
+            return false;
+        }
 
 		public void Update()
 		{

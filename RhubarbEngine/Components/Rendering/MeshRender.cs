@@ -250,7 +250,7 @@ namespace RhubarbEngine.Components.Rendering
 			_loaded = _meshPieces.Length > 0 && _mainRS.Count > 0 && _shadowRS.Count > 0;
 		}
 
-		private MeshPiece[] _meshPieces = new MeshPiece[0];
+		private MeshPiece[] _meshPieces = Array.Empty<MeshPiece>();
         private GraphicsDevice Gd
         {
             get
@@ -259,11 +259,11 @@ namespace RhubarbEngine.Components.Rendering
             }
         }
 
-        private readonly List<Pipeline> _mainPipeline = new List<Pipeline>();
-		private readonly List<Pipeline> _shadowpipeline = new List<Pipeline>();
+        private readonly List<Pipeline> _mainPipeline = new();
+		private readonly List<Pipeline> _shadowpipeline = new();
 		private DeviceBuffer _wvpBuffer;
-		private readonly List<ResourceSet> _mainRS = new List<ResourceSet>();
-		private readonly List<ResourceSet> _shadowRS = new List<ResourceSet>();
+		private readonly List<ResourceSet> _mainRS = new();
+		private readonly List<ResourceSet> _shadowRS = new();
 		private bool _loaded;
 
 		public override void Render(GraphicsDevice gd, CommandList cl, UBO ubo)
@@ -299,11 +299,11 @@ namespace RhubarbEngine.Components.Rendering
 				var a = i % _meshPieces.Length;
 				var b = i % Materials.Length;
 				var piece = _meshPieces[a];
-				cl.SetPipeline((shadow) ? _shadowpipeline[b] : _mainPipeline[b]);
+				cl.SetPipeline(shadow ? _shadowpipeline[b] : _mainPipeline[b]);
 				cl.SetVertexBuffer(0, piece.Positions);
 				cl.SetVertexBuffer(1, piece.TexCoords);
 				cl.SetIndexBuffer(piece.Indices, IndexFormat.UInt32);
-				cl.SetGraphicsResourceSet(0, (shadow) ? _shadowRS[b] : _mainRS[b]);
+				cl.SetGraphicsResourceSet(0, shadow ? _shadowRS[b] : _mainRS[b]);
 				cl.DrawIndexed(piece.IndexCount);
 			}
 		}

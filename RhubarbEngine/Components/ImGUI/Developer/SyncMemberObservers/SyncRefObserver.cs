@@ -37,7 +37,7 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 1f, 0, 0)).ToSystem());
 			}
 			Interaction.GrabbableHolder source = null;
-			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
+			switch (canvas.imputPlane.Target?.Source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
 					source = World.LeftLaserGrabbableHolder;

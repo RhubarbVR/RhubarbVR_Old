@@ -738,7 +738,7 @@ namespace RhubarbEngine.World
 				}
 				else
 				{
-					worldManager.BuildLocalWorld(this);
+                    WorldManager.BuildLocalWorld(this);
 				}
 			}
 		}

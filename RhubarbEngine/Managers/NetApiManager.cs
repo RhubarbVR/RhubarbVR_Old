@@ -15,7 +15,7 @@ namespace RhubarbEngine.Managers
 
 		public bool islogin = false;
 
-		public IManager initialize(Engine _engine)
+		public IManager Initialize(Engine _engine)
 		{
 			this._engine = _engine;
 			this._engine.logger.Log("Starting Cloud Interface");

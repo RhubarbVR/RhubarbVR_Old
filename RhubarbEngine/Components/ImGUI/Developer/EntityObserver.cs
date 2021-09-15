@@ -91,7 +91,7 @@ namespace RhubarbEngine.Components.ImGUI
 					{
 						var obs = _e.AttachComponent<WorkerObserver>();
 						obs.fieldName.Value = field.Name;
-						obs.target.Target = ((Worker)field.GetValue(target.Target));
+                        obs.target.Target = (Worker)field.GetValue(target.Target);
 						children.Add().Target = obs;
 					}
 				}
@@ -101,17 +101,17 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void Dispose()
 		{
-			base.Dispose();
-			if (World.lastEntityObserver == this)
-			{
-				World.lastEntityObserver = null;
-			}
+            if (World.lastEntityObserver == this)
+            {
+                World.lastEntityObserver = null;
+            }
+            base.Dispose();
 		}
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
 			Interaction.GrabbableHolder source = null;
-			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
+			switch (canvas.imputPlane.Target?.Source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
 					source = World.LeftLaserGrabbableHolder;

@@ -11,16 +11,16 @@ namespace RhubarbEngine.Managers
 {
 	public class PlatformInfoManager : IManager
 	{
-		private Engine engine;
+		private Engine _engine;
 
-		private OperatingSystem os = Environment.OSVersion;
+		private readonly OperatingSystem _os = Environment.OSVersion;
 
 		public Platform platform = Platform.UNKNOWN;
 		public string CPU { get; private set; } = "UNKNOWN";
 		public string GPU { get; private set; } = "UNKNOWN";
-		public long memoryBytes { get; private set; } = -1L;
+		public long MemoryBytes { get; private set; } = -1L;
 
-		public long vRAM_Bytes { get; private set; } = -1L;
+		public long VRAM_Bytes { get; private set; } = -1L;
 
 		public DateTime startTime = DateTime.UtcNow;
 
@@ -40,9 +40,9 @@ namespace RhubarbEngine.Managers
 
 		public int ThreadCount;
 
-		public IManager initialize(Engine _engine)
+		public IManager Initialize(Engine _engine)
 		{
-			engine = _engine;
+			this._engine = _engine;
 			sw = new Stopwatch();
 			sw.Start();
 
@@ -74,28 +74,29 @@ namespace RhubarbEngine.Managers
 			}
 			catch (Exception e)
 			{
-				engine.logger.Log("Failed to get CPU: " + e);
+				this._engine.logger.Log("Failed to get CPU: " + e);
 			}
 
-			engine.logger.Log("Platform: " + platform.ToString() + "/" + os.Platform + " CPU: " + CPU + " RamBytes: " + memoryBytes + " GPU: " + GPU + " VRAMBytes: " + vRAM_Bytes, true);
+			this._engine.logger.Log("Platform: " + platform.ToString() + "/" + _os.Platform + " CPU: " + CPU + " RamBytes: " + MemoryBytes + " GPU: " + GPU + " VRAMBytes: " + VRAM_Bytes, true);
 			return this;
 		}
-		long currentFrameTicks;
-
-		float vsync = 0f;
-		public void Update()
+		long _currentFrameTicks;
+        readonly float _vsync;
+        public void Update()
 		{
-			previousFrameTicks = currentFrameTicks;
-			currentFrameTicks = sw.ElapsedTicks;
-			deltaSeconds = (currentFrameTicks - previousFrameTicks) / (double)Stopwatch.Frequency;
+			previousFrameTicks = _currentFrameTicks;
+			_currentFrameTicks = sw.ElapsedTicks;
+			deltaSeconds = (_currentFrameTicks - previousFrameTicks) / (double)Stopwatch.Frequency;
 			FrameRate = 1f / (float)deltaSeconds;
-			AvrageFrameRate = (FrameRate) * 0.8f + (AvrageFrameRate) * 0.2f;
-			if (vsync != 0)
+			AvrageFrameRate = (FrameRate * 0.8f) + (AvrageFrameRate * 0.2f);
+			if (_vsync != 0)
 			{
-				var sleepTime = (int)(((1 / vsync) - deltaSeconds) * 1000);
+				var sleepTime = (int)(((1 / _vsync) - deltaSeconds) * 1000);
 				if (sleepTime > 0)
-					Thread.Sleep(sleepTime);
-			}
+                {
+                    Thread.Sleep(sleepTime);
+                }
+            }
 		}
 	}
 }

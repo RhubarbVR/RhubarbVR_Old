@@ -30,9 +30,11 @@ namespace RhubarbEngine.Components.ImGUI
 			labels = new SyncValueList<string>(this, newRefIds);
 			action = new SyncDelegate<Action<string>>(this, newRefIds);
 			widths = new SyncValueList<float>(this, newRefIds);
-			hight = new Sync<float>(this, newRefIds);
-			hight.Value = 0.06666666666666666f;
-		}
+            hight = new Sync<float>(this, newRefIds)
+            {
+                Value = 0.06666666666666666f
+            };
+        }
 
 		public ImGUIButtonRow(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
@@ -44,7 +46,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			for (int i = 0; i < labels.Count; i++)
+			for (var i = 0; i < labels.Count; i++)
 			{
 				var label = labels[i].Value;
 				ImGui.SameLine();

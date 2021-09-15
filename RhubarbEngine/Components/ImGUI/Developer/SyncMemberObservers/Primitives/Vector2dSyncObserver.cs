@@ -41,7 +41,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			bool Changeboarder = false;
+			var Changeboarder = false;
 			if (target.Target?.Driven ?? false)
 			{
 				var e = ImGui.GetStyleColorVec4(ImGuiCol.FrameBg);
@@ -49,7 +49,7 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 1f, 0, 0)).ToSystem());
 			}
 			Interaction.GrabbableHolder source = null;
-			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
+			switch (canvas.imputPlane.Target?.Source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
 					source = World.LeftLaserGrabbableHolder;
@@ -76,12 +76,14 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 3);
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
-			Vector2d val = target.Target?.Value ?? Vector2d.Zero;
+			var val = target.Target?.Value ?? Vector2d.Zero;
 			if (ImGui.DragScalarN((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ImGuiDataType.Double, (IntPtr)(&val), 2, 0.1f))
 			{
 				if (target.Target != null)
-					target.Target.Value = val;
-			}
+                {
+                    target.Target.Value = val;
+                }
+            }
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				if (source != null)
@@ -97,10 +99,13 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-					Sync<Vector2d> e = (Sync<Vector2d>)source.Referencer.Target;
+                    var e = (Sync<Vector2d>)source.Referencer.Target;
 					if (target.Target != null)
-						target.Target.Value = e.Value;
-					source.Referencer.Target = null;
+                    {
+                        target.Target.Value = e.Value;
+                    }
+
+                    source.Referencer.Target = null;
 				}
 				ImGui.PopStyleVar();
 				ImGui.PopStyleColor();

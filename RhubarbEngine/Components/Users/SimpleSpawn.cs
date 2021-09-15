@@ -14,10 +14,6 @@ using RhubarbEngine.Input;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using RhubarbEngine.Components.Interaction;
 
-namespace RhubarbEngine
-{
-
-}
 
 namespace RhubarbEngine.Components.Users
 {
@@ -34,40 +30,40 @@ namespace RhubarbEngine.Components.Users
 			}
 			if (World.LocalUser.userroot.Target == null)
 			{
-				Entity rootent = World.RootEntity.AddChild();
+				var rootent = World.RootEntity.AddChild();
 				rootent.name.Value = $"{World.LocalUser.username.Value} (ID:{World.LocalUser.ReferenceID.id.ToHexString()})";
 				rootent.persistence.Value = false;
 				rootent.Manager = World.LocalUser;
-				UserRoot userRoot = rootent.AttachComponent<UserRoot>();
+				var userRoot = rootent.AttachComponent<UserRoot>();
 				userRoot.user.Target = World.LocalUser;
 				World.LocalUser.userroot.Target = userRoot;
-				Entity head = rootent.AddChild("Head");
+				var head = rootent.AddChild("Head");
 				head.AttachComponent<Head>().userroot.Target = userRoot;
 				var grabHolder = head.AddChild("GrabHolder").AttachComponent<GrabbableHolder>();
-				grabHolder.initializeGrabHolder(InteractionSource.HeadLaser);
+				grabHolder.InitializeGrabHolder(InteractionSource.HeadLaser);
 				userRoot.Head.Target = head;
-				Entity left = rootent.AddChild("Left hand");
-				Entity right = rootent.AddChild("Right hand");
+				var left = rootent.AddChild("Left hand");
+				var right = rootent.AddChild("Right hand");
 
 
 				userRoot.LeftHand.Target = left;
 				userRoot.RightHand.Target = right;
-				Hand leftcomp = left.AttachComponent<Hand>();
+				var leftcomp = left.AttachComponent<Hand>();
 				leftcomp.userroot.Target = userRoot;
 				leftcomp.creality.Value = RhubarbEngine.Input.Creality.Left;
-				Hand rightcomp = right.AttachComponent<Hand>();
+				var rightcomp = right.AttachComponent<Hand>();
 				rightcomp.creality.Value = RhubarbEngine.Input.Creality.Right;
 				rightcomp.userroot.Target = userRoot;
 
 
-				Entity obj = World.worldManager.AddMesh<ArrowMesh>(left);
-				Entity obj2 = World.worldManager.AddMesh<ArrowMesh>(right);
-				Entity obj3 = World.worldManager.AddMesh<ArrowMesh>(head);
+				var obj = Managers.WorldManager.AddMesh<ArrowMesh>(left);
+				var obj2 = Managers.WorldManager.AddMesh<ArrowMesh>(right);
+				var obj3 = Managers.WorldManager.AddMesh<ArrowMesh>(head);
 
 				var ileft = left.AttachComponent<GrabbableHolder>();
 				var iright = right.AttachComponent<GrabbableHolder>();
-				ileft.initializeGrabHolder(InteractionSource.LeftLaser);
-				iright.initializeGrabHolder(InteractionSource.RightLaser);
+				ileft.InitializeGrabHolder(InteractionSource.LeftLaser);
+				iright.InitializeGrabHolder(InteractionSource.RightLaser);
 
 				obj3.position.Value = new Vector3f(0f, 0f, 0.5f);
 				obj.scale.Value = new Vector3f(0.2f);

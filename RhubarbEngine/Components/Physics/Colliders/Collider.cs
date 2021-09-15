@@ -149,27 +149,25 @@ namespace RhubarbEngine.Components.Physics.Colliders
 		}
 		private void UpdateMassListner(IChangeable val)
 		{
-			var isDynamic = (mass.Value != 0.0f);
+			var isDynamic = mass.Value != 0.0f;
 			var localInertia = isDynamic ? collisionObject.CollisionShape.CalculateLocalInertia(mass.Value) : BulletSharp.Math.Vector3.Zero;
 			collisionObject.SetMassProps(mass.Value, localInertia);
 			collisionObject.Activate(true);
 		}
-		public RigidBody LocalCreateRigidBody(float mass, Matrix startTransform, CollisionShape shape)
+		public static RigidBody LocalCreateRigidBody(float mass, Matrix startTransform, CollisionShape shape)
 		{
 			//rigidbody is dynamic if and only if mass is non zero, otherwise static
-			var isDynamic = (mass != 0.0f);
+			var isDynamic = mass != 0.0f;
 			var localInertia = isDynamic ? shape.CalculateLocalInertia(mass) : BulletSharp.Math.Vector3.Zero;
 
-			using (var rbInfo = new RigidBodyConstructionInfo(mass, null, shape, localInertia))
-			{
-				var body = new RigidBody(rbInfo)
-				{
-					ContactProcessingThreshold = 0.0f,
-					WorldTransform = startTransform
-				};
-				return body;
-			}
-		}
+            using var rbInfo = new RigidBodyConstructionInfo(mass, null, shape, localInertia);
+            var body = new RigidBody(rbInfo)
+            {
+                ContactProcessingThreshold = 0.0f,
+                WorldTransform = startTransform
+            };
+            return body;
+        }
 
 		public void BuildCollissionObject(RigidBody newCol)
 		{

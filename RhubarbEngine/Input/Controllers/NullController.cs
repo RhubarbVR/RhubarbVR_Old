@@ -11,28 +11,100 @@ namespace RhubarbEngine.Input.Controllers
 {
 	public class NullController : IController
 	{
-		string IController.ControllerName => "Null";
+        string IController.ControllerName
+        {
+            get
+            {
+                return "Null";
+            }
+        }
 
-		Creality IController.Creality => Creality.None;
+        Creality IController.Creality
+        {
+            get
+            {
+                return Creality.None;
+            }
+        }
 
-		bool IController.PrimaryPress => false;
+        bool IController.PrimaryPress
+        {
+            get
+            {
+                return false;
+            }
+        }
 
-		bool IController.TriggerTouching => false;
+        bool IController.TriggerTouching
+        {
+            get
+            {
+                return false;
+            }
+        }
 
-		bool IController.AxisTouching => false;
+        bool IController.AxisTouching
+        {
+            get
+            {
+                return false;
+            }
+        }
 
-		bool IController.SystemPress => false;
+        bool IController.SystemPress
+        {
+            get
+            {
+                return false;
+            }
+        }
 
-		bool IController.MenuPress => false;
+        bool IController.MenuPress
+        {
+            get
+            {
+                return false;
+            }
+        }
 
-		bool IController.GrabPress => false;
+        bool IController.GrabPress
+        {
+            get
+            {
+                return false;
+            }
+        }
 
-		bool IController.SecondaryPress => false;
+        bool IController.SecondaryPress
+        {
+            get
+            {
+                return false;
+            }
+        }
 
-		Vector2f IController.Axis => Vector2f.Zero;
+        Vector2f IController.Axis
+        {
+            get
+            {
+                return Vector2f.Zero;
+            }
+        }
 
-		float IController.TriggerAix => 0f;
+        float IController.TriggerAix
+        {
+            get
+            {
+                return 0f;
+            }
+        }
 
-		Matrix4x4 IController.Posistion => Matrix4x4.CreateScale(1);
-	}
+        Matrix4x4 IController.Posistion
+        {
+            get
+            {
+                return Matrix4x4.CreateScale(1);
+            }
+        }
+    }
 }

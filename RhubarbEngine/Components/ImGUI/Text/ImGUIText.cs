@@ -37,9 +37,11 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			base.BuildSyncObjs(newRefIds);
 			text = new Sync<string>(this, newRefIds);
-			textType = new Sync<TextType>(this, newRefIds);
-			textType.Value = TextType.Normal;
-		}
+            textType = new Sync<TextType>(this, newRefIds)
+            {
+                Value = TextType.Normal
+            };
+        }
 
 		public ImGUIText(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{

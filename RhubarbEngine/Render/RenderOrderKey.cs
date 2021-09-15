@@ -19,7 +19,7 @@ namespace RhubarbEngine.Render
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static RenderOrderKey Create(uint RenderOffsetint, float cameraDistance)
 		{
-			uint cameraDistanceInt = (uint)Math.Min(uint.MaxValue, (cameraDistance * 1000f));
+			var cameraDistanceInt = (uint)Math.Min(uint.MaxValue, (cameraDistance * 1000f));
 
 			return new RenderOrderKey(
 				((ulong)RenderOffsetint << 32) +

@@ -35,7 +35,7 @@ namespace RhubarbEngine.Managers
 	{
 		public Engine engine;
 
-		public SynchronizedCollection<World.World> worlds = new SynchronizedCollection<World.World>();
+		public SynchronizedCollection<World.World> worlds = new();
 
 		public World.World privateOverlay;
 
@@ -148,7 +148,7 @@ namespace RhubarbEngine.Managers
 		}
 		public byte[] WorldToBytes(World.World world)
 		{
-			var val = new byte[] { };
+			var val = Array.Empty<byte>();
 			if (FocusedWorld != null)
 			{
 				var node = world.Serialize();
@@ -162,7 +162,7 @@ namespace RhubarbEngine.Managers
 			return WorldToBytes(FocusedWorld);
 		}
 
-		public IManager initialize(Engine _engine)
+		public IManager Initialize(Engine _engine)
 		{
 			engine = _engine;
 
@@ -187,7 +187,7 @@ namespace RhubarbEngine.Managers
 						dontSaveLocal = true;
 						Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
 						localWorld = new World.World(this, "TempLoaclWorld", 16, false, true);
-						BuildLocalWorld(localWorld);
+                        BuildLocalWorld(localWorld);
 					}
 				}
 				else
@@ -195,7 +195,7 @@ namespace RhubarbEngine.Managers
 					try
 					{
 						localWorld = new World.World(this, "LocalWorld", 16, false, true);
-						BuildLocalWorld(localWorld);
+                        BuildLocalWorld(localWorld);
 					}
 					catch (Exception e)
 					{
@@ -217,12 +217,12 @@ namespace RhubarbEngine.Managers
 			return this;
 		}
 
-        private void JoinSessionFromUUID(string session, bool v)
-        {
-            throw new NotImplementedException();
-        }
+        //private void JoinSessionFromUUID(string session, bool v)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public ImGUICanvas BuildUI(Entity e)
+        public static ImGUICanvas BuildUI(Entity e)
 		{
 
 			var shader = e.World.staticAssets.basicUnlitShader;
@@ -244,7 +244,7 @@ namespace RhubarbEngine.Managers
 			return imGUICanvas;
 		}
 
-		public WebBrowser BuildWebBrowser(Entity e, Vector2u pixsize, Vector2f size, bool globalAudio = false)
+		public static WebBrowser BuildWebBrowser(Entity e, Vector2u pixsize, Vector2f size, bool globalAudio = false)
 		{
 			var shader = e.World.staticAssets.basicUnlitShader;
 			var bmesh = e.AttachComponent<PlaneMesh>();
@@ -277,7 +277,7 @@ namespace RhubarbEngine.Managers
 			return imGUICanvas;
 		}
 
-		public void BuildLocalWorld(World.World world)
+		public static void BuildLocalWorld(World.World world)
 		{
 			world.RootEntity.AttachComponent<SimpleSpawn>();
 			var floor = world.RootEntity.AddChild("Floor");
@@ -311,7 +311,7 @@ namespace RhubarbEngine.Managers
 
 		}
 
-		public void AttachSpiningCubes(Entity root, AssetProvider<RTexture2D> textue2D)
+		public static void AttachSpiningCubes(Entity root, AssetProvider<RTexture2D> textue2D)
 		{
 			var speed = 0.5f;
 			var group1 = root.AddChild("group1");
@@ -346,28 +346,28 @@ namespace RhubarbEngine.Managers
 			mit.Shader.Target = shader;
 			var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
 			field.field.Target = textue2D;
-			BuildGroup(bmesh, mit, group1);
-			BuildGroup(bmesh, mit, group2);
-			BuildGroup(bmesh, mit, group3);
-			BuildGroup(bmesh, mit, group4);
-			BuildGroup(bmesh, mit, group5);
-			BuildGroup(bmesh, mit, group6);
-			BuildGroup(bmesh, mit, group11);
-			BuildGroup(bmesh, mit, group21);
-			BuildGroup(bmesh, mit, group31);
-			BuildGroup(bmesh, mit, group41);
-			BuildGroup(bmesh, mit, group51);
-			BuildGroup(bmesh, mit, group61);
+            BuildGroup(bmesh, mit, group1);
+            BuildGroup(bmesh, mit, group2);
+            BuildGroup(bmesh, mit, group3);
+            BuildGroup(bmesh, mit, group4);
+            BuildGroup(bmesh, mit, group5);
+            BuildGroup(bmesh, mit, group6);
+            BuildGroup(bmesh, mit, group11);
+            BuildGroup(bmesh, mit, group21);
+            BuildGroup(bmesh, mit, group31);
+            BuildGroup(bmesh, mit, group41);
+            BuildGroup(bmesh, mit, group51);
+            BuildGroup(bmesh, mit, group61);
 
 		}
-		static readonly Random _random = new Random();
+		static readonly Random _random = new();
 		static float NextFloat()
 		{
 			var buffer = new byte[4];
 			_random.NextBytes(buffer);
 			return BitConverter.ToSingle(buffer, 0);
 		}
-		public void BuildGroup(BoxMesh bmesh, RMaterial mit, Entity entity)
+		public static void BuildGroup(BoxMesh bmesh, RMaterial mit, Entity entity)
 		{
 			for (var i = 0; i < 6; i++)
 			{
@@ -376,11 +376,11 @@ namespace RhubarbEngine.Managers
 				var cube = cubeholder.AddChild("Cube");
 				cube.position.Value = new Vector3f(0, 15, 0);
 				cube.scale.Value = new Vector3f(0.5f);
-				AttachRender(bmesh, mit, cube);
+                AttachRender(bmesh, mit, cube);
 			}
 		}
 
-		public void AttachRender(BoxMesh bmesh, RMaterial mit, Entity entity)
+		public static void AttachRender(BoxMesh bmesh, RMaterial mit, Entity entity)
 		{
 			var meshRender = entity.AttachComponent<MeshRender>();
 			meshRender.Materials.Add().Target = mit;
@@ -388,7 +388,7 @@ namespace RhubarbEngine.Managers
 		}
 
 
-		public Entity AddMesh<T>(Entity ea) where T : ProceduralMesh
+		public static Entity AddMesh<T>(Entity ea) where T : ProceduralMesh
 		{
 			var e = ea.AddChild();
 			var shader = e.World.staticAssets.basicUnlitShader;

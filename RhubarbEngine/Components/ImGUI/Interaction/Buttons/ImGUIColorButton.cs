@@ -31,9 +31,11 @@ namespace RhubarbEngine.Components.ImGUI
 			base.BuildSyncObjs(newRefIds);
 			color = new Sync<Colorf>(this, newRefIds);
 			id = new Sync<string>(this, newRefIds);
-			imGuiColorEditFlags = new Sync<ImGuiColorEditFlags>(this, newRefIds);
-			imGuiColorEditFlags.Value = ImGuiColorEditFlags.None;
-			action = new SyncDelegate(this, newRefIds);
+            imGuiColorEditFlags = new Sync<ImGuiColorEditFlags>(this, newRefIds)
+            {
+                Value = ImGuiColorEditFlags.None
+            };
+            action = new SyncDelegate(this, newRefIds);
 		}
 
 		public ImGUIColorButton(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

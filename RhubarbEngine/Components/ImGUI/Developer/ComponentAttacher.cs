@@ -91,7 +91,7 @@ namespace RhubarbEngine.Components.ImGUI
 			string[] pa;
 			if (string.IsNullOrEmpty(path.Value))
 			{
-				pa = new string[0] { };
+				pa = Array.Empty<string>();
 			}
 			else
 			{
@@ -103,15 +103,8 @@ namespace RhubarbEngine.Components.ImGUI
 						select e;
 				}
 				catch { p = null; };
-				if (p == null)
-				{
-					pa = new string[0] { };
-				}
-				else
-				{
-					pa = p.ToArray();
-				}
-			}
+				pa = p == null ? Array.Empty<string>() : p.ToArray();
+            }
 
 			try
 			{

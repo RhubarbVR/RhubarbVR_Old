@@ -27,7 +27,7 @@ namespace RhubarbEngine.Render
 		private Pipeline _pipeline;
 		private DeviceBuffer _ubo;
 		private ResourceSet _resourceSet;
-		private readonly List<IDisposable> _disposables = new List<IDisposable>();
+		private readonly List<IDisposable> _disposables = new();
 
 		public Skybox(
 			Image<Rgba32> front, Image<Rgba32> back, Image<Rgba32> left,
@@ -43,28 +43,28 @@ namespace RhubarbEngine.Render
 
 		public void CreateDeviceObjects(GraphicsDevice gd, OutputDescription outputs)
 		{
-			ResourceFactory factory = gd.ResourceFactory;
+			var factory = gd.ResourceFactory;
 
-			_vb = factory.CreateBuffer(new BufferDescription((uint)(s_vertices.Length * 12), BufferUsage.VertexBuffer));
-			gd.UpdateBuffer(_vb, 0, s_vertices);
+			_vb = factory.CreateBuffer(new BufferDescription((uint)(_vertices.Length * 12), BufferUsage.VertexBuffer));
+			gd.UpdateBuffer(_vb, 0, _vertices);
 
-			_ib = factory.CreateBuffer(new BufferDescription((uint)(s_indices.Length * 2), BufferUsage.IndexBuffer));
-			gd.UpdateBuffer(_ib, 0, s_indices);
+			_ib = factory.CreateBuffer(new BufferDescription((uint)(_indices.Length * 2), BufferUsage.IndexBuffer));
+			gd.UpdateBuffer(_ib, 0, _indices);
 
-			ImageSharpCubemapTexture imageSharpCubemapTexture = new ImageSharpCubemapTexture(_front, _back, _top, _bottom, _right, _left, true);
+			var imageSharpCubemapTexture = new ImageSharpCubemapTexture(_front, _back, _top, _bottom, _right, _left, true);
 
-			Texture textureCube = imageSharpCubemapTexture.CreateDeviceTexture(gd, factory);
-			TextureView textureView = factory.CreateTextureView(new TextureViewDescription(textureCube));
+			var textureCube = imageSharpCubemapTexture.CreateDeviceTexture(gd, factory);
+			var textureView = factory.CreateTextureView(new TextureViewDescription(textureCube));
 
-			VertexLayoutDescription[] vertexLayouts = new VertexLayoutDescription[]
+			var vertexLayouts = new VertexLayoutDescription[]
 			{
 				new VertexLayoutDescription(
 					new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3))
 			};
 
-			Veldrid.Shader[] shaders = factory.CreateFromSpirv(
-				new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(VertexShader), "main"),
-				new ShaderDescription(ShaderStages.Fragment, Encoding.ASCII.GetBytes(FragmentShader), "main"));
+			var shaders = factory.CreateFromSpirv(
+				new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(VERTEX_SHADER), "main"),
+				new ShaderDescription(ShaderStages.Fragment, Encoding.ASCII.GetBytes(FRAGMENT_SHADER), "main"));
 			_disposables.Add(shaders[0]);
 			_disposables.Add(shaders[1]);
 
@@ -73,7 +73,7 @@ namespace RhubarbEngine.Render
 				new ResourceLayoutElementDescription("CubeTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
 				new ResourceLayoutElementDescription("CubeSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
 
-			GraphicsPipelineDescription pd = new GraphicsPipelineDescription(
+			var pd = new GraphicsPipelineDescription(
 				BlendStateDescription.SingleAlphaBlend,
 				DepthStencilStateDescription.DepthOnlyLessEqual,
 				new RasterizerStateDescription(FaceCullMode.None, PolygonFillMode.Solid, FrontFace.Clockwise, true, true),
@@ -102,12 +102,12 @@ namespace RhubarbEngine.Render
 			cl.SetGraphicsResourceSet(0, _resourceSet);
 			float depth = 1;
 			cl.SetViewport(0, new Viewport(0, 0, fb.Width, fb.Height, depth, depth));
-			cl.DrawIndexed((uint)s_indices.Length, 1, 0, 0, 0);
+			cl.DrawIndexed((uint)_indices.Length, 1, 0, 0, 0);
 
 			cl.SetViewport(0, new Viewport(0, 0, fb.Width, fb.Height, 0, 1));
 		}
 
-		private static readonly Vector3[] s_vertices = new Vector3[]
+		private static readonly Vector3[] _vertices = new Vector3[]
 		{
             // Top
             new Vector3(-20.0f,20.0f,-20.0f),
@@ -141,7 +141,7 @@ namespace RhubarbEngine.Render
 			new Vector3(-20.0f,-20.0f,20.0f),
 		};
 
-		private static readonly ushort[] s_indices = new ushort[]
+		private static readonly ushort[] _indices = new ushort[]
 		{
 			0,1,2, 0,2,3,
 			4,5,6, 4,6,7,
@@ -151,7 +151,7 @@ namespace RhubarbEngine.Render
 			20,21,22, 20,22,23,
 		};
 
-		internal const string VertexShader =
+		internal const string VERTEX_SHADER =
 @"
 #version 450
 
@@ -178,7 +178,7 @@ void main()
 }
 ";
 
-		internal const string FragmentShader =
+		internal const string FRAGMENT_SHADER =
 @"
 #version 450
 
