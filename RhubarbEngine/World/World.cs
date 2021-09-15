@@ -25,7 +25,7 @@ namespace RhubarbEngine.World
 {
 	public class World : IWorldObject
 	{
-		public UpdateLists updateLists = new UpdateLists();
+		public UpdateLists updateLists = new();
 
 		public StaticAssets staticAssets;
 
@@ -171,7 +171,7 @@ namespace RhubarbEngine.World
 							Logger.Log("Loading Start State");
 							try
 							{
-								var node = ((DataNodeGroup)dataNodeGroup.GetValue("data"));
+								var node = (DataNodeGroup)dataNodeGroup.GetValue("data");
 								var loadded = new List<Action>();
 								DeSerialize(node, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
 								LoadSelf();
@@ -234,9 +234,9 @@ namespace RhubarbEngine.World
 				Logger.Log("Sent start state");
 				var send = new DataNodeGroup();
 				send.SetValue("responses", new DataNode<string>("WorldSync"));
-				var value = Serialize(true);
-				send.SetValue("data", value);
-				peer.Send(send.getByteArray(), ReliabilityLevel.Reliable);
+				var value = Serialize(new WorkerSerializerObject(true));
+                send.SetValue("data", value);
+				peer.Send(send.GetByteArray(), ReliabilityLevel.Reliable);
 			}
 		}
 
@@ -351,33 +351,12 @@ namespace RhubarbEngine.World
 		{
 			get
 			{
-				if (Userspace)
-				{
-					return 1;
-				}
-				else
-				{
-					if (_maxUsers.Value >= 0)
-					{
-						return _maxUsers.Value;
-					}
-					else
-					{
-						return 1;
-					}
-				}
-			}
+                return Userspace ? 1 : _maxUsers.Value >= 0 ? _maxUsers.Value : 1;
+            }
 			set
 			{
-				if (value >= 0)
-				{
-					_maxUsers.Value = value;
-				}
-				else
-				{
-					_maxUsers.Value = 1;
-				}
-			}
+				_maxUsers.Value = value >= 0 ? value : 1;
+            }
 		}
 		public DateTime LastFocusChange { get; private set; }
 
@@ -415,11 +394,11 @@ namespace RhubarbEngine.World
 			}
 		}
 
-		private readonly SynchronizedCollection<Entity> _entitys = new SynchronizedCollection<Entity>();
+		private readonly SynchronizedCollection<Entity> _entitys = new();
 
-		private readonly ConcurrentDictionary<NetPointer, IWorldObject> _worldObjects = new ConcurrentDictionary<NetPointer, IWorldObject>();
+		private readonly ConcurrentDictionary<NetPointer, IWorldObject> _worldObjects = new();
 
-		public ConcurrentDictionary<ulong, List<(DataNodeGroup, DateTime, Peer)>> unassignedValues = new ConcurrentDictionary<ulong, List<(DataNodeGroup, DateTime, Peer)>>();
+		public ConcurrentDictionary<ulong, List<(DataNodeGroup, DateTime, Peer)>> unassignedValues = new();
 
 		public void AddWorldObj(IWorldObject obj)
 		{
@@ -433,7 +412,7 @@ namespace RhubarbEngine.World
 						var member = (ISyncMember)obj;
 						foreach (var item in unassignedValues[obj.ReferenceID.id])
 						{
-							member.ReceiveData((DataNodeGroup)(item.Item1).GetValue("data"), (item.Item3));
+							member.ReceiveData((DataNodeGroup)item.Item1.GetValue("data"), item.Item3);
 						}
 						unassignedValues.TryRemove(obj.ReferenceID.id, out var var);
 					}
@@ -548,7 +527,7 @@ namespace RhubarbEngine.World
 				{
 					if (((Worker)val) != null)
 					{
-						((Worker)val).onUpdate();
+						((Worker)val).OnUpdate();
 					}
 				});
 			}
@@ -566,7 +545,7 @@ namespace RhubarbEngine.World
 			{
 				if (((Worker)val) != null)
 				{
-					((Worker)val).onUserJoined(user);
+					((Worker)val).OnUserJoined(user);
 				}
 			}
 		}
@@ -581,15 +560,10 @@ namespace RhubarbEngine.World
 			_collisionConfiguration = new DefaultCollisionConfiguration();
 			_dispatcher = new CollisionDispatcher(_collisionConfiguration);
 			_broadphase = new DbvtBroadphase();
-			if (worldManager.engine.settingsObject.PhysicsSettings.ThreadCount == -1)
-			{
-				_constraintSolver = new ConstraintSolverPoolMultiThreaded(worldManager.engine.platformInfo.ThreadCount - 1);
-			}
-			else
-			{
-				_constraintSolver = new ConstraintSolverPoolMultiThreaded(worldManager.engine.settingsObject.PhysicsSettings.ThreadCount);
-			}
-			PhysicsWorld = new DiscreteDynamicsWorld(_dispatcher, _broadphase, _constraintSolver, _collisionConfiguration);
+			_constraintSolver = worldManager.engine.settingsObject.PhysicsSettings.ThreadCount == -1
+                ? new ConstraintSolverPoolMultiThreaded(worldManager.engine.platformInfo.ThreadCount - 1)
+                : new ConstraintSolverPoolMultiThreaded(worldManager.engine.settingsObject.PhysicsSettings.ThreadCount);
+            PhysicsWorld = new DiscreteDynamicsWorld(_dispatcher, _broadphase, _constraintSolver, _collisionConfiguration);
 			staticAssets = new StaticAssets(this);
 		}
 
@@ -639,7 +613,7 @@ namespace RhubarbEngine.World
 		public Sync<bool> Eighteenandolder;
 		[NoSave]
 		public Sync<bool> Mobilefriendly;
-		public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false, DataNodeGroup datanode = null, bool networksession = false) : this(_worldManager)
+		public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false, DataNodeGroup datanode = null) : this(_worldManager)
 		{
 			var random = new Random();
 			Posoffset = (byte)random.Next();
@@ -738,44 +712,16 @@ namespace RhubarbEngine.World
 				}
 				else
 				{
-					worldManager.BuildLocalWorld(this);
+                    WorldManager.BuildLocalWorld(this);
 				}
 			}
 		}
 
 		public NetPointer BuildRefID()
 		{
-			position = position + Posoffset;
-			if (!_worldObjects.ContainsKey(NetPointer.BuildID(position, user)))
-			{
-				return NetPointer.BuildID(position, user);
-			}
-			else
-			{
-				return BuildRefID();
-			}
-		}
-
-		public DataNodeGroup Serialize(bool netSave = false)
-		{
-			var fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-			var obj = new DataNodeGroup();
-			foreach (var field in fields)
-			{
-				if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && !(!netSave && (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length > 0)) && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))
-				{
-					if (((IWorldObject)field.GetValue(this)) != null)
-					{
-						obj.SetValue(field.Name, ((IWorldObject)field.GetValue(this)).Serialize(netSave));
-					}
-				}
-			}
-			if (netSave)
-			{
-				obj.SetValue("StartTime", new DataNode<DateTime>(StartTime));
-			}
-			return obj;
-		}
+			position += Posoffset;
+            return !_worldObjects.ContainsKey(NetPointer.BuildID(position, user)) ? NetPointer.BuildID(position, user) : BuildRefID();
+        }
 
 		public void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = true, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
 		{
@@ -813,8 +759,12 @@ namespace RhubarbEngine.World
 
 		public DataNodeGroup Serialize()
 		{
-			return Serialize(false);
+			return Serialize(new WorkerSerializerObject(false));
 		}
 
-	}
+        public DataNodeGroup Serialize(WorkerSerializerObject serializerObject)
+        {
+            return serializerObject.CommonWorkerSerialize(this);
+        }
+    }
 }

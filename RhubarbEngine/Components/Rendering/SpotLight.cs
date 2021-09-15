@@ -28,11 +28,23 @@ namespace RhubarbEngine.Components.Rendering
 	[Category(new string[] { "Rendering" })]
 	public class SpotLight : Component, IRenderObject
 	{
-		public RenderFrequency renderFrac => throw new NotImplementedException();
+        public RenderFrequency RenderFrac
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		public bool Threaded => throw new NotImplementedException();
+        public bool Threaded
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-		public SpotLight(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public SpotLight(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}

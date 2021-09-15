@@ -32,48 +32,41 @@ namespace RhubarbEngine.Components.Transform
 
 		public Sync<LookAtPace> positionSource;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			driver = new Driver<Quaternionf>(this, newRefIds);
-			offset = new Sync<Quaternionf>(this, newRefIds);
-			offset.Value = Quaternionf.Identity;
-			positionOffset = new Sync<Vector3f>(this, newRefIds);
-			positionSource = new Sync<LookAtPace>(this, newRefIds);
-			positionSource.Value = LookAtPace.Head;
-		}
+            offset = new Sync<Quaternionf>(this, newRefIds)
+            {
+                Value = Quaternionf.Identity
+            };
+            positionOffset = new Sync<Vector3f>(this, newRefIds);
+            positionSource = new Sync<LookAtPace>(this, newRefIds)
+            {
+                Value = LookAtPace.Head
+            };
+        }
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
 			if (driver.Linked)
 			{
-				Vector3f? tagetPos;
-				switch (positionSource.Value)
-				{
-					case LookAtPace.Root:
-						tagetPos = world.LocalUser.userroot.Target?.entity.GlobalPos();
-						break;
-					case LookAtPace.Head:
-						tagetPos = world.LocalUser.userroot.Target?.Head.Target?.GlobalPos();
-						break;
-					case LookAtPace.LeftController:
-						tagetPos = world.LocalUser.userroot.Target?.LeftHand.Target?.GlobalPos();
-						break;
-					case LookAtPace.RightController:
-						tagetPos = world.LocalUser.userroot.Target?.RightHand.Target?.GlobalPos();
-						break;
-					default:
-						tagetPos = null;
-						break;
-				}
-				Vector3f tangent = (((tagetPos ?? Vector3f.AxisY) + positionOffset.Value) - entity.GlobalPos());
+                var tagetPos = positionSource.Value switch
+                {
+                    LookAtPace.Root => World.LocalUser.userroot.Target?.Entity.GlobalPos(),
+                    LookAtPace.Head => World.LocalUser.userroot.Target?.Head.Target?.GlobalPos(),
+                    LookAtPace.LeftController => World.LocalUser.userroot.Target?.LeftHand.Target?.GlobalPos(),
+                    LookAtPace.RightController => World.LocalUser.userroot.Target?.RightHand.Target?.GlobalPos(),
+                    _ => null,
+                };
+                var tangent = (tagetPos ?? Vector3f.AxisY) + positionOffset.Value - Entity.GlobalPos();
 				tangent.Normalize();
-				Vector3f normal = Vector3f.AxisY;
+				var normal = Vector3f.AxisY;
 				var newrot = Quaternionf.LookRotation(tangent, normal) * offset.Value;
-				driver.Drivevalue = entity.GlobalRotToLocal(newrot, false);
+				driver.Drivevalue = Entity.GlobalRotToLocal(newrot, false);
 			}
 			else
 			{
-				driver.Target = entity.rotation;
+				driver.Target = Entity.rotation;
 			}
 		}
 		public LookAtUser(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

@@ -31,7 +31,7 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
 			ImGui.Text(fieldName.Value ?? "NUll");
-			if (ImGui.BeginChild(referenceID.id.ToString()))
+			if (ImGui.BeginChild(ReferenceID.id.ToString()))
 			{
 				RenderChildren(imGuiRenderer, canvas);
 				ImGui.EndChild();

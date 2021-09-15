@@ -11,9 +11,9 @@ namespace RhubarbEngine.World
 {
 	public class UpdateLists
 	{
-		public SynchronizedCollection<AudioOutput> audioOutputs = new SynchronizedCollection<AudioOutput>();
-		public SynchronizedCollection<IRenderObject> trenderObject = new SynchronizedCollection<IRenderObject>();
-		public SynchronizedCollection<IRenderObject> renderObject = new SynchronizedCollection<IRenderObject>();
+		public SynchronizedCollection<AudioOutput> audioOutputs = new ();
+		public SynchronizedCollection<IRenderObject> trenderObject = new ();
+		public SynchronizedCollection<IRenderObject> renderObject = new ();
 
 
 

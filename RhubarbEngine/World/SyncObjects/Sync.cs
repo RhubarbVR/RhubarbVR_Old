@@ -9,45 +9,47 @@ using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
-	public class Sync<T> : Worker, DriveMember<T>, IPrimitiveEditable where T : IConvertible
+	public class Sync<T> : Worker, IDriveMember<T>, IPrimitiveEditable where T : IConvertible
 	{
+
 		public IDriver drivenFromobj;
-		public NetPointer drivenFrom { get { return drivenFromobj.ReferenceID; } }
 
-		public bool isDriven { get; private set; }
+		public NetPointer DrivenFrom { get { return drivenFromobj.ReferenceID; } }
 
-		private readonly List<Driveable> _driven = new List<Driveable>();
+		public bool IsDriven { get; private set; }
+
+		private readonly List<IDriveable> _driven = new();
 
 		public override void Removed()
 		{
 			foreach (var dev in _driven)
 			{
-				dev.killDrive();
+				dev.KillDrive();
 			}
 		}
 
-		public void killDrive()
+		public void KillDrive()
 		{
 			drivenFromobj.RemoveDriveLocation();
-			isDriven = false;
+			IsDriven = false;
 		}
 
-		public void drive(IDriver value)
+		public void Drive(IDriver value)
 		{
-			if (!isDriven)
+			if (!IsDriven)
 			{
-				forceDrive(value);
+				ForceDrive(value);
 			}
 		}
-		public void forceDrive(IDriver value)
+		public void ForceDrive(IDriver value)
 		{
-			if (isDriven)
+			if (IsDriven)
 			{
-				killDrive();
+				KillDrive();
 			}
 			value.SetDriveLocation(this);
 			drivenFromobj = value;
-			isDriven = true;
+			IsDriven = true;
 		}
 
 		public virtual T Defalut()
@@ -74,22 +76,22 @@ namespace RhubarbEngine.World
 			set
 			{
 				_value = value;
-				if (!isDriven)
+				if (!IsDriven)
 				{
 					UpdateValue();
 				}
 				UpdatedValue();
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 		}
 
-		public string primitiveString { get { return Value.ToString(); } set { SetValueAsString(value); } }
+		public string PrimitiveString { get { return Value.ToString(); } set { SetValueAsString(value); } }
 
         public bool Driven
         {
             get
             {
-                return isDriven;
+                return IsDriven;
             }
         }
 
@@ -109,7 +111,7 @@ namespace RhubarbEngine.World
 		public void SetValueNoOnChange(T value)
 		{
 			_value = value;
-			if (!isDriven)
+			if (!IsDriven)
 			{
 				UpdateValue();
 			}
@@ -119,17 +121,9 @@ namespace RhubarbEngine.World
 		private void UpdateValue()
 		{
 			var obj = new DataNodeGroup();
-			IDataNode Value;
-			if (typeof(T).IsEnum)
-			{
-				Value = new DataNode<int>((int)(object)_value);
-			}
-			else
-			{
-				Value = new DataNode<T>(_value);
-			}
-			obj.SetValue("Value", Value);
-			world.NetModule?.AddToQueue(Net.ReliabilityLevel.LatestOnly, obj, referenceID.id);
+			var Value = typeof(T).IsEnum ? new DataNode<int>((int)(object)_value) : (IDataNode)new DataNode<T>(_value);
+            obj.SetValue("Value", Value);
+			World.NetModule?.AddToQueue(Net.ReliabilityLevel.LatestOnly, obj, ReferenceID.id);
 		}
 
 		public Sync(World _world, IWorldObject _parent, bool newref = true, T val = default) : base(_world, _parent, newref)
@@ -142,27 +136,14 @@ namespace RhubarbEngine.World
 			Value = val;
 		}
 
-		public virtual T SaveToBytes(bool netsync)
-		{
-			return _value;
-		}
+        public virtual T SaveToBytes()
+        {
+            return _value;
+        }
 
-        public override DataNodeGroup Serialize(bool netsync = false)
+        public override DataNodeGroup Serialize(WorkerSerializerObject workerSerializerObject)
 		{
-			var obj = new DataNodeGroup();
-			var Refid = new DataNode<NetPointer>(referenceID);
-			obj.SetValue("referenceID", Refid);
-			IDataNode Value;
-			if (typeof(T).IsEnum)
-			{
-				Value = new DataNode<int>((int)(object)SaveToBytes(netsync));
-			}
-			else
-			{
-				Value = new DataNode<T>(SaveToBytes(netsync));
-			}
-			obj.SetValue("Value", Value);
-			return obj;
+            return WorkerSerializerObject.CommonValueSerialize(this, SaveToBytes());
 		}
 
 		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
@@ -170,34 +151,27 @@ namespace RhubarbEngine.World
 			_value = Defalut();
 			if (data == null)
 			{
-				world.worldManager.engine.logger.Log($"Node did not exsets When loading Sync Value { GetType().FullName}");
+				World.worldManager.engine.logger.Log($"Node did not exsets When loading Sync Value { GetType().FullName}");
 				return;
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), referenceID.getID());
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
 				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
 				{
 					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
 					{
-						func(referenceID.getID());
+						func(ReferenceID.getID());
 					}
 				}
 			}
 			else
 			{
-				referenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
-				world.AddWorldObj(this);
+				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
+				World.AddWorldObj(this);
 			}
-			if (typeof(T).IsEnum)
-			{
-				_value = (T)(object)((DataNode<int>)data.GetValue("Value")).Value;
-			}
-			else
-			{
-				_value = ((DataNode<T>)data.GetValue("Value")).Value;
-			}
-			LoadedFromBytes(NewRefIDs);
+			_value = typeof(T).IsEnum ? (T)(object)((DataNode<int>)data.GetValue("Value")).Value : ((DataNode<T>)data.GetValue("Value")).Value;
+            LoadedFromBytes(NewRefIDs);
 		}
 
 		public void ReceiveData(DataNodeGroup data, Peer peer)
@@ -205,12 +179,12 @@ namespace RhubarbEngine.World
 			if (typeof(T).IsEnum)
 			{
 				_value = (T)(object)((DataNode<int>)data.GetValue("Value")).Value;
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 			else
 			{
 				_value = ((DataNode<T>)data.GetValue("Value")).Value;
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 		}
 	}

@@ -29,9 +29,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRefList<IObserver> children;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<MaterialField>(this, newRefIds);
 			target.Changed += Target_Changed;
 			root = new SyncRef<IObserver>(this, newRefIds);
@@ -40,11 +40,16 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void Target_Changed(IChangeable obj)
 		{
-			if (entity.Manager != world.LocalUser)
-				return;
-			var e = new Thread(BuildView, 1024);
-			e.Priority = ThreadPriority.BelowNormal;
-			e.Start();
+			if (Entity.Manager != World.LocalUser)
+            {
+                return;
+            }
+
+            var e = new Thread(BuildView, 1024)
+            {
+                Priority = ThreadPriority.BelowNormal
+            };
+            e.Start();
 		}
 
 		private void ClearOld()
@@ -62,13 +67,16 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				ClearOld();
 				if (target.Target == null)
-					return;
-				FieldInfo[] fields = target.Target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                {
+                    return;
+                }
+
+                var fields = target.Target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 				foreach (var field in fields)
 				{
 					if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
 					{
-						var obs = entity.AttachComponent<WorkerObserver>();
+						var obs = Entity.AttachComponent<WorkerObserver>();
 						obs.fieldName.Value = field.Name;
 						obs.target.Target = ((Worker)field.GetValue(target.Target));
 						children.Add().Target = obs;
@@ -93,16 +101,16 @@ namespace RhubarbEngine.Components.ImGUI
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				Interaction.GrabbableHolder source = null;
-				switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
+				switch (canvas.imputPlane.Target?.Source ?? Interaction.InteractionSource.None)
 				{
 					case Interaction.InteractionSource.LeftLaser:
-						source = world.LeftLaserGrabbableHolder;
+						source = World.LeftLaserGrabbableHolder;
 						break;
 					case Interaction.InteractionSource.RightLaser:
-						source = world.RightLaserGrabbableHolder;
+						source = World.RightLaserGrabbableHolder;
 						break;
 					case Interaction.InteractionSource.HeadLaser:
-						source = world.HeadLaserGrabbableHolder;
+						source = World.HeadLaserGrabbableHolder;
 						break;
 					default:
 						break;

@@ -22,9 +22,9 @@ namespace RhubarbEngine.Components.ImGUI
 		public Sync<bool> active;
 
 		public SyncDelegate action;
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			id = new Sync<string>(this, newRefIds);
 			active = new Sync<bool>(this, newRefIds);
 			action = new SyncDelegate(this, newRefIds);

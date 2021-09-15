@@ -55,7 +55,7 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return (AudioFrameSize * sizeof(float));
+                return AudioFrameSize * sizeof(float);
             }
         }
 
@@ -86,7 +86,7 @@ namespace RhubarbEngine.Managers
 
 		public int audioframeTimeMs;
 
-		public unsafe IManager initialize(Engine _engine)
+		public unsafe IManager Initialize(Engine _engine)
 		{
 			audioframeTimeMs = AudioFrameSize / (SamplingRate / 1000);
 			ee = new float[AudioFrameSize * 2];
@@ -118,15 +118,8 @@ namespace RhubarbEngine.Managers
 
 			Console.WriteLine("Starting Audio task");
 			_running = true;
-			if (OpenAl)
-			{
-				task = new Thread(OpenALUpdater, 1024 * 4);
-			}
-			else
-			{
-				task = new Thread(NaudioUpdater, 1024 * 4);
-			}
-			task.Name = "Audio";
+			task = OpenAl ? new Thread(OpenALUpdater, 1024 * 4) : new Thread(NaudioUpdater, 1024 * 4);
+            task.Name = "Audio";
 			task.IsBackground = true;
 			task.Priority = ThreadPriority.Highest;
 			return this;
@@ -189,7 +182,7 @@ namespace RhubarbEngine.Managers
 		{
 			//Steam Audio Initialization
 
-			var set = new IPL.ContextSettings { logCallback = SteamLogFunction, version = ((((uint)(4) << 16) | ((uint)(0) << 8) | ((uint)(0)))) };
+			var set = new IPL.ContextSettings { logCallback = SteamLogFunction, version = ((uint)4 << 16) | ((uint)0 << 8) | ((uint)0) };
 
 			IPL.ContextCreate(ref set, out iplContext);
 
@@ -245,7 +238,7 @@ namespace RhubarbEngine.Managers
 				{
 					foreach (var comp in world.updateLists.audioOutputs)
 					{
-						if (comp.isNotCulled)
+						if (comp.IsNotCulled)
 						{
 							comp.AudioUpdate();
 							IPL.AudioBufferMix(iplContext, ref comp.iplOutputBuffer, ref iplOutputBuffer);
@@ -298,7 +291,7 @@ namespace RhubarbEngine.Managers
 
 				AL.BufferData(bufferId, BUFFER_FORMAT_STEREO_FLOAT_32, _outBuff, AudioFrameSizeInBytes * 2, SamplingRate);
 				AL.SourceQueueBuffers(sourceId, 1, &bufferId);
-				CheckALErrors();
+                CheckALErrors();
 
 				buffersToAdd--;
 			}
@@ -311,10 +304,10 @@ namespace RhubarbEngine.Managers
 				AL.SourcePlay(sourceId);
 			}
 
-			CheckALErrors();
+            CheckALErrors();
 		}
 
-		private void CheckALErrors()
+		private static void CheckALErrors()
 		{
 			var error = AL.GetError();
 
@@ -346,7 +339,7 @@ namespace RhubarbEngine.Managers
 				throw new Exception($"This program requires '{FLOAT_32_EXTENSION}' OpenAL extension to function.");
 			}
 
-			CheckALErrors();
+            CheckALErrors();
 
 			Logger.Log("OpenAL is ready.");
 		}

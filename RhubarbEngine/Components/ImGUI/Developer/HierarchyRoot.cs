@@ -26,9 +26,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<HierarchyItem> root;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			size = new Sync<Vector2f>(this, newRefIds);
 			border = new Sync<bool>(this, newRefIds);
             windowflag = new Sync<ImGuiWindowFlags>(this, newRefIds)
@@ -40,7 +40,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public void Initialize(Entity tentity)
 		{
-			var e = entity.AttachComponent<HierarchyItem>();
+			var e = Entity.AttachComponent<HierarchyItem>();
 			root.Target = e;
 			e.target.Target = tentity;
 		}
@@ -55,7 +55,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (ImGui.BeginChild(referenceID.id.ToString(), new Vector2(size.Value.x, size.Value.y), border.Value, windowflag.Value))
+			if (ImGui.BeginChild(ReferenceID.id.ToString(), new Vector2(size.Value.x, size.Value.y), border.Value, windowflag.Value))
 			{
 				root.Target?.ImguiRender(imGuiRenderer, canvas);
 				ImGui.EndChild();

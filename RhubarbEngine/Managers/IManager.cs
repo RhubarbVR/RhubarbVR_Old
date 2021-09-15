@@ -9,6 +9,6 @@ namespace RhubarbEngine.Managers
 {
 	public interface IManager
 	{
-		IManager initialize(Engine engine);
+		IManager Initialize(Engine engine);
 	}
 }

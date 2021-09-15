@@ -22,26 +22,28 @@ namespace RhubarbEngine.Components.Transform
 
 		public Sync<Quaternionf> offset;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			driver = new Driver<Quaternionf>(this, newRefIds);
-			speed = new Sync<Vector3f>(this, newRefIds);
-			offset = new Sync<Quaternionf>(this, newRefIds);
-			speed.Value = new Vector3f(1f, 0f, 0f);
+            speed = new Sync<Vector3f>(this, newRefIds)
+            {
+                Value = new Vector3f(1f, 0f, 0f)
+            };
+            offset = new Sync<Quaternionf>(this, newRefIds);
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			var deltaSeconds = (float)world.worldManager.engine.platformInfo.deltaSeconds;
+			var deltaSeconds = (float)World.worldManager.engine.platformInfo.deltaSeconds;
 			if (driver.Linked)
 			{
-				var newval = entity.LocalTrans() * Matrix4x4.CreateFromQuaternion(offset.Value.ToSystemNumric()) * Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(speed.Value.x * deltaSeconds, speed.Value.y * deltaSeconds, speed.Value.z * deltaSeconds));
+				var newval = Entity.LocalTrans() * Matrix4x4.CreateFromQuaternion(offset.Value.ToSystemNumric()) * Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(speed.Value.x * deltaSeconds, speed.Value.y * deltaSeconds, speed.Value.z * deltaSeconds));
 				Matrix4x4.Decompose(newval, out _, out var newrotation, out _);
 				driver.Drivevalue = new Quaternionf(newrotation.X, newrotation.Y, newrotation.Z, newrotation.W);
 			}
 			else
 			{
-				driver.Target = entity.rotation;
+				driver.Target = Entity.rotation;
 			}
 		}
 		public Spinner(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

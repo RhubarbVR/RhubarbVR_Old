@@ -29,10 +29,10 @@ namespace RhubarbEngine.World.DataStructure.Tests
 		{
 			var testValue = new Vector3f(1, 321, 1232);
 			DataNode<Vector3f> val = new DataNode<Vector3f>(testValue);
-			var e = val.getByteArray();
+			var e = val.GetByteArray();
 
 			DataNode<Vector3f> newval = new DataNode<Vector3f>();
-			newval.setByteArray(e);
+			newval.SetByteArray(e);
 
 			Assert.AreNotSame(testValue, newval.Value);
 		}

@@ -18,7 +18,7 @@ namespace RhubarbEngine.Components.ImGUI
 	[Category("ImGUI/Developer/SyncMemberObservers")]
 	public class SyncComponentListObserver : SyncListBaseObserver, IObserver
 	{
-        public override bool removeable
+        public override bool Removeable
         {
             get
             {
@@ -37,15 +37,15 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
 
-			if (ImGui.BeginChild(referenceID.id.ToString(), new Vector2(ImGui.GetWindowContentRegionWidth(), ImGui.GetFrameHeightWithSpacing() - 50f)))
+			if (ImGui.BeginChild(ReferenceID.id.ToString(), new Vector2(ImGui.GetWindowContentRegionWidth(), ImGui.GetFrameHeightWithSpacing() - 50f)))
 			{
 				RenderChildren(imGuiRenderer, canvas);
 				ImGui.EndChild();
 			}
-			if (ImGui.Button($"Attach Component##{referenceID.id}", new Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
+			if (ImGui.Button($"Attach Component##{ReferenceID.id}", new Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
 			{
-				var createWorld = world.worldManager.FocusedWorld ?? world;
-				var User = createWorld.UserRoot.entity;
+				var createWorld = World.worldManager.FocusedWorld ?? World;
+				var User = createWorld.UserRoot.Entity;
 				var par = User.parent.Target;
 				var (cube, _, comp) = Helpers.MeshHelper.AttachWindow<ComponentAttacher>(par);
 				var headPos = createWorld.UserRoot.Headpos;

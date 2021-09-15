@@ -59,7 +59,7 @@ namespace RhubarbEngine.World
 
 		public SyncAbstractObjList<UserStream> userStreams;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			userroot = new SyncRef<UserRoot>(this, newRefIds);
 			username = new Sync<string>(this, newRefIds);

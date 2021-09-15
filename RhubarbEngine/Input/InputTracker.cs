@@ -10,24 +10,56 @@ namespace RhubarbEngine.Input
 	public class CustomFrame : InputSnapshot
 	{
 		public List<KeyEvent> keyEvents;
-		public List<KeyEvent> UpkeyEvents = new List<KeyEvent>();
+		public List<KeyEvent> UpkeyEvents = new();
 
-		public IReadOnlyList<KeyEvent> KeyEvents => keyEvents;
-		public List<MouseEvent> mouseEvents;
-		public List<MouseEvent> UpmouseEvents = new List<MouseEvent>();
-		public IReadOnlyList<MouseEvent> MouseEvents => mouseEvents;
-		public List<char> UpkeyCharPresses = new List<char>();
+        public IReadOnlyList<KeyEvent> KeyEvents
+        {
+            get
+            {
+                return keyEvents;
+            }
+        }
+
+        public List<MouseEvent> mouseEvents;
+		public List<MouseEvent> UpmouseEvents = new();
+        public IReadOnlyList<MouseEvent> MouseEvents
+        {
+            get
+            {
+                return mouseEvents;
+            }
+        }
+
+        public List<char> UpkeyCharPresses = new();
 
 		public List<char> keyCharPresses;
-		public IReadOnlyList<char> KeyCharPresses => keyCharPresses;
+        public IReadOnlyList<char> KeyCharPresses
+        {
+            get
+            {
+                return keyCharPresses;
+            }
+        }
 
-		public Vector2 mousePosition;
-		public Vector2 MousePosition => mousePosition;
+        public Vector2 mousePosition;
+        public Vector2 MousePosition
+        {
+            get
+            {
+                return mousePosition;
+            }
+        }
 
-		public float wheelDelta;
-		public float WheelDelta => wheelDelta;
+        public float wheelDelta;
+        public float WheelDelta
+        {
+            get
+            {
+                return wheelDelta;
+            }
+        }
 
-		public bool IsMouseDown(MouseButton button)
+        public bool IsMouseDown(MouseButton button)
 		{
 			foreach (var item in mouseEvents)
 			{
@@ -51,7 +83,7 @@ namespace RhubarbEngine.Input
 			{
 				keyEvents.Add(item);
 			}
-			List<KeyEvent> ew = new List<KeyEvent>();
+			var ew = new List<KeyEvent>();
 			foreach (var item in UpkeyEvents)
 			{
 				if (item.Down)
@@ -70,7 +102,7 @@ namespace RhubarbEngine.Input
 			{
 				mouseEvents.Add(item);
 			}
-			List<MouseEvent> ewm = new List<MouseEvent>();
+			var ewm = new List<MouseEvent>();
 			foreach (var item in UpmouseEvents)
 			{
 				if (item.Down)
@@ -97,7 +129,7 @@ namespace RhubarbEngine.Input
 		public void PressChar(char key, ModifierKeys e)
 		{
 			UpkeyCharPresses.Add(key);
-			Key ekey = Key.Unknown;
+			var ekey = Key.Unknown;
 			switch (key)
 			{
 				case 'A':
@@ -292,8 +324,8 @@ namespace RhubarbEngine.Input
 		private HashSet<Key> _currentlyPressedKeys = new HashSet<Key>();
 		private HashSet<Key> _newKeysThisFrame = new HashSet<Key>();
 
-		private HashSet<MouseButton> _currentlyPressedMouseButtons = new HashSet<MouseButton>();
-		private HashSet<MouseButton> _newMouseButtonsThisFrame = new HashSet<MouseButton>();
+		private readonly HashSet<MouseButton> _currentlyPressedMouseButtons = new();
+		private readonly HashSet<MouseButton> _newMouseButtonsThisFrame = new();
 
 		public Vector2 MousePosition;
 		public Vector2 MouseDelta;
@@ -329,9 +361,9 @@ namespace RhubarbEngine.Input
 
 			MousePosition = snapshot.MousePosition;
 			MouseDelta = window.MouseDelta;
-			for (int i = 0; i < snapshot.KeyEvents.Count; i++)
+			for (var i = 0; i < snapshot.KeyEvents.Count; i++)
 			{
-				KeyEvent ke = snapshot.KeyEvents[i];
+				var ke = snapshot.KeyEvents[i];
 				if (ke.Down)
 				{
 					KeyDown(ke.Key);
@@ -341,9 +373,9 @@ namespace RhubarbEngine.Input
 					KeyUp(ke.Key);
 				}
 			}
-			for (int i = 0; i < snapshot.MouseEvents.Count; i++)
+			for (var i = 0; i < snapshot.MouseEvents.Count; i++)
 			{
-				MouseEvent me = snapshot.MouseEvents[i];
+				var me = snapshot.MouseEvents[i];
 				if (me.Down)
 				{
 					MouseDown(me.MouseButton);

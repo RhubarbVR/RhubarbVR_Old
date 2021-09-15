@@ -38,7 +38,7 @@ namespace RhubarbEngine.Components.Transform
 
 		private Quaternionf _targetRotation = Quaternionf.Identity;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			targetUser = new SyncRef<User>(this, newRefIds);
 			rotateVerticalOnly = new Sync<bool>(this, newRefIds);
@@ -75,30 +75,30 @@ namespace RhubarbEngine.Components.Transform
 
 		public override void OnAttach()
 		{
-			targetUser.Target = world.LocalUser;
+			targetUser.Target = World.LocalUser;
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
-			_targetPosition = entity.GlobalPos();
-			_targetRotation = entity.GlobalRot();
+			base.OnLoaded();
+			_targetPosition = Entity.GlobalPos();
+			_targetRotation = Entity.GlobalRot();
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (targetUser.Target == world.LocalUser && world.UserRoot != null)
+			if (targetUser.Target == World.LocalUser && World.UserRoot != null)
 			{
-				var a = world.UserRoot.Head.Target?.GlobalPos() ?? Vector3f.Zero;
-				var temp = world.UserRoot.Head.Target.rotation.Value * Vector3f.AxisZ;
+				var a = World.UserRoot.Head.Target?.GlobalPos() ?? Vector3f.Zero;
+				var temp = World.UserRoot.Head.Target.rotation.Value * Vector3f.AxisZ;
 				var HeadFacingDirection = new Vector3f(temp.x, 0, temp.z).Normalized;
-				var mat = world.UserRoot.entity.GlobalTrans();
+				var mat = World.UserRoot.Entity.GlobalTrans();
 				var e = new Vector3f((mat.M11 * HeadFacingDirection.x) + (mat.M12 * HeadFacingDirection.y) + (mat.M13 * HeadFacingDirection.z), (mat.M21 * HeadFacingDirection.x) + (mat.M22 * HeadFacingDirection.y) + (mat.M23 * HeadFacingDirection.z), (mat.M31 * HeadFacingDirection.x) + (mat.M32 * HeadFacingDirection.y) + (mat.M33 * HeadFacingDirection.z));
-				var headrot = Quaternionf.LookRotation(e, world.UserRoot.entity.Up);
-				var a2 = (rotateVerticalOnly.Value ? headrot : world.UserRoot.Head.Target?.GlobalRot() ?? Quaternionf.Zero);
-				var b = entity.GlobalPos();
+				var headrot = Quaternionf.LookRotation(e, World.UserRoot.Entity.Up);
+				var a2 = rotateVerticalOnly.Value ? headrot : World.UserRoot.Head.Target?.GlobalRot() ?? Quaternionf.Zero;
+				var b = Entity.GlobalPos();
 				var num = a.Distance(b);
-				var b2 = entity.GlobalRot();
+				var b2 = Entity.GlobalRot();
 				var num2 = a2.Angle(b2);
 				if (num >= activationDistance.Value || num2 >= activationAngle.Value)
 				{
@@ -114,12 +114,12 @@ namespace RhubarbEngine.Components.Transform
 					_targetRotation = a2;
 				}
 
-				var from = entity.GlobalPos();
-				var pos = Vector3f.Lerp(from, _targetPosition, (float)(engine.platformInfo.deltaSeconds * positionSpeed.Value));
-				var ae = entity.GlobalRot();
+				var from = Entity.GlobalPos();
+				var pos = Vector3f.Lerp(from, _targetPosition, (float)(Engine.platformInfo.deltaSeconds * positionSpeed.Value));
+				var ae = Entity.GlobalRot();
 				var rot = Quaternionf.CreateFromEuler(0f, 0f, 0f);
-				rot.SetToSlerp(ae, _targetRotation, (float)engine.platformInfo.deltaSeconds * rotationSpeed.Value);
-				entity.SetGlobalTrans((Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(rot.ToSystemNumric()) * Matrix4x4.CreateTranslation(pos.ToSystemNumrics())));
+				rot.SetToSlerp(ae, _targetRotation, (float)Engine.platformInfo.deltaSeconds * rotationSpeed.Value);
+				Entity.SetGlobalTrans(Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(rot.ToSystemNumric()) * Matrix4x4.CreateTranslation(pos.ToSystemNumrics()));
 			}
 		}
 

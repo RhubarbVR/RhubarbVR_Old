@@ -62,7 +62,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
         internal GraphicsDevice GraphicsDevice { get; private set; }
 
-        public override IController leftController
+        public override IController LeftController
         {
             get
             {
@@ -86,7 +86,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
             }
         }
 
-        public Matrix4x4 InvertRot(Matrix4x4 val)
+        public static Matrix4x4 InvertRot(Matrix4x4 val)
 		{
 			Matrix4x4.Decompose(val, out var scale, out var rot, out var trans);
 
@@ -141,12 +141,12 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			var error = OVR.Input.SetActionManifestPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SteamVR", "steamvr_manifest.json"));
 			if (error != EVRInputError.None)
 			{
-				Logger.Log($"Action manifest error {error.ToString()}");
+				Logger.Log($"Action manifest error {error}");
 			}
 
 			if (error != EVRInputError.None)
 			{
-				Logger.Log($"Action Get Action Handl error {error.ToString()}");
+				Logger.Log($"Action Get Action Handl error {error}");
 			}
 			generalActionSet = SetUPActionSet("/actions/General");
 			viveActionSet = SetUPActionSet("/actions/HTCVive");
@@ -228,13 +228,13 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 		}
 
-		private VRActiveActionSet_t SetUPActionSet(string path)
+		private static VRActiveActionSet_t SetUPActionSet(string path)
 		{
 			ulong handle = 0;
 			var error = OVR.Input.GetActionSetHandle(path, ref handle);
 			if (error != EVRInputError.None)
 			{
-				Logger.Log($"Action Set Handle  {path}  error {error.ToString()}");
+				Logger.Log($"Action Set Handle  {path}  error {error}");
 			}
 			var actionSet = new VRActiveActionSet_t
 			{
@@ -270,15 +270,8 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 				sb,
 				512u,
 				ref error);
-			if (error != ETrackedPropertyError.TrackedProp_Success)
-			{
-				_deviceName = "<Unknown OpenVR Device>";
-			}
-			else
-			{
-				_deviceName = sb.ToString();
-			}
-			Logger.Log("Head Set Type: " + _deviceName);
+			_deviceName = error != ETrackedPropertyError.TrackedProp_Success ? "<Unknown OpenVR Device>" : sb.ToString();
+            Logger.Log("Head Set Type: " + _deviceName);
 
 			uint eyeWidth = 0;
 			uint eyeHeight = 0;
@@ -315,11 +308,11 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 			if (error != EVRInputError.None)
 			{
-				Logger.Log($"Input error {error.ToString()}");
+				Logger.Log($"Input error {error}");
 			}
 			try
 			{
-				controllerOne?.update();
+				controllerOne?.Update();
 			}
 			catch
 			{
@@ -327,7 +320,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			}
 			try
 			{
-				controllerTwo?.update();
+				controllerTwo?.Update();
 			}
 			catch
 			{
@@ -337,7 +330,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 		public override (string[] instance, string[] device) GetRequiredVulkanExtensions()
 		{
-			return (new string[] { }, new string[] { });
+			return (Array.Empty<string>(), Array.Empty<string>());
 		}
 
 		Matrix4x4 _headPos;

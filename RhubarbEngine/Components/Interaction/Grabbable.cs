@@ -32,18 +32,24 @@ namespace RhubarbEngine.Components.Interaction
 
 		public SyncRef<GrabbableHolder> grabbableHolder;
 
-		Vector3d offset;
+		Vector3d _offset;
 
 		public bool LaserGrabbed;
 
-		public bool Grabbed => (grabbableHolder.Target != null) && (grabbingUser.Target != null);
+        public bool Grabbed
+        {
+            get
+            {
+                return (grabbableHolder.Target != null) && (grabbingUser.Target != null);
+            }
+        }
 
-		Vector3f lastValue;
-		Vector3f volas;
+        Vector3f _lastValue;
+		Vector3f _volas;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			grabbableHolder = new SyncRef<GrabbableHolder>(this, newRefIds);
 			grabbableHolder.Changed += GrabbableHolder_Changed;
 			grabbingUser = new SyncRef<User>(this, newRefIds);
@@ -53,29 +59,32 @@ namespace RhubarbEngine.Components.Interaction
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
 			base.CommonUpdate(startTime, Frame);
-			if (grabbingUser.Target != world.LocalUser)
-				return;
-			if (LaserGrabbed && (grabbableHolder.Target != null))
+			if (grabbingUser.Target != World.LocalUser)
+            {
+                return;
+            }
+
+            if (LaserGrabbed && (grabbableHolder.Target != null))
 			{
-				Vector3d newpos = Vector3d.Zero;
+				var newpos = Vector3d.Zero;
 				switch (grabbableHolder.Target.source.Value)
 				{
 					case InteractionSource.LeftLaser:
-						newpos = (offset + input.LeftLaser.pos);
+						newpos = _offset + Input.LeftLaser.Pos;
 						break;
 					case InteractionSource.RightLaser:
-						newpos = (offset + input.RightLaser.pos);
+						newpos = _offset + Input.RightLaser.Pos;
 						break;
 					case InteractionSource.HeadLaser:
-						newpos = (offset + input.RightLaser.pos);
+						newpos = _offset + Input.RightLaser.Pos;
 						break;
 					default:
 						break;
 				}
-				entity.SetGlobalPos(new Vector3f(newpos.x, newpos.y, newpos.z));
+				Entity.SetGlobalPos(new Vector3f(newpos.x, newpos.y, newpos.z));
 			}
-			volas = (((lastValue - entity.GlobalPos()) * (1 / (float)engine.platformInfo.deltaSeconds)) + volas) / 2;
-			lastValue = entity.GlobalPos();
+			_volas = (((_lastValue - Entity.GlobalPos()) * (1 / (float)Engine.platformInfo.deltaSeconds)) + _volas) / 2;
+			_lastValue = Entity.GlobalPos();
 
 		}
 
@@ -83,58 +92,70 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			if (grabbableHolder.Target == null)
 			{
-				entity.RemovePhysicsDisableder(this);
+				Entity.RemovePhysicsDisableder(this);
 			}
 			else
 			{
-				entity.AddPhysicsDisableder(this);
+				Entity.AddPhysicsDisableder(this);
 
 			}
 		}
 
 		public override void Dispose()
 		{
-			base.Dispose();
-			entity.RemovePhysicsDisableder(this);
-		}
+			Entity.RemovePhysicsDisableder(this);
+            base.Dispose();
+        }
 
-		public void Drop()
+        public void Drop()
 		{
-			if (world.LocalUser != grabbingUser.Target)
-				return;
-			grabbingUser.Target = null;
-			entity.SetParent(lastParent.Target);
-			entity.SendDrop(false, grabbableHolder.Target, true);
+			if (World.LocalUser != grabbingUser.Target)
+            {
+                return;
+            }
+
+            grabbingUser.Target = null;
+			Entity.SetParent(lastParent.Target);
+			Entity.SendDrop(false, grabbableHolder.Target, true);
 			grabbableHolder.Target = null;
-			foreach (var item in entity.GetAllComponents<Collider>())
+			foreach (var item in Entity.GetAllComponents<Collider>())
 			{
 				if (item.NoneStaticBody.Value && (item.collisionObject != null))
 				{
-					item.collisionObject.LinearVelocity = new BulletSharp.Math.Vector3(-volas.x, -volas.y, -volas.z);
-					item.collisionObject.AngularVelocity = new BulletSharp.Math.Vector3(volas.x / 10, volas.y / 10, volas.z / 10);
+					item.collisionObject.LinearVelocity = new BulletSharp.Math.Vector3(-_volas.x, -_volas.y, -_volas.z);
+					item.collisionObject.AngularVelocity = new BulletSharp.Math.Vector3(_volas.x / 10, _volas.y / 10, _volas.z / 10);
 				}
 			}
 
 		}
 
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
-			entity.OnGrip += Entity_onGrip;
+			base.OnLoaded();
+			Entity.OnGrip += Entity_onGrip;
 		}
 
 		private void Entity_onGrip(GrabbableHolder obj, bool Laser)
 		{
 			if (grabbableHolder.Target == obj)
-				return;
-			if (obj == null)
-				return;
-			if (obj.holder.Target == null)
-				return;
-			if (!Grabbed)
+            {
+                return;
+            }
+
+            if (obj == null)
+            {
+                return;
+            }
+
+            if (obj.holder.Target == null)
+            {
+                return;
+            }
+
+            if (!Grabbed)
 			{
-				lastParent.Target = entity.parent.Target;
+				lastParent.Target = Entity.parent.Target;
 			}
 			LaserGrabbed = Laser;
 			if (LaserGrabbed)
@@ -143,33 +164,36 @@ namespace RhubarbEngine.Components.Interaction
 				switch (obj.source.Value)
 				{
 					case InteractionSource.LeftLaser:
-						laserpos = input.LeftLaser.pos;
-						input.LeftLaser.Lock();
+						laserpos = Input.LeftLaser.Pos;
+						Input.LeftLaser.Lock();
 						break;
 					case InteractionSource.RightLaser:
-						laserpos = input.RightLaser.pos;
-						input.RightLaser.Lock();
+						laserpos = Input.RightLaser.Pos;
+						Input.RightLaser.Lock();
 						break;
 					case InteractionSource.HeadLaser:
-						laserpos = input.RightLaser.pos;
-						input.RightLaser.Lock();
+						laserpos = Input.RightLaser.Pos;
+						Input.RightLaser.Lock();
 						break;
 					default:
 						break;
 				}
-				offset = (laserpos - entity.GlobalPos());
+				_offset = laserpos - Entity.GlobalPos();
 			}
-			entity.Manager = world.LocalUser;
+			Entity.Manager = World.LocalUser;
 			grabbableHolder.Target = obj;
-			grabbingUser.Target = world.LocalUser;
-			entity.SetParent(obj.holder.Target);
+			grabbingUser.Target = World.LocalUser;
+			Entity.SetParent(obj.holder.Target);
 		}
 
 		public void RemoteGrab()
 		{
-			if (world.lastHolder == null)
-				return;
-			Entity_onGrip(world.lastHolder, true);
+			if (World.lastHolder == null)
+            {
+                return;
+            }
+
+            Entity_onGrip(World.lastHolder, true);
 		}
 
 		public Grabbable(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

@@ -16,21 +16,21 @@ namespace RhubarbEngine.Components.Relations
 	{
 		public Driver<T> driver;
 
-		public SyncRef<ValueSource<T>> source;
+		public SyncRef<IValueSource<T>> source;
 
 		public Sync<bool> writeBack;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			driver = new Driver<T>(this, newRefIds);
-			source = new SyncRef<ValueSource<T>>(this, newRefIds);
+			source = new SyncRef<IValueSource<T>>(this, newRefIds);
 			writeBack = new Sync<bool>(this, newRefIds);
 		}
 
-		private IChangeable linckedSource;
+		private IChangeable _linckedSource;
 
-		private IChangeable linckedTarget;
-		public void sourceChange(IChangeable val)
+		private IChangeable _linckedTarget;
+		public void SourceChange(IChangeable val)
 		{
 			if (source.Target != null && driver.Linked)
 			{
@@ -38,29 +38,29 @@ namespace RhubarbEngine.Components.Relations
 			}
 		}
 
-		public void targetChange(IChangeable val)
+		public void TargetChange(IChangeable val)
 		{
 			if (writeBack.Value && source.Target != null && driver.Linked)
 			{
 				source.Target.Value = driver.Drivevalue;
 			}
 		}
-		public override void onChanged()
+		public override void OnChanged()
 		{
 			if (source.Target != null && driver.Linked)
 			{
-				if (linckedSource != null)
+				if (_linckedSource != null)
 				{
-					linckedTarget.Changed -= sourceChange;
+					_linckedTarget.Changed -= SourceChange;
 				}
-				if (linckedTarget != null)
+				if (_linckedTarget != null)
 				{
-					linckedTarget.Changed -= targetChange;
+					_linckedTarget.Changed -= TargetChange;
 				}
-				linckedSource = source.Target;
-				linckedTarget = driver.Target;
-				linckedTarget.Changed += targetChange;
-				linckedTarget.Changed += sourceChange;
+				_linckedSource = source.Target;
+				_linckedTarget = driver.Target;
+				_linckedTarget.Changed += TargetChange;
+				_linckedTarget.Changed += SourceChange;
 
 			}
 		}

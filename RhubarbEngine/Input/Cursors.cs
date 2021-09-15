@@ -73,33 +73,21 @@ namespace RhubarbEngine.Input
 
 		public static Cursors ImGuiMouse(ImGuiMouseCursor b)
 		{
-			switch (b)
-			{
-				case ImGuiMouseCursor.None:
-					return Cursors.None;
-				case ImGuiMouseCursor.Arrow:
-					return Cursors.Pointer;
-				case ImGuiMouseCursor.TextInput:
-					return Cursors.IBeam;
-				case ImGuiMouseCursor.ResizeAll:
-					return Cursors.NorthwestSoutheastResize;
-				case ImGuiMouseCursor.ResizeNS:
-					return Cursors.NorthSouthResize;
-				case ImGuiMouseCursor.ResizeEW:
-					return Cursors.EastWestResize;
-				case ImGuiMouseCursor.ResizeNESW:
-					return Cursors.NortheastSouthwestResize;
-				case ImGuiMouseCursor.ResizeNWSE:
-					return Cursors.NorthwestSoutheastResize;
-				case ImGuiMouseCursor.Hand:
-					return Cursors.Hand;
-				case ImGuiMouseCursor.NotAllowed:
-					return Cursors.NotAllowed;
-				case ImGuiMouseCursor.COUNT:
-					return Cursors.Pointer;
-				default:
-					return Cursors.Pointer;
-			}
-		}
+            return b switch
+            {
+                ImGuiMouseCursor.None => Cursors.None,
+                ImGuiMouseCursor.Arrow => Cursors.Pointer,
+                ImGuiMouseCursor.TextInput => Cursors.IBeam,
+                ImGuiMouseCursor.ResizeAll => Cursors.NorthwestSoutheastResize,
+                ImGuiMouseCursor.ResizeNS => Cursors.NorthSouthResize,
+                ImGuiMouseCursor.ResizeEW => Cursors.EastWestResize,
+                ImGuiMouseCursor.ResizeNESW => Cursors.NortheastSouthwestResize,
+                ImGuiMouseCursor.ResizeNWSE => Cursors.NorthwestSoutheastResize,
+                ImGuiMouseCursor.Hand => Cursors.Hand,
+                ImGuiMouseCursor.NotAllowed => Cursors.NotAllowed,
+                ImGuiMouseCursor.COUNT => Cursors.Pointer,
+                _ => Cursors.Pointer,
+            };
+        }
 	}
 }

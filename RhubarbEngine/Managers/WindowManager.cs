@@ -10,40 +10,46 @@ namespace RhubarbEngine.Managers
 {
 	public class WindowManager : IManager
 	{
-		private Engine engine;
+		private Engine _engine;
 
-		public Window mainWindow { get; private set; }
+		public Window MainWindow { get; private set; }
 
-		public List<Window> windows { get; private set; }
+		public List<Window> Windows { get; private set; }
 
-		public IManager initialize(Engine _engine)
+		public IManager Initialize(Engine _engine)
 		{
-			engine = _engine;
-			windows = new List<Window>();
-			engine.logger.Log("Starting Main Window");
+			this._engine = _engine;
+			Windows = new List<Window>();
+			this._engine.logger.Log("Starting Main Window");
 			BuildWindow();
 			return this;
 		}
 
 		public Window BuildWindow(string windowName = "RhubarbVR", int Xpos = 100, int Ypos = 100, int windowWidth = 960, int windowHeight = 540)
 		{
-			Window win = new Window(windowName, Xpos, Ypos, windowWidth, windowHeight);
-			windows.Add(win);
-			if (windows.Count == 1)
+			var win = new Window(windowName, Xpos, Ypos, windowWidth, windowHeight);
+			Windows.Add(win);
+			if (Windows.Count == 1)
 			{
-				mainWindow = windows[0];
+				MainWindow = Windows[0];
 			}
 			return win;
 		}
 
 		public void Update()
 		{
-			foreach (var window in windows)
+			foreach (var window in Windows)
 			{
-				engine.inputManager.mainWindows.UpdateFrameInput(window.Update(), window.window);
+				_engine.inputManager.mainWindows.UpdateFrameInput(window.Update(), window.window);
 			}
 		}
 
-		public bool mainWindowOpen => mainWindow.windowOpen;
-	}
+        public bool MainWindowOpen
+        {
+            get
+            {
+                return MainWindow.WindowOpen;
+            }
+        }
+    }
 }

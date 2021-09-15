@@ -22,11 +22,11 @@ namespace RhubarbEngine.Components.Physics.Colliders
 	{
 		public AssetRef<RMesh> mesh;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			mesh = new AssetRef<RMesh>(this, newRefIds);
-			mesh.loadChange += Mesh_loadChange;
+			mesh.LoadChange += Mesh_loadChange;
 		}
 
 		private void Mesh_loadChange(RMesh obj)
@@ -34,47 +34,50 @@ namespace RhubarbEngine.Components.Physics.Colliders
 			BuildShape();
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
+			base.OnLoaded();
 			BuildShape();
 		}
 
-		private void goNull()
+		private void GoNull()
 		{
 			BuildCollissionObject(null);
 		}
 
-		public int[] index = new int[] { };
-		public BulletSharp.Math.Vector3[] vertices = new BulletSharp.Math.Vector3[] { };
+		public int[] index = Array.Empty<int>();
+		public BulletSharp.Math.Vector3[] vertices = Array.Empty<BulletSharp.Math.Vector3>();
 
 		public override void BuildShape()
 		{
 			if (mesh.Asset == null)
-			{ goNull(); return; };
+			{ GoNull(); return; };
 			if (!mesh.Target?.loaded ?? false)
-			{ goNull(); return; };
+			{ GoNull(); return; };
 			// Initialize TriangleIndexVertexArray with Vector3 array
-			vertices = new BulletSharp.Math.Vector3[mesh.Asset.meshes[0].VertexCount];
-			for (int i = 0; i < vertices.Length; i++)
+			vertices = new BulletSharp.Math.Vector3[mesh.Asset.Meshes[0].VertexCount];
+			for (var i = 0; i < vertices.Length; i++)
 			{
 				vertices[i] = new BulletSharp.Math.Vector3(
-					mesh.Asset.meshes[0].GetVertex(i).x,
-					mesh.Asset.meshes[0].GetVertex(i).y,
-					mesh.Asset.meshes[0].GetVertex(i).z);
+					mesh.Asset.Meshes[0].GetVertex(i).x,
+					mesh.Asset.Meshes[0].GetVertex(i).y,
+					mesh.Asset.Meshes[0].GetVertex(i).z);
 			}
-			var e = mesh.Asset.meshes[0].RenderIndices().ToArray();
+			var e = mesh.Asset.Meshes[0].RenderIndices().ToArray();
 
 			// Initialize TriangleIndexIndexArray with int array
-			int[] index = new int[e.Length];
-			for (int i = 0; i < index.Length; i++)
+			var index = new int[e.Length];
+			for (var i = 0; i < index.Length; i++)
 			{
 				index[i] = e[i];
 			}
 			if (index.Length < 3)
-				return;
-			var indexVertexArray2 = new TriangleIndexVertexArray(index, vertices);
-			BvhTriangleMeshShape trys = new BvhTriangleMeshShape(indexVertexArray2, true);
+            {
+                return;
+            }
+
+            var indexVertexArray2 = new TriangleIndexVertexArray(index, vertices);
+			var trys = new BvhTriangleMeshShape(indexVertexArray2, true);
 			StartShape(trys);
 		}
 

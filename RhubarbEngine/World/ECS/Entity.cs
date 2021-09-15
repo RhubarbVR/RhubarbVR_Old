@@ -23,7 +23,7 @@ namespace RhubarbEngine.World.ECS
         {
             get
             {
-                return world.users[(int)referenceID.getOwnerID()];
+                return World.users[(int)ReferenceID.getOwnerID()];
             }
         }
 
@@ -34,18 +34,10 @@ namespace RhubarbEngine.World.ECS
 		{
 			get
 			{
-				User retur;
-				if (_manager.Target == null)
+				var retur = _manager.Target ?? (parent.Target?.NullableManager);
+                if (retur == null)
 				{
-					retur = parent.Target?.NullableManager;
-				}
-				else
-				{
-					retur = _manager.Target;
-				}
-				if (retur == null)
-				{
-					retur = world.HostUser;
+					retur = World.HostUser;
 				}
 				return retur;
 			}
@@ -58,16 +50,8 @@ namespace RhubarbEngine.World.ECS
 		{
 			get
 			{
-				User retur;
-				if (_manager.Target == null)
-				{
-					retur = parent.Target?.Manager;
-				}
-				else
-				{
-					retur = _manager.Target;
-				}
-				return retur;
+				var retur = _manager.Target ?? (parent.Target?.Manager);
+                return retur;
 			}
 		}
 
@@ -102,16 +86,8 @@ namespace RhubarbEngine.World.ECS
 		public Vector3f GlobalPointToLocal(Vector3f point, bool Child = true)
 		{
 			var newtrans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromYawPitchRoll(0f, 0f, 0f) * Matrix4x4.CreateTranslation(point.ToSystemNumrics());
-            Matrix4x4 parentMatrix;
-			if (Child)
-			{
-				parentMatrix = _cashedGlobalTrans;
-			}
-			else
-			{
-				parentMatrix = parent.Target._cashedGlobalTrans;
-			}
-			Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
+            var parentMatrix = Child ? _cashedGlobalTrans : parent.Target._cashedGlobalTrans;
+            Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
 			var newlocal = newtrans * invparentMatrix;
 			Matrix4x4.Decompose(newlocal, out _, out _, out var newtranslation);
 			return (Vector3f)newtranslation;
@@ -119,16 +95,8 @@ namespace RhubarbEngine.World.ECS
 		public Vector3f GlobalScaleToLocal(Vector3f Scale, bool Child = true)
 		{
 			var newtrans = Matrix4x4.CreateScale((Vector3)Scale) * Matrix4x4.CreateFromYawPitchRoll(0f, 0f, 0f) * Matrix4x4.CreateTranslation(0, 0, 0);
-			Matrix4x4 parentMatrix;
-			if (Child)
-			{
-				parentMatrix = _cashedGlobalTrans;
-			}
-			else
-			{
-				parentMatrix = parent.Target._cashedGlobalTrans;
-			}
-			Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
+			var parentMatrix = Child ? _cashedGlobalTrans : parent.Target._cashedGlobalTrans;
+            Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
 			var newlocal = newtrans * invparentMatrix;
 			Matrix4x4.Decompose(newlocal, out var newscale, out _, out _);
 			return (Vector3f)newscale;
@@ -136,16 +104,8 @@ namespace RhubarbEngine.World.ECS
 		public Quaternionf GlobalRotToLocal(Quaternionf Rot, bool Child = true)
 		{
 			var newtrans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion((Quaternion)Rot) * Matrix4x4.CreateTranslation(0, 0, 0);
-			Matrix4x4 parentMatrix;
-			if (Child)
-			{
-				parentMatrix = _cashedGlobalTrans;
-			}
-			else
-			{
-				parentMatrix = parent.Target._cashedGlobalTrans;
-			}
-			Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
+			var parentMatrix = Child ? _cashedGlobalTrans : parent.Target._cashedGlobalTrans;
+            Matrix4x4.Invert(parentMatrix, out var invparentMatrix);
 			var newlocal = newtrans * invparentMatrix;
 			Matrix4x4.Decompose(newlocal, out _, out var newrotation, out _);
 			return (Quaternionf)newrotation;
@@ -168,7 +128,7 @@ namespace RhubarbEngine.World.ECS
 		[NoShow]
 		[NoSave]
 		[NoSync]
-		public List<IPhysicsDisableder> physicsDisableders = new List<IPhysicsDisableder>();
+		public List<IPhysicsDisableder> physicsDisableders = new();
         [NoShow]
         [NoSave]
         [NoSync]
@@ -187,7 +147,7 @@ namespace RhubarbEngine.World.ECS
         {
             get
             {
-                return _internalParent?._children ?? (IWorldObject)world;
+                return _internalParent?._children ?? (IWorldObject)World;
             }
         }
 
@@ -331,9 +291,9 @@ namespace RhubarbEngine.World.ECS
 		{
 			base.Persistent = persistence.Value;
 		}
-		public override void inturnalSyncObjs(bool newRefIds)
+		public override void InturnalSyncObjs(bool newRefIds)
 		{
-			world.AddWorldEntity(this);
+			World.AddWorldEntity(this);
 		}
 
 		public Vector3f GlobalPos()
@@ -419,7 +379,7 @@ namespace RhubarbEngine.World.ECS
 			UpdateGlobalTrans();
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			position = new Sync<Vector3f>(this, newRefIds);
             scale = new Sync<Vector3f>(this, newRefIds)
@@ -455,7 +415,7 @@ namespace RhubarbEngine.World.ECS
 
 		private void Parent_Changed(IChangeable obj)
 		{
-			if (world.RootEntity == this)
+			if (World.RootEntity == this)
             {
                 return;
             }
@@ -473,12 +433,12 @@ namespace RhubarbEngine.World.ECS
 			}
 			if (parent.Target == null)
 			{
-				parent.Target = world.RootEntity;
+				parent.Target = World.RootEntity;
 				return;
 			}
-			if (world != parent.Target.world)
+			if (World != parent.Target.World)
 			{
-				logger.Log("tried to set parent from another world");
+				Logger.Log("tried to set parent from another world");
 				return;
 			}
 			if (!parent.Target.CheckIfParented(this))
@@ -496,15 +456,8 @@ namespace RhubarbEngine.World.ECS
 		}
 		public bool CheckIfParented(Entity entity)
 		{
-			if (entity == this)
-			{
-				return true;
-			}
-			else
-			{
-				return _internalParent?.CheckIfParented(entity) ?? false;
-			}
-		}
+            return entity == this || (_internalParent?.CheckIfParented(entity) ?? false);
+        }
 		private void OnTransChange(IChangeable newValue)
 		{
 			UpdateGlobalTrans();
@@ -512,7 +465,7 @@ namespace RhubarbEngine.World.ECS
 
 		private void OnEnableChange(IChangeable newValue)
 		{
-			if (!enabled.Value && (world.RootEntity == this))
+			if (!enabled.Value && (World.RootEntity == this))
 			{ enabled.Value = true; };
 			foreach (var item in _children)
 			{
@@ -565,9 +518,9 @@ namespace RhubarbEngine.World.ECS
 			}
 			catch (Exception e)
 			{
-				Logger.Log("Failed To run Attach On Component" + typeof(T).Name + " Error:" + e.ToString());
+                RhubarbEngine.Logger.Log("Failed To run Attach On Component" + typeof(T).Name + " Error:" + e.ToString());
 			}
-			newcomp.onLoaded();
+			newcomp.OnLoaded();
 			return newcomp;
 		}
 
@@ -584,15 +537,15 @@ namespace RhubarbEngine.World.ECS
 			}
 			catch (Exception e)
 			{
-				Logger.Log("Failed To run Attach On Component" + type.Name + " Error:" + e.ToString());
+                RhubarbEngine.Logger.Log("Failed To run Attach On Component" + type.Name + " Error:" + e.ToString());
 			}
-			newcomp.onLoaded();
+			newcomp.OnLoaded();
 			return newcomp;
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
+			base.OnLoaded();
 			UpdateGlobalTrans();
 		}
 		[NoShow]
@@ -633,7 +586,7 @@ namespace RhubarbEngine.World.ECS
 			{
 				try
 				{
-					gu.Add(((Renderable)comp), playpos, ref frustum, view);
+					gu.Add((Renderable)comp, playpos, ref frustum, view);
 				}
 				catch
 				{ }
@@ -642,9 +595,9 @@ namespace RhubarbEngine.World.ECS
 
 		public override void Dispose()
 		{
-			logger.Log("Entity Remove");
+			Logger.Log("Entity Remove");
 			base.Dispose();
-			world.RemoveWorldEntity(this);
+			World.RemoveWorldEntity(this);
 		}
 
 		public void Update(DateTime startTime, DateTime Frame)
@@ -656,7 +609,7 @@ namespace RhubarbEngine.World.ECS
 
             foreach (var comp in _components)
 			{
-				if (comp.enabled.Value && !comp.IsRemoved && world.Focus != World.FocusLevel.Background)
+				if (comp.enabled.Value && !comp.IsRemoved && World.Focus != World.FocusLevel.Background)
 				{
 					comp.CommonUpdate(startTime, Frame);
 				}

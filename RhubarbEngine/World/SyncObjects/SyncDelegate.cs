@@ -35,13 +35,9 @@ namespace RhubarbEngine.World
         {
 			get
 			{
-				if (base.Target != null && base.Target.IsRemoved)
-				{
-					return null;
-				}
-				return _delegateTarget;
-			}
-			set
+                return base.Target != null && base.Target.IsRemoved ? null : _delegateTarget;
+            }
+            set
 			{
 				if (value == Target)
 				{
@@ -60,7 +56,7 @@ namespace RhubarbEngine.World
                     {
                         throw new Exception("Delegate doesn't belong to a WorldObject");
                     }
-                    if (worldObject.World != world)
+                    if (worldObject.World != World)
 					{
 						throw new Exception("Delegate owner belongs to a different world");
 					}
@@ -99,15 +95,8 @@ namespace RhubarbEngine.World
 		{
 			_method = ((DataNode<string>)data.GetValue("Method")).Value;
 			var hello = ((DataNode<string>)data.GetValue("Type")).Value;
-			if (hello == "")
-			{
-				_type = null;
-			}
-			else
-			{
-				_type = Type.GetType(hello);
-			}
-			BuildDelegate();
+			_type = hello == "" ? null : Type.GetType(hello);
+            BuildDelegate();
 		}
 
 		public void BuildDelegate()
@@ -124,7 +113,7 @@ namespace RhubarbEngine.World
 			}
 			catch (Exception e)
 			{
-				logger.Log($"Failed To load Delegate Type {_type}  Method {_method} Error" + e.ToString());
+				Logger.Log($"Failed To load Delegate Type {_type}  Method {_method} Error" + e.ToString());
 				_type = null;
 				_method = "";
 				base.Target = null;

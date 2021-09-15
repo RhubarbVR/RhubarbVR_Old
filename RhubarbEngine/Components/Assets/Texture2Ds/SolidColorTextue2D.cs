@@ -30,33 +30,38 @@ using System.Net.Http;
 
 namespace RhubarbEngine.Components.Assets
 {
-	[Category(new string[] { "Assets/Texture2Ds" })]
+    [Category(new string[] { "Assets/Texture2Ds" })]
 	public class SolidColorTextue2D : AssetProvider<RTexture2D>, IAsset
 	{
 		public Sync<Colorf> color;
 
-		private Texture texture;
-		private TextureView view;
+        private Texture _texture;
+        private TextureView _view;
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			texture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, color.Value), false).CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
-			view = engine.renderManager.gd.ResourceFactory.CreateTextureView(texture);
-			load(new RTexture2D(view));
+			_texture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, color.Value), false).CreateDeviceTexture(Engine.renderManager.gd, Engine.renderManager.gd.ResourceFactory);
+			_view = Engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture);
+			Load(new RTexture2D(_view));
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			color = new Sync<Colorf>(this, newRefIds);
-			color.Value = Colorf.White;
-			color.Changed += Color_Changed;
+            color = new Sync<Colorf>(this, newRefIds)
+            {
+                Value = Colorf.White
+            };
+            color.Changed += Color_Changed;
 		}
 
 		private void Color_Changed(IChangeable obj)
 		{
-			if (texture == null)
-				return;
-			texture.UpdateTexture(new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, color.Value), false), engine.renderManager.gd, engine.renderManager.gd.ResourceFactory);
+			if (_texture == null)
+            {
+                return;
+            }
+
+            _texture.UpdateTexture(new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, color.Value), false), Engine.renderManager.gd, Engine.renderManager.gd.ResourceFactory);
 		}
 
 		public SolidColorTextue2D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

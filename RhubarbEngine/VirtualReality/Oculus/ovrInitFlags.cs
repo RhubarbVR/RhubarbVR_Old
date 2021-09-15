@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RhubarbEngine.VirtualReality.Oculus
 {
 	[Flags]
-	internal enum ovrInitFlags
+	internal enum OvrInitFlags
 	{
 		/// <summary>
 		/// When a debug library is requested, a slower debugging version of the library will

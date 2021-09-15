@@ -8,7 +8,7 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-	public interface ValueSource<T> : IChangeable, IWorldObject where T : IConvertible
+	public interface IValueSource<T> : IChangeable, IWorldObject where T : IConvertible
 	{
 		T Value { get; set; }
 

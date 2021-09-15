@@ -22,13 +22,13 @@ namespace RhubarbEngine.World
 		public IWorldObject TargetIWorldObject { get; set; }
 	}
 
-	public class SyncRef<T> : Worker, ISyncRef, DriveMember<NetPointer>, IWorldObject, ISyncMember where T : class, IWorldObject
+	public class SyncRef<T> : Worker, ISyncRef, IDriveMember<NetPointer>, IWorldObject, ISyncMember where T : class, IWorldObject
 	{
         public bool Driven
         {
             get
             {
-                return isDriven;
+                return IsDriven;
             }
         }
 
@@ -42,27 +42,16 @@ namespace RhubarbEngine.World
 		{
 			get
 			{
-				if (this._target == null || this._target.IsRemoved || this._target.World != world)
-				{
-					return null;
-				}
-				return this._target;
-			}
-			set
+                return this._target == null || this._target.IsRemoved || this._target.World != World ? null : this._target;
+            }
+            set
 			{
 				_target = value;
-				if (value == null)
-				{
-					_targetRefID = default;
-				}
-				else
-				{
-					_targetRefID = value.ReferenceID;
-				}
-				Bind();
+				_targetRefID = value == null ? default : value.ReferenceID;
+                Bind();
 				UpdateNetValue();
 				Change();
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 		}
 
@@ -73,12 +62,12 @@ namespace RhubarbEngine.World
 
 		private void UpdateNetValue()
 		{
-			if (!isDriven)
+			if (!IsDriven)
 			{
 				var send = new DataNodeGroup();
 				send.SetValue("Value", new DataNode<NetPointer>(_targetRefID));
 				UpdateNetIngect(send);
-				world.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, referenceID.id);
+				World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, ReferenceID.id);
 			}
 		}
 
@@ -99,14 +88,14 @@ namespace RhubarbEngine.World
 			try
 			{
 				_targetRefID = thing;
-				_target = (T)world.GetWorldObj(thing);
+				_target = (T)World.GetWorldObj(thing);
 				Bind();
 			}
 			catch
 			{
 				_target = null;
 			}
-			onChangeInternal(this);
+			OnChangeInternal(this);
 		}
 		public virtual NetPointer Value
 		{
@@ -119,7 +108,7 @@ namespace RhubarbEngine.World
 				try
 				{
 					_targetRefID = value;
-					_target = (T)world.GetWorldObj(value);
+					_target = (T)World.GetWorldObj(value);
 					Bind();
 					UpdateNetValue();
 				}
@@ -127,7 +116,7 @@ namespace RhubarbEngine.World
 				{
 					_target = null;
 				}
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 		}
 
@@ -136,7 +125,7 @@ namespace RhubarbEngine.World
 
 		}
 
-		private NetPointer Netvalue
+        private NetPointer Netvalue
 		{
 			get
 			{
@@ -147,15 +136,15 @@ namespace RhubarbEngine.World
 				try
 				{
 					_targetRefID = value;
-					_target = (T)world.GetWorldObj(value);
+					_target = (T)World.GetWorldObj(value);
 					Bind();
 				}
 				catch
 				{
-					logger.Log("Failed To loaded" + _targetRefID.id.ToString());
+					Logger.Log("Failed To loaded" + _targetRefID.id.ToString());
 					_target = null;
 				}
-				onChangeInternal(this);
+				OnChangeInternal(this);
 			}
 		}
 
@@ -176,14 +165,10 @@ namespace RhubarbEngine.World
 		{
 
 		}
-		public override DataNodeGroup Serialize(bool netsync = false)
+		public override DataNodeGroup Serialize(WorkerSerializerObject workerSerializerObject)
 		{
-			var obj = new DataNodeGroup();
-			var Refid = new DataNode<NetPointer>(referenceID);
-			obj.SetValue("referenceID", Refid);
-			var Value = new DataNode<NetPointer>(_targetRefID);
-			obj.SetValue("targetRefID", Value);
-			UpdateNetIngect(obj);
+            var obj = WorkerSerializerObject.CommonRefSerialize(this, _targetRefID);
+            UpdateNetIngect(obj);
 			return obj;
 		}
 
@@ -203,18 +188,18 @@ namespace RhubarbEngine.World
 		{
 			if (data == null)
 			{
-				world.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
+				World.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
 				return;
 			}
 			_temp = ((DataNode<NetPointer>)data.GetValue("targetRefID")).Value;
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), referenceID.getID());
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
 				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
 				{
 					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
 					{
-						func(referenceID.getID());
+						func(ReferenceID.getID());
 					}
 				}
 				if (newRefID.ContainsKey(_temp.getID()))
@@ -233,50 +218,50 @@ namespace RhubarbEngine.World
 			}
 			else
 			{
-				referenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
-				world.AddWorldObj(this);
+				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
+				World.AddWorldObj(this);
 			}
 			onload.Insert(0, LoadRefPoint);
 			ReceiveDataIngect(data);
 		}
 
 		public IDriver drivenFromobj;
-		public NetPointer drivenFrom { get { return drivenFromobj.ReferenceID; } }
+		public NetPointer DrivenFrom { get { return drivenFromobj.ReferenceID; } }
 
-		public bool isDriven { get; private set; }
+		public bool IsDriven { get; private set; }
 
-		private readonly List<Driveable> _driven = new List<Driveable>();
+		private readonly List<IDriveable> _driven = new();
 
 		public override void Removed()
 		{
 			foreach (var dev in _driven)
 			{
-				dev.killDrive();
+				dev.KillDrive();
 			}
 		}
 
-		public void killDrive()
+		public void KillDrive()
 		{
 			drivenFromobj.RemoveDriveLocation();
-			isDriven = false;
+			IsDriven = false;
 		}
 
-		public void drive(IDriver value)
+		public void Drive(IDriver value)
 		{
-			if (!isDriven)
+			if (!IsDriven)
 			{
-				forceDrive(value);
+				ForceDrive(value);
 			}
 		}
-		public void forceDrive(IDriver value)
+		public void ForceDrive(IDriver value)
 		{
-			if (isDriven)
+			if (IsDriven)
 			{
-				killDrive();
+				KillDrive();
 			}
 			value.SetDriveLocation(this);
 			drivenFromobj = value;
-			isDriven = true;
+			IsDriven = true;
 		}
 
 

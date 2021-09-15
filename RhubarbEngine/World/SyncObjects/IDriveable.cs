@@ -8,11 +8,11 @@ using RhubarbDataTypes;
 
 namespace RhubarbEngine.World
 {
-	public interface Driveable : IWorldObject
+	public interface IDriveable : IWorldObject
 	{
-		bool isDriven { get; }
-		NetPointer drivenFrom { get; }
+		bool IsDriven { get; }
+		NetPointer DrivenFrom { get; }
 
-		void killDrive();
+		void KillDrive();
 	}
 }

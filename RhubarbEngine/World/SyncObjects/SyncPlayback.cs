@@ -11,16 +11,16 @@ namespace RhubarbEngine.World
 {
 	public class SyncPlayback : Sync<Playback>
 	{
-		public event Func<double> stateChange;
+		public event Func<double> StateChange;
 
 		public override Playback Defalut()
 		{
-			return new Playback { Speed = 1f, Looping = true, Offset = world.WorldTime };
+			return new Playback { Speed = 1f, Looping = true, Offset = World.WorldTime };
 		}
 
 		public override void UpdatedValue()
 		{
-			ClipLength = stateChange?.Invoke() ?? double.NegativeInfinity;
+			ClipLength = StateChange?.Invoke() ?? double.NegativeInfinity;
 		}
 
 		public double ClipLength { get; set; } = double.NegativeInfinity;
@@ -30,41 +30,28 @@ namespace RhubarbEngine.World
 			get { return ProccessPosition(); }
 			set
 			{
-				base.Value = new Playback { Looping = base.Value.Looping, Offset = world.WorldTime, Playing = base.Value.Playing, Speed = base.Value.Speed, Position = value };
+				base.Value = new Playback { Looping = base.Value.Looping, Offset = World.WorldTime, Playing = base.Value.Playing, Speed = base.Value.Speed, Position = value };
 			}
 		}
 
-		public bool Playing => (((RawPos() < ClipLength) || Looping) || Stream) && Value.Playing;
+        public bool Playing
+        {
+            get
+            {
+                return ((RawPos() < ClipLength) || Looping || Stream) && Value.Playing;
+            }
+        }
 
-		public bool Stream { get { return ClipLength >= double.PositiveInfinity; } }
+        public bool Stream { get { return ClipLength >= double.PositiveInfinity; } }
 
 		public double ProccessPosition()
 		{
-			if (Value.Playing)
-			{
-				if (Stream)
-				{
-					return 1f;
-				}
-				if (Looping)
-				{
-					return RawPos() % ClipLength;
-				}
-				if (RawPos() > ClipLength)
-				{
-					return ClipLength;
-				}
-				else
-				{
-					return RawPos();
-				}
-			}
-			return Value.Position;
-		}
+            return Value.Playing ? Stream ? 1f : Looping ? RawPos() % ClipLength : RawPos() > ClipLength ? ClipLength : RawPos() : Value.Position;
+        }
 
-		public double RawPos()
+        public double RawPos()
 		{
-			return ((Value.Offset - world.WorldTime) * Speed) + Value.Position;
+			return ((Value.Offset - World.WorldTime) * Speed) + Value.Position;
 		}
 
 		public override void LoadedFromBytes(bool networked)
@@ -72,10 +59,10 @@ namespace RhubarbEngine.World
 			base.LoadedFromBytes(networked);
 			if (!networked)
 			{
-				Value = new Playback { Looping = Value.Looping, Offset = world.WorldTime, Playing = Value.Playing, Speed = Value.Speed, Position = Value.Position };
+				Value = new Playback { Looping = Value.Looping, Offset = World.WorldTime, Playing = Value.Playing, Speed = Value.Speed, Position = Value.Position };
 			}
 		}
-		public override Playback SaveToBytes(bool netsync)
+		public override Playback SaveToBytes()
 		{
 			return new Playback { Looping = Value.Looping, Offset = 0f, Playing = Value.Playing, Speed = Value.Speed, Position = RawPos() };
 
@@ -110,11 +97,11 @@ namespace RhubarbEngine.World
 
 		public void Play()
 		{
-			Value = new Playback { Looping = Value.Looping, Offset = world.WorldTime, Playing = true, Speed = Value.Speed, Position = 0f };
+			Value = new Playback { Looping = Value.Looping, Offset = World.WorldTime, Playing = true, Speed = Value.Speed, Position = 0f };
 		}
 		public void Stop()
 		{
-			Value = new Playback { Looping = Value.Looping, Offset = world.WorldTime, Playing = false, Speed = Value.Speed, Position = 0f };
+			Value = new Playback { Looping = Value.Looping, Offset = World.WorldTime, Playing = false, Speed = Value.Speed, Position = 0f };
 		}
 		public void Pause()
 		{

@@ -9,7 +9,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 	[Category(new string[] { "Assets/Procedural Meshes" })]
 	public class RevolveMesh : ProceduralMesh
 	{
-		private readonly Curve3Axis3RevolveGenerator _generator = new Curve3Axis3RevolveGenerator();
+        private readonly Curve3Axis3RevolveGenerator _generator = new();
 
 		public SyncValueList<Vector3d> Curve;
 
@@ -18,7 +18,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public Sync<bool> NoSharedVertices;
 
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			Curve = new SyncValueList<Vector3d>(this, newRefIds);
 			Curve.Add().Value = new Vector3d(1.0f, 0.25f, 0.0f);
@@ -26,21 +26,25 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			Curve.Add().Value = new Vector3d(1.0f, -0.25f, 0.0f);
 			Curve.Add().Value = new Vector3d(0.75f, 0.0f, 0.0f);
 
-			Slices = new Sync<int>(this, newRefIds);
-			Slices.Value = 16;
+            Slices = new Sync<int>(this, newRefIds)
+            {
+                Value = 16
+            };
 
-			Capped = new Sync<bool>(this, newRefIds);
-			Capped.Value = false;
-			NoSharedVertices = new Sync<bool>(this, newRefIds);
+            Capped = new Sync<bool>(this, newRefIds)
+            {
+                Value = false
+            };
+            NoSharedVertices = new Sync<bool>(this, newRefIds);
 		}
-		public override void onChanged()
+		public override void OnChanged()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			Vector3d[] tempArray = new Vector3d[Curve.Count];
-			for (int i = 0; i < Curve.Count; i++)
+			var tempArray = new Vector3d[Curve.Count];
+			for (var i = 0; i < Curve.Count; i++)
 			{
 				tempArray[i] = Curve[i].Value;
 			}
@@ -49,13 +53,13 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			_generator.Slices = Slices.Value;
 			_generator.Capped = Capped.Value;
 			_generator.NoSharedVertices = NoSharedVertices.Value;
-			updateMesh();
+			UpdateMesh();
 		}
-		private void updateMesh()
+		private void UpdateMesh()
 		{
-			RMesh tempMesh = new RMesh(_generator.Generate().MakeDMesh());
-			tempMesh.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
-			load(tempMesh, true);
+			var tempMesh = new RMesh(_generator.Generate().MakeDMesh());
+			tempMesh.CreateMeshesBuffers(World.worldManager.engine.renderManager.gd);
+			Load(tempMesh, true);
 		}
 
 		public RevolveMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

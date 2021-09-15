@@ -32,16 +32,16 @@ namespace RhubarbEngine.Components.PrivateSpace
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			if (!world.Userspace)
+			if (!World.Userspace)
             {
                 return;
             }
 
-            rotation.SetDriveTarget(entity.rotation);
+            rotation.SetDriveTarget(Entity.rotation);
 		}
 
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
             source = new Sync<InteractionSource>(this, newRefIds)
             {
@@ -60,17 +60,17 @@ namespace RhubarbEngine.Components.PrivateSpace
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (!world.Userspace)
+			if (!World.Userspace)
             {
                 return;
             }
 
-            if (((engine.outputType == VirtualReality.OutputType.Screen) && (source.Value != InteractionSource.HeadLaser)))
+            if ((Engine.outputType == VirtualReality.OutputType.Screen) && (source.Value != InteractionSource.HeadLaser))
             {
                 return;
             }
 
-            if (((engine.outputType != VirtualReality.OutputType.Screen) && (source.Value == InteractionSource.HeadLaser)))
+            if ((Engine.outputType != VirtualReality.OutputType.Screen) && (source.Value == InteractionSource.HeadLaser))
             {
                 return;
             }
@@ -79,30 +79,30 @@ namespace RhubarbEngine.Components.PrivateSpace
 			{
 				if (source.Value == InteractionSource.HeadLaser)
 				{
-					var mousepos = engine.inputManager.mainWindows.MousePosition;
-					var size = new System.Numerics.Vector2(engine.windowManager.mainWindow.width, engine.windowManager.mainWindow.height);
+					var mousepos = Engine.inputManager.mainWindows.MousePosition;
+					var size = new System.Numerics.Vector2(Engine.windowManager.MainWindow.Width, Engine.windowManager.MainWindow.Height);
 					var x = (2.0f * mousepos.X / size.X) - 1.0f;
 					var y = (2.0f * mousepos.Y / size.Y) - 1.0f;
 					var ar = size.X / size.Y;
-					var tan = (float)Math.Tan(engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
+					var tan = (float)Math.Tan(Engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
 					var vectforward = new Vector3f(-x * tan * ar, y * tan, 1);
 					var vectup = new Vector3f(0, 1, 0);
-					entity.rotation.Value = Quaternionf.LookRotation(vectforward, vectup);
+					Entity.rotation.Value = Quaternionf.LookRotation(vectforward, vectup);
 				}
-				System.Numerics.Matrix4x4.Decompose(entity.GlobalTrans(), out var vsg, out var vrg, out var global);
+				System.Numerics.Matrix4x4.Decompose(Entity.GlobalTrans(), out var vsg, out var vrg, out var global);
 				var sourcse = new Vector3(global.X, global.Y, global.Z);
-				var val = entity.GlobalRot().AxisZ;
+				var val = Entity.GlobalRot().AxisZ;
 				var destination = new Vector3(-val.x, -val.y, -val.z);
 				switch (source.Value)
 				{
 					case InteractionSource.LeftLaser:
-						input.LeftLaser.SendRayCast(sourcse, destination);
+						Input.LeftLaser.SendRayCast(sourcse, destination);
 						break;
 					case InteractionSource.RightLaser:
-						input.RightLaser.SendRayCast(sourcse, destination);
+						Input.RightLaser.SendRayCast(sourcse, destination);
 						break;
 					case InteractionSource.HeadLaser:
-						input.RightLaser.SendRayCast(sourcse, destination);
+						Input.RightLaser.SendRayCast(sourcse, destination);
 						break;
 					default:
 						break;
@@ -110,7 +110,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 			}
 			catch (Exception e)
 			{
-				logger.Log("Error With Interaction :" + e.ToString(), true);
+				Logger.Log("Error With Interaction :" + e.ToString(), true);
 			}
 
 		}

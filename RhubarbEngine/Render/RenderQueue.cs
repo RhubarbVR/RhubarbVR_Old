@@ -9,16 +9,20 @@ namespace RhubarbEngine.Render
 {
 	public class RenderQueue
 	{
-		private const int DefaultCapacity = 250;
+		private const int DEFAULT_CAPACITY = 250;
 
-		private readonly SynchronizedCollection<RenderItemIndex> _indices = new SynchronizedCollection<RenderItemIndex>(DefaultCapacity);
-		private readonly SynchronizedCollection<Renderable> _renderables = new SynchronizedCollection<Renderable>(DefaultCapacity);
-		private IEnumerable<Renderable> sorted;
+		private readonly SynchronizedCollection<RenderItemIndex> _indices = new(DEFAULT_CAPACITY);
+		private readonly SynchronizedCollection<Renderable> _renderables = new(DEFAULT_CAPACITY);
+        public IEnumerable<Renderable> Renderables { get; private set; }
+        public int Count
+        {
+            get
+            {
+                return _renderables.Count;
+            }
+        }
 
-		public IEnumerable<Renderable> Renderables { get { return sorted; } }
-		public int Count => _renderables.Count;
-
-		public void Clear()
+        public void Clear()
 		{
 			_indices.Clear();
 			_renderables.Clear();
@@ -26,9 +30,9 @@ namespace RhubarbEngine.Render
 
 		public void AddRange(IList<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
 		{
-			for (int i = 0; i < Renderables.Count; i++)
+			for (var i = 0; i < Renderables.Count; i++)
 			{
-				Renderable Renderable = Renderables[i];
+				var Renderable = Renderables[i];
 				if (Renderable != null)
 				{
 					Add(Renderable, viewPosition, ref frustum, view);
@@ -38,9 +42,9 @@ namespace RhubarbEngine.Render
 
 		public void AddRange(IReadOnlyList<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
 		{
-			for (int i = 0; i < Renderables.Count; i++)
+			for (var i = 0; i < Renderables.Count; i++)
 			{
-				Renderable Renderable = Renderables[i];
+				var Renderable = Renderables[i];
 				if (Renderable != null)
 				{
 					Add(Renderable, viewPosition, ref frustum, view);
@@ -50,7 +54,7 @@ namespace RhubarbEngine.Render
 
 		public void AddRange(IEnumerable<Renderable> Renderables, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
 		{
-			foreach (Renderable item in Renderables)
+			foreach (var item in Renderables)
 			{
 				if (item != null)
 				{
@@ -71,7 +75,7 @@ namespace RhubarbEngine.Render
 
 		public void Order()
 		{
-			sorted = from parer in _indices.AsParallel() orderby parer.Key.Value descending select _renderables[parer.ItemIndex];
+			Renderables = from parer in _indices.AsParallel() orderby parer.Key.Value descending select _renderables[parer.ItemIndex];
 		}
 	}
 }

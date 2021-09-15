@@ -23,14 +23,16 @@ namespace RhubarbEngine.Components.ImGUI
 		public SyncValueList<string> labels;
 		public Sync<int> Columns;
 		public SyncDelegate<Action<string>> action;
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			labels = new SyncValueList<string>(this, newRefIds);
 			action = new SyncDelegate<Action<string>>(this, newRefIds);
-			Columns = new Sync<int>(this, newRefIds);
-			Columns.Value = 5;
-		}
+            Columns = new Sync<int>(this, newRefIds)
+            {
+                Value = 5
+            };
+        }
 
 		public ImGUIButtonGrid(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
@@ -44,7 +46,7 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			ImGui.Columns(Columns.Value, null);
 			ImGui.Separator();
-			for (int i = 0; i < labels.Count; i++)
+			for (var i = 0; i < labels.Count; i++)
 			{
 				var label = labels[i].Value;
 

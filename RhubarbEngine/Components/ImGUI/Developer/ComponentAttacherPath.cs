@@ -17,9 +17,9 @@ namespace RhubarbEngine.Components.ImGUI
 	{
 		public Sync<string> path;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			path = new Sync<string>(this, newRefIds);
 		}
 
@@ -34,14 +34,14 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			if (ImGui.Button(path.Value + "##" + referenceID.id, new System.Numerics.Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
+			if (ImGui.Button(path.Value + "##" + ReferenceID.id, new System.Numerics.Vector2(ImGui.GetWindowContentRegionWidth(), 20)))
 			{
 				if (path.Value == "../")
 				{
 					if (target.Target != null)
 					{
-						string news = "/";
-						string temp = "";
+						var news = "/";
+						var temp = "";
 						foreach (var item in target.Target.path.Value.Split('/', '\\'))
 						{
 							if (!string.IsNullOrEmpty(item))
@@ -50,21 +50,16 @@ namespace RhubarbEngine.Components.ImGUI
 								temp = item;
 							}
 						}
-						if (target.Target.path.Value.Contains("`1"))
-						{
-							target.Target.path.Value = target.Target.path.Value.Replace("`1", "");
-						}
-						else
-						{
-							target.Target.path.Value = news;
-						}
-					}
+						target.Target.path.Value = target.Target.path.Value.Contains("`1") ? target.Target.path.Value.Replace("`1", "") : news;
+                    }
 				}
 				else
 				{
 					if (target.Target != null)
-						target.Target.path.Value += path.Value;
-				}
+                    {
+                        target.Target.path.Value += path.Value;
+                    }
+                }
 			}
 		}
 	}

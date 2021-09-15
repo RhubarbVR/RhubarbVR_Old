@@ -54,9 +54,9 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			rowOne = new SyncRef<ImGUIButtonRow>(this, newRefIds);
 			rowTwo = new SyncRef<ImGUIButtonRow>(this, newRefIds);
 			rowThree = new SyncRef<ImGUIButtonRow>(this, newRefIds);
@@ -70,9 +70,9 @@ namespace RhubarbEngine.Components.ImGUI
 			caps = new Sync<bool>(this, newRefIds);
 		}
 
-		private void clickKey(string key)
+		private void ClickKey(string key)
 		{
-			ModifierKeys mkey = ModifierKeys.None;
+			var mkey = ModifierKeys.None;
 			if (shift.Value)
 			{
 				mkey |= ModifierKeys.Shift;
@@ -90,7 +90,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				mkey |= ModifierKeys.Gui;
 			}
-			var i = input.mainWindows.FrameSnapshot;
+			var i = Input.mainWindows.FrameSnapshot;
 			if (key.Length > 1)
 			{
 				switch (key)
@@ -151,10 +151,10 @@ namespace RhubarbEngine.Components.ImGUI
 						ReloadKeyboard();
 						break;
 					case "Enter":
-						input.mainWindows.FrameSnapshot.PressChar('\n', mkey);
+						Input.mainWindows.FrameSnapshot.PressChar('\n', mkey);
 						break;
 					case "Space":
-						input.mainWindows.FrameSnapshot.PressChar(' ', mkey);
+						Input.mainWindows.FrameSnapshot.PressChar(' ', mkey);
 						break;
 					case "Caps\nLock":
 						i.PressKey(Key.F1, mkey);
@@ -187,7 +187,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			else
 			{
-				input.mainWindows.FrameSnapshot.PressChar(key.ToCharArray()[0], mkey);
+				Input.mainWindows.FrameSnapshot.PressChar(key.ToCharArray()[0], mkey);
 			}
 
 		}
@@ -195,19 +195,19 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			rowOne.Target = entity.AttachComponent<ImGUIButtonRow>();
-			rowTwo.Target = entity.AttachComponent<ImGUIButtonRow>();
-			rowThree.Target = entity.AttachComponent<ImGUIButtonRow>();
-			rowFour.Target = entity.AttachComponent<ImGUIButtonRow>();
-			rowFive.Target = entity.AttachComponent<ImGUIButtonRow>();
-			rowSix.Target = entity.AttachComponent<ImGUIButtonRow>();
-			rowOne.Target.action.Target = clickKey;
-			rowTwo.Target.action.Target = clickKey;
-			rowThree.Target.action.Target = clickKey;
-			rowFour.Target.action.Target = clickKey;
-			rowFive.Target.action.Target = clickKey;
-			rowSix.Target.action.Target = clickKey;
-			float val = 0.125f;
+			rowOne.Target = Entity.AttachComponent<ImGUIButtonRow>();
+			rowTwo.Target = Entity.AttachComponent<ImGUIButtonRow>();
+			rowThree.Target = Entity.AttachComponent<ImGUIButtonRow>();
+			rowFour.Target = Entity.AttachComponent<ImGUIButtonRow>();
+			rowFive.Target = Entity.AttachComponent<ImGUIButtonRow>();
+			rowSix.Target = Entity.AttachComponent<ImGUIButtonRow>();
+			rowOne.Target.action.Target = ClickKey;
+			rowTwo.Target.action.Target = ClickKey;
+			rowThree.Target.action.Target = ClickKey;
+			rowFour.Target.action.Target = ClickKey;
+			rowFive.Target.action.Target = ClickKey;
+			rowSix.Target.action.Target = ClickKey;
+			var val = 0.125f;
 			rowOne.Target.hight.Value = val;
 			rowTwo.Target.hight.Value = val;
 			rowThree.Target.hight.Value = val;
@@ -238,7 +238,7 @@ namespace RhubarbEngine.Components.ImGUI
 			BuildRowSix(shift);
 		}
 
-		private void BuildBasicKey(IList<string> list, ImGUIButtonRow row, float width)
+		private static void BuildBasicKey(IList<string> list, ImGUIButtonRow row, float width)
 		{
 			foreach (var item in list)
 			{
@@ -250,13 +250,16 @@ namespace RhubarbEngine.Components.ImGUI
 		private void BuildRowOne(bool shift)
 		{
 			if (rowOne.Target == null)
-				return;
-			rowOne.Target.labels.Clear();
+            {
+                return;
+            }
+
+            rowOne.Target.labels.Clear();
 			rowOne.Target.widths.Clear();
 			var row = rowOne.Target;
 			if (shift)
 			{
-				BuildBasicKey(new string[] {
+                BuildBasicKey(new string[] {
 				"Esc",
 				"F1",
 				"F2",
@@ -274,7 +277,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			else
 			{
-				BuildBasicKey(new string[] {
+                BuildBasicKey(new string[] {
 				"Esc",
 				"F1",
 				"F2",
@@ -294,13 +297,16 @@ namespace RhubarbEngine.Components.ImGUI
 		private void BuildRowTwo(bool shift)
 		{
 			if (rowTwo.Target == null)
-				return;
-			rowTwo.Target.labels.Clear();
+            {
+                return;
+            }
+
+            rowTwo.Target.labels.Clear();
 			rowTwo.Target.widths.Clear();
 			var row = rowTwo.Target;
 			if (shift)
 			{
-				BuildBasicKey(new string[] {
+                BuildBasicKey(new string[] {
 				"~",
 				"!",
 				"@",
@@ -320,7 +326,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			else
 			{
-				BuildBasicKey(new string[] {
+                BuildBasicKey(new string[] {
 				"`",
 				"1",
 				"2",
@@ -342,15 +348,18 @@ namespace RhubarbEngine.Components.ImGUI
 		private void BuildRowThree(bool shift)
 		{
 			if (rowThree.Target == null)
-				return;
-			rowThree.Target.labels.Clear();
+            {
+                return;
+            }
+
+            rowThree.Target.labels.Clear();
 			rowThree.Target.widths.Clear();
 			var row = rowThree.Target;
 			if (shift)
 			{
 				row.widths.Add().Value = 0.075f;
 				row.labels.Add().Value = "Tab";
-				BuildBasicKey(new string[] {
+                BuildBasicKey(new string[] {
 				"Q",
 				"W",
 				"E",
@@ -371,7 +380,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				row.widths.Add().Value = 0.075f;
 				row.labels.Add().Value = "Tab";
-				BuildBasicKey(new string[] {
+                BuildBasicKey(new string[] {
 				"q",
 				"w",
 				"e",
@@ -392,15 +401,18 @@ namespace RhubarbEngine.Components.ImGUI
 		private void BuildRowFour(bool shift)
 		{
 			if (rowFour.Target == null)
-				return;
-			rowFour.Target.labels.Clear();
+            {
+                return;
+            }
+
+            rowFour.Target.labels.Clear();
 			rowFour.Target.widths.Clear();
 			var row = rowFour.Target;
 			if (shift)
 			{
 				row.widths.Add().Value = 0.085f;
 				row.labels.Add().Value = "Caps\nLock";
-				BuildBasicKey(new string[] {
+                BuildBasicKey(new string[] {
 				"A",
 				"S",
 				"D",
@@ -420,7 +432,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				row.widths.Add().Value = 0.085f;
 				row.labels.Add().Value = "Caps\nLock";
-				BuildBasicKey(new string[] {
+                BuildBasicKey(new string[] {
 				"a",
 				"s",
 				"d",
@@ -440,15 +452,18 @@ namespace RhubarbEngine.Components.ImGUI
 		private void BuildRowFive(bool shift)
 		{
 			if (rowFive.Target == null)
-				return;
-			rowFive.Target.labels.Clear();
+            {
+                return;
+            }
+
+            rowFive.Target.labels.Clear();
 			rowFive.Target.widths.Clear();
 			var row = rowFive.Target;
 			if (shift)
 			{
 				row.widths.Add().Value = 0.12f;
 				row.labels.Add().Value = "sHIFT";
-				BuildBasicKey(new string[] {
+                BuildBasicKey(new string[] {
 				"Z",
 				"X",
 				"C",
@@ -467,7 +482,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				row.widths.Add().Value = 0.12f;
 				row.labels.Add().Value = "Shift";
-				BuildBasicKey(new string[] {
+                BuildBasicKey(new string[] {
 				"z",
 				"x",
 				"c",
@@ -486,8 +501,11 @@ namespace RhubarbEngine.Components.ImGUI
 		private void BuildRowSix(bool shift)
 		{
 			if (rowSix.Target == null)
-				return;
-			rowSix.Target.labels.Clear();
+            {
+                return;
+            }
+
+            rowSix.Target.labels.Clear();
 			rowSix.Target.widths.Clear();
 			var row = rowSix.Target;
 			if (shift)

@@ -21,9 +21,9 @@ namespace RhubarbEngine.Components.ImGUI
 	public class ImGUIBeginDragDropSource : UIWidgetList
 	{
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 
 		}
 

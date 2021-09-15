@@ -10,16 +10,15 @@ namespace RhubarbEngine
 {
 	public static class Logger
 	{
-		private static Engine engine;
-		public static Engine Engine { get { return engine; } }
-		public static void init(Engine _engine)
+        public static Engine Engine { get; private set; }
+        public static void Init(Engine _engine)
 		{
-			engine = _engine;
+            Logger.Engine = _engine;
 		}
 
 		public static void Log(string _log, bool _alwaysLog = false)
 		{
-			engine.logger.Log(_log, _alwaysLog);
+			Engine.logger.Log(_log, _alwaysLog);
 		}
 	}
 }

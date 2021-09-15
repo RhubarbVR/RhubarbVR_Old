@@ -10,7 +10,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 	[Category(new string[] { "Assets/Procedural Meshes" })]
 	public class TubeMesh : ProceduralMesh
 	{
-		private readonly OpenCylinderGenerator _generator = new OpenCylinderGenerator();
+		private readonly OpenCylinderGenerator _generator = new();
 
 		public Sync<float> BaseRadius;
 		public Sync<float> TopRadius;
@@ -20,36 +20,50 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		public Sync<int> Slices;
 		public Sync<bool> NoSharedVertices;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			BaseRadius = new Sync<float>(this, newRefIds);
-			BaseRadius.Value = 1.0f;
+            BaseRadius = new Sync<float>(this, newRefIds)
+            {
+                Value = 1.0f
+            };
 
-			TopRadius = new Sync<float>(this, newRefIds);
-			TopRadius.Value = 1.0f;
+            TopRadius = new Sync<float>(this, newRefIds)
+            {
+                Value = 1.0f
+            };
 
-			Height = new Sync<float>(this, newRefIds);
-			Height.Value = 1.0f;
+            Height = new Sync<float>(this, newRefIds)
+            {
+                Value = 1.0f
+            };
 
-			StartAngleDeg = new Sync<float>(this, newRefIds);
-			StartAngleDeg.Value = 0.0f;
+            StartAngleDeg = new Sync<float>(this, newRefIds)
+            {
+                Value = 0.0f
+            };
 
-			EndAngleDeg = new Sync<float>(this, newRefIds);
-			EndAngleDeg.Value = 360.0f;
+            EndAngleDeg = new Sync<float>(this, newRefIds)
+            {
+                Value = 360.0f
+            };
 
-			Slices = new Sync<int>(this, newRefIds);
-			Slices.Value = 16;
+            Slices = new Sync<int>(this, newRefIds)
+            {
+                Value = 16
+            };
 
-			NoSharedVertices = new Sync<bool>(this, newRefIds);
-			NoSharedVertices.Value = false;
+            NoSharedVertices = new Sync<bool>(this, newRefIds)
+            {
+                Value = false
+            };
+        }
+
+		public override void OnChanged()
+		{
+			UpdateMesh();
 		}
 
-		public override void onChanged()
-		{
-			updateMesh();
-		}
-
-		private void updateMesh()
+		private void UpdateMesh()
 		{
 			_generator.BaseRadius = BaseRadius.Value;
 			_generator.TopRadius = TopRadius.Value;
@@ -58,14 +72,14 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			_generator.EndAngleDeg = EndAngleDeg.Value;
 			_generator.Slices = Slices.Value;
 			_generator.NoSharedVertices = NoSharedVertices.Value;
-			MeshGenerator newmesh = _generator.Generate();
-			RMesh kite = new RMesh(newmesh.MakeDMesh());
-			kite.createMeshesBuffers(world.worldManager.engine.renderManager.gd);
-			load(kite, true);
+			var newmesh = _generator.Generate();
+			var kite = new RMesh(newmesh.MakeDMesh());
+			kite.CreateMeshesBuffers(World.worldManager.engine.renderManager.gd);
+			Load(kite, true);
 		}
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			updateMesh();
+			UpdateMesh();
 		}
 		public TubeMesh(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{

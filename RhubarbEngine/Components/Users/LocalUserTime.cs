@@ -26,7 +26,7 @@ namespace RhubarbEngine.Components.Users
 			}
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			currentTime = new Driver<DateTime>(this, newRefIds);
 		}

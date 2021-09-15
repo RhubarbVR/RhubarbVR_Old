@@ -39,8 +39,8 @@ namespace RhubarbEngine.Components.PrivateSpace
 		public override void OnAttach()
 		{
 			base.OnAttach();
-			var (curs, _, cmit) = MeshHelper.AddMesh<PlaneMesh>(entity, world.staticAssets.overLayedUnlitShader, "Currsor", 0);
-			var (Lasere, lmesh, mit) = MeshHelper.AddMesh<CurvedTubeMesh>(entity, world.staticAssets.overLayedUnlitShader, "Laser", 3);
+			var (curs, _, cmit) = MeshHelper.AddMesh<PlaneMesh>(Entity, World.staticAssets.OverLayedUnlitShader, "Currsor", 0);
+			var (Lasere, lmesh, mit) = MeshHelper.AddMesh<CurvedTubeMesh>(Entity, World.staticAssets.OverLayedUnlitShader, "Laser", 3);
 			Laser.Target = Lasere;
 			Lasere.rotation.Value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
 			LaserMesh.Target = lmesh;
@@ -62,7 +62,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 			textureField.field.Target = this;
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
             source = new Sync<InteractionSource>(this, newRefIds)
             {
@@ -88,14 +88,14 @@ namespace RhubarbEngine.Components.PrivateSpace
 			switch (source.Value)
 			{
 				case InteractionSource.LeftLaser:
-					pos = input.LeftLaser.pos;
+					pos = Input.LeftLaser.Pos;
 					left = true;
 					break;
 				case InteractionSource.RightLaser:
-					pos = input.RightLaser.pos;
+					pos = Input.RightLaser.Pos;
 					break;
 				case InteractionSource.HeadLaser:
-					pos = input.RightLaser.pos;
+					pos = Input.RightLaser.Pos;
 					break;
 				default:
 					break;
@@ -104,11 +104,11 @@ namespace RhubarbEngine.Components.PrivateSpace
 			{
 				if (left)
 				{
-					input.LeftLaser.cursorChange += UpdateCursor;
+					Input.LeftLaser.CursorChange += UpdateCursor;
 				}
 				else
 				{
-					input.RightLaser.cursorChange += UpdateCursor;
+					Input.RightLaser.CursorChange += UpdateCursor;
 				}
 				_bind = true;
 			}
@@ -116,13 +116,13 @@ namespace RhubarbEngine.Components.PrivateSpace
 			switch (source.Value)
 			{
 				case InteractionSource.LeftLaser:
-					hitvector = input.LeftLaser.normal;
+					hitvector = Input.LeftLaser.Normal;
 					break;
 				case InteractionSource.RightLaser:
-					hitvector = input.RightLaser.normal;
+					hitvector = Input.RightLaser.Normal;
 					break;
 				case InteractionSource.HeadLaser:
-					hitvector = input.RightLaser.normal;
+					hitvector = Input.RightLaser.Normal;
 					break;
 				default:
 					break;
@@ -141,23 +141,23 @@ namespace RhubarbEngine.Components.PrivateSpace
 
             var mesh = LaserMesh.Target;
 			mesh.Endpoint.Value = Laser.Target.GlobalPointToLocal(newpos);
-			var val = entity.GlobalPos().Distance(new Vector3f(pos.x, pos.y, pos.z));
+			var val = Entity.GlobalPos().Distance(new Vector3f(pos.x, pos.y, pos.z));
 			mesh.StartHandle.Value = Vector3d.AxisY * (val / 4);
 			var e = Laser.Target.GlobalRot().Inverse() * new Vector3f(hitvector.x, hitvector.y, hitvector.z);
 			mesh.EndHandle.Value = e * (val / 6);
 			switch (source.Value)
 			{
 				case InteractionSource.LeftLaser:
-					Currsor.Target.enabled.Value = input.LeftLaser.isvisible;
-					Laser.Target.enabled.Value = input.LeftLaser.isvisible;
+					Currsor.Target.enabled.Value = Input.LeftLaser.Isvisible;
+					Laser.Target.enabled.Value = Input.LeftLaser.Isvisible;
 					break;
 				case InteractionSource.RightLaser:
-					Currsor.Target.enabled.Value = input.RightLaser.isvisible;
-					Laser.Target.enabled.Value = input.RightLaser.isvisible;
+					Currsor.Target.enabled.Value = Input.RightLaser.Isvisible;
+					Laser.Target.enabled.Value = Input.RightLaser.Isvisible;
 					break;
 				case InteractionSource.HeadLaser:
-					Currsor.Target.enabled.Value = input.RightLaser.isvisible;
-					Laser.Target.enabled.Value = input.RightLaser.isvisible;
+					Currsor.Target.enabled.Value = Input.RightLaser.Isvisible;
+					Laser.Target.enabled.Value = Input.RightLaser.Isvisible;
 					break;
 				default:
 					break;
@@ -169,7 +169,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 			var color = new Colorf(1f, 0.7f, 1f, 0.7f);
 			switch (newcursor)
 			{
-				case Input.Cursors.Grabbing:
+				case RhubarbEngine.Input.Cursors.Grabbing:
 					color = new Colorf(0.7f, 0.7f, 1f, 0.7f);
 					break;
 				default:
@@ -185,13 +185,13 @@ namespace RhubarbEngine.Components.PrivateSpace
                 planeColorField.Target.field.Value = color;
             }
 
-            load(new RTexture2D(engine.renderManager.cursors[(int)newcursor]));
+            Load(new RTexture2D(Engine.renderManager.cursors[(int)newcursor]));
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
-			UpdateCursor(Input.Cursors.None);
+			base.OnLoaded();
+            UpdateCursor(RhubarbEngine.Input.Cursors.None);
 		}
 
 		public LaserVisual(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

@@ -1,15 +1,11 @@
 name: .NET
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -24,6 +20,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore "RhubarbVR"
     - name: Build
-      run: dotnet build "RhubarbVR" --no-restore /p:Platform=x64
+      run: dotnet build "RhubarbVR" --no-restore /p:Configuration=Release /p:Platform="x64" /warnaserror
     - name: Test
-      run: dotnet test --no-build --verbosity normal  /p:Platform=x64
+      run: dotnet test --no-build --verbosity normal  /p:Configuration=Release /p:Platform="x64" /warnaserror

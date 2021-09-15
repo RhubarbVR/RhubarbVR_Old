@@ -27,7 +27,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<IUIElement> element;
 
-		public SyncRef<IinputPlane> imputPlane;
+		public SyncRef<IInputPlane> imputPlane;
 
 		public Sync<string> name;
 
@@ -55,7 +55,7 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			try
 			{
-				world.updateLists.renderObject.SafeAdd(this);
+				World.updateLists.renderObject.SafeAdd(this);
 			}
 			catch { }
 		}
@@ -64,13 +64,13 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			try
 			{
-				world.updateLists.renderObject.Remove(this);
+				World.updateLists.renderObject.Remove(this);
 			}
 			catch { }
 		}
 
 
-        public RenderFrequency renderFrac
+        public RenderFrequency RenderFrac
         {
             get
             {
@@ -86,15 +86,15 @@ namespace RhubarbEngine.Components.ImGUI
             }
         }
 
-        public override void buildSyncObjs(bool newRefIds)
+        public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			scale = new Sync<Vector2u>(this, newRefIds);
 			renderFrequency = new Sync<RenderFrequency>(this, newRefIds);
 			scale.Value = new Vector2u(600, 600);
 			scale.Changed += OnScaleChange;
 			element = new SyncRef<IUIElement>(this, newRefIds);
-			imputPlane = new SyncRef<IinputPlane>(this, newRefIds);
+			imputPlane = new SyncRef<IInputPlane>(this, newRefIds);
 			name = new Sync<string>(this, newRefIds);
 			noCloseing = new Sync<bool>(this, newRefIds);
 			noBackground = new Sync<bool>(this, newRefIds);
@@ -115,26 +115,26 @@ namespace RhubarbEngine.Components.ImGUI
                 return;
             }
 
-            if (((_framebuffer != null) && (_igr != null) && _uIloaded))
+            if ((_framebuffer != null) && (_igr != null) && _uIloaded)
 			{
 				_uIloaded = false;
-				load(null);
+				Load(null);
 				_framebuffer.Dispose();
 				_igr.Dispose();
 				LoadUI();
 			}
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
-			_uIcommandList = engine.renderManager.gd.ResourceFactory.CreateCommandList();
+			base.OnLoaded();
+			_uIcommandList = Engine.renderManager.gd.ResourceFactory.CreateCommandList();
 			LoadUI();
 		}
 
 		private Framebuffer CreateFramebuffer(uint width, uint height)
 		{
-			var factory = engine.renderManager.gd.ResourceFactory;
+			var factory = Engine.renderManager.gd.ResourceFactory;
 			var colorTarget = factory.CreateTexture(TextureDescription.Texture2D(
 				width, height,
 				1, 1,
@@ -153,22 +153,22 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			try
 			{
-				logger.Log("Loading ui");
+				Logger.Log("Loading ui");
 				if (scale.Value.x < 2 || scale.Value.y < 2)
                 {
                     throw new Exception("UI too Small");
                 }
 
                 _framebuffer = CreateFramebuffer(scale.Value.x, scale.Value.y);
-				_igr = new ImGuiRenderer(engine.renderManager.gd, _framebuffer.OutputDescription, (int)scale.Value.x, (int)scale.Value.y, ColorSpaceHandling.Linear);
+				_igr = new ImGuiRenderer(Engine.renderManager.gd, _framebuffer.OutputDescription, (int)scale.Value.x, (int)scale.Value.y, ColorSpaceHandling.Linear);
 				var target = _framebuffer.ColorTargets[0].Target;
-				var view = engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
-				load(new RTexture2D(view));
+				var view = Engine.renderManager.gd.ResourceFactory.CreateTextureView(target);
+				Load(new RTexture2D(view));
 				_uIloaded = true;
 			}
 			catch (Exception e)
 			{
-				logger.Log("ImGUI Error When Loading Error" + e.ToString(), true);
+				Logger.Log("ImGUI Error When Loading Error" + e.ToString(), true);
 			}
 		}
 
@@ -229,15 +229,8 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			bool val;
 			var e = true;
-			if (!noCloseing.Value)
-			{
-				val = ImGui.Begin(name.Value ?? "Null", ref e, ui);
-			}
-			else
-			{
-				val = ImGui.Begin(name.Value ?? "Null", ui);
-			}
-			if (val)
+            val = !noCloseing.Value ? ImGui.Begin(name.Value ?? "Null", ref e, ui) : ImGui.Begin(name.Value ?? "Null", ui);
+            if (val)
 			{
 				ImGui.SetWindowPos(Vector2.Zero);
 				ImGui.SetWindowSize(new Vector2(scale.Value.x, scale.Value.y));
@@ -274,7 +267,7 @@ namespace RhubarbEngine.Components.ImGUI
 
                 if (ImGui.GetIO().WantTextInput)
 				{
-					input.Keyboard = this;
+					Input.Keyboard = this;
 					if (imputPlane.Target != null)
 					{
 						imputPlane.Target.StopMouse = true;
@@ -282,9 +275,9 @@ namespace RhubarbEngine.Components.ImGUI
 				}
 				else
 				{
-					if (input.Keyboard == this)
+					if (Input.Keyboard == this)
 					{
-						input.Keyboard = null;
+						Input.Keyboard = null;
 					}
 					if (imputPlane.Target != null)
 					{
@@ -293,7 +286,7 @@ namespace RhubarbEngine.Components.ImGUI
 				}
 				if (imputPlane.Target != null)
 				{
-					imputPlane.Target.SetCursor(Input.CursorsEnumCaster.ImGuiMouse(ImGui.GetMouseCursor()));
+                    imputPlane.Target.SetCursor(RhubarbEngine.Input.CursorsEnumCaster.ImGuiMouse(ImGui.GetMouseCursor()));
 				}
 				ImGui.End();
 			}
@@ -313,27 +306,19 @@ namespace RhubarbEngine.Components.ImGUI
 
             try
 			{
-				InputSnapshot inputSnapshot;
-				if (imputPlane.Target == null)
-				{
-					inputSnapshot = fakeInputSnapshot;
-				}
-				else
-				{
-					inputSnapshot = imputPlane.Target;
-				}
-				_igr.Update((float)engine.platformInfo.deltaSeconds, inputSnapshot);
+				var inputSnapshot = imputPlane.Target == null ? fakeInputSnapshot : (InputSnapshot)imputPlane.Target;
+                _igr.Update((float)Engine.platformInfo.deltaSeconds, inputSnapshot);
 				ImGuiUpdate();
 				_uIcommandList.Begin();
 				_uIcommandList.SetFramebuffer(_framebuffer);
 				_uIcommandList.ClearColorTarget(0, new RgbaFloat((Vector4)backGroundColor.Value.ToRGBA()));
-				_igr.Render(engine.renderManager.gd, _uIcommandList);
+				_igr.Render(Engine.renderManager.gd, _uIcommandList);
 				_uIcommandList.End();
-				engine.renderManager.gd.SubmitCommands(_uIcommandList);
+				Engine.renderManager.gd.SubmitCommands(_uIcommandList);
 			}
 			catch (Exception e)
 			{
-				logger.Log("Error Rendering" + e.ToString(), true);
+				Logger.Log("Error Rendering" + e.ToString(), true);
 			}
 		}
 

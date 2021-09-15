@@ -31,7 +31,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 		public SyncRef<Entity> Keyboard;
 
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			FollowUser = new SyncRef<Entity>(this, newRefIds);
 			Keyboard = new SyncRef<Entity>(this, newRefIds);
@@ -53,8 +53,8 @@ namespace RhubarbEngine.Components.PrivateSpace
 				var e = keyboard;
 
 				var bmesh = e.AttachComponent<CurvedPlaneMesh>();
-				bmesh.BottomRadius.Value = engine.settingsObject.UISettings.KeyBoardCurve;
-				bmesh.TopRadius.Value = engine.settingsObject.UISettings.KeyBoardCurve + 10f;
+				bmesh.BottomRadius.Value = Engine.settingsObject.UISettings.KeyBoardCurve;
+				bmesh.TopRadius.Value = Engine.settingsObject.UISettings.KeyBoardCurve + 10f;
 				bmesh.Height.Value = 0.4f;
 				bmesh.Width.Value = 0.5f;
 				var bmeshcol = e.AttachComponent<MeshInputPlane>();
@@ -75,7 +75,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 				var imGUIText = e.AttachComponent<ImGUIKeyboard>();
 				imGUICanvas.imputPlane.Target = bmeshcol;
 				imGUICanvas.element.Target = imGUIText;
-				mit.Shader.Target = world.staticAssets.basicUnlitShader;
+				mit.Shader.Target = World.staticAssets.BasicUnlitShader;
 				meshRender.Materials.Add().Target = mit;
 				meshRender.Mesh.Target = bmesh;
 				imGUICanvas.noCloseing.Value = true;
@@ -99,20 +99,20 @@ namespace RhubarbEngine.Components.PrivateSpace
 
 		public override void OnAttach()
 		{
-			base.onLoaded();
-			var d = world.RootEntity.AddChild("User Follower");
+			base.OnLoaded();
+			var d = World.RootEntity.AddChild("User Follower");
 			FollowUser.Target = d;
 
 			var e = d.AddChild("Main Panel");
 			d.AttachComponent<UserInterfacePositioner>();
 			e.AttachComponent<TaskBarManager>();
 
-			var rootent = world.RootEntity.AddChild();
+			var rootent = World.RootEntity.AddChild();
 			rootent.name.Value = $"PersonalSpace User";
 			rootent.persistence.Value = false;
 			var userRoot = rootent.AttachComponent<UserRoot>();
-			userRoot.user.Target = world.LocalUser;
-			world.LocalUser.userroot.Target = userRoot;
+			userRoot.user.Target = World.LocalUser;
+			World.LocalUser.userroot.Target = userRoot;
 			var head = rootent.AddChild("Head");
 			head.AttachComponent<Head>();
 			head.AddChild("Laser").AttachComponent<InteractionLaser>().source.Value = InteractionSource.HeadLaser;
@@ -125,9 +125,9 @@ namespace RhubarbEngine.Components.PrivateSpace
 			userRoot.RightHand.Target = right;
 			var leftcomp = left.AttachComponent<Hand>();
 			leftcomp.userroot.Target = userRoot;
-			leftcomp.creality.Value = Input.Creality.Left;
+			leftcomp.creality.Value = RhubarbEngine.Input.Creality.Left;
 			var rightcomp = right.AttachComponent<Hand>();
-			rightcomp.creality.Value = Input.Creality.Right;
+			rightcomp.creality.Value = RhubarbEngine.Input.Creality.Right;
 			rightcomp.userroot.Target = userRoot;
 
 			var LeftLaser = left.AddChild("Left Laser");
@@ -141,30 +141,30 @@ namespace RhubarbEngine.Components.PrivateSpace
 			var rightContext = rootent.AddChild("Right Context");
 
 			var leftC = leftContext.AttachComponent<ContextMenu>();
-			leftC.side.Value = Input.Creality.Left;
+			leftC.side.Value = RhubarbEngine.Input.Creality.Left;
 
 			var rightC = rightContext.AttachComponent<ContextMenu>();
-			rightC.side.Value = Input.Creality.Right;
+			rightC.side.Value = RhubarbEngine.Input.Creality.Right;
 
-			logger.Log("Spawned User PersonalSpace");
+			Logger.Log("Spawned User PersonalSpace");
 		}
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (input.IsKeyboardinuse)
+			if (Input.IsKeyboardinuse)
             {
                 return;
             }
 
-            if ((input.mainWindows.GetKeyDown(Veldrid.Key.Tab) && (input.mainWindows.GetKey(Veldrid.Key.AltLeft) || input.mainWindows.GetKey(Veldrid.Key.AltRight))) || input.SecondaryPress(Input.Creality.None))
+            if ((Input.mainWindows.GetKeyDown(Veldrid.Key.Tab) && (Input.mainWindows.GetKey(Veldrid.Key.AltLeft) || Input.mainWindows.GetKey(Veldrid.Key.AltRight))) || Input.SecondaryPress(RhubarbEngine.Input.Creality.None))
 			{
-				SwitchWorld();
+                SwitchWorld();
 			}
 		}
 
 		public void SwitchWorld()
 		{
-			var mang = engine.worldManager;
+			var mang = Engine.worldManager;
 
 			var pos = mang.worlds.IndexOf(mang.FocusedWorld) + 1;
 			if (pos == mang.worlds.Count)
@@ -183,20 +183,20 @@ namespace RhubarbEngine.Components.PrivateSpace
 			{
 				return;
 			}
-			var mang = engine.worldManager;
-			if (mang.worlds[i].Focus == World.World.FocusLevel.Background)
+			var mang = Engine.worldManager;
+			if (mang.worlds[i].Focus == RhubarbEngine.World.World.FocusLevel.Background)
 			{
-				mang.worlds[i].Focus = World.World.FocusLevel.Focused;
+				mang.worlds[i].Focus = RhubarbEngine.World.World.FocusLevel.Focused;
 			}
 			else
 			{
 				if (i + 1 == mang.worlds.Count)
 				{
-					JoinNextIfBackground(0, count + 1);
+                    JoinNextIfBackground(0, count + 1);
 				}
 				else
 				{
-					JoinNextIfBackground(i + 1, count + 1);
+                    JoinNextIfBackground(i + 1, count + 1);
 				}
 			}
 

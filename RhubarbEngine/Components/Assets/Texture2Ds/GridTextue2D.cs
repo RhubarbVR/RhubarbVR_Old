@@ -34,12 +34,12 @@ namespace RhubarbEngine.Components.Assets
 	public class GridTextue2D : AssetProvider<RTexture2D>, IAsset
 	{
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			load(new RTexture2D(engine.renderManager.gridview));
+			Load(new RTexture2D(Engine.renderManager.gridview));
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 
 		}

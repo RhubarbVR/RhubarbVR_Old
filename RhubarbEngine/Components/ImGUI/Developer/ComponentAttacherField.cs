@@ -13,9 +13,9 @@ namespace RhubarbEngine.Components.ImGUI
 	{
 		public SyncRef<ComponentAttacher> target;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<ComponentAttacher>(this, newRefIds);
 		}
 

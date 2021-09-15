@@ -8,24 +8,28 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using NativeLibraryLoader;
 using Veldrid;
+#pragma warning disable IDE1006 // Naming Styles
+#pragma warning disable IDE0025 // Use block body for properties
+#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable IDE0007 // Use implicit type
 
 namespace RhubarbEngine.VirtualReality.Oculus
 {
 	internal static unsafe class LibOvrNative
 	{
-		private const string LibName32 = "LibOVRRT32_1.dll";
-		private const string LibName64 = "LibOVRRT64_1.dll";
+		private const string LIB_NAME_32 = "LibOVRRT32_1.dll";
+        private const string LIB_NAME_64 = "LibOVRRT64_1.dll";
 
-		private static readonly NativeLibraryLoader.NativeLibrary s_libovrrt = LoadLibAndFunctions();
+		private static readonly NativeLibraryLoader.NativeLibrary _libovrrt = LoadLibAndFunctions();
 
-		internal static bool LibOvrLoadedSuccessfully() => s_libovrrt != null;
+		internal static bool LibOvrLoadedSuccessfully() => _libovrrt != null;
 
 		private static NativeLibraryLoader.NativeLibrary LoadLibAndFunctions()
 		{
-			string libName = Environment.Is64BitProcess ? LibName64 : LibName32;
+			var libName = Environment.Is64BitProcess ? LIB_NAME_64 : LIB_NAME_32;
 			try
 			{
-				NativeLibraryLoader.NativeLibrary lib = new NativeLibraryLoader.NativeLibrary(libName);
+				var lib = new NativeLibraryLoader.NativeLibrary(libName);
 
 				p_ovr_Initialize = lib.LoadFunction<ovr_Initialize_t>("ovr_Initialize");
 				p_ovr_Shutdown = lib.LoadFunction<ovr_Shutdown_t>("ovr_Shutdown");
@@ -77,22 +81,22 @@ namespace RhubarbEngine.VirtualReality.Oculus
 			}
 		}
 
-		private delegate ovrResult ovr_Initialize_t(ovrInitParams* @params);
+		private delegate OvrResult ovr_Initialize_t(ovrInitParams* @params);
 		private static ovr_Initialize_t p_ovr_Initialize;
-		public static ovrResult ovr_Initialize(ovrInitParams* @params)
+		public static OvrResult ovr_Initialize(ovrInitParams* @params)
 		{
 			try
 			{
 				if (p_ovr_Initialize == null)
 				{
-					return ovrResult.Error_NoHmd;
+					return OvrResult.Error_NoHmd;
 				}
-				ovrResult a = p_ovr_Initialize(@params);
-				return a;
+                OvrResult a = p_ovr_Initialize(@params);
+                return a;
 			}
 			catch
 			{
-				return ovrResult.Error_NoHmd;
+				return OvrResult.Error_NoHmd;
 			}
 		}
 
@@ -105,9 +109,9 @@ namespace RhubarbEngine.VirtualReality.Oculus
 		private static ovr_GetLastErrorInfo_t p_ovr_GetLastErrorInfo;
 		public static void ovr_GetLastErrorInfo(out ovrErrorInfo errorInfo) => p_ovr_GetLastErrorInfo(out errorInfo);
 
-		private delegate ovrResult ovr_Create_t(ovrSession* pSession, ovrGraphicsLuid* pLuid);
+		private delegate OvrResult ovr_Create_t(ovrSession* pSession, ovrGraphicsLuid* pLuid);
 		private static ovr_Create_t p_ovr_Create;
-		public static ovrResult ovr_Create(ovrSession* pSession, ovrGraphicsLuid* pLuid) => p_ovr_Create(pSession, pLuid);
+		public static OvrResult ovr_Create(ovrSession* pSession, ovrGraphicsLuid* pLuid) => p_ovr_Create(pSession, pLuid);
 
 		private delegate void ovr_Destroy_t(ovrSession session);
 		private static ovr_Destroy_t p_ovr_Destroy;
@@ -126,40 +130,40 @@ namespace RhubarbEngine.VirtualReality.Oculus
 		public static ovrSizei ovr_GetFovTextureSize(ovrSession session, ovrEyeType eye, ovrFovPort fov, float pixelsPerDisplayPixel)
 			=> p_ovr_GetFovTextureSize(session, eye, fov, pixelsPerDisplayPixel);
 
-		private delegate ovrResult ovr_CreateTextureSwapChainDX_t(
+		private delegate OvrResult ovr_CreateTextureSwapChainDX_t(
 			ovrSession session,
 			IntPtr d3dPtr,
 			ovrTextureSwapChainDesc* desc,
 			ovrTextureSwapChain* outTextureSet);
 		private static ovr_CreateTextureSwapChainDX_t p_ovr_CreateTextureSwapChainDX;
-		public static ovrResult ovr_CreateTextureSwapChainDX(
+		public static OvrResult ovr_CreateTextureSwapChainDX(
 			ovrSession session,
 			IntPtr d3dPtr,
 			ovrTextureSwapChainDesc* desc,
 			ovrTextureSwapChain* outTextureSet) => p_ovr_CreateTextureSwapChainDX(session, d3dPtr, desc, outTextureSet);
 
-		private delegate ovrResult ovr_GetTextureSwapChainLength_t(ovrSession session, ovrTextureSwapChain chain, int* length);
+		private delegate OvrResult ovr_GetTextureSwapChainLength_t(ovrSession session, ovrTextureSwapChain chain, int* length);
 		private static ovr_GetTextureSwapChainLength_t p_ovr_GetTextureSwapChainLength;
-		public static ovrResult ovr_GetTextureSwapChainLength(ovrSession session, ovrTextureSwapChain chain, int* length)
+		public static OvrResult ovr_GetTextureSwapChainLength(ovrSession session, ovrTextureSwapChain chain, int* length)
 			=> p_ovr_GetTextureSwapChainLength(session, chain, length);
 
-		private delegate ovrResult ovr_GetTextureSwapChainBufferDX_t(
+		private delegate OvrResult ovr_GetTextureSwapChainBufferDX_t(
 			ovrSession session,
 			ovrTextureSwapChain chain,
 			int index,
 			Guid iid,
 			IntPtr* ppObject);
 		private static ovr_GetTextureSwapChainBufferDX_t p_ovr_GetTextureSwapChainBufferDX;
-		public static ovrResult ovr_GetTextureSwapChainBufferDX(
+		public static OvrResult ovr_GetTextureSwapChainBufferDX(
 			ovrSession session,
 			ovrTextureSwapChain chain,
 			int index,
 			Guid iid,
 			IntPtr* ppObject) => p_ovr_GetTextureSwapChainBufferDX(session, chain, index, iid, ppObject);
 
-		private delegate ovrResult ovr_GetTextureSwapChainCurrentIndex_t(ovrSession session, ovrTextureSwapChain chain, int* currentIndex);
+		private delegate OvrResult ovr_GetTextureSwapChainCurrentIndex_t(ovrSession session, ovrTextureSwapChain chain, int* currentIndex);
 		private static ovr_GetTextureSwapChainCurrentIndex_t p_ovr_GetTextureSwapChainCurrentIndex;
-		public static ovrResult ovr_GetTextureSwapChainCurrentIndex(ovrSession session, ovrTextureSwapChain chain, int* currentIndex)
+		public static OvrResult ovr_GetTextureSwapChainCurrentIndex(ovrSession session, ovrTextureSwapChain chain, int* currentIndex)
 			=> p_ovr_GetTextureSwapChainCurrentIndex(session, chain, currentIndex);
 
 		private delegate void ovr_DestroyTextureSwapChain_t(ovrSession session, ovrTextureSwapChain chain);
@@ -167,11 +171,12 @@ namespace RhubarbEngine.VirtualReality.Oculus
 		public static void ovr_DestroyTextureSwapChain(ovrSession session, ovrTextureSwapChain chain)
 			=> p_ovr_DestroyTextureSwapChain(session, chain);
 
-		private delegate ovrResult ovr_CommitTextureSwapChain_t(ovrSession session, ovrTextureSwapChain chain);
+		private delegate OvrResult ovr_CommitTextureSwapChain_t(ovrSession session, ovrTextureSwapChain chain);
 		private static ovr_CommitTextureSwapChain_t p_ovr_CommitTextureSwapChain;
-		public static ovrResult ovr_CommitTextureSwapChain(ovrSession session, ovrTextureSwapChain chain) => p_ovr_CommitTextureSwapChain(session, chain);
+        public static OvrResult ovr_CommitTextureSwapChain(ovrSession session, ovrTextureSwapChain chain) => p_ovr_CommitTextureSwapChain(session, chain);
 
-		private delegate ovrEyeRenderDesc ovr_GetRenderDesc2_t(ovrSession session, ovrEyeType eyeType, ovrFovPort fov);
+
+        private delegate ovrEyeRenderDesc ovr_GetRenderDesc2_t(ovrSession session, ovrEyeType eyeType, ovrFovPort fov);
 		private static ovr_GetRenderDesc2_t p_ovr_GetRenderDesc2;
 		public static ovrEyeRenderDesc ovr_GetRenderDesc2(ovrSession session, ovrEyeType eyeType, ovrFovPort fov)
 			=> p_ovr_GetRenderDesc2(session, eyeType, fov);
@@ -191,31 +196,31 @@ namespace RhubarbEngine.VirtualReality.Oculus
 		public static ovrTrackingState ovr_GetTrackingState(ovrSession session, double absTime, ovrBool latencyMarker)
 			=> p_ovr_GetTrackingState(session, absTime, latencyMarker);
 
-		private delegate ovrResult ovr_CreateMirrorTextureWithOptionsDX_t(
+		private delegate OvrResult ovr_CreateMirrorTextureWithOptionsDX_t(
 			ovrSession session,
 			IntPtr d3dPtr,
 			ovrMirrorTextureDesc* desc,
 			ovrMirrorTexture* outMirrorTexture);
 		private static ovr_CreateMirrorTextureWithOptionsDX_t p_ovr_CreateMirrorTextureWithOptionsDX;
-		public static ovrResult ovr_CreateMirrorTextureWithOptionsDX(
+		public static OvrResult ovr_CreateMirrorTextureWithOptionsDX(
 			ovrSession session,
 			IntPtr d3dPtr,
 			ovrMirrorTextureDesc* desc,
 			ovrMirrorTexture* outMirrorTexture) => p_ovr_CreateMirrorTextureWithOptionsDX(session, d3dPtr, desc, outMirrorTexture);
 
-		private delegate ovrResult ovr_SetTrackingOriginType_t(ovrSession session, ovrTrackingOrigin origin);
+		private delegate OvrResult ovr_SetTrackingOriginType_t(ovrSession session, ovrTrackingOrigin origin);
 		private static ovr_SetTrackingOriginType_t p_ovr_SetTrackingOriginType;
-		public static ovrResult ovr_SetTrackingOriginType(ovrSession session, ovrTrackingOrigin origin)
+		public static OvrResult ovr_SetTrackingOriginType(ovrSession session, ovrTrackingOrigin origin)
 			=> p_ovr_SetTrackingOriginType(session, origin);
 
-		private delegate ovrResult ovr_GetSessionStatus_t(ovrSession session, ovrSessionStatus* sessionStatus);
+		private delegate OvrResult ovr_GetSessionStatus_t(ovrSession session, ovrSessionStatus* sessionStatus);
 		private static ovr_GetSessionStatus_t p_ovr_GetSessionStatus;
-		public static ovrResult ovr_GetSessionStatus(ovrSession session, ovrSessionStatus* sessionStatus)
+		public static OvrResult ovr_GetSessionStatus(ovrSession session, ovrSessionStatus* sessionStatus)
 			=> p_ovr_GetSessionStatus(session, sessionStatus);
 
-		private delegate ovrResult ovr_RecenterTrackingOrigin_t(ovrSession session);
+		private delegate OvrResult ovr_RecenterTrackingOrigin_t(ovrSession session);
 		private static ovr_RecenterTrackingOrigin_t p_ovr_RecenterTrackingOrigin;
-		public static ovrResult ovr_RecenterTrackingOrigin(ovrSession session)
+		public static OvrResult ovr_RecenterTrackingOrigin(ovrSession session)
 			=> p_ovr_RecenterTrackingOrigin(session);
 
 		private delegate ovrTimewarpProjectionDesc ovrTimewarpProjectionDesc_FromProjection_t(Matrix4x4 Projection, ovrProjectionModifier projectionModFlags);
@@ -239,23 +244,23 @@ namespace RhubarbEngine.VirtualReality.Oculus
 			out EyePair_ovrPosef outEyePoses,
 			double* outSensorSampleTime) => p_ovr_GetEyePoses(session, frameIndex, latencyMarker, hmdToEyeOffset, out outEyePoses, outSensorSampleTime);
 
-		private delegate ovrResult ovr_SubmitFrame_t(
+		private delegate OvrResult ovr_SubmitFrame_t(
 			ovrSession session,
 			long frameIndex,
 			void* viewScaleDesc,
 			ovrLayerHeader** layerPtrList,
 			uint layerCount);
 		private static ovr_SubmitFrame_t p_ovr_SubmitFrame;
-		public static ovrResult ovr_SubmitFrame(
+		public static OvrResult ovr_SubmitFrame(
 			ovrSession session,
 			long frameIndex,
 			void* viewScaleDesc,
 			ovrLayerHeader** layerPtrList,
 			uint layerCount) => p_ovr_SubmitFrame(session, frameIndex, viewScaleDesc, layerPtrList, layerCount);
 
-		private delegate ovrResult ovr_GetMirrorTextureBufferDX_t(ovrSession session, ovrMirrorTexture mirror, Guid iid, IntPtr* ppObject);
+		private delegate OvrResult ovr_GetMirrorTextureBufferDX_t(ovrSession session, ovrMirrorTexture mirror, Guid iid, IntPtr* ppObject);
 		private static ovr_GetMirrorTextureBufferDX_t p_ovr_GetMirrorTextureBufferDX;
-		public static ovrResult ovr_GetMirrorTextureBufferDX(ovrSession session, ovrMirrorTexture mirror, Guid iid, IntPtr* ppObject)
+		public static OvrResult ovr_GetMirrorTextureBufferDX(ovrSession session, ovrMirrorTexture mirror, Guid iid, IntPtr* ppObject)
 			=> p_ovr_GetMirrorTextureBufferDX(session, mirror, iid, ppObject);
 
 		private delegate Matrix4x4 ovrMatrix4f_Projection_t(ovrFovPort fov, float znear, float zfar, ovrProjectionModifier projectionModFlags);
@@ -267,117 +272,117 @@ namespace RhubarbEngine.VirtualReality.Oculus
 		private static ovr_GetTimeInSeconds_t p_ovr_GetTimeInSeconds;
 		public static double ovr_GetTimeInSeconds() => p_ovr_GetTimeInSeconds();
 
-		private delegate ovrResult ovr_CreateTextureSwapChainGL_t(
+		private delegate OvrResult ovr_CreateTextureSwapChainGL_t(
 			ovrSession session,
 			ovrTextureSwapChainDesc* desc,
 			ovrTextureSwapChain* out_TextureSwapChain);
 		private static ovr_CreateTextureSwapChainGL_t p_ovr_CreateTextureSwapChainGL;
-		public static ovrResult ovr_CreateTextureSwapChainGL(
+		public static OvrResult ovr_CreateTextureSwapChainGL(
 			ovrSession session,
 			ovrTextureSwapChainDesc* desc,
 			ovrTextureSwapChain* out_TextureSwapChain) => p_ovr_CreateTextureSwapChainGL(session, desc, out_TextureSwapChain);
 
-		private delegate ovrResult ovr_GetTextureSwapChainBufferGL_t(
+		private delegate OvrResult ovr_GetTextureSwapChainBufferGL_t(
 			ovrSession session,
 			ovrTextureSwapChain chain,
 			int index, uint* out_TexId);
 		private static ovr_GetTextureSwapChainBufferGL_t p_ovr_GetTextureSwapChainBufferGL;
-		public static ovrResult ovr_GetTextureSwapChainBufferGL(
+		public static OvrResult ovr_GetTextureSwapChainBufferGL(
 			ovrSession session,
 			ovrTextureSwapChain chain,
 			int index,
 			uint* out_TexId) => p_ovr_GetTextureSwapChainBufferGL(session, chain, index, out_TexId);
 
-		private delegate ovrResult ovr_CreateMirrorTextureWithOptionsGL_t(
+		private delegate OvrResult ovr_CreateMirrorTextureWithOptionsGL_t(
 			ovrSession session,
 			ovrMirrorTextureDesc* desc,
 			ovrMirrorTexture* out_MirrorTexture);
 		private static ovr_CreateMirrorTextureWithOptionsGL_t p_ovr_CreateMirrorTextureWithOptionsGL;
-		public static ovrResult ovr_CreateMirrorTextureWithOptionsGL(
+		public static OvrResult ovr_CreateMirrorTextureWithOptionsGL(
 			ovrSession session,
 			ovrMirrorTextureDesc* desc,
 			ovrMirrorTexture* out_MirrorTexture) => p_ovr_CreateMirrorTextureWithOptionsGL(session, desc, out_MirrorTexture);
 
-		private delegate ovrResult ovr_GetMirrorTextureBufferGL_t(
+		private delegate OvrResult ovr_GetMirrorTextureBufferGL_t(
 			ovrSession session,
 			ovrMirrorTexture mirrorTexture,
 			uint* out_TexId);
 		private static ovr_GetMirrorTextureBufferGL_t p_ovr_GetMirrorTextureBufferGL;
-		public static ovrResult ovr_GetMirrorTextureBufferGL(
+		public static OvrResult ovr_GetMirrorTextureBufferGL(
 			ovrSession session,
 			ovrMirrorTexture mirrorTexture,
 			uint* out_TexId) => p_ovr_GetMirrorTextureBufferGL(session, mirrorTexture, out_TexId);
 
-		private delegate ovrResult ovr_GetInstanceExtensionsVk_t(ovrGraphicsLuid luid, byte* extensionNames, uint* inoutExtensionNamesSize);
+		private delegate OvrResult ovr_GetInstanceExtensionsVk_t(ovrGraphicsLuid luid, byte* extensionNames, uint* inoutExtensionNamesSize);
 		private static ovr_GetInstanceExtensionsVk_t p_ovr_GetInstanceExtensionsVk;
-		public static ovrResult ovr_GetInstanceExtensionsVk(ovrGraphicsLuid luid, byte* extensionNames, uint* inoutExtensionNamesSize)
+		public static OvrResult ovr_GetInstanceExtensionsVk(ovrGraphicsLuid luid, byte* extensionNames, uint* inoutExtensionNamesSize)
 			=> p_ovr_GetInstanceExtensionsVk(luid, extensionNames, inoutExtensionNamesSize);
 
-		private delegate ovrResult ovr_GetDeviceExtensionsVk_t(ovrGraphicsLuid luid, byte* extensionNames, uint* inoutExtensionNamesSize);
+		private delegate OvrResult ovr_GetDeviceExtensionsVk_t(ovrGraphicsLuid luid, byte* extensionNames, uint* inoutExtensionNamesSize);
 		private static ovr_GetDeviceExtensionsVk_t p_ovr_GetDeviceExtensionsVk;
-		public static ovrResult ovr_GetDeviceExtensionsVk(ovrGraphicsLuid luid, byte* extensionNames, uint* inoutExtensionNamesSize)
+		public static OvrResult ovr_GetDeviceExtensionsVk(ovrGraphicsLuid luid, byte* extensionNames, uint* inoutExtensionNamesSize)
 			=> p_ovr_GetDeviceExtensionsVk(luid, extensionNames, inoutExtensionNamesSize);
 
-		private delegate ovrResult ovr_GetSessionPhysicalDeviceVk_t(
+		private delegate OvrResult ovr_GetSessionPhysicalDeviceVk_t(
 			ovrSession session,
 			ovrGraphicsLuid luid,
 			IntPtr instance,
 			IntPtr* out_physicalDevice);
 		private static ovr_GetSessionPhysicalDeviceVk_t p_ovr_GetSessionPhysicalDeviceVk;
-		public static ovrResult ovr_GetSessionPhysicalDeviceVk(
+		public static OvrResult ovr_GetSessionPhysicalDeviceVk(
 			ovrSession session,
 			ovrGraphicsLuid luid,
 			IntPtr instance,
 			IntPtr* out_physicalDevice) => p_ovr_GetSessionPhysicalDeviceVk(session, luid, instance, out_physicalDevice);
 
-		private delegate ovrResult ovr_SetSynchonizationQueueVk_t(ovrSession session, IntPtr queue);
+		private delegate OvrResult ovr_SetSynchonizationQueueVk_t(ovrSession session, IntPtr queue);
 		private static ovr_SetSynchonizationQueueVk_t p_ovr_SetSynchonizationQueueVk;
-		public static ovrResult ovr_SetSynchonizationQueueVk(ovrSession session, IntPtr queue)
+		public static OvrResult ovr_SetSynchonizationQueueVk(ovrSession session, IntPtr queue)
 			=> p_ovr_SetSynchonizationQueueVk(session, queue);
 
-		private delegate ovrResult ovr_CreateTextureSwapChainVk_t(
+		private delegate OvrResult ovr_CreateTextureSwapChainVk_t(
 			ovrSession session,
 			IntPtr device,
 			ovrTextureSwapChainDesc* desc,
 			ovrTextureSwapChain* out_TextureSwapChain);
 		private static ovr_CreateTextureSwapChainVk_t p_ovr_CreateTextureSwapChainVk;
-		public static ovrResult ovr_CreateTextureSwapChainVk(
+		public static OvrResult ovr_CreateTextureSwapChainVk(
 			ovrSession session,
 			IntPtr device,
 			ovrTextureSwapChainDesc* desc,
 			ovrTextureSwapChain* out_TextureSwapChain)
 			=> p_ovr_CreateTextureSwapChainVk(session, device, desc, out_TextureSwapChain);
 
-		private delegate ovrResult ovr_GetTextureSwapChainBufferVk_t(
+		private delegate OvrResult ovr_GetTextureSwapChainBufferVk_t(
 			ovrSession session,
 			ovrTextureSwapChain chain,
 			int index,
 			ulong* out_Image);
 		private static ovr_GetTextureSwapChainBufferVk_t p_ovr_GetTextureSwapChainBufferVk;
-		public static ovrResult ovr_GetTextureSwapChainBufferVk(
+		public static OvrResult ovr_GetTextureSwapChainBufferVk(
 			ovrSession session,
 			ovrTextureSwapChain chain,
 			int index,
 			ulong* out_Image) => p_ovr_GetTextureSwapChainBufferVk(session, chain, index, out_Image);
 
-		private delegate ovrResult ovr_CreateMirrorTextureWithOptionsVk_t(
+		private delegate OvrResult ovr_CreateMirrorTextureWithOptionsVk_t(
 			ovrSession session,
 			IntPtr device,
 			ovrMirrorTextureDesc* desc,
 			ovrMirrorTexture* out_MirrorTexture);
 		private static ovr_CreateMirrorTextureWithOptionsVk_t p_ovr_CreateMirrorTextureWithOptionsVk;
-		public static ovrResult ovr_CreateMirrorTextureWithOptionsVk(
+		public static OvrResult ovr_CreateMirrorTextureWithOptionsVk(
 			ovrSession session,
 			IntPtr device,
 			ovrMirrorTextureDesc* desc,
 			ovrMirrorTexture* out_MirrorTexture) => p_ovr_CreateMirrorTextureWithOptionsVk(session, device, desc, out_MirrorTexture);
 
-		private delegate ovrResult ovr_GetMirrorTextureBufferVk_t(
+		private delegate OvrResult ovr_GetMirrorTextureBufferVk_t(
 			ovrSession session,
 			ovrMirrorTexture mirrorTexture,
 			ulong* out_Image);
 		private static ovr_GetMirrorTextureBufferVk_t p_ovr_GetMirrorTextureBufferVk;
-		public static ovrResult ovr_GetMirrorTextureBufferVk(
+		public static OvrResult ovr_GetMirrorTextureBufferVk(
 			ovrSession session,
 			ovrMirrorTexture mirrorTexture,
 			ulong* out_Image) => p_ovr_GetMirrorTextureBufferVk(session, mirrorTexture, out_Image);
@@ -391,7 +396,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct ovrInitParams
 	{
-		public ovrInitFlags Flags;
+		public OvrInitFlags Flags;
 		public uint RequestedMinorVersion;
 		public IntPtr LogCallback;
 		public UIntPtr UserData;
@@ -401,7 +406,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct ovrErrorInfo
 	{
-		public ovrResult Result;
+		public OvrResult Result;
 		public FixedString512 ErrorString;
 	}
 
@@ -551,11 +556,11 @@ namespace RhubarbEngine.VirtualReality.Oculus
 		/// Resolution of the full HMD screen (both eyes) in pixels.
 		/// </summary>
 		public ovrSizei Resolution;
-		private IntPtr _padHack1;
-		/// <summary>
-		/// Refresh rate of the display in cycles per second.
-		/// </summary>
-		public float DisplayRefreshRate
+        private IntPtr _padHack1;
+        /// <summary>
+        /// Refresh rate of the display in cycles per second.
+        /// </summary>
+        public float DisplayRefreshRate
 		{
 			get
 			{
@@ -807,8 +812,8 @@ namespace RhubarbEngine.VirtualReality.Oculus
 	internal struct ovrTextureSwapChain
 	{
 		public readonly IntPtr NativePtr;
-		public bool IsNull => NativePtr == IntPtr.Zero;
-	}
+        public bool IsNull => NativePtr == IntPtr.Zero;
+    }
 
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct ovrMirrorTexture
@@ -1441,3 +1446,7 @@ namespace RhubarbEngine.VirtualReality.Oculus
 		public float HmdSpaceToWorldScaleInMeters;
 	}
 }
+#pragma warning restore IDE1006 // Naming Styles
+#pragma warning restore IDE0025 // Use block body for properties
+#pragma warning restore IDE0044 // Add readonly modifier
+#pragma warning restore IDE0007 // Use implicit type

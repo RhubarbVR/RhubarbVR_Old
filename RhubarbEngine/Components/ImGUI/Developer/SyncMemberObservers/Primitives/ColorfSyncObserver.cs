@@ -23,9 +23,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<Sync<Colorf>> target;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<Sync<Colorf>>(this, newRefIds);
 			fieldName = new Sync<string>(this, newRefIds);
 		}
@@ -41,7 +41,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			bool Changeboarder = false;
+            var Changeboarder = false;
 			if (target.Target?.Driven ?? false)
 			{
 				var e = ImGui.GetStyleColorVec4(ImGuiCol.FrameBg);
@@ -49,16 +49,16 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleColor(ImGuiCol.FrameBg, (vec - new Vector4f(0, 1f, 0, 0)).ToSystem());
 			}
 			Interaction.GrabbableHolder source = null;
-			switch (canvas.imputPlane.Target?.source ?? Interaction.InteractionSource.None)
+			switch (canvas.imputPlane.Target?.Source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
-					source = world.LeftLaserGrabbableHolder;
+					source = World.LeftLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.RightLaser:
-					source = world.RightLaserGrabbableHolder;
+					source = World.RightLaserGrabbableHolder;
 					break;
 				case Interaction.InteractionSource.HeadLaser:
-					source = world.HeadLaserGrabbableHolder;
+					source = World.HeadLaserGrabbableHolder;
 					break;
 				default:
 					break;
@@ -76,12 +76,14 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 3);
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
-			Vector4 val = target.Target?.Value.ToRGBA().ToSystem() ?? Vector4.Zero;
-			if (ImGui.ColorEdit4((fieldName.Value ?? "null") + $"##{referenceID.id}", ref val))
+			var val = target.Target?.Value.ToRGBA().ToSystem() ?? Vector4.Zero;
+			if (ImGui.ColorEdit4((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref val))
 			{
 				if (target.Target != null)
-					target.Target.Value = (Colorf)(Vector4f)val;
-			}
+                {
+                    target.Target.Value = (Colorf)(Vector4f)val;
+                }
+            }
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				if (source != null)
@@ -97,10 +99,13 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-					Sync<Colorf> e = (Sync<Colorf>)source.Referencer.Target;
+                    var e = (Sync<Colorf>)source.Referencer.Target;
 					if (target.Target != null)
-						target.Target.Value = e.Value;
-					source.Referencer.Target = null;
+                    {
+                        target.Target.Value = e.Value;
+                    }
+
+                    source.Referencer.Target = null;
 				}
 				ImGui.PopStyleVar();
 				ImGui.PopStyleColor();

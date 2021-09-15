@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace RhubarbEngine.World.ECS
 {
-	public class Category : Attribute
+    public class Category : Attribute
 	{
 		public readonly string[] Paths;
 
 		public Category(params string[] paths)
 		{
-			List<string> end = new List<string>();
+			var end = new List<string>();
 			foreach (var item in paths)
 			{
 				var p = from e in item.Split('/', '\\')

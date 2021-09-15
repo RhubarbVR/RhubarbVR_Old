@@ -11,17 +11,16 @@ namespace RhubarbEngine.VirtualReality
 {
 	internal class TextureBlitter : IDisposable
 	{
-		private readonly GraphicsDevice _gd;
-		private readonly ResourceLayout _rl;
-		private readonly ResourceLayout _sampleRegionLayout;
+        private readonly GraphicsDevice _gd;
+        private readonly ResourceLayout _sampleRegionLayout;
 		private readonly Pipeline _pipeline;
 		private readonly DeviceBuffer _sampleRegionUB;
 		private readonly ResourceSet _sampleRegionSet;
 		private Vector4 _lastMinMaxUV;
 
-		public ResourceLayout ResourceLayout => _rl;
+        public ResourceLayout ResourceLayout { get; }
 
-		public TextureBlitter(
+        public TextureBlitter(
 			GraphicsDevice gd,
 			ResourceFactory factory,
 			OutputDescription outputDesc,
@@ -29,18 +28,18 @@ namespace RhubarbEngine.VirtualReality
 		{
 			_gd = gd;
 
-			SpecializationConstant[] specConstants = new[]
+			var specConstants = new[]
 			{
 				new SpecializationConstant(0, srgbOutput),
-				new SpecializationConstant(1, gd.BackendType == GraphicsBackend.OpenGL || gd.BackendType == GraphicsBackend.OpenGLES)
+                new SpecializationConstant(1, gd.BackendType is GraphicsBackend.OpenGL or GraphicsBackend.OpenGLES)
 			};
 
-			Shader[] shaders = factory.CreateFromSpirv(
-				new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
-				new ShaderDescription(ShaderStages.Fragment, Encoding.ASCII.GetBytes(fragmentGlsl), "main"),
+			var shaders = factory.CreateFromSpirv(
+				new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(VERTEX_GLSL), "main"),
+				new ShaderDescription(ShaderStages.Fragment, Encoding.ASCII.GetBytes(FRAGMENT_GLSL), "main"),
 				new CrossCompileOptions(false, false, specConstants));
 
-			_rl = factory.CreateResourceLayout(new ResourceLayoutDescription(
+			ResourceLayout = factory.CreateResourceLayout(new ResourceLayoutDescription(
 				new ResourceLayoutElementDescription("Input", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
 				new ResourceLayoutElementDescription("InputSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
 
@@ -56,7 +55,7 @@ namespace RhubarbEngine.VirtualReality
 					Array.Empty<VertexLayoutDescription>(),
 					new[] { shaders[0], shaders[1] },
 					specConstants),
-				new[] { _rl, _sampleRegionLayout },
+				new[] { ResourceLayout, _sampleRegionLayout },
 				outputDesc));
 
 			_sampleRegionUB = factory.CreateBuffer(new BufferDescription(16, BufferUsage.UniformBuffer));
@@ -68,7 +67,7 @@ namespace RhubarbEngine.VirtualReality
 
 		public void Render(CommandList cl, ResourceSet rs, Vector2 minUV, Vector2 maxUV)
 		{
-			Vector4 newVal = new Vector4(minUV.X, minUV.Y, maxUV.X, maxUV.Y);
+			var newVal = new Vector4(minUV.X, minUV.Y, maxUV.X, maxUV.Y);
 			if (_lastMinMaxUV != newVal)
 			{
 				_lastMinMaxUV = newVal;
@@ -83,14 +82,14 @@ namespace RhubarbEngine.VirtualReality
 
 		public void Dispose()
 		{
-			_rl.Dispose();
+			ResourceLayout.Dispose();
 			_pipeline.Dispose();
 			_sampleRegionUB.Dispose();
 			_sampleRegionSet.Dispose();
 			_sampleRegionLayout.Dispose();
 		}
 
-		private const string vertexGlsl =
+		private const string VERTEX_GLSL =
 @"
 #version 450
 #extension GL_KHR_vulkan_glsl : enable
@@ -111,7 +110,7 @@ void main()
     fsin_UV = QuadInfos[gl_VertexIndex].zw;
 }
 ";
-		private const string fragmentGlsl =
+		private const string FRAGMENT_GLSL =
 @"
 #version 450
 

@@ -17,7 +17,6 @@ namespace RhubarbEngine.VirtualReality
         private readonly string _deviceName = "Screen";
 		private Framebuffer _leftEyeFB;
 		private Matrix4x4 _projLeft;
-		private readonly TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[1];
 
         public override string DeviceName
         {
@@ -46,7 +45,7 @@ namespace RhubarbEngine.VirtualReality
         internal GraphicsDevice GraphicsDevice { get; private set; }
 
         //throw new NotImplementedException()
-        public override IController leftController
+        public override IController LeftController
         {
             get
             {
@@ -110,15 +109,10 @@ namespace RhubarbEngine.VirtualReality
 		public override void Initialize(GraphicsDevice gd)
 		{
 			GraphicsDevice = gd;
-			if (_eng.settingsObject.RenderSettings.DesktopRenderSettings.auto)
-			{
-				_leftEyeFB = CreateFramebuffer((uint)_eng.windowManager.mainWindow.width, (uint)_eng.windowManager.mainWindow.height);
-			}
-			else
-			{
-				_leftEyeFB = CreateFramebuffer((uint)_eng.settingsObject.RenderSettings.DesktopRenderSettings.x, (uint)_eng.settingsObject.RenderSettings.DesktopRenderSettings.y);
-			}
-			_eng.windowManager.mainWindow.window.Resized += Window_Resized;
+			_leftEyeFB = _eng.settingsObject.RenderSettings.DesktopRenderSettings.auto
+                ? CreateFramebuffer((uint)_eng.windowManager.MainWindow.Width, (uint)_eng.windowManager.MainWindow.Height)
+                : CreateFramebuffer((uint)_eng.settingsObject.RenderSettings.DesktopRenderSettings.x, (uint)_eng.settingsObject.RenderSettings.DesktopRenderSettings.y);
+            _eng.windowManager.MainWindow.window.Resized += Window_Resized;
 			if (_leftEyeFB == null)
 			{
 				Logger.Log("Error Loading Frame Buffer", true);
@@ -131,13 +125,13 @@ namespace RhubarbEngine.VirtualReality
 			if (_eng.settingsObject.RenderSettings.DesktopRenderSettings.auto)
 			{
 				var oldbuf = _leftEyeFB;
-				Console.WriteLine(_eng.windowManager.mainWindow.width.ToString());
+				Console.WriteLine(_eng.windowManager.MainWindow.Width.ToString());
 
-				_leftEyeFB = CreateFramebuffer((uint)_eng.windowManager.mainWindow.width, (uint)_eng.windowManager.mainWindow.height);
+				_leftEyeFB = CreateFramebuffer((uint)_eng.windowManager.MainWindow.Width, (uint)_eng.windowManager.MainWindow.Height);
 				oldbuf.ColorTargets[0].Target.Dispose();
 				oldbuf.DepthTarget?.Target.Dispose();
 				oldbuf.Dispose();
-				_mirrorTexture.clearLeftSet();
+				_mirrorTexture.ClearLeftSet();
 			}
 			else
 			{
@@ -146,7 +140,7 @@ namespace RhubarbEngine.VirtualReality
 				oldbuf.ColorTargets[0].Target.Dispose();
 				oldbuf.DepthTarget?.Target.Dispose();
 				oldbuf.Dispose();
-				_mirrorTexture.clearLeftSet();
+				_mirrorTexture.ClearLeftSet();
 			}
 			ChangeProject((float)(Math.PI / 180) * _eng.renderManager.FieldOfView, _eng.renderManager.AspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
 		}
@@ -170,7 +164,7 @@ namespace RhubarbEngine.VirtualReality
 		}
 		public override (string[] instance, string[] device) GetRequiredVulkanExtensions()
 		{
-			return (new string[] { }, new string[] { });
+			return (Array.Empty<string>(), Array.Empty<string>());
 		}
 
 		public override HmdPoseState WaitForPoses()
@@ -215,29 +209,29 @@ namespace RhubarbEngine.VirtualReality
 				if (!_mousePressed)
 				{
 					_mousePressed = true;
-					_mousePressedPos = new Vector2(_eng.windowManager.mainWindow.window.Width / 2, _eng.windowManager.mainWindow.window.Height / 2);
+					_mousePressedPos = new Vector2(_eng.windowManager.MainWindow.window.Width / 2, _eng.windowManager.MainWindow.window.Height / 2);
 					Sdl2Native.SDL_ShowCursor(0);
-					Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.mainWindow.window.SdlWindowHandle, true);
+					Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.MainWindow.window.SdlWindowHandle, true);
 				}
 				else
 				{
-					Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
-					Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.mainWindow.window.SdlWindowHandle, false);
+					Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.MainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
+					Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.MainWindow.window.SdlWindowHandle, false);
 					Sdl2Native.SDL_ShowCursor(1);
 					_mousePressed = false;
 				}
 				mouseDelta = Vector2.Zero;
-				Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
+				Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.MainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
 			}
 			else if (_mousePressed)
 			{
-				mouseDelta = (_mousePressedPos - _eng.inputManager.mainWindows.MousePosition);
-				Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.mainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
+				mouseDelta = _mousePressedPos - _eng.inputManager.mainWindows.MousePosition;
+				Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.MainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
 			}
 			if (mouseDelta != default)
 			{
-				_horizontalAngle += (mouseDelta.X * 0.002f);
-				_verticalAngle = Math.Clamp(_verticalAngle + (mouseDelta.Y * 0.002f), VerticalMin / 90, VerticalMax / 90);
+				_horizontalAngle += mouseDelta.X * 0.002f;
+                _verticalAngle = Math.Clamp(value: _verticalAngle + (mouseDelta.Y * 0.002f), min: VerticalMin / 90, max: VerticalMax / 90);
 			}
 		}
 

@@ -17,12 +17,12 @@ namespace RhubarbEngine.World.ECS
 		public string temptype;
 
 		public DataNodeGroup tempdata;
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			type = new Sync<string>(this, newRefIds);
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
 			type.Value = temptype;
 		}
@@ -34,7 +34,7 @@ namespace RhubarbEngine.World.ECS
 		{
 		}
 
-		public virtual DataNodeGroup Serialize()
+		public override DataNodeGroup Serialize(WorkerSerializerObject workerSerializerObject)
 		{
 			var fields = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 			var obj = new DataNodeGroup();
@@ -44,10 +44,10 @@ namespace RhubarbEngine.World.ECS
 				{
 					if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))
 					{
-						obj.SetValue(field.Name, ((IWorldObject)field.GetValue(this)).Serialize());
+						obj.SetValue(field.Name, ((IWorldObject)field.GetValue(this)).Serialize(workerSerializerObject));
 					}
 				}
-				var Refid = new DataNode<NetPointer>(referenceID);
+				var Refid = new DataNode<NetPointer>(ReferenceID);
 				obj.SetValue("referenceID", Refid);
 				obj.SetValue("Data", tempdata);
 			}
@@ -58,29 +58,29 @@ namespace RhubarbEngine.World.ECS
 		{
 			if (data == null)
 			{
-				world.worldManager.engine.logger.Log("Node did not exsets When loading Node");
+				World.worldManager.engine.logger.Log("Node did not exsets When loading Node");
 				return;
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), referenceID.getID());
-				latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()](referenceID.getID());
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
+				latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()](ReferenceID.getID());
 			}
 			else
 			{
-				referenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
-				world.AddWorldObj(this);
+				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
+				World.AddWorldObj(this);
 			}
 			if (((DataNode<string>)data.GetValue("type")) != null)
 			{
 				temptype = ((DataNode<string>)data.GetValue("type")).Value;
-				tempdata = ((DataNodeGroup)data.GetValue("Data"));
+				tempdata = (DataNodeGroup)data.GetValue("Data");
 			}
 			else
 			{
 				tempdata = data;
 			}
-			onLoaded();
+			OnLoaded();
 		}
 
 	}

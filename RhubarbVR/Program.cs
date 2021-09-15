@@ -6,7 +6,7 @@ namespace RhubarbVR
 {
     public static class Program
     {
-        public static Engine engine = new Engine();
+        public static Engine engine = new();
         public static void Main(string[] _args)
         {
             try

@@ -24,9 +24,9 @@ namespace RhubarbEngine.Components.ImGUI
 		public Sync<string> label;
 
 		public Sync<T> value;
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			label = new Sync<string>(this, newRefIds);
 			value = new Sync<T>(this, newRefIds);
 		}
@@ -41,7 +41,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			int c = (int)(object)value.Value;
+			var c = (int)(object)value.Value;
 			var e = Enum.GetNames(typeof(T)).ToList();
 			ImGui.Combo(label.Value ?? "", ref c, e.ToArray(), e.Count);
 			if (c != (int)(object)value.Value)

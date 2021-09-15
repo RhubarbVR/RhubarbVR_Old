@@ -36,11 +36,11 @@ using RhubarbEngine.Render;
 namespace RhubarbEngine.Components.Interaction
 {
 
-	/// <summary>
-	/// Default implementation of <see cref="IRenderHandler"/>, this class handles Offscreen Rendering (OSR).
-	/// Upstream documentation at http://magpcss.org/ceforum/apidocs3/projects/(default)/CefRenderHandler.html
-	/// </summary>
-	public class RenderHandler : IRenderHandler
+    /// <summary>
+    /// Default implementation of <see cref="IRenderHandler"/>, this class handles Offscreen Rendering (OSR).
+    /// Upstream documentation at http://magpcss.org/ceforum/apidocs3/projects/(default)/CefRenderHandler.html
+    /// </summary>
+    public class RenderHandler : IRenderHandler
 	{
 		private ChromiumWebBrowser _browser;
 
@@ -53,7 +53,7 @@ namespace RhubarbEngine.Components.Interaction
 		/// Need a lock because the caller may be asking for the bitmap
 		/// while Chromium async rendering has returned on another thread.
 		/// </summary>
-		public readonly object BitmapLock = new object();
+		public readonly object BitmapLock = new();
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the popup is open.
@@ -194,7 +194,7 @@ namespace RhubarbEngine.Components.Interaction
 			renderEvent.Set();
 		}
 
-		public ManualResetEvent renderEvent = new ManualResetEvent(false);
+		public ManualResetEvent renderEvent = new(false);
 
 		/// <summary>
 		/// Called when the browser's cursor has changed.
@@ -313,7 +313,7 @@ namespace RhubarbEngine.Components.Interaction
             }
         }
 
-        public RenderFrequency renderFrac
+        public RenderFrequency RenderFrac
         {
             get
             {
@@ -343,7 +343,7 @@ namespace RhubarbEngine.Components.Interaction
 
         public Sync<RenderFrequency> renderFrequency;
 		public Sync<Vector2u> scale;
-		public SyncRef<IinputPlane> imputPlane;
+		public SyncRef<IInputPlane> imputPlane;
 		public Sync<string> path;
 		public Driver<string> title;
 		public Sync<bool> globalAudio;
@@ -355,9 +355,10 @@ namespace RhubarbEngine.Components.Interaction
 
 		public override void Dispose()
 		{
-			base.Dispose();
-			load(null, true);
-			_browser?.Dispose();
+
+            Load(null, true);
+            _browser?.Dispose();
+            base.Dispose();
 		}
 
 		public override void OnAttach()
@@ -366,16 +367,16 @@ namespace RhubarbEngine.Components.Interaction
 
 		}
 		IAudioHandler _audio;
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
-			_frameInputBuffer = new RollBuffer(engine.audioManager.AudioFrameSizeInBytes * ChannelCount);
+			base.OnLoaded();
+			_frameInputBuffer = new RollBuffer(Engine.audioManager.AudioFrameSizeInBytes * ChannelCount);
 			if (!Cef.IsInitialized) // Check before init
 			{
 				Console.WriteLine("Init Cef");
                 var cefSettings = new CefSettings
                 {
-                    CachePath = Path.Combine(engine.dataPath, "WebBrowser")
+                    CachePath = Path.Combine(Engine.dataPath, "WebBrowser")
                 };
                 cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
 				cefSettings.CefCommandLineArgs.Add("disable-usb-keyboard-detect", "1");
@@ -406,7 +407,7 @@ namespace RhubarbEngine.Components.Interaction
                 return;
             }
 
-            imputPlane.Target.SetCursor(Input.CursorsEnumCaster.CursorType(obj));
+            imputPlane.Target.SetCursor(RhubarbEngine.Input.CursorsEnumCaster.CursorType(obj));
 		}
 
 		private void Hander_keyboard(TextInputMode obj)
@@ -429,7 +430,7 @@ namespace RhubarbEngine.Components.Interaction
                 return;
             }
 
-            input.Keyboard = this;
+            Input.Keyboard = this;
 			if (imputPlane.Target != null)
 			{
 				imputPlane.Target.StopMouse = true;
@@ -437,9 +438,9 @@ namespace RhubarbEngine.Components.Interaction
 		}
 		private void LoseKeyboard()
 		{
-			if (input.Keyboard == this)
+			if (Input.Keyboard == this)
 			{
-				input.Keyboard = null;
+				Input.Keyboard = null;
 			}
 			if (imputPlane.Target != null)
 			{
@@ -467,11 +468,11 @@ namespace RhubarbEngine.Components.Interaction
 			}
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			renderFrequency = new Sync<RenderFrequency>(this, newRefIds);
 			scale = new Sync<Vector2u>(this, newRefIds);
-			imputPlane = new SyncRef<IinputPlane>(this, newRefIds);
+			imputPlane = new SyncRef<IInputPlane>(this, newRefIds);
 			scale.Value = new Vector2u(600, 600);
 			scale.Changed += OnScaleChange;
 			path = new Sync<string>(this, newRefIds);
@@ -497,12 +498,12 @@ namespace RhubarbEngine.Components.Interaction
 			IsActive = false;
 			try
 			{
-				_frameInputBuffer.Push(new byte[engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
+				_frameInputBuffer.Push(new byte[Engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
 				_browser.AudioHandler = null;
 				_browser.Dispose();
 			}
 			catch { }
-			onLoaded();
+			OnLoaded();
 		}
 
 		private void GlobalAudio_Changed(IChangeable obj)
@@ -514,7 +515,7 @@ namespace RhubarbEngine.Components.Interaction
 
             if (globalAudio.Value)
 			{
-				_frameInputBuffer.Push(new byte[engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
+				_frameInputBuffer.Push(new byte[Engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
 				_browser.AudioHandler = null;
 			}
 			else
@@ -572,7 +573,7 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			try
 			{
-				world.updateLists.trenderObject.SafeAdd(this);
+				World.updateLists.trenderObject.SafeAdd(this);
 			}
 			catch { }
 		}
@@ -581,7 +582,7 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			try
 			{
-				world.updateLists.trenderObject.Remove(this);
+				World.updateLists.trenderObject.Remove(this);
 			}
 			catch { }
 		}
@@ -592,7 +593,7 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			if (_lastTask != null)
 			{
-				if ((!(_lastTask.IsFaulted)) && !_lastTask.IsCompleted)
+				if ((!_lastTask.IsFaulted) && !_lastTask.IsCompleted)
 				{
 					return;
 				}
@@ -613,11 +614,11 @@ namespace RhubarbEngine.Components.Interaction
                     }
 
                     _target = new UpdateDatingTexture2D();
-					_view = _target.InitializeView(((RenderHandler)_browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(engine.renderManager.gd, engine.renderManager.gd.ResourceFactory), engine.renderManager.gd);
+					_view = _target.InitializeView(((RenderHandler)_browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(Engine.renderManager.gd, Engine.renderManager.gd.ResourceFactory), Engine.renderManager.gd);
 					var e = new RTexture2D(_view);
-					e.addDisposable(_target);
-					e.addDisposable(_view);
-					load(e, true);
+					e.AddDisposable(_target);
+					e.AddDisposable(_view);
+					Load(e, true);
 				}
 				else
 				{
@@ -634,7 +635,7 @@ namespace RhubarbEngine.Components.Interaction
 			_lastTask = null;
 		}
 
-		public Bitmap ScreenshotOrNull(ChromiumWebBrowser browser, PopupBlending blend = PopupBlending.Main)
+		public static Bitmap ScreenshotOrNull(ChromiumWebBrowser browser, PopupBlending blend = PopupBlending.Main)
 		{
 			if (browser.RenderHandler == null)
 			{
@@ -665,14 +666,10 @@ namespace RhubarbEngine.Components.Interaction
 				if (renderHandler.PopupOpen && bitmap != null)
 				{
 					var popup = renderHandler.PopupBuffer.CreateBitmap();
-					if (popup == null)
-					{
-						return bitmap;
-					}
-					return MergeBitmaps(bitmap, popup, renderHandler.PopupPosition);
-				}
+                    return popup == null ? bitmap : MergeBitmaps(bitmap, popup, renderHandler.PopupPosition);
+                }
 
-				return bitmap;
+                return bitmap;
 			}
 		}
 		private static Bitmap MergeBitmaps(Bitmap firstBitmap, Bitmap secondBitmap, Point secondBitmapPosition)
@@ -739,7 +736,7 @@ namespace RhubarbEngine.Components.Interaction
 				{
 					k.Modifiers |= CefEventFlags.ShiftDown;
 				}
-				k.Type = (item.Down) ? KeyEventType.KeyDown : KeyEventType.KeyUp;
+				k.Type = item.Down ? KeyEventType.KeyDown : KeyEventType.KeyUp;
 				k.IsSystemKey = false;
 				_browser.GetBrowser().GetHost().SendKeyEvent(k);
 			}
@@ -773,34 +770,24 @@ namespace RhubarbEngine.Components.Interaction
 				}
 			}
 
-			_browser.GetBrowser().GetHost().SendMouseMoveEvent(new CefSharp.MouseEvent((int)imp.MousePosition.X, (int)imp.MousePosition.Y, CefEventFlags.None), !imp.focused);
+			_browser.GetBrowser().GetHost().SendMouseMoveEvent(new CefSharp.MouseEvent((int)imp.MousePosition.X, (int)imp.MousePosition.Y, CefEventFlags.None), !imp.Focused);
 			_browser.GetBrowser().GetHost().SendMouseWheelEvent(0, (int)(imp.WheelDelta * 100), 0, (int)(imp.WheelDelta * 100), CefEventFlags.None);
 			_browser.GetBrowser().GetHost().SetAudioMuted(false);
-			_browser.GetBrowser().GetHost().SetFocus(imp.focused);
+			_browser.GetBrowser().GetHost().SetFocus(imp.Focused);
 
 		}
 		public bool GetAudioParameters(IWebBrowser chromiumWebBrowser, IBrowser browser, ref AudioParameters parameters)
 		{
-			switch (audioType.Value)
-			{
-				case AudioType.LayoutUnsupported:
-					parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutUnsupported;
-					break;
-				case AudioType.LayoutMono:
-					parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutMono;
-					break;
-				case AudioType.LayoutStereo:
-					parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutStereo;
-					break;
-				case AudioType.LayoutSurround:
-					parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutSurround;
-					break;
-				default:
-					parameters.ChannelLayout = CefSharp.Enums.ChannelLayout.LayoutUnsupported;
-					break;
-			}
-			parameters.FramesPerBuffer = engine.audioManager.AudioFrameSize;
-			parameters.SampleRate = engine.audioManager.SamplingRate;
+            parameters.ChannelLayout = audioType.Value switch
+            {
+                AudioType.LayoutUnsupported => CefSharp.Enums.ChannelLayout.LayoutUnsupported,
+                AudioType.LayoutMono => CefSharp.Enums.ChannelLayout.LayoutMono,
+                AudioType.LayoutStereo => CefSharp.Enums.ChannelLayout.LayoutStereo,
+                AudioType.LayoutSurround => CefSharp.Enums.ChannelLayout.LayoutSurround,
+                _ => CefSharp.Enums.ChannelLayout.LayoutUnsupported,
+            };
+            parameters.FramesPerBuffer = Engine.audioManager.AudioFrameSize;
+			parameters.SampleRate = Engine.audioManager.SamplingRate;
 			return true;
 		}
 
@@ -840,7 +827,7 @@ namespace RhubarbEngine.Components.Interaction
 
 		public void OnAudioStreamError(IWebBrowser chromiumWebBrowser, IBrowser browser, string errorMessage)
 		{
-			logger.Log("Browser Audio Error" + errorMessage, true);
+			Logger.Log("Browser Audio Error" + errorMessage, true);
 		}
 
 		public WebBrowser(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

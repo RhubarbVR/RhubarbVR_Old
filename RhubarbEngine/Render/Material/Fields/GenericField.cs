@@ -12,7 +12,7 @@ namespace RhubarbEngine.Render.Material.Fields
 	public class GenericField<T> : MaterialField, IWorldObject where T : unmanaged, IConvertible
 	{
 		public Sync<T> field;
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			field = new Sync<T>(this, newRefIds);
 			SetDefault();
@@ -30,7 +30,7 @@ namespace RhubarbEngine.Render.Material.Fields
 
 		private void valueUpdate(IChangeable e)
 		{
-			updateBuffer(engine.renderManager.gd);
+			updateBuffer(Engine.renderManager.gd);
 		}
 
 		unsafe public override void updateBuffer(GraphicsDevice gb)

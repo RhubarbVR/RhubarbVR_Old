@@ -44,10 +44,10 @@ namespace RhubarbEngine.Components.Assets
 			BindableResourcesReload?.Invoke(this);
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
 			//Logger.Log("Loaded Material");
-			load(this);
+			Load(this);
 		}
 
 		public void GetBindableResources(List<BindableResource> BindableResources, bool shadow = false)
@@ -57,7 +57,7 @@ namespace RhubarbEngine.Components.Assets
 				var mitfield = GetField<MaterialField>(field.fieldName, field.shaderType);
 				if (mitfield == null)
 				{
-					logger.Log(field.fieldName + "  :  " + field.shaderType.ToString() + "  :  " + field.valueType.ToString());
+					Logger.Log(field.fieldName + "  :  " + field.shaderType.ToString() + "  :  " + field.valueType.ToString());
 					CreateField(field.fieldName, field.shaderType, field.valueType);
 					mitfield = GetField<MaterialField>(field.fieldName, field.shaderType);
 				}
@@ -82,7 +82,7 @@ namespace RhubarbEngine.Components.Assets
 					{
 						if (mitfield.resource == null)
 						{
-							throw new Exception($"resource is null nonshadow {shadow}");
+							throw new Exception($"{Shader.Target.GetType().Name} resource is null nonshadow {shadow}");
 						}
 						else
 						{
@@ -230,7 +230,7 @@ namespace RhubarbEngine.Components.Assets
 
 		public void LoadChange(RShader shader)
 		{
-			logger.Log("Starting Shader Uniform list");
+			Logger.Log("Starting Shader Uniform list");
 			foreach (var item in shader.Fields)
 			{
 				var val = false;
@@ -251,18 +251,18 @@ namespace RhubarbEngine.Components.Assets
 				}
 				if (!val)
 				{
-					logger.Log(item.fieldName + "  :  " + item.shaderType.ToString() + "  :  " + item.valueType.ToString());
+					Logger.Log(item.fieldName + "  :  " + item.shaderType.ToString() + "  :  " + item.valueType.ToString());
 					CreateField(item.fieldName, item.shaderType, item.valueType);
 				}
 			}
-			load(this);
+			Load(this);
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			Shader = new AssetRef<RShader>(this, newRefIds);
 			Fields = new SyncAbstractObjList<MaterialField>(this, newRefIds);
-			Shader.loadChange += LoadChange;
+			Shader.LoadChange += LoadChange;
 		}
 		public RMaterial(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{

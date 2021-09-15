@@ -24,39 +24,51 @@ namespace RhubarbEngine.Components.Audio
 		public class AudioSplits : Worker, IAudioSource
 		{
 			public Sync<bool> active;
-			public bool IsActive => isConpatable();
+            public bool IsActive
+            {
+                get
+                {
+                    return IsConpatable();
+                }
+            }
 
-			public bool isConpatable()
+            public bool IsConpatable()
 			{
-				if (audioParent != null)
-					return false;
-				return active.Value && audioParent.isConpatable() && (getPos() < getParentCount());
-			}
+                return !(audioParent != null || !active.Value || !audioParent.IsConpatable() || GetPos() >= GetParentCount());
+            }
 
-			public int getPos()
+            public int GetPos()
 			{
-				if (audioParent == null)
-					return -1;
-				return audioParent.outputs.GetIndexOf(this);
-			}
-			public int getParentCount()
+                return audioParent == null ? -1 : audioParent.outputs.GetIndexOf(this);
+            }
+            public int GetParentCount()
 			{
-				if (audioParent == null)
-					return -1;
-				return audioParent.outputs.Count();
-			}
-			public int ChannelCount => 1;
+                return audioParent == null ? -1 : audioParent.outputs.Count();
+            }
+            public int ChannelCount
+            {
+                get
+                {
+                    return 1;
+                }
+            }
 
-			public AudioSplitter audioParent;
+            public AudioSplitter audioParent;
 
-			public byte[] FrameInputBuffer => audioParent.getData(getPos());
+            public byte[] FrameInputBuffer
+            {
+                get
+                {
+                    return audioParent.GetData(GetPos());
+                }
+            }
 
-			public override void onLoaded()
+            public override void OnLoaded()
 			{
-				base.onLoaded();
+				base.OnLoaded();
 				try
 				{
-					audioParent = (AudioSplitter)(parent.Parent);
+					audioParent = (AudioSplitter)parent.Parent;
 				}
 				catch
 				{
@@ -64,12 +76,14 @@ namespace RhubarbEngine.Components.Audio
 				}
 			}
 
-			public override void buildSyncObjs(bool newRefIds)
+			public override void BuildSyncObjs(bool newRefIds)
 			{
-				base.buildSyncObjs(newRefIds);
-				active = new Sync<bool>(this, newRefIds);
-				active.Value = true;
-			}
+				base.BuildSyncObjs(newRefIds);
+                active = new Sync<bool>(this, newRefIds)
+                {
+                    Value = true
+                };
+            }
 			public AudioSplits(IWorldObject _parent, bool newRefIds = true) : base(_parent.World, _parent, newRefIds)
 			{
 
@@ -84,19 +98,19 @@ namespace RhubarbEngine.Components.Audio
 
 		public byte[] data;
 
-		public byte[] getData(int channelminsone)
+		public byte[] GetData(int channelminsone)
 		{
 			if (channelminsone == 0)
 			{
 				data = audioSource.Target.FrameInputBuffer;
 			}
-			var returnData = new byte[engine.audioManager.AudioFrameSizeInBytes];
-			int index = 0;
-			for (int i = 0; i < data.Length; i += 8)
+			var returnData = new byte[Engine.audioManager.AudioFrameSizeInBytes];
+			var index = 0;
+			for (var i = 0; i < data.Length; i += 8)
 			{
-				if (channelminsone == ((i / 8) % audioSource.Target.ChannelCount))
+                if (channelminsone == (i / 8 % audioSource.Target.ChannelCount))
 				{
-					for (int e = 0; e < 8; e++)
+					for (var e = 0; e < 8; e++)
 					{
 						returnData[e + index] = data[e + i];
 					}
@@ -107,16 +121,15 @@ namespace RhubarbEngine.Components.Audio
 		}
 
 
-		public bool isConpatable()
-		{
-			if (audioSource.Target == null)
-				return false;
-			return (outputs.Count() == audioSource.Target.ChannelCount);
-		}
+        public bool IsConpatable()
+        {
 
-		public override void buildSyncObjs(bool newRefIds)
+            return audioSource.Target != null && outputs.Count() == audioSource.Target.ChannelCount;
+        }
+
+        public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			outputs = new SyncObjList<AudioSplits>(this, newRefIds);
 			audioSource = new SyncRef<IAudioSource>(this, newRefIds);
 		}

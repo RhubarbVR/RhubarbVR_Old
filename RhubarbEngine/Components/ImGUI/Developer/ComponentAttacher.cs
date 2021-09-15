@@ -29,9 +29,9 @@ namespace RhubarbEngine.Components.ImGUI
 		[NoSync]
 		Entity _list;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<Worker>(this, newRefIds);
 			children = new SyncRefList<ComponentAttacherField>(this, newRefIds);
             path = new Sync<string>(this, newRefIds)
@@ -42,9 +42,9 @@ namespace RhubarbEngine.Components.ImGUI
 			Tentity = new SyncRef<Entity>(this, newRefIds);
 		}
 
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			base.onLoaded();
+			base.OnLoaded();
 			LoadList();
 		}
 
@@ -71,7 +71,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void LoadList()
 		{
-			if (world.LocalUser != entity.Manager)
+			if (World.LocalUser != Entity.Manager)
             {
                 return;
             }
@@ -86,12 +86,12 @@ namespace RhubarbEngine.Components.ImGUI
                 _list.Destroy();
             }
 
-            _list = entity.AddChild("CompList");
+            _list = Entity.AddChild("CompList");
 			_list.persistence.Value = false;
 			string[] pa;
 			if (string.IsNullOrEmpty(path.Value))
 			{
-				pa = new string[0] { };
+				pa = Array.Empty<string>();
 			}
 			else
 			{
@@ -103,15 +103,8 @@ namespace RhubarbEngine.Components.ImGUI
 						select e;
 				}
 				catch { p = null; };
-				if (p == null)
-				{
-					pa = new string[0] { };
-				}
-				else
-				{
-					pa = p.ToArray();
-				}
-			}
+				pa = p == null ? Array.Empty<string>() : p.ToArray();
+            }
 
 			try
 			{
@@ -160,7 +153,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			catch (Exception e)
 			{
-				logger.Log("Failed To build Comp Minue " + e.ToString());
+				Logger.Log("Failed To build Comp Minue " + e.ToString());
 			}
 		}
 
@@ -180,7 +173,7 @@ namespace RhubarbEngine.Components.ImGUI
                                 _list.Destroy();
                             }
 
-                            _list = entity.AddChild("CompList");
+                            _list = Entity.AddChild("CompList");
 							_list.persistence.Value = false;
 							var assems = new Assembly[2] { Assembly.GetAssembly(typeof(Vector2f)), Assembly.GetAssembly(typeof(World.Asset.RMesh)) };
 							var IConvertibleTypes =
@@ -208,7 +201,7 @@ namespace RhubarbEngine.Components.ImGUI
                                 _list.Destroy();
                             }
 
-                            _list = entity.AddChild("CompList");
+                            _list = Entity.AddChild("CompList");
 							_list.persistence.Value = false;
 							var assems = new Assembly[2] { Assembly.GetAssembly(typeof(Vector2f)), Assembly.GetAssembly(typeof(World.Asset.RMesh)) };
 							var IConvertibleTypes =
@@ -240,7 +233,7 @@ namespace RhubarbEngine.Components.ImGUI
                                 _list.Destroy();
                             }
 
-                            _list = entity.AddChild("CompList");
+                            _list = Entity.AddChild("CompList");
 							_list.persistence.Value = false;
 							var IConvertibleTypes =
 								 from t in Assembly.GetAssembly(typeof(IWorldObject)).GetTypes().AsParallel()
@@ -270,7 +263,7 @@ namespace RhubarbEngine.Components.ImGUI
                                 _list.Destroy();
                             }
 
-                            _list = entity.AddChild("CompList");
+                            _list = Entity.AddChild("CompList");
 							_list.persistence.Value = false;
 							var assems = new Assembly[2] { Assembly.GetAssembly(typeof(Vector2f)), Assembly.GetAssembly(typeof(string)) };
 							var IConvertibleTypes =
@@ -303,13 +296,13 @@ namespace RhubarbEngine.Components.ImGUI
 					else
 					{
 						Tentity.Target?.AttachComponent(type);
-						entity.Destroy();
+						Entity.Destroy();
 					}
 				}
 				else
 				{
 					Tentity.Target?.AttachComponent(type);
-					entity.Destroy();
+					Entity.Destroy();
 				}
 			}
 			else

@@ -17,9 +17,15 @@ namespace RhubarbEngine.Components.ImGUI
 {
 	public class SyncListBaseObserver : UIWidget, IObserver
 	{
-		public virtual bool removeable => true;
+        public virtual bool Removeable
+        {
+            get
+            {
+                return true;
+            }
+        }
 
-		public Sync<string> fieldName;
+        public Sync<string> fieldName;
 
 		public SyncRef<ISyncList> target;
 
@@ -27,9 +33,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<Entity> childrenHolder;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<ISyncList>(this, newRefIds);
 			target.Changed += Target_Changed;
 			fieldName = new Sync<string>(this, newRefIds);
@@ -39,33 +45,39 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void Dispose()
 		{
-			base.Dispose();
 			childrenHolder.Target?.Dispose();
-		}
+            base.Dispose();
+        }
 
-		private void Target_Changed(IChangeable obj)
+        private void Target_Changed(IChangeable obj)
 		{
-			if (entity.Manager != world.LocalUser)
-				return;
-			foreach (var item in children)
+			if (Entity.Manager != World.LocalUser)
+            {
+                return;
+            }
+
+            foreach (var item in children)
 			{
 				item.Target?.Dispose();
 			}
 			children.Clear();
 			if (target.Target == null)
-				return;
-			if (childrenHolder.Target == null)
+            {
+                return;
+            }
+
+            if (childrenHolder.Target == null)
 			{
-				childrenHolder.Target = entity.AddChild(fieldName.Value + "Holder");
+				childrenHolder.Target = Entity.AddChild(fieldName.Value + "Holder");
 			}
-			int index = 0;
+			var index = 0;
 			foreach (var item in target.Target)
 			{
 				if (typeof(Worker).IsAssignableFrom(item.GetType()))
 				{
 					var obs = childrenHolder.Target.AttachComponent<WorkerObserver>();
 					obs.fieldName.Value = index.ToString();
-					obs.target.Target = ((Worker)item);
+					obs.target.Target = (Worker)item;
 					children.Add().Target = obs;
 				}
 				index++;
@@ -85,10 +97,10 @@ namespace RhubarbEngine.Components.ImGUI
 			if (children[index].Target != null)
 			{
 				children[index].Target.ImguiRender(imGuiRenderer, canvas);
-				if (removeable)
+				if (Removeable)
 				{
 					ImGui.SameLine();
-					if (ImGui.Button("X##" + referenceID.id.ToString()))
+					if (ImGui.Button("X##" + ReferenceID.id.ToString()))
 					{
 						target.Target?.Remove(index);
 					}
@@ -98,7 +110,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public virtual void RenderChildren(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			for (int i = 0; i < children.Count(); i++)
+			for (var i = 0; i < children.Count(); i++)
 			{
 				ChildRender(i, imGuiRenderer, canvas);
 			}

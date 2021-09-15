@@ -42,11 +42,11 @@ namespace RhubarbEngine.Components.Rendering
             }
         }
 
-        public override void buildSyncObjs(bool newRefIds)
+        public override void BuildSyncObjs(bool newRefIds)
 		{
 			Mesh = new AssetRef<RMesh>(this, newRefIds);
 			Materials = new SyncAssetRefList<RMaterial>(this, newRefIds);
-			Mesh.loadChange += LoadMesh;
+			Mesh.LoadChange += LoadMesh;
 			Materials.loadChange += LoadMaterial;
             RenderOrderOffset = new Sync<uint>(this, newRefIds)
             {
@@ -63,17 +63,17 @@ namespace RhubarbEngine.Components.Rendering
 
             if (Mesh.Target == null)
 			{
-				logger.Log("no mesh provider");
+				Logger.Log("no mesh provider");
 				return;
 			}
-			if (Mesh.Target.value == null)
+			if (Mesh.Target.Value == null)
 			{
-				logger.Log("no mesh to load");
-				logger.Log($"{Mesh.Value.getID()}");
+				Logger.Log("no mesh to load");
+				Logger.Log($"{Mesh.Value.getID()}");
 			}
 			else
 			{
-				_meshPieces = Mesh.Asset.meshPieces.ToArray();
+				_meshPieces = Mesh.Asset.MeshPieces.ToArray();
 			}
 			CheckIsLoaded();
 		}
@@ -96,7 +96,7 @@ namespace RhubarbEngine.Components.Rendering
                 return;
             }
 
-            logger.Log("load Materials");
+            Logger.Log("load Materials");
 			var factory = Gd.ResourceFactory;
 
             var positionLayoutDesc = new VertexLayoutDescription(
@@ -129,7 +129,7 @@ namespace RhubarbEngine.Components.Rendering
 				PrimitiveTopology.TriangleList,
 				new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.mainVertShader, mit.Shader.Asset.mainFragShader }),
 				mit.Shader.Asset.mainresourceLayout,
-				engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
+				Engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
 								AddDisposable(mainPipeline);
 								_mainPipeline.Add(mainPipeline);
 
@@ -141,7 +141,7 @@ namespace RhubarbEngine.Components.Rendering
 				PrimitiveTopology.TriangleList,
 				new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.shadowVertShader, mit.Shader.Asset.shadowFragShader }),
 				mit.Shader.Asset.shadowresourceLayout,
-				engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
+				Engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
 								AddDisposable(shadowPipeline);
 								_shadowpipeline.Add(mainPipeline);
 
@@ -197,7 +197,7 @@ namespace RhubarbEngine.Components.Rendering
                 return;
             }
 
-            var mitindex = Materials.indexOf(mit);
+            var mitindex = Materials.IndexOf(mit);
 			if (mitindex == -1)
 			{
 				mit.BindableResourcesReload -= ReloadResorseSet;
@@ -250,20 +250,20 @@ namespace RhubarbEngine.Components.Rendering
 			_loaded = _meshPieces.Length > 0 && _mainRS.Count > 0 && _shadowRS.Count > 0;
 		}
 
-		private MeshPiece[] _meshPieces = new MeshPiece[0];
+		private MeshPiece[] _meshPieces = Array.Empty<MeshPiece>();
         private GraphicsDevice Gd
         {
             get
             {
-                return engine.renderManager.gd;
+                return Engine.renderManager.gd;
             }
         }
 
-        private readonly List<Pipeline> _mainPipeline = new List<Pipeline>();
-		private readonly List<Pipeline> _shadowpipeline = new List<Pipeline>();
+        private readonly List<Pipeline> _mainPipeline = new();
+		private readonly List<Pipeline> _shadowpipeline = new();
 		private DeviceBuffer _wvpBuffer;
-		private readonly List<ResourceSet> _mainRS = new List<ResourceSet>();
-		private readonly List<ResourceSet> _shadowRS = new List<ResourceSet>();
+		private readonly List<ResourceSet> _mainRS = new();
+		private readonly List<ResourceSet> _shadowRS = new();
 		private bool _loaded;
 
 		public override void Render(GraphicsDevice gd, CommandList cl, UBO ubo)
@@ -299,18 +299,18 @@ namespace RhubarbEngine.Components.Rendering
 				var a = i % _meshPieces.Length;
 				var b = i % Materials.Length;
 				var piece = _meshPieces[a];
-				cl.SetPipeline((shadow) ? _shadowpipeline[b] : _mainPipeline[b]);
+				cl.SetPipeline(shadow ? _shadowpipeline[b] : _mainPipeline[b]);
 				cl.SetVertexBuffer(0, piece.Positions);
 				cl.SetVertexBuffer(1, piece.TexCoords);
 				cl.SetIndexBuffer(piece.Indices, IndexFormat.UInt32);
-				cl.SetGraphicsResourceSet(0, (shadow) ? _shadowRS[b] : _mainRS[b]);
+				cl.SetGraphicsResourceSet(0, shadow ? _shadowRS[b] : _mainRS[b]);
 				cl.DrawIndexed(piece.IndexCount);
 			}
 		}
 
 		public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
 		{
-			return RenderOrderKey.Create(RenderOrderOffset.Value, BoundingBox.DistanceFromPoint((Vector3)entity.GlobalPointToLocal((Vector3f)cameraPosition, false)));
+			return RenderOrderKey.Create(RenderOrderOffset.Value, BoundingBox.DistanceFromPoint((Vector3)Entity.GlobalPointToLocal((Vector3f)cameraPosition, false)));
 		}
 
 
@@ -318,15 +318,15 @@ namespace RhubarbEngine.Components.Rendering
 		{
 
 		}
-		public override void onLoaded()
+		public override void OnLoaded()
 		{
-			_wvpBuffer = engine.renderManager.gd.ResourceFactory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+			_wvpBuffer = Engine.renderManager.gd.ResourceFactory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 			AddDisposable(_wvpBuffer);
-			Logger.Log("Loading Mesh Render");
+            RhubarbEngine.Logger.Log("Loading Mesh Render");
 			LoadMesh(null);
 			LoadMaterial(null);
 		}
-		public override void onChanged()
+		public override void OnChanged()
 		{
 		}
 		public MeshRender(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

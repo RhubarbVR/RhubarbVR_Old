@@ -14,10 +14,6 @@ using RhubarbEngine.Input;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using RhubarbEngine.Components.Interaction;
 
-namespace RhubarbEngine
-{
-
-}
 
 namespace RhubarbEngine.Components.Users
 {
@@ -28,57 +24,57 @@ namespace RhubarbEngine.Components.Users
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (!world.userLoaded)
+			if (!World.userLoaded)
 			{
 				return;
 			}
-			if (world.LocalUser.userroot.Target == null)
+			if (World.LocalUser.userroot.Target == null)
 			{
-				Entity rootent = world.RootEntity.AddChild();
-				rootent.name.Value = $"{world.LocalUser.username.Value} (ID:{world.LocalUser.referenceID.id.ToHexString()})";
+				var rootent = World.RootEntity.AddChild();
+				rootent.name.Value = $"{World.LocalUser.username.Value} (ID:{World.LocalUser.ReferenceID.id.ToHexString()})";
 				rootent.persistence.Value = false;
-				rootent.Manager = world.LocalUser;
-				UserRoot userRoot = rootent.AttachComponent<UserRoot>();
-				userRoot.user.Target = world.LocalUser;
-				world.LocalUser.userroot.Target = userRoot;
-				Entity head = rootent.AddChild("Head");
+				rootent.Manager = World.LocalUser;
+				var userRoot = rootent.AttachComponent<UserRoot>();
+				userRoot.user.Target = World.LocalUser;
+				World.LocalUser.userroot.Target = userRoot;
+				var head = rootent.AddChild("Head");
 				head.AttachComponent<Head>().userroot.Target = userRoot;
 				var grabHolder = head.AddChild("GrabHolder").AttachComponent<GrabbableHolder>();
-				grabHolder.initializeGrabHolder(InteractionSource.HeadLaser);
+				grabHolder.InitializeGrabHolder(InteractionSource.HeadLaser);
 				userRoot.Head.Target = head;
-				Entity left = rootent.AddChild("Left hand");
-				Entity right = rootent.AddChild("Right hand");
+				var left = rootent.AddChild("Left hand");
+				var right = rootent.AddChild("Right hand");
 
 
 				userRoot.LeftHand.Target = left;
 				userRoot.RightHand.Target = right;
-				Hand leftcomp = left.AttachComponent<Hand>();
+				var leftcomp = left.AttachComponent<Hand>();
 				leftcomp.userroot.Target = userRoot;
-				leftcomp.creality.Value = Input.Creality.Left;
-				Hand rightcomp = right.AttachComponent<Hand>();
-				rightcomp.creality.Value = Input.Creality.Right;
+				leftcomp.creality.Value = RhubarbEngine.Input.Creality.Left;
+				var rightcomp = right.AttachComponent<Hand>();
+				rightcomp.creality.Value = RhubarbEngine.Input.Creality.Right;
 				rightcomp.userroot.Target = userRoot;
 
 
-				Entity obj = world.worldManager.AddMesh<ArrowMesh>(left);
-				Entity obj2 = world.worldManager.AddMesh<ArrowMesh>(right);
-				Entity obj3 = world.worldManager.AddMesh<ArrowMesh>(head);
+				var obj = Managers.WorldManager.AddMesh<ArrowMesh>(left);
+				var obj2 = Managers.WorldManager.AddMesh<ArrowMesh>(right);
+				var obj3 = Managers.WorldManager.AddMesh<ArrowMesh>(head);
 
 				var ileft = left.AttachComponent<GrabbableHolder>();
 				var iright = right.AttachComponent<GrabbableHolder>();
-				ileft.initializeGrabHolder(InteractionSource.LeftLaser);
-				iright.initializeGrabHolder(InteractionSource.RightLaser);
+				ileft.InitializeGrabHolder(InteractionSource.LeftLaser);
+				iright.InitializeGrabHolder(InteractionSource.RightLaser);
 
 				obj3.position.Value = new Vector3f(0f, 0f, 0.5f);
 				obj.scale.Value = new Vector3f(0.2f);
 				obj2.scale.Value = new Vector3f(0.2f);
 				obj.rotation.Value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
 				obj2.rotation.Value = Quaternionf.CreateFromYawPitchRoll(0.0f, -90.0f, 0.0f);
-				logger.Log("SpawnedUser");
+				Logger.Log("SpawnedUser");
 			}
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 		}
 

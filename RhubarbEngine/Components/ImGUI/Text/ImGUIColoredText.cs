@@ -24,13 +24,15 @@ namespace RhubarbEngine.Components.ImGUI
 		public Sync<string> text;
 		public Sync<Colorf> color;
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
-			base.buildSyncObjs(newRefIds);
+			base.BuildSyncObjs(newRefIds);
 			text = new Sync<string>(this, newRefIds);
-			color = new Sync<Colorf>(this, newRefIds);
-			color.Value = Colorf.Cyan;
-		}
+            color = new Sync<Colorf>(this, newRefIds)
+            {
+                Value = Colorf.Cyan
+            };
+        }
 
 		public ImGUIColoredText(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{

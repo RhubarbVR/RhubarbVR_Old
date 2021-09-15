@@ -4,11 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-
 using RhubarbEngine.World.DataStructure;
-
 using RhuNet;
-
 using RhuNetShared;
 
 namespace RhubarbEngine.World.Net
@@ -60,7 +57,7 @@ namespace RhubarbEngine.World.Net
 
         public override IReadOnlyList<Peer> Peers { get { return rhuPeers; } }
 
-		public List<RhuPeer> rhuPeers = new List<RhuPeer>();
+		public List<RhuPeer> rhuPeers = new();
 
 		public RhuNetModule(World world) : base(world)
 		{
@@ -131,10 +128,10 @@ namespace RhubarbEngine.World.Net
 			switch (item.reliabilityLevel)
 			{
 				case ReliabilityLevel.Unreliable:
-					UdpToAll(new Data(node.getByteArray()));
+					UdpToAll(new Data(node.GetByteArray()));
 					break;
 				default:
-					UdpToAll(new Data(node.getByteArray()));
+					UdpToAll(new Data(node.GetByteArray()));
 					break;
 			}
 		}

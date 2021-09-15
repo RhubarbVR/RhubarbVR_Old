@@ -23,11 +23,11 @@ namespace RhubarbEngine.Components.Users
 		{
 			if (plat.Linked)
 			{
-				plat.Drivevalue = engine.platformInfo.platform;
+				plat.Drivevalue = Engine.platformInfo.platform;
 			}
 		}
 
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			plat = new Driver<Platform>(this, newRefIds);
 		}

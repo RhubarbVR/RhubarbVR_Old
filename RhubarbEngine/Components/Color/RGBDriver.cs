@@ -19,7 +19,7 @@ namespace RhubarbEngine.Components.Color
 		public Driver<Colorf> driver;
 
 		public Sync<ColorHSV> Value;
-		public override void buildSyncObjs(bool newRefIds)
+		public override void BuildSyncObjs(bool newRefIds)
 		{
 			driver = new Driver<Colorf>(this, newRefIds);
 			Value = new Sync<ColorHSV>(this, newRefIds);
