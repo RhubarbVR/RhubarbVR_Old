@@ -32,6 +32,7 @@ using Range = CefSharp.Structs.Range;
 using Size = System.Drawing.Size;
 using System.Drawing;
 using RhubarbEngine.Render;
+#if Windows
 
 namespace RhubarbEngine.Components.Interaction
 {
@@ -838,3 +839,4 @@ namespace RhubarbEngine.Components.Interaction
 		}
 	}
 }
+#endif
