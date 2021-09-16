@@ -58,7 +58,7 @@
   <ItemGroup>
     <PackageReference Include="BEPUik" Version="1.5.1" />
     <PackageReference Include="BulletSharp.x64" Version="0.12.0" />
-    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="93.1.110-pre" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="93.1.111" />
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
     <PackageReference Include="Concentus" Version="1.1.7" />
     <PackageReference Include="DiscordRichPresence" Version="1.0.175" />

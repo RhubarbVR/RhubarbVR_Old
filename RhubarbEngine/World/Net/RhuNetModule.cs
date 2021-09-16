@@ -67,7 +67,7 @@ namespace RhubarbEngine.World.Net
 			rhuClient.OnClientAdded += Trains;
 			rhuClient.OnResultsUpdate += RhuClient_OnResultsUpdate;
 			rhuClient.OnClientConnection += RhuClient_OnClientConnection;
-			rhuClient.dataRecived += RhuClient_dataRecived;
+			rhuClient.DataRecived += RhuClient_dataRecived;
 			rhuClient.ConnectOrDisconnect();
 		}
 
@@ -112,7 +112,7 @@ namespace RhubarbEngine.World.Net
 
 		private void Thing(object sender, MessageReceivedEventArgs e)
 		{
-			Console.WriteLine(e.message.Content);
+			Console.WriteLine(e.Message.Content);
 		}
 
 		public void UdpToAll(IP2PBase p2PBase)

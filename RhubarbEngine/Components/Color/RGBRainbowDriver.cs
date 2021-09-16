@@ -32,7 +32,7 @@ namespace RhubarbEngine.Components.Color
 			if (driver.Linked)
 			{
 				ColorHSV color = driver.Drivevalue;
-				driver.Drivevalue = color.updateHue(deltaSeconds * speed.Value);
+				driver.Drivevalue = color.UpdateHue(deltaSeconds * speed.Value);
 			}
 		}
 		public RGBRainbowDriver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
