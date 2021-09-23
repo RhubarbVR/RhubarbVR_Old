@@ -19,9 +19,9 @@ namespace RhubarbEngine.Components.ImGUI
 		[NoSave]
 		[NoShow]
 		[NoSync]
-		private Worker _lastWorker;
+		private IWorker _lastWorker;
 
-		public SyncRef<Worker> target;
+		public SyncRef<IWorker> target;
 
 		public SyncRef<IObserver> root;
 
@@ -40,7 +40,7 @@ namespace RhubarbEngine.Components.ImGUI
         public override void BuildSyncObjs(bool newRefIds)
 		{
 			base.BuildSyncObjs(newRefIds);
-			target = new SyncRef<Worker>(this, newRefIds);
+			target = new SyncRef<IWorker>(this, newRefIds);
 			target.Changed += Target_Changed;
 			root = new SyncRef<IObserver>(this, newRefIds);
 			children = new SyncRefList<IObserver>(this, newRefIds);
@@ -119,7 +119,7 @@ namespace RhubarbEngine.Components.ImGUI
 			catch { }
 		}
 
-		private void Target_onDispose(Worker obj)
+		private void Target_onDispose(IWorker obj)
 		{
 			Dispose();
 		}
@@ -155,11 +155,11 @@ namespace RhubarbEngine.Components.ImGUI
 			var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 			foreach (var field in fields)
 			{
-                if (!(!typeof(Worker).IsAssignableFrom(field.FieldType) || field.GetCustomAttributes(typeof(NoShowAttribute), false).Length > 0))
+                if (!(!typeof(IWorker).IsAssignableFrom(field.FieldType) || field.GetCustomAttributes(typeof(NoShowAttribute), false).Length > 0))
 				{
 					var obs = _e.AttachComponent<WorkerObserver>();
 					obs.fieldName.Value = field.Name;
-					obs.target.Target = (Worker)field.GetValue(target.Target);
+					obs.target.Target = (IWorker)field.GetValue(target.Target);
 					children.Add().Target = obs;
 				}
 			}

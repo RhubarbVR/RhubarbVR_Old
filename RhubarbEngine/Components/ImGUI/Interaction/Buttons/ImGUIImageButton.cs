@@ -106,17 +106,17 @@ namespace RhubarbEngine.Components.ImGUI
 					}
 					else
 					{
-						SetResource(Engine.renderManager.nulview);
+						SetResource(Engine.RenderManager.nulview);
 					}
 				}
 				else
 				{
-					SetResource(Engine.renderManager.nulview);
+					SetResource(Engine.RenderManager.nulview);
 				}
 			}
 			else
 			{
-				SetResource(Engine.renderManager.nulview);
+				SetResource(Engine.RenderManager.nulview);
 			}
 
 		}
@@ -144,7 +144,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				tintval *= 0.8f;
 			}
-			if (ImGui.ImageButton(imGuiRenderer.GetOrCreateImGuiBinding(Engine.renderManager.gd.ResourceFactory, _view), new Vector2(size.Value.x, size.Value.y), new Vector2(UV0.Value.x, UV0.Value.y), new Vector2(UV1.Value.x, UV1.Value.y), padding.Value, big.Value.ToRGBA().ToSystem(), tintval.ToRGBA().ToSystem()))
+			if (ImGui.ImageButton(imGuiRenderer.GetOrCreateImGuiBinding(Engine.RenderManager.gd.ResourceFactory, _view), new Vector2(size.Value.x, size.Value.y), new Vector2(UV0.Value.x, UV0.Value.y), new Vector2(UV1.Value.x, UV1.Value.y), padding.Value, big.Value.ToRGBA().ToSystem(), tintval.ToRGBA().ToSystem()))
 			{
 				if (TintOnClick.Value)
 				{

@@ -101,7 +101,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			LoadCurve();
 			var newmesh = _generator.Generate();
 			_kite = new RMesh(newmesh.MakeSimpleMesh());
-			_kite.CreateMeshesBuffers(World.worldManager.engine.renderManager.gd);
+			_kite.CreateMeshesBuffers(World.worldManager.engine.RenderManager.gd);
 			Load(_kite, true);
 		}
 		public override void OnLoaded()

@@ -11,7 +11,7 @@ namespace RhubarbEngine.Managers
 {
 	public class PlatformInfoManager : IManager
 	{
-		private Engine _engine;
+		private IEngine _engine;
 
 		private readonly OperatingSystem _os = Environment.OSVersion;
 
@@ -40,7 +40,7 @@ namespace RhubarbEngine.Managers
 
 		public int ThreadCount;
 
-		public IManager Initialize(Engine _engine)
+		public IManager Initialize(IEngine _engine)
 		{
 			this._engine = _engine;
 			sw = new Stopwatch();
@@ -74,10 +74,10 @@ namespace RhubarbEngine.Managers
 			}
 			catch (Exception e)
 			{
-				this._engine.logger.Log("Failed to get CPU: " + e);
+				this._engine.Logger.Log("Failed to get CPU: " + e);
 			}
 
-			this._engine.logger.Log("Platform: " + platform.ToString() + "/" + _os.Platform + " CPU: " + CPU + " RamBytes: " + MemoryBytes + " GPU: " + GPU + " VRAMBytes: " + VRAM_Bytes, true);
+			this._engine.Logger.Log("Platform: " + platform.ToString() + "/" + _os.Platform + " CPU: " + CPU + " RamBytes: " + MemoryBytes + " GPU: " + GPU + " VRAMBytes: " + VRAM_Bytes, true);
 			return this;
 		}
 		long _currentFrameTicks;

@@ -129,7 +129,7 @@ namespace RhubarbEngine.Components.Rendering
 				PrimitiveTopology.TriangleList,
 				new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.mainVertShader, mit.Shader.Asset.mainFragShader }),
 				mit.Shader.Asset.mainresourceLayout,
-				Engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
+				Engine.RenderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
 								AddDisposable(mainPipeline);
 								_mainPipeline.Add(mainPipeline);
 
@@ -141,7 +141,7 @@ namespace RhubarbEngine.Components.Rendering
 				PrimitiveTopology.TriangleList,
 				new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.shadowVertShader, mit.Shader.Asset.shadowFragShader }),
 				mit.Shader.Asset.shadowresourceLayout,
-				Engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
+				Engine.RenderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
 								AddDisposable(shadowPipeline);
 								_shadowpipeline.Add(mainPipeline);
 
@@ -255,7 +255,7 @@ namespace RhubarbEngine.Components.Rendering
         {
             get
             {
-                return Engine.renderManager.gd;
+                return Engine.RenderManager.gd;
             }
         }
 
@@ -320,9 +320,9 @@ namespace RhubarbEngine.Components.Rendering
 		}
 		public override void OnLoaded()
 		{
-			_wvpBuffer = Engine.renderManager.gd.ResourceFactory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+			_wvpBuffer = Engine.RenderManager.gd.ResourceFactory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 			AddDisposable(_wvpBuffer);
-            RhubarbEngine.Logger.Log("Loading Mesh Render");
+            Logger.Log("Loading Mesh Render");
 			LoadMesh(null);
 			LoadMaterial(null);
 		}

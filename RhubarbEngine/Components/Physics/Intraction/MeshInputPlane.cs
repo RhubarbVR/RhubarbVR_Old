@@ -32,11 +32,11 @@ namespace RhubarbEngine.Components.Physics
 
 		public SyncDelegate onFocusLost;
 
-		public IReadOnlyList<KeyEvent> KeyEvents { get { return !Focused ? new List<KeyEvent>() : Input.mainWindows.FrameSnapshot.KeyEvents; } }
+		public IReadOnlyList<KeyEvent> KeyEvents { get { return !Focused ? new List<KeyEvent>() : Input.MainWindows.FrameSnapshot.KeyEvents; } }
 
-		public IReadOnlyList<MouseEvent> MouseEvents { get { return IsNotTakingInput ? new List<MouseEvent>() : Input.mainWindows.FrameSnapshot.MouseEvents; } }
+		public IReadOnlyList<MouseEvent> MouseEvents { get { return IsNotTakingInput ? new List<MouseEvent>() : Input.MainWindows.FrameSnapshot.MouseEvents; } }
 
-		public IReadOnlyList<char> KeyCharPresses { get { return !Focused ? new List<char>() : Input.mainWindows.FrameSnapshot.KeyCharPresses; } }
+		public IReadOnlyList<char> KeyCharPresses { get { return !Focused ? new List<char>() : Input.MainWindows.FrameSnapshot.KeyCharPresses; } }
 
 		private Vector2 _mousePosition = Vector2.Zero;
 
@@ -101,7 +101,7 @@ namespace RhubarbEngine.Components.Physics
 		{
 			get
 			{
-                return IsNotTakingInput ? 0f : Input.mainWindows.FrameSnapshot.WheelDelta;
+                return IsNotTakingInput ? 0f : Input.MainWindows.FrameSnapshot.WheelDelta;
             }
         }
 
@@ -226,9 +226,9 @@ namespace RhubarbEngine.Components.Physics
                 return false;
             }
 
-            if (Engine.outputType == VirtualReality.OutputType.Screen)
+            if (Engine.OutputType == VirtualReality.OutputType.Screen)
 			{
-				return Engine.inputManager.mainWindows.GetMouseButton(button);
+				return Engine.InputManager.MainWindows.GetMouseButton(button);
 			}
 			switch (Source)
 			{
@@ -306,7 +306,7 @@ namespace RhubarbEngine.Components.Physics
 				case InteractionSource.RightFinger:
 					break;
 				case InteractionSource.HeadLaser:
-					return Engine.inputManager.mainWindows.GetMouseButton(button);
+					return Engine.InputManager.MainWindows.GetMouseButton(button);
 				case InteractionSource.HeadFinger:
 					break;
 				default:

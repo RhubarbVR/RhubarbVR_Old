@@ -259,14 +259,14 @@ namespace RhubarbEngine.Components.Physics.Colliders
 					UserPosSync(World.HostUser);
 					break;
 				default:
-                    RhubarbEngine.Logger.Log("SyncLevel Does Not Exists");
+                    Logger.Log("SyncLevel Does Not Exists");
 					break;
 			}
 		}
 
 		private void SyncUpdate()
 		{
-            RhubarbEngine.Logger.Log("This Is not Done");
+            Logger.Log("This Is not Done");
 		}
 
 		private void LocalPosSync()
@@ -283,7 +283,7 @@ namespace RhubarbEngine.Components.Physics.Colliders
         private void UserPosSync(User user)
 #pragma warning restore IDE0060 // Remove unused parameter
         {
-            RhubarbEngine.Logger.Log("This Is not Done");
+            Logger.Log("This Is not Done");
 		}
 
 		public Collider(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

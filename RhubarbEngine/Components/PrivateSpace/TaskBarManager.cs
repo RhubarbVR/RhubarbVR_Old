@@ -179,8 +179,8 @@ namespace RhubarbEngine.Components.PrivateSpace
 			root.Target = e;
 			var shader = World.staticAssets.BasicUnlitShader;
 			var bmesh = e.AttachComponent<CurvedPlaneMesh>();
-			bmesh.BottomRadius.Value = Engine.settingsObject.UISettings.TaskBarCurve;
-			bmesh.TopRadius.Value = Engine.settingsObject.UISettings.TaskBarCurve + 10f;
+			bmesh.BottomRadius.Value = Engine.SettingsObject.UISettings.TaskBarCurve;
+			bmesh.TopRadius.Value = Engine.SettingsObject.UISettings.TaskBarCurve + 10f;
 			bmesh.Height.Value = 0.12f;
 			bmesh.Width.Value = 0.95f;
 			var bmeshcol = e.AttachComponent<MeshInputPlane>();
@@ -195,7 +195,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 			var meshRender = TaskBar.AttachComponent<MeshRender>();
 			meshRender.RenderOrderOffset.Value = 20;
 			var imGUICanvas = TaskBar.AttachComponent<ImGUICanvas>();
-			imGUICanvas.scale.Value = bmeshcol.pixelSize.Value = new Vector2u(((uint)(7.69 * Engine.settingsObject.UISettings.TaskBarCurve)) * 2, 76 * 2);
+			imGUICanvas.scale.Value = bmeshcol.pixelSize.Value = new Vector2u(((uint)(7.69 * Engine.SettingsObject.UISettings.TaskBarCurve)) * 2, 76 * 2);
 			imGUICanvas.imputPlane.Target = bmeshcol;
 			mit.Shader.Target = shader;
 			meshRender.Materials.Add().Target = mit;
@@ -231,14 +231,14 @@ namespace RhubarbEngine.Components.PrivateSpace
 				var now = DateTime.Now;
 				dateTextDriver.Drivevalue = $"{((now.Hour > 12) ? $"pm {now.Hour - 12}" : ((now.Hour == 0) ? "pm 12" : $"am {now.Hour}"))}:{((now.Minute < 10) ? $"0{now.Minute}" : now.Minute)}\n";
 				dateTextDriver.Drivevalue += $"{now.Month}/{((now.Day < 10) ? $"0{now.Day}" : now.Day)}/{now.Year}\n";
-				dateTextDriver.Drivevalue += $"FPS {Engine.platformInfo.AvrageFrameRate}";
+				dateTextDriver.Drivevalue += $"FPS {Engine.PlatformInfo.AvrageFrameRate}";
 			}
 			if (DateTime.UtcNow <= _opened + new TimeSpan(0, 0, 1))
             {
                 return;
             }
 
-            if (((Input.mainWindows.GetKey(Veldrid.Key.ControlLeft) || Input.mainWindows.GetKey(Veldrid.Key.ControlLeft)) && Input.mainWindows.GetKey(Veldrid.Key.Space)) || Input.mainWindows.GetKeyDown(Veldrid.Key.Escape))
+            if (((Input.MainWindows.GetKey(Veldrid.Key.ControlLeft) || Input.MainWindows.GetKey(Veldrid.Key.ControlLeft)) && Input.MainWindows.GetKey(Veldrid.Key.Space)) || Input.MainWindows.GetKeyDown(Veldrid.Key.Escape))
 			{
 				Entity.enabled.Value = !Entity.enabled.Value;
 				_opened = DateTime.UtcNow;

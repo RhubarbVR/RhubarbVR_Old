@@ -33,7 +33,7 @@ namespace RhubarbEngine.Managers
 {
 	public class WorldManager : IManager
 	{
-		public Engine engine;
+		public IEngine engine;
 
 		public SynchronizedCollection<World.World> worlds = new();
 
@@ -53,7 +53,7 @@ namespace RhubarbEngine.Managers
 		{
 			if (FocusedWorld == localWorld)
 			{
-				engine.discordRpcClient.SetPresence(new RichPresence()
+				engine.DiscordRpcClient.SetPresence(new RichPresence()
 				{
 					Timestamps = new Timestamps(FocusedWorld.StartTime),
 					Details = "The Engine",
@@ -162,11 +162,11 @@ namespace RhubarbEngine.Managers
 			return WorldToBytes(FocusedWorld);
 		}
 
-		public IManager Initialize(Engine _engine)
+		public IManager Initialize(IEngine _engine)
 		{
 			engine = _engine;
 
-			engine.logger.Log("Starting Private Overlay World");
+			engine.Logger.Log("Starting Private Overlay World");
 			privateOverlay = new World.World(this, "Private Overlay", 1, true);
 			personalSpace = privateOverlay.RootEntity.AttachComponent<PersonalSpace>();
 			worlds.Add(privateOverlay);
@@ -174,18 +174,18 @@ namespace RhubarbEngine.Managers
 
 			Task.Run(() =>
 			{
-				engine.logger.Log("Starting Local World");
-				if (File.Exists(engine.dataPath + "/LocalWorld.RWorld"))
+				engine.Logger.Log("Starting Local World");
+				if (File.Exists(engine.DataPath + "/LocalWorld.RWorld"))
 				{
 					try
 					{
-						var node = new DataNodeGroup(File.ReadAllBytes(engine.dataPath + "/LocalWorld.RWorld"));
+						var node = new DataNodeGroup(File.ReadAllBytes(engine.DataPath + "/LocalWorld.RWorld"));
 						localWorld = new World.World(this, "LocalWorld", 16, false, true, node);
 					}
 					catch (Exception e)
 					{
 						dontSaveLocal = true;
-						Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
+                        _engine.Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
 						localWorld = new World.World(this, "TempLoaclWorld", 16, false, true);
                         BuildLocalWorld(localWorld);
 					}
@@ -199,13 +199,13 @@ namespace RhubarbEngine.Managers
 					}
 					catch (Exception e)
 					{
-						Logger.Log("Failed To start New localWorld" + e.ToString());
+                        _engine.Logger.Log("Failed To start New localWorld" + e.ToString());
 					}
 				}
 				localWorld.Focus = World.World.FocusLevel.Focused;
 				worlds.Add(localWorld);
 				FocusedWorld = localWorld;
-				if (engine.engineInitializer.session != null)
+				if (engine.EngineInitializer.session != null)
 				{
 					//JoinSessionFromUUID(engine.engineInitializer.session, true);
 				}
@@ -425,10 +425,14 @@ namespace RhubarbEngine.Managers
 		}
 		public void CleanUp()
 		{
-			if (engine.engineInitializer == null && !dontSaveLocal)
+			if (engine.EngineInitializer == null && !dontSaveLocal)
 			{
-				File.WriteAllBytes(engine.dataPath + "/LocalWorld.RWorld", WorldToBytes(localWorld));
+				File.WriteAllBytes(engine.DataPath + "/LocalWorld.RWorld", WorldToBytes(localWorld));
 			}
 		}
-	}
+
+        public void Update()
+        {
+        }
+    }
 }

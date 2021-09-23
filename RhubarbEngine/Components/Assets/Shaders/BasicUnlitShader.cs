@@ -51,7 +51,7 @@ void main()
     fsout_Color0 = texture(sampler2D(Texture, Sampler), uv)*TintColor;
 }
 ";
-			shader.LoadShader(Engine.renderManager.gd, Logger);
+			shader.LoadShader(Engine.RenderManager.gd, Logger);
 			Load(shader);
 		}
 

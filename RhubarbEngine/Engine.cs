@@ -10,39 +10,71 @@ using DiscordRPC;
 
 namespace RhubarbEngine
 {
-	public class Engine
-	{
-		public bool verbose;
+    public interface IEngine
+    {
+        public bool Verbose { get; set; }
+
+        public string DataPath { get; }
+
+        public WorldManager WorldManager { get; }
+
+        public IInputManager InputManager { get; }
+
+        public RenderManager RenderManager { get; }
+
+        public MainSettingsObject SettingsObject { get; }
+
+        public PlatformInfoManager PlatformInfo { get; }
+
+        public Managers.WindowManager WindowManager { get; }
+
+        public Managers.NetApiManager NetApiManager { get; }
+
+        public AudioManager AudioManager { get; }
+
+        public UnitLogs Logger { get; }
+
+        public EngineInitializer EngineInitializer { get; }
+
+        public DiscordRpcClient DiscordRpcClient { get; }
+
+        public OutputType OutputType { get; set; }
+
+        public GraphicsBackend Backend { get; set; }
+
+    }
+
+    public class Engine: IEngine
+    {
+        public bool verbose;
 
         public WorldManager worldManager;
 
-		public InputManager inputManager;
+        public IInputManager inputManager;
 
-		public RenderManager renderManager;
+        public RenderManager renderManager;
 
-		public MainSettingsObject settingsObject;
+        public PlatformInfoManager platformInfo;
 
-		public PlatformInfoManager platformInfo;
+        public Managers.WindowManager windowManager;
 
-		public GraphicsBackend backend = GraphicsBackend.Vulkan;
+        public Managers.NetApiManager netApiManager;
+
+        public AudioManager audioManager;
+
+        public UnitLogs logger;
+
+        public EngineInitializer engineInitializer;
+
+        public DiscordRpcClient discordRpcClient;
+
+        public MainSettingsObject settingsObject;
+        public GraphicsBackend backend = GraphicsBackend.Vulkan;
 
 		public OutputType outputType;
-
-		public Managers.WindowManager windowManager;
-
-		public Managers.NetApiManager netApiManager;
-
-		public AudioManager audioManager;
-
-		public UnitLogs logger;
-
-		public string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RhubarbVR");
+        public string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RhubarbVR");
 
 		public FileStream lockFile;
-
-		public EngineInitializer engineInitializer;
-
-		public DiscordRpcClient discordRpcClient;
 
 #pragma warning disable IDE0060 // Remove unused parameter
         public void Initialize(string[] _args, bool _verbose = false, bool _Rendering = true)
@@ -88,9 +120,8 @@ namespace RhubarbEngine
 			}
 			catch { }
 
-			verbose = _verbose;
+            verbose = _verbose;
 			logger = new UnitLogs(this);
-			Logger.Init(this);
 			engineInitializer = new EngineInitializer(this);
 			logger.Log("Loading Arguments:", true);
 			engineInitializer.LoadArguments(_args);
@@ -146,8 +177,144 @@ namespace RhubarbEngine
 		}
 
 		public double lastTimemark;
-		//For performance testing
-		public void TimeMark(string mark)
+
+        public bool Verbose
+        {
+            get
+            {
+                return verbose;
+            }
+
+            set
+            {
+                verbose = value;
+            }
+        }
+
+        public WorldManager WorldManager
+        {
+            get
+            {
+                return worldManager;
+            }
+        }
+
+        public IInputManager InputManager
+        {
+            get
+            {
+                return inputManager;
+            }
+        }
+
+        public RenderManager RenderManager
+        {
+            get
+            {
+                return renderManager;
+            }
+        }
+
+        public MainSettingsObject SettingsObject
+        {
+            get
+            {
+                return settingsObject;
+            }
+        }
+
+        public PlatformInfoManager PlatformInfo
+        {
+            get
+            {
+                return platformInfo;
+            }
+        }
+
+        public Managers.WindowManager WindowManager
+        {
+            get
+            {
+                return windowManager;
+            }
+        }
+
+        public NetApiManager NetApiManager
+        {
+            get
+            {
+                return netApiManager;
+            }
+        }
+
+        public AudioManager AudioManager
+        {
+            get
+            {
+                return audioManager;
+            }
+        }
+
+        public UnitLogs Logger
+        {
+            get
+            {
+                return logger;
+            }
+        }
+
+        public EngineInitializer EngineInitializer
+        {
+            get
+            {
+                return engineInitializer;
+            }
+        }
+
+        public DiscordRpcClient DiscordRpcClient
+        {
+            get
+            {
+                return discordRpcClient;
+            }
+        }
+
+        public string DataPath
+        {
+            get
+            {
+                return dataPath;
+            }
+        }
+
+        public OutputType OutputType
+        {
+            get
+            {
+                return outputType;
+            }
+
+            set
+            {
+                outputType = value;
+            }
+        }
+
+        public GraphicsBackend Backend
+        {
+            get
+            {
+                return backend;
+            }
+
+            set
+            {
+                backend = value;
+            }
+        }
+
+        //For performance testing
+        public void TimeMark(string mark)
 		{
 			var newtime = platformInfo.sw.Elapsed.TotalSeconds;
 			Console.WriteLine(mark + " : " + (newtime - lastTimemark).ToString());

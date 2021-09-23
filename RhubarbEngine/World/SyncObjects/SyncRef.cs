@@ -188,7 +188,7 @@ namespace RhubarbEngine.World
 		{
 			if (data == null)
 			{
-				World.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
+				World.worldManager.engine.Logger.Log("Node did not exsets When loading SyncRef");
 				return;
 			}
 			_temp = ((DataNode<NetPointer>)data.GetValue("targetRefID")).Value;

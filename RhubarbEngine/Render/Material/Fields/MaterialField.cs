@@ -33,8 +33,8 @@ namespace RhubarbEngine.Render.Material.Fields
 		public override void OnLoaded()
 		{
 			base.OnLoaded();
-			createDeviceResource(Engine.renderManager.gd.ResourceFactory);
-			updateBuffer(Engine.renderManager.gd);
+			createDeviceResource(Engine.RenderManager.gd.ResourceFactory);
+			updateBuffer(Engine.RenderManager.gd);
 		}
 
 		public virtual void setValue(Object val)

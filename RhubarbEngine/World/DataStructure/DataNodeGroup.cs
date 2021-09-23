@@ -122,7 +122,7 @@ namespace RhubarbEngine.World.DataStructure
             }
             catch (Exception e)
             {
-                Logger.Log("Failed to deserialize. Group Reason: " + e.Message);
+                throw new Exception("Failed to deserialize. Group Reason: " + e.Message);
             }
         }
 

@@ -29,15 +29,15 @@ namespace RhubarbEngine.World
 			}
 		}
 
-		public static Worker GetClosedWorker(this IWorldObject worldObject, bool allowSyncVals = false)
+		public static IWorker GetClosedWorker(this IWorldObject worldObject, bool allowSyncVals = false)
 		{
 			try
 			{
                 return allowSyncVals
-                    ? (Worker)worldObject
+                    ? (IWorker)worldObject
                     : typeof(ISyncMember).IsAssignableFrom(worldObject.GetType())
                         ? (worldObject.Parent?.GetClosedWorker(allowSyncVals))
-                        : (Worker)worldObject;
+                        : (IWorker)worldObject;
             }
 			catch
 			{

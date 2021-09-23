@@ -168,7 +168,7 @@ namespace RhubarbEngine.World
 					{
 						if (((DataNode<string>)dataNodeGroup.GetValue("responses")).Value == "WorldSync")
 						{
-							Logger.Log("Loading Start State");
+                            worldManager.engine.Logger.Log("Loading Start State");
 							try
 							{
 								var node = (DataNodeGroup)dataNodeGroup.GetValue("data");
@@ -183,7 +183,7 @@ namespace RhubarbEngine.World
 							}
 							catch (Exception e)
 							{
-								Logger.Log("Failed To Load Start State Error" + e.ToString());
+                                worldManager.engine.Logger.Log("Failed To Load Start State Error" + e.ToString());
 							}
 
 						}
@@ -222,16 +222,16 @@ namespace RhubarbEngine.World
 			}
 			catch (Exception e)
 			{
-				Logger.Log("Error With Net Reqwest Size: " + vale.Length + " Error: " + e.ToString(), true);
+                worldManager.engine.Logger.Log("Error With Net Reqwest Size: " + vale.Length + " Error: " + e.ToString(), true);
 			}
 		}
 
 		public void PeerConnectedEvent(Peer peer)
 		{
-			Logger.Log("We got connection");
+            worldManager.engine.Logger.Log("We got connection");
 			if (!_waitingForInitSync)
 			{
-				Logger.Log("Sent start state");
+                worldManager.engine.Logger.Log("Sent start state");
 				var send = new DataNodeGroup();
 				send.SetValue("responses", new DataNode<string>("WorldSync"));
 				var value = Serialize(new WorkerSerializerObject(true));
@@ -425,7 +425,7 @@ namespace RhubarbEngine.World
 			}
 			catch
 			{
-				worldManager.engine.logger.Log("RefId already existed: " + obj.ReferenceID.getID().ToString());
+				worldManager.engine.Logger.Log("RefId already existed: " + obj.ReferenceID.getID().ToString());
 			}
 		}
 
@@ -511,8 +511,8 @@ namespace RhubarbEngine.World
 		public void Update(DateTime startTime, DateTime Frame)
 		{
 			PhysicsWorld.UpdateAabbs();
-			PhysicsWorld.UpdateVehicles(worldManager.engine.platformInfo.deltaSeconds);
-			PhysicsWorld.StepSimulation(worldManager.engine.platformInfo.deltaSeconds);
+			PhysicsWorld.UpdateVehicles(worldManager.engine.PlatformInfo.deltaSeconds);
+			PhysicsWorld.StepSimulation(worldManager.engine.PlatformInfo.deltaSeconds);
 			PhysicsWorld.ComputeOverlappingPairs();
 			try
 			{
@@ -525,9 +525,9 @@ namespace RhubarbEngine.World
 			{
 				Parallel.ForEach(_worldObjects.Values, val =>
 				{
-					if (((Worker)val) != null)
+					if (((IWorker)val) != null)
 					{
-						((Worker)val).OnUpdate();
+						((IWorker)val).OnUpdate();
 					}
 				});
 			}
@@ -543,9 +543,9 @@ namespace RhubarbEngine.World
 		{
 			foreach (var val in _worldObjects.Values)
 			{
-				if (((Worker)val) != null)
+				if (((IWorker)val) != null)
 				{
-					((Worker)val).OnUserJoined(user);
+					((IWorker)val).OnUserJoined(user);
 				}
 			}
 		}
@@ -560,9 +560,9 @@ namespace RhubarbEngine.World
 			_collisionConfiguration = new DefaultCollisionConfiguration();
 			_dispatcher = new CollisionDispatcher(_collisionConfiguration);
 			_broadphase = new DbvtBroadphase();
-			_constraintSolver = worldManager.engine.settingsObject.PhysicsSettings.ThreadCount == -1
-                ? new ConstraintSolverPoolMultiThreaded(worldManager.engine.platformInfo.ThreadCount - 1)
-                : new ConstraintSolverPoolMultiThreaded(worldManager.engine.settingsObject.PhysicsSettings.ThreadCount);
+			_constraintSolver = worldManager.engine.SettingsObject.PhysicsSettings.ThreadCount == -1
+                ? new ConstraintSolverPoolMultiThreaded(worldManager.engine.PlatformInfo.ThreadCount - 1)
+                : new ConstraintSolverPoolMultiThreaded(worldManager.engine.SettingsObject.PhysicsSettings.ThreadCount);
             PhysicsWorld = new DiscreteDynamicsWorld(_dispatcher, _broadphase, _constraintSolver, _collisionConfiguration);
 			staticAssets = new StaticAssets(this);
 		}
@@ -738,7 +738,7 @@ namespace RhubarbEngine.World
 						}
 						catch (Exception e)
 						{
-							Logger.Log("Error Deserializeing on world Field name: " + field.Name + " Error:" + e.ToString(), true);
+                            worldManager.engine.Logger.Log("Error Deserializeing on world Field name: " + field.Name + " Error:" + e.ToString(), true);
 						}
 					}
 				}

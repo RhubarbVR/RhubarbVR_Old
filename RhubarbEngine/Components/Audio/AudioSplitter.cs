@@ -104,7 +104,7 @@ namespace RhubarbEngine.Components.Audio
 			{
 				data = audioSource.Target.FrameInputBuffer;
 			}
-			var returnData = new byte[Engine.audioManager.AudioFrameSizeInBytes];
+			var returnData = new byte[Engine.AudioManager.AudioFrameSizeInBytes];
 			var index = 0;
 			for (var i = 0; i < data.Length; i += 8)
 			{

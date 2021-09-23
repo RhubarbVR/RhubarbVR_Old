@@ -6,7 +6,7 @@ namespace RhubarbVR
 {
     public static class Program
     {
-        public static Engine engine = new();
+        public static IEngine engine = new();
         public static void Main(string[] _args)
         {
             try
@@ -16,7 +16,7 @@ namespace RhubarbVR
             }
             catch (Exception e)
             {
-                engine.logger.Log(e.ToString(), true);
+                engine.Logger.Log(e.ToString(), true);
             }
 
             try
@@ -25,8 +25,8 @@ namespace RhubarbVR
             }
             catch (Exception e)
             {
-                engine.logger.Log(e.ToString(), true);
-                engine.logger.CleanUP();
+                engine.Logger.Log(e.ToString(), true);
+                engine.Logger.CleanUP();
             }
         }
     }

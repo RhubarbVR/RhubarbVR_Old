@@ -13,13 +13,38 @@ using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.Managers
 {
-	public class InputManager : IManager
-	{
-		private Engine _engine;
+    public interface IInputManager: IManager
+    {
+        public IKeyboardStealer Keyboard { get; set; }
+        public InputTracker MainWindows { get; }
+        public bool IsKeyboardinuse { get; }
+        public InteractionLaserSource LeftLaser { get; }
+
+        public InteractionLaserSource RightLaser { get; }
+
+        event Action RemoveFocus;
+
+        Vector2f Axis(Creality side = Creality.None);
+        bool AxisTouching(Creality side = Creality.None);
+        string ControllerName(Creality side = Creality.None);
+        Matrix4x4 GetPos(Creality side = Creality.None);
+        bool GrabPress(Creality side = Creality.None);
+        void InvokeRemoveFocus();
+        bool MenuPress(Creality side = Creality.None);
+        bool PrimaryPress(Creality side = Creality.None);
+        bool SecondaryPress(Creality side = Creality.None);
+        bool SystemPress(Creality side = Creality.None);
+        float TriggerAix(Creality side = Creality.None);
+        bool TriggerTouching(Creality side = Creality.None);
+    }
+
+    public class InputManager : IInputManager
+    {
+		private IEngine _engine;
 
 		private IKeyboardStealer _keyboard;
 
-		public IKeyboardStealer Keyboard { get { return _keyboard; } set { if (value != null) { _engine.worldManager.personalSpace?.OpenKeyboard(); } else { _engine.worldManager.personalSpace?.CloseKeyboard(); } _keyboard = value; } }
+		public IKeyboardStealer Keyboard { get { return _keyboard; } set { if (value != null) { _engine.WorldManager.personalSpace?.OpenKeyboard(); } else { _engine.WorldManager.personalSpace?.CloseKeyboard(); } _keyboard = value; } }
 
         public bool IsKeyboardinuse
         {
@@ -46,7 +71,7 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return _engine.renderManager.vrContext.LeftController;
+                return _engine.RenderManager.vrContext.LeftController;
             }
         }
 
@@ -54,7 +79,31 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return _engine.renderManager.vrContext.RightController;
+                return _engine.RenderManager.vrContext.RightController;
+            }
+        }
+
+        public InputTracker MainWindows
+        {
+            get
+            {
+                return mainWindows;
+            }
+        }
+
+        InteractionLaserSource IInputManager.LeftLaser
+        {
+            get
+            {
+                return LeftLaser;
+            }
+        }
+
+        InteractionLaserSource IInputManager.RightLaser
+        {
+            get
+            {
+                return RightLaser;
             }
         }
 
@@ -173,7 +222,7 @@ namespace RhubarbEngine.Managers
             };
         }
 
-		public IManager Initialize(Engine _engine)
+		public IManager Initialize(IEngine _engine)
 		{
 			this._engine = _engine;
 
@@ -189,15 +238,15 @@ namespace RhubarbEngine.Managers
 			RightLaser.Update();
 			if (mainWindows.GetKeyDown(Key.F8))
 			{
-				if (_engine.outputType == OutputType.Screen)
+				if (_engine.OutputType == OutputType.Screen)
 				{
-					_engine.renderManager.SwitchVRContext(OutputType.SteamVR);
+					_engine.RenderManager.SwitchVRContext(OutputType.SteamVR);
 				}
 				else
 				{
-					if (_engine.outputType == OutputType.SteamVR)
+					if (_engine.OutputType == OutputType.SteamVR)
 					{
-						_engine.renderManager.SwitchVRContext(OutputType.Screen);
+						_engine.RenderManager.SwitchVRContext(OutputType.Screen);
 					}
 				}
 			}

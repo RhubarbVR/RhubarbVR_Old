@@ -10,17 +10,17 @@ namespace RhubarbEngine.Managers
 {
 	public class WindowManager : IManager
 	{
-		private Engine _engine;
+		private IEngine _engine;
 
 		public Window MainWindow { get; private set; }
 
 		public List<Window> Windows { get; private set; }
 
-		public IManager Initialize(Engine _engine)
+		public IManager Initialize(IEngine _engine)
 		{
 			this._engine = _engine;
 			Windows = new List<Window>();
-			this._engine.logger.Log("Starting Main Window");
+			this._engine.Logger.Log("Starting Main Window");
 			BuildWindow();
 			return this;
 		}
@@ -40,7 +40,7 @@ namespace RhubarbEngine.Managers
 		{
 			foreach (var window in Windows)
 			{
-				_engine.inputManager.mainWindows.UpdateFrameInput(window.Update(), window.window);
+				_engine.InputManager.MainWindows.UpdateFrameInput(window.Update(), window.window);
 			}
 		}
 

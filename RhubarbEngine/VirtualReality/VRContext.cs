@@ -38,8 +38,8 @@ namespace RhubarbEngine.VirtualReality
 
 		public abstract void Dispose();
 
-		public static VRContext CreateScreen(Engine eng) => CreateScreen(default, eng);
-		public static VRContext CreateScreen(VRContextOptions options, Engine eng) => new ScreenContext(options, eng);
+		public static VRContext CreateScreen(IEngine eng) => CreateScreen(default, eng);
+		public static VRContext CreateScreen(VRContextOptions options, IEngine eng) => new ScreenContext(options, eng);
 
 		public static VRContext CreateOculus() => CreateOculus(default);
 		public static VRContext CreateOculus(VRContextOptions options) => new OculusContext(options);

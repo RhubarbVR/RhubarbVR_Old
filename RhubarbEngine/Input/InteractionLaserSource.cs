@@ -19,17 +19,17 @@ namespace RhubarbEngine.Input
 	{
 		public Creality side;
 
-		private readonly Engine _engine;
+		private readonly IEngine _engine;
 
-        private InputManager Input
+        private IInputManager Input
         {
             get
             {
-                return _engine.inputManager;
+                return _engine.InputManager;
             }
         }
 
-        public InteractionLaserSource(Creality _side, Engine _engine)
+        public InteractionLaserSource(Creality _side, IEngine _engine)
 		{
 			side = _side;
 			this._engine = _engine;
@@ -45,9 +45,9 @@ namespace RhubarbEngine.Input
 
 		private bool HasClicked()
 		{
-			if ((_engine.outputType == VirtualReality.OutputType.Screen) && (side == Creality.Right))
+			if ((_engine.OutputType == VirtualReality.OutputType.Screen) && (side == Creality.Right))
 			{
-				return (_engine.inputManager.mainWindows.GetMouseButton(MouseButton.Right)) | _engine.inputManager.mainWindows.GetMouseButton(MouseButton.Left) | _engine.inputManager.mainWindows.GetMouseButton(MouseButton.Middle);
+				return (_engine.InputManager.MainWindows.GetMouseButton(MouseButton.Right)) | _engine.InputManager.MainWindows.GetMouseButton(MouseButton.Left) | _engine.InputManager.MainWindows.GetMouseButton(MouseButton.Middle);
 			}
 			switch (side)
 			{
@@ -81,11 +81,11 @@ namespace RhubarbEngine.Input
 			var e = RhubarbEngine.Input.Creality.Right;
 			if (Input.GrabPress(e))
 			{
-                Input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Right);
+                Input.MainWindows.FrameSnapshot.MouseClick(MouseButton.Right);
 			}
 			if (Input.PrimaryPress(e))
 			{
-                Input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Left);
+                Input.MainWindows.FrameSnapshot.MouseClick(MouseButton.Left);
 			}
 		}
 		private void LeftLaser()
@@ -93,11 +93,11 @@ namespace RhubarbEngine.Input
 			var e = RhubarbEngine.Input.Creality.Left;
 			if (Input.GrabPress(e))
 			{
-                Input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Right);
+                Input.MainWindows.FrameSnapshot.MouseClick(MouseButton.Right);
 			}
 			if (Input.PrimaryPress(e))
 			{
-                Input.mainWindows.FrameSnapshot.MouseClick(MouseButton.Left);
+                Input.MainWindows.FrameSnapshot.MouseClick(MouseButton.Left);
 			}
 		}
 
@@ -254,11 +254,11 @@ namespace RhubarbEngine.Input
 					default:
 						break;
 				}
-				if (_engine.outputType == VirtualReality.OutputType.Screen)
+				if (_engine.OutputType == VirtualReality.OutputType.Screen)
 				{
-					ent.SendSecondary(Input.mainWindows.GetMouseButton(MouseButton.Middle));
-					ent.SendPrimary(Input.mainWindows.GetMouseButton(MouseButton.Left));
-					ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, Input.mainWindows.GetMouseButton(MouseButton.Right));
+					ent.SendSecondary(Input.MainWindows.GetMouseButton(MouseButton.Middle));
+					ent.SendPrimary(Input.MainWindows.GetMouseButton(MouseButton.Left));
+					ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, Input.MainWindows.GetMouseButton(MouseButton.Right));
 				}
 				switch (source)
 				{
@@ -281,9 +281,9 @@ namespace RhubarbEngine.Input
 					case InteractionSource.RightFinger:
 						break;
 					case InteractionSource.HeadLaser:
-						ent.SendSecondary(Input.mainWindows.GetMouseButton(MouseButton.Middle));
-						ent.SendPrimary(Input.mainWindows.GetMouseButton(MouseButton.Left));
-						ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, Input.mainWindows.GetMouseButton(MouseButton.Right));
+						ent.SendSecondary(Input.MainWindows.GetMouseButton(MouseButton.Middle));
+						ent.SendPrimary(Input.MainWindows.GetMouseButton(MouseButton.Left));
+						ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, Input.MainWindows.GetMouseButton(MouseButton.Right));
 						break;
 					case InteractionSource.HeadFinger:
 						break;
@@ -344,7 +344,7 @@ namespace RhubarbEngine.Input
         {
             get
             {
-                return _engine.settingsObject.InteractionSettings.SnapDistance / 100;
+                return _engine.SettingsObject.InteractionSettings.SnapDistance / 100;
             }
         }
 
@@ -352,7 +352,7 @@ namespace RhubarbEngine.Input
         {
             get
             {
-                return _engine.settingsObject.InteractionSettings.Smoothing;
+                return _engine.SettingsObject.InteractionSettings.Smoothing;
             }
         }
 
@@ -388,7 +388,7 @@ namespace RhubarbEngine.Input
 
 			if (Smoothing != 0)
 			{
-				var poser = _engine.platformInfo.deltaSeconds * 2 * Smoothing;
+				var poser = _engine.PlatformInfo.deltaSeconds * 2 * Smoothing;
 				_iRayCastDeriction = Lerp(_iRayCastDeriction, deriction, poser);
 				_iRayCastsourcse = Lerp(_iRayCastsourcse, _sourcse, poser);
 				smoothedDeriction = Lerp(_lastRayCastDeriction, _iRayCastDeriction, poser);
@@ -430,17 +430,17 @@ namespace RhubarbEngine.Input
 		}
 		private void ProsscesRayTestHit(Vector3 _sourcse, Vector3 _destination, Vector3 deriction)
 		{
-			if (!RayTestHitTest(_sourcse, _destination, _engine.worldManager.privateOverlay))
+			if (!RayTestHitTest(_sourcse, _destination, _engine.WorldManager.privateOverlay))
 			{
 				var hittestbool = false;
-				foreach (var item in _engine.worldManager.worlds)
+				foreach (var item in _engine.WorldManager.worlds)
 				{
 					if ((item.Focus == World.World.FocusLevel.Overlay) && !hittestbool)
 					{
 						hittestbool = RayTestHitTest(_sourcse, _destination, item);
 					}
 				}
-				if (!((!RayTestHitTest(_sourcse, _destination, _engine.worldManager.FocusedWorld)) && !hittestbool))
+				if (!((!RayTestHitTest(_sourcse, _destination, _engine.WorldManager.FocusedWorld)) && !hittestbool))
 				{
 					HasHit = true;
 					_lastDeriction = deriction;
@@ -461,17 +461,17 @@ namespace RhubarbEngine.Input
 
 		private void ProsscesHit()
 		{
-			if (!HitTest(Sourcse, Destination, _engine.worldManager.privateOverlay))
+			if (!HitTest(Sourcse, Destination, _engine.WorldManager.privateOverlay))
 			{
 				var hittestbool = false;
-				foreach (var item in _engine.worldManager.worlds)
+				foreach (var item in _engine.WorldManager.worlds)
 				{
 					if ((item.Focus == World.World.FocusLevel.Overlay) && !hittestbool)
 					{
 						hittestbool = HitTest(Sourcse, Destination, item);
 					}
 				}
-				if ((!HitTest(Sourcse, Destination, _engine.worldManager.FocusedWorld)) && !hittestbool)
+				if ((!HitTest(Sourcse, Destination, _engine.WorldManager.FocusedWorld)) && !hittestbool)
 				{
 					_snaping = false;
                     Cursor = RhubarbEngine.Input.Cursors.None;

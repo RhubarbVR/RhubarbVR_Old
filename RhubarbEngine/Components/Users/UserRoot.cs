@@ -84,7 +84,7 @@ namespace RhubarbEngine.Components.Users
 			};
 			if (World.LocalUser == user.Target)
 			{
-				if (Input.mainWindows.GetKeyDown(Key.F7))
+				if (Input.MainWindows.GetKeyDown(Key.F7))
 				{
 					Console.WriteLine(Entity.GlobalPos());
 				}
@@ -93,48 +93,48 @@ namespace RhubarbEngine.Components.Users
                     return;
                 }
 
-                var deltaSeconds = (float)World.worldManager.engine.platformInfo.deltaSeconds;
-				var sprintFactor = World.worldManager.engine.inputManager.mainWindows.GetKey(Key.ControlLeft) || Engine.inputManager.PrimaryPress()
+                var deltaSeconds = (float)World.worldManager.engine.PlatformInfo.deltaSeconds;
+				var sprintFactor = World.worldManager.engine.InputManager.MainWindows.GetKey(Key.ControlLeft) || Engine.InputManager.PrimaryPress()
 				   ? 0.1f
-				   : World.worldManager.engine.inputManager.mainWindows.GetKey(Key.ShiftLeft)
+				   : World.worldManager.engine.InputManager.MainWindows.GetKey(Key.ShiftLeft)
 				   ? 2.5f
 					 : 1f;
 				var motionDir = Vector3.Zero;
-				var leftvraix = Engine.inputManager.Axis(RhubarbEngine.Input.Creality.Left);
-				var Rightvraix = Engine.inputManager.Axis(RhubarbEngine.Input.Creality.Right);
+				var leftvraix = Engine.InputManager.Axis(RhubarbEngine.Input.Creality.Left);
+				var Rightvraix = Engine.InputManager.Axis(RhubarbEngine.Input.Creality.Right);
 				motionDir -= (LeftHand.Target.rotation.Value.AxisZ * leftvraix.y).ToSystemNumrics();
 				motionDir -= (RightHand.Target.rotation.Value.AxisZ * Rightvraix.y).ToSystemNumrics();
 
 				var lookRotation = Quaternion.CreateFromYawPitchRoll(leftvraix.x * -5f * deltaSeconds, 0.0f, 0.0f);
 				lookRotation *= Quaternion.CreateFromYawPitchRoll(Rightvraix.x * -5f * deltaSeconds, 0.0f, 0.0f);
-				float e = World.worldManager.engine.inputManager.mainWindows.GetKey(Key.X) ? 0 : 1;
-				e += World.worldManager.engine.inputManager.mainWindows.GetKey(Key.Z) ? 0 : -1;
+				float e = World.worldManager.engine.InputManager.MainWindows.GetKey(Key.X) ? 0 : 1;
+				e += World.worldManager.engine.InputManager.MainWindows.GetKey(Key.Z) ? 0 : -1;
 				lookRotation *= Quaternion.CreateFromYawPitchRoll(e * -5f * deltaSeconds, 0.0f, 0.0f);
 
 				var temp = World.UserRoot.Head.Target.rotation.Value * Vector3f.AxisZ;
 				var HeadFacingDirection = new Vector3f(temp.x, 0, temp.z).Normalized;
 				var looke = Quaternionf.FromTo(Vector3f.AxisZ, HeadFacingDirection);
-				if (World.worldManager.engine.inputManager.mainWindows.GetKey(Key.A))
+				if (World.worldManager.engine.InputManager.MainWindows.GetKey(Key.A))
 				{
 					motionDir += -looke.AxisX.ToSystemNumrics();
 				}
-				if (World.worldManager.engine.inputManager.mainWindows.GetKey(Key.D))
+				if (World.worldManager.engine.InputManager.MainWindows.GetKey(Key.D))
 				{
 					motionDir += looke.AxisX.ToSystemNumrics();
 				}
-				if (World.worldManager.engine.inputManager.mainWindows.GetKey(Key.W))
+				if (World.worldManager.engine.InputManager.MainWindows.GetKey(Key.W))
 				{
 					motionDir += -looke.AxisZ.ToSystemNumrics();
 				}
-				if (World.worldManager.engine.inputManager.mainWindows.GetKey(Key.S))
+				if (World.worldManager.engine.InputManager.MainWindows.GetKey(Key.S))
 				{
 					motionDir += looke.AxisZ.ToSystemNumrics();
 				}
-				if (World.worldManager.engine.inputManager.mainWindows.GetKey(Key.Q))
+				if (World.worldManager.engine.InputManager.MainWindows.GetKey(Key.Q))
 				{
 					motionDir += -Vector3.UnitY;
 				}
-				if (World.worldManager.engine.inputManager.mainWindows.GetKey(Key.E))
+				if (World.worldManager.engine.InputManager.MainWindows.GetKey(Key.E))
 				{
 					motionDir += Vector3.UnitY;
 				}
@@ -161,7 +161,7 @@ namespace RhubarbEngine.Components.Users
 					userpos.Value = new Vector3f(translation.X, translation.Y, translation.Z);
 					userrot.Value = new Quaternionf(rotation.X, rotation.Y, rotation.Z, rotation.W);
 					userscale.Value = new Vector3f(scale.X, scale.Y, scale.Z);
-					Engine.worldManager.privateOverlay.UserRoot.Entity.SetGlobalTrans(Entity.GlobalTrans());
+					Engine.WorldManager.privateOverlay.UserRoot.Entity.SetGlobalTrans(Entity.GlobalTrans());
 				}
 			}
 			else

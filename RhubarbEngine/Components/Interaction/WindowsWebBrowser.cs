@@ -371,13 +371,13 @@ namespace RhubarbEngine.Components.Interaction
 		public override void OnLoaded()
 		{
 			base.OnLoaded();
-			_frameInputBuffer = new RollBuffer(Engine.audioManager.AudioFrameSizeInBytes * ChannelCount);
+			_frameInputBuffer = new RollBuffer(Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount);
 			if (!Cef.IsInitialized) // Check before init
 			{
 				Console.WriteLine("Init Cef");
                 var cefSettings = new CefSettings
                 {
-                    CachePath = Path.Combine(Engine.dataPath, "WebBrowser")
+                    CachePath = Path.Combine(Engine.DataPath, "WebBrowser")
                 };
                 cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
 				cefSettings.CefCommandLineArgs.Add("disable-usb-keyboard-detect", "1");
@@ -499,7 +499,7 @@ namespace RhubarbEngine.Components.Interaction
 			IsActive = false;
 			try
 			{
-				_frameInputBuffer.Push(new byte[Engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
+				_frameInputBuffer.Push(new byte[Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount]);
 				_browser.AudioHandler = null;
 				_browser.Dispose();
 			}
@@ -516,7 +516,7 @@ namespace RhubarbEngine.Components.Interaction
 
             if (globalAudio.Value)
 			{
-				_frameInputBuffer.Push(new byte[Engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
+				_frameInputBuffer.Push(new byte[Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount]);
 				_browser.AudioHandler = null;
 			}
 			else
@@ -615,7 +615,7 @@ namespace RhubarbEngine.Components.Interaction
                     }
 
                     _target = new UpdateDatingTexture2D();
-					_view = _target.InitializeView(((RenderHandler)_browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(Engine.renderManager.gd, Engine.renderManager.gd.ResourceFactory), Engine.renderManager.gd);
+					_view = _target.InitializeView(((RenderHandler)_browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(Engine.RenderManager.gd, Engine.RenderManager.gd.ResourceFactory), Engine.RenderManager.gd);
 					var e = new RTexture2D(_view);
 					e.AddDisposable(_target);
 					e.AddDisposable(_view);
@@ -787,8 +787,8 @@ namespace RhubarbEngine.Components.Interaction
                 AudioType.LayoutSurround => CefSharp.Enums.ChannelLayout.LayoutSurround,
                 _ => CefSharp.Enums.ChannelLayout.LayoutUnsupported,
             };
-            parameters.FramesPerBuffer = Engine.audioManager.AudioFrameSize;
-			parameters.SampleRate = Engine.audioManager.SamplingRate;
+            parameters.FramesPerBuffer = Engine.AudioManager.AudioFrameSize;
+			parameters.SampleRate = Engine.AudioManager.SamplingRate;
 			return true;
 		}
 

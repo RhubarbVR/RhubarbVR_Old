@@ -30,7 +30,7 @@ namespace RhubarbEngine.Render.Material.Fields
 
 		private void valueUpdate(IChangeable e)
 		{
-			updateBuffer(Engine.renderManager.gd);
+			updateBuffer(Engine.RenderManager.gd);
 		}
 
 		unsafe public override void updateBuffer(GraphicsDevice gb)

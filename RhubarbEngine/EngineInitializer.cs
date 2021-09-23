@@ -30,19 +30,19 @@ namespace RhubarbEngine
 			//System.Runtime.GCSettings.LatencyMode = System.Runtime.GCLatencyMode.LowLatency;
 			try
 			{
-				_engine.logger.Log("Starting Managers");
+				_engine.Logger.Log("Starting Managers");
 
 				intphase = "Platform Info Manager";
-				_engine.logger.Log("Starting Platform Info Manager:");
+				_engine.Logger.Log("Starting Platform Info Manager:");
 				_engine.platformInfo = new PlatformInfoManager();
-				_engine.platformInfo.Initialize(_engine);
+				_engine.PlatformInfo.Initialize(_engine);
 
-				if (_engine.platformInfo.platform != Platform.Android)
+				if (_engine.PlatformInfo.platform != Platform.Android)
 				{
 					intphase = "Window Manager";
-					_engine.logger.Log("Starting Window Manager:");
+					_engine.Logger.Log("Starting Window Manager:");
 					_engine.windowManager = new Managers.WindowManager();
-					_engine.windowManager.Initialize(_engine);
+					_engine.WindowManager.Initialize(_engine);
 				}
 				else
 				{
@@ -50,41 +50,41 @@ namespace RhubarbEngine
 				}
 
 				intphase = "Input Manager";
-				_engine.logger.Log("Starting Input Manager:");
+				_engine.Logger.Log("Starting Input Manager:");
 				_engine.inputManager = new Managers.InputManager();
-				_engine.inputManager.Initialize(_engine);
+				_engine.InputManager.Initialize(_engine);
 
 				intphase = "Render Manager";
-				_engine.logger.Log("Starting Render Manager:");
+				_engine.Logger.Log("Starting Render Manager:");
 				_engine.renderManager = new Managers.RenderManager();
-				_engine.renderManager.Initialize(_engine);
+				_engine.RenderManager.Initialize(_engine);
 
 
 				intphase = "Audio Manager";
-				_engine.logger.Log("Starting Audio Manager:");
+				_engine.Logger.Log("Starting Audio Manager:");
 				_engine.audioManager = new Managers.AudioManager();
-				_engine.audioManager.Initialize(_engine);
+				_engine.AudioManager.Initialize(_engine);
 
 				intphase = "Net Api Manager";
-				_engine.logger.Log("Starting Net Api Manager:");
+				_engine.Logger.Log("Starting Net Api Manager:");
 				_engine.netApiManager = new Managers.NetApiManager();
 				if (token != null)
 				{
-					_engine.netApiManager.token = token;
+					_engine.NetApiManager.token = token;
 				}
-				_engine.netApiManager.Initialize(_engine);
+				_engine.NetApiManager.Initialize(_engine);
 
 				intphase = "World Manager";
-				_engine.logger.Log("Starting World Manager:");
+				_engine.Logger.Log("Starting World Manager:");
 				_engine.worldManager = new WorldManager();
-				_engine.worldManager.Initialize(_engine);
+				_engine.WorldManager.Initialize(_engine);
 
-				_engine.audioManager.task.Start();
+				_engine.AudioManager.task.Start();
 				Initialised = true;
 			}
 			catch (Exception _e)
 			{
-				_engine.logger.Log("Failed at " + intphase + " Error: " + _e);
+				_engine.Logger.Log("Failed at " + intphase + " Error: " + _e);
 			}
 
 		}
@@ -99,14 +99,14 @@ namespace RhubarbEngine
 		{
 			foreach (var arg in _args)
 			{
-				_engine.logger.Log(arg, true);
+				_engine.Logger.Log(arg, true);
 			}
 			Parser.Default.ParseArguments<CommandLineOptions>(_args)
 				.WithParsed<CommandLineOptions>(o =>
 				{
 					if (o.Verbose)
 					{
-						_engine.verbose = true;
+						_engine.Verbose = true;
 					}
 					if (o.Datapath != null)
 					{

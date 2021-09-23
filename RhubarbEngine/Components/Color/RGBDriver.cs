@@ -19,6 +19,7 @@ namespace RhubarbEngine.Components.Color
 		public Driver<Colorf> driver;
 
 		public Sync<ColorHSV> Value;
+
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			driver = new Driver<Colorf>(this, newRefIds);
@@ -32,10 +33,12 @@ namespace RhubarbEngine.Components.Color
 				driver.Drivevalue = Value.Value;
 			}
 		}
+
 		public RGBDriver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}
+
 		public RGBDriver()
 		{
 		}

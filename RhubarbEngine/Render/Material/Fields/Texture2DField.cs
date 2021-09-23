@@ -24,7 +24,7 @@ namespace RhubarbEngine.Render.Material.Fields
 		public override void OnUpdate()
 		{
 			base.OnUpdate();
-			if (Input.mainWindows.GetKey(Key.F3))
+			if (Input.MainWindows.GetKey(Key.F3))
 			{
 				loadTextureView(true);
 			}
@@ -60,17 +60,17 @@ namespace RhubarbEngine.Render.Material.Fields
 					}
 					else
 					{
-						SetResource(Engine.renderManager.nulview);
+						SetResource(Engine.RenderManager.nulview);
 					}
 				}
 				else
 				{
-					SetResource(Engine.renderManager.nulview);
+					SetResource(Engine.RenderManager.nulview);
 				}
 			}
 			else
 			{
-				SetResource(Engine.renderManager.solidview);
+				SetResource(Engine.RenderManager.solidview);
 			}
 
 		}

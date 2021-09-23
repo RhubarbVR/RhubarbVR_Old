@@ -102,7 +102,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 		private void Alline()
 		{
 			var trans = Matrix4x4.CreateScale(1);
-			if (Engine.outputType == VirtualReality.OutputType.Screen)
+			if (Engine.OutputType == VirtualReality.OutputType.Screen)
 			{
 				if (side.Value == Creality.Left)
                 {
@@ -140,8 +140,8 @@ namespace RhubarbEngine.Components.PrivateSpace
 		}
 		private bool ProssesOpenKey()
 		{
-            return Engine.outputType == VirtualReality.OutputType.Screen
-                ? side.Value != Creality.Left && Input.mainWindows.GetKeyDown(Key.F)
+            return Engine.OutputType == VirtualReality.OutputType.Screen
+                ? side.Value != Creality.Left && Input.MainWindows.GetKeyDown(Key.F)
                 : Input.MenuPress(side.Value);
         }
 

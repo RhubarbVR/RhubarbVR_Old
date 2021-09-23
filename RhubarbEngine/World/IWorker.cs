@@ -13,16 +13,18 @@ using RhubarbEngine.Render.Material.Fields;
 
 namespace RhubarbEngine.World
 {
-    public interface IWorker : IChangeable, IWorldObject
+    public interface IWorker : IChangeable, IWorldObject, IDisposable
     {
 
         public UnitLogs Logger { get; }
 
-        public Engine Engine { get; }
+        public IEngine Engine { get; }
 
-        public InputManager Input { get; }
+        public IInputManager Input { get; }
 
         public double DeltaSeconds { get; }
+
+        public event Action<IWorker> OnDispose;
 
         public void Initialize(World _world, IWorldObject _parent, bool newRefID = true, bool childlisten = true);
 
@@ -64,7 +66,7 @@ namespace RhubarbEngine.World
             }
             catch { }
         }
-        public event Action<Worker> OnDispose;
+        public event Action<IWorker> OnDispose;
 
         public event Action<IChangeable> Changed;
         [NoShow]
@@ -82,11 +84,11 @@ namespace RhubarbEngine.World
         {
             get
             {
-                return World.worldManager.engine.logger;
+                return World.worldManager.engine.Logger;
             }
         }
 
-        public Engine Engine
+        public IEngine Engine
         {
             get
             {
@@ -94,11 +96,11 @@ namespace RhubarbEngine.World
             }
         }
 
-        public InputManager Input
+        public IInputManager Input
         {
             get
             {
-                return Engine.inputManager;
+                return Engine.InputManager;
             }
         }
 
@@ -106,7 +108,7 @@ namespace RhubarbEngine.World
         {
             get
             {
-                return World.worldManager.engine.platformInfo.deltaSeconds;
+                return World.worldManager.engine.PlatformInfo.deltaSeconds;
             }
         }
 
@@ -269,7 +271,7 @@ namespace RhubarbEngine.World
 
             if (data == null)
             {
-                World.worldManager.engine.logger.Log("Node did not exsets When loading Node: " + GetType().FullName);
+                World.worldManager.engine.Logger.Log("Node did not exsets When loading Node: " + GetType().FullName);
                 return;
             }
             if (NewRefIDs)

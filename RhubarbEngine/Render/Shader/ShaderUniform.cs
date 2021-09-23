@@ -16,9 +16,9 @@ namespace RhubarbEngine.Render.Shader
 
 		public string fieldName = "";
 
-		public string getCode(int location)
+		public string GetCode(int location)
 		{
-			string code = "";
+            string code;
 			switch (valueType)
 			{
 				case ShaderValueType.Val_texture2D:
@@ -28,14 +28,14 @@ namespace RhubarbEngine.Render.Shader
 					code = $"layout(set = 0, binding = {location}) uniform {valueType} {{ vec4 {fieldName}; }}; \n";
 					break;
 				default:
-					string type = valueType.ToString().Replace("Val_", "");
+					var type = valueType.ToString().Replace("Val_", "");
 					code = $"layout(set = 0, binding = {location}) uniform {valueType} {{ {type} {fieldName}; }}; \n";
 					break;
 			}
 			return code;
 		}
 
-		public ResourceLayoutElementDescription getResourceLayoutElementDescription()
+		public ResourceLayoutElementDescription GetResourceLayoutElementDescription()
 		{
 			ResourceKind resourceKind;
 			ShaderStages shaderStage;
@@ -49,7 +49,7 @@ namespace RhubarbEngine.Render.Shader
 			}
 			else
 			{
-				Logger.Log("Shader Value Type not Found", true);
+                Console.WriteLine("Shader Value Type not Found", true);
 				throw new Exception("Shader Value Type not Found");
 			}
 			if ((int)shaderType % 2 == 0)

@@ -18,13 +18,13 @@ namespace RhubarbEngine.Managers
 {
 	public class AudioManager : IManager
 	{
-		private Engine _engine;
+		private IEngine _engine;
 
         public bool OpenAl
         {
             get
             {
-                return _engine?.settingsObject.AudioSettings.OpenAL ?? true;
+                return _engine?.SettingsObject.AudioSettings.OpenAL ?? true;
             }
         }
 
@@ -39,7 +39,7 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return _engine?.settingsObject.AudioSettings.SamplingRate ?? 48000;
+                return _engine?.SettingsObject.AudioSettings.SamplingRate ?? 48000;
             }
         }
 
@@ -47,7 +47,7 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return _engine?.settingsObject.AudioSettings.AudioFrameSize ?? 2048;
+                return _engine?.SettingsObject.AudioSettings.AudioFrameSize ?? 2048;
             }
         }
 
@@ -86,7 +86,7 @@ namespace RhubarbEngine.Managers
 
 		public int audioframeTimeMs;
 
-		public unsafe IManager Initialize(Engine _engine)
+		public unsafe IManager Initialize(IEngine _engine)
 		{
 			audioframeTimeMs = AudioFrameSize / (SamplingRate / 1000);
 			ee = new float[AudioFrameSize * 2];
@@ -166,10 +166,10 @@ namespace RhubarbEngine.Managers
 					Console.WriteLine("Steam Audio Info" + message);
 					break;
 				case IPL.LogLevel.Warning:
-					Logger.Log("Steam Audio Warning" + message);
+                    _engine.Logger.Log("Steam Audio Warning" + message);
 					break;
 				case IPL.LogLevel.Error:
-					Logger.Log("Steam Audio Error" + message, true);
+                    _engine.Logger.Log("Steam Audio Error" + message, true);
 					break;
 				case IPL.LogLevel.Debug:
 					Console.WriteLine("Steam Audio Debug" + message);
@@ -192,10 +192,10 @@ namespace RhubarbEngine.Managers
 			IPL.HRTFCreate(iplContext, ref iplAudioSettings, ref herfset, out hrtf);
 
 
-			Logger.Log("Created SteamAudio context.");
-			IPL.AudioBufferAllocate(_engine.audioManager.iplContext, 2, AudioFrameSize, ref iplOutputBuffer);
+			_engine.Logger.Log("Created SteamAudio context.");
+			IPL.AudioBufferAllocate(_engine.AudioManager.iplContext, 2, AudioFrameSize, ref iplOutputBuffer);
 
-			Logger.Log("SteamAudio is ready.");
+            _engine.Logger.Log("SteamAudio is ready.");
 
 		}
 
@@ -232,7 +232,7 @@ namespace RhubarbEngine.Managers
 		public unsafe void RunOutput()
 		{
 			IPL.AudioBufferDeinterleave(iplContext, ee, ref iplOutputBuffer);
-			foreach (var world in _engine.worldManager.worlds)
+			foreach (var world in _engine.WorldManager.worlds)
 			{
 				if (world.Focus != World.World.FocusLevel.Background)
 				{
@@ -319,7 +319,7 @@ namespace RhubarbEngine.Managers
 
 		private void PrepareOpenAL()
 		{
-			_alBuffers = new uint[_engine.settingsObject.AudioSettings.BufferCount];
+			_alBuffers = new uint[_engine.SettingsObject.AudioSettings.BufferCount];
 
 			_alAudioDevice = ALC.OpenDevice(null);
 			_alAudioContext = ALC.CreateContext(_alAudioDevice, null);
@@ -329,7 +329,7 @@ namespace RhubarbEngine.Managers
 				throw new InvalidOperationException("Unable to make context current");
 			}
 
-			Logger.Log("Created OpenAL context.");
+            _engine.Logger.Log("Created OpenAL context.");
 
 			//Require float32 support.
 			const string FLOAT_32_EXTENSION = "AL_EXT_float32";
@@ -341,7 +341,7 @@ namespace RhubarbEngine.Managers
 
             CheckALErrors();
 
-			Logger.Log("OpenAL is ready.");
+            _engine.Logger.Log("OpenAL is ready.");
 		}
 		private void UnloadOpenAL()
 		{
@@ -365,5 +365,9 @@ namespace RhubarbEngine.Managers
 			}
 			UnloadSteamAudio();
 		}
-	}
+
+        public void Update()
+        {
+        }
+    }
 }

@@ -9,19 +9,22 @@ namespace RhubarbEngine.Managers
 {
 	public class NetApiManager : IManager
 	{
-		private Engine _engine;
+		private IEngine _engine;
 
 		public string token = "";
 
 		public bool islogin = false;
 
-		public IManager Initialize(Engine _engine)
+		public IManager Initialize(IEngine _engine)
 		{
 			this._engine = _engine;
-			this._engine.logger.Log("Starting Cloud Interface");
+			this._engine.Logger.Log("Starting Cloud Interface");
 
 			return this;
 		}
+        public void Update()
+        {
 
+        }
 	}
 }

@@ -16,7 +16,7 @@ namespace RhubarbEngine.Components.ImGUI
 	[Category("ImGUI/Developer")]
 	public class ComponentAttacher : UIWidget
 	{
-		public SyncRef<Worker> target;
+		public SyncRef<IWorker> target;
 
 		public Sync<string> path;
 
@@ -32,7 +32,7 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			base.BuildSyncObjs(newRefIds);
-			target = new SyncRef<Worker>(this, newRefIds);
+			target = new SyncRef<IWorker>(this, newRefIds);
 			children = new SyncRefList<ComponentAttacherField>(this, newRefIds);
             path = new Sync<string>(this, newRefIds)
             {
