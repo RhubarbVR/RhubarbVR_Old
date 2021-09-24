@@ -31,7 +31,7 @@ namespace RhubarbEngine.Render.Material.Fields
 
 		}
 
-		public override void setValue(Object val)
+		public override void SetValue(Object val)
 		{
 			field.Value = (NetPointer)val;
 		}
@@ -45,7 +45,7 @@ namespace RhubarbEngine.Render.Material.Fields
 			if ((resource != res) || forceR)
 			{
 				resource = res;
-				rMaterial.ReloadBindableResources();
+				RMaterial.ReloadBindableResources();
 			}
 		}
 		public void loadTextureView(bool forceR = false)
@@ -60,22 +60,22 @@ namespace RhubarbEngine.Render.Material.Fields
 					}
 					else
 					{
-						SetResource(Engine.RenderManager.nulview);
+						SetResource(Engine.RenderManager.Nulview);
 					}
 				}
 				else
 				{
-					SetResource(Engine.RenderManager.nulview);
+					SetResource(Engine.RenderManager.Nulview);
 				}
 			}
 			else
 			{
-				SetResource(Engine.RenderManager.solidview);
+				SetResource(Engine.RenderManager.Solidview);
 			}
 
 		}
 
-		public unsafe override void createDeviceResource(ResourceFactory fact)
+		public unsafe override void CreateDeviceResource(ResourceFactory fact)
 		{
 			loadTextureView();
 		}

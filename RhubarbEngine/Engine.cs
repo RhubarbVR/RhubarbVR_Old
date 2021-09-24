@@ -20,7 +20,7 @@ namespace RhubarbEngine
 
         public IInputManager InputManager { get; }
 
-        public RenderManager RenderManager { get; }
+        public IRenderManager RenderManager { get; }
 
         public MainSettingsObject SettingsObject { get; }
 
@@ -52,7 +52,7 @@ namespace RhubarbEngine
 
         public IInputManager inputManager;
 
-        public RenderManager renderManager;
+        public IRenderManager renderManager;
 
         public PlatformInfoManager platformInfo;
 
@@ -207,7 +207,7 @@ namespace RhubarbEngine
             }
         }
 
-        public RenderManager RenderManager
+        public IRenderManager RenderManager
         {
             get
             {
@@ -328,7 +328,7 @@ namespace RhubarbEngine
 			windowManager.Update();
 			inputManager.Update();
 			worldManager.Update(startTime, Frame);
-			renderManager.Update().Wait();
+			renderManager.Update();
 		}
 
 		public void CleanUP()

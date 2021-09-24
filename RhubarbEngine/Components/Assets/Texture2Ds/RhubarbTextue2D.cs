@@ -44,11 +44,11 @@ namespace RhubarbEngine.Components.Assets
 		{
 			if (solid.Value)
 			{
-				Load(new RTexture2D(Engine.RenderManager.rhubarbSolidview));
+				Load(new RTexture2D(Engine.RenderManager.RhubarbSolidview));
 			}
 			else
 			{
-				Load(new RTexture2D(Engine.RenderManager.rhubarbview));
+				Load(new RTexture2D(Engine.RenderManager.Rhubarbview));
 			}
 
 		}

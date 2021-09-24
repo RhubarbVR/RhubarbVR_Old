@@ -58,7 +58,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		private void UpdateMesh()
 		{
 			var tempMesh = new RMesh(_generator.Generate().MakeDMesh());
-			tempMesh.CreateMeshesBuffers(World.worldManager.engine.RenderManager.gd);
+			tempMesh.CreateMeshesBuffers(World.worldManager.engine.RenderManager.Gd);
 			Load(tempMesh, true);
 		}
 

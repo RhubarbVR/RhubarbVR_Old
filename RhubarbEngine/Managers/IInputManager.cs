@@ -71,7 +71,7 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return _engine.RenderManager.vrContext.LeftController;
+                return _engine.RenderManager.VrContext.LeftController;
             }
         }
 
@@ -79,7 +79,7 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return _engine.RenderManager.vrContext.RightController;
+                return _engine.RenderManager.VrContext.RightController;
             }
         }
 

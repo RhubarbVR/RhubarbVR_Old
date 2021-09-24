@@ -128,13 +128,13 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void OnLoaded()
 		{
 			base.OnLoaded();
-			_uIcommandList = Engine.RenderManager.gd.ResourceFactory.CreateCommandList();
+			_uIcommandList = Engine.RenderManager.Gd.ResourceFactory.CreateCommandList();
 			LoadUI();
 		}
 
 		private Framebuffer CreateFramebuffer(uint width, uint height)
 		{
-			var factory = Engine.RenderManager.gd.ResourceFactory;
+			var factory = Engine.RenderManager.Gd.ResourceFactory;
 			var colorTarget = factory.CreateTexture(TextureDescription.Texture2D(
 				width, height,
 				1, 1,
@@ -160,9 +160,9 @@ namespace RhubarbEngine.Components.ImGUI
                 }
 
                 _framebuffer = CreateFramebuffer(scale.Value.x, scale.Value.y);
-				_igr = new ImGuiRenderer(Engine.RenderManager.gd, _framebuffer.OutputDescription, (int)scale.Value.x, (int)scale.Value.y, ColorSpaceHandling.Linear);
+				_igr = new ImGuiRenderer(Engine.RenderManager.Gd, _framebuffer.OutputDescription, (int)scale.Value.x, (int)scale.Value.y, ColorSpaceHandling.Linear);
 				var target = _framebuffer.ColorTargets[0].Target;
-				var view = Engine.RenderManager.gd.ResourceFactory.CreateTextureView(target);
+				var view = Engine.RenderManager.Gd.ResourceFactory.CreateTextureView(target);
 				Load(new RTexture2D(view));
 				_uIloaded = true;
 			}
@@ -312,9 +312,9 @@ namespace RhubarbEngine.Components.ImGUI
 				_uIcommandList.Begin();
 				_uIcommandList.SetFramebuffer(_framebuffer);
 				_uIcommandList.ClearColorTarget(0, new RgbaFloat((Vector4)backGroundColor.Value.ToRGBA()));
-				_igr.Render(Engine.RenderManager.gd, _uIcommandList);
+				_igr.Render(Engine.RenderManager.Gd, _uIcommandList);
 				_uIcommandList.End();
-				Engine.RenderManager.gd.SubmitCommands(_uIcommandList);
+				Engine.RenderManager.Gd.SubmitCommands(_uIcommandList);
 			}
 			catch (Exception e)
 			{

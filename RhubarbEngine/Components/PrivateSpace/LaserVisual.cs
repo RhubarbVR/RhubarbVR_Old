@@ -185,7 +185,7 @@ namespace RhubarbEngine.Components.PrivateSpace
                 planeColorField.Target.field.Value = color;
             }
 
-            Load(new RTexture2D(Engine.RenderManager.cursors[(int)newcursor]));
+            Load(new RTexture2D(Engine.RenderManager.Cursors[(int)newcursor]));
 		}
 
 		public override void OnLoaded()

@@ -25,19 +25,25 @@ namespace RhubarbEngine.Render.Material.Fields
 		[NoSync]
 		public BindableResource resource;
 
-		[NoShow]
-		[NoSave]
-		[NoSync]
-		public RMaterial rMaterial => (RMaterial)parent.Parent;
+        [NoShow]
+        [NoSave]
+        [NoSync]
+        public RMaterial RMaterial
+        {
+            get
+            {
+                return (RMaterial)parent.Parent;
+            }
+        }
 
-		public override void OnLoaded()
+        public override void OnLoaded()
 		{
 			base.OnLoaded();
-			createDeviceResource(Engine.RenderManager.gd.ResourceFactory);
-			updateBuffer(Engine.RenderManager.gd);
+			CreateDeviceResource(Engine.RenderManager.Gd.ResourceFactory);
+			UpdateBuffer(Engine.RenderManager.Gd);
 		}
 
-		public virtual void setValue(Object val)
+		public virtual void SetValue(object val)
 		{
 
 		}
@@ -48,12 +54,12 @@ namespace RhubarbEngine.Render.Material.Fields
 			fieldName = new Sync<string>(this, newRefIds);
 		}
 
-		public virtual void updateBuffer(GraphicsDevice gb)
+		public virtual void UpdateBuffer(GraphicsDevice gb)
 		{
 
 		}
 
-		public virtual void createDeviceResource(ResourceFactory fact)
+		public virtual void CreateDeviceResource(ResourceFactory fact)
 		{
 		}
 	}

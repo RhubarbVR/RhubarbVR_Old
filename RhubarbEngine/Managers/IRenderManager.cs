@@ -17,8 +17,27 @@ using Veldrid.ImageSharp;
 
 namespace RhubarbEngine.Managers
 {
-    public class RenderManager : IManager
-	{
+    public interface IRenderManager : IManager
+    {
+        float FieldOfView { get; }
+        float AspectRatio { get; }
+        float NearPlaneDistance { get; set; }
+        float FarPlaneDistance { get; set; }
+        VRContext VrContext { get; set; }
+        TextureView Nulview { get; }
+        Swapchain Sc { get; set; }
+        GraphicsDevice Gd { get; set; }
+        TextureView Gridview { get; }
+        TextureView Rhubarbview { get; }
+        TextureView Solidview { get; }
+        TextureView RhubarbSolidview { get; }
+        TextureView[] Cursors { get; }
+
+        void SwitchVRContext(OutputType type);
+    }
+
+    public class RenderManager : IRenderManager
+    {
         public float FieldOfView
         {
             get
@@ -37,9 +56,22 @@ namespace RhubarbEngine.Managers
 
         public float nearPlaneDistance = 0.01f;
 
-		public float farPlaneDistance = 1000f;
+        public float NearPlaneDistance
+        {
+            get {return nearPlaneDistance; }
+            set { nearPlaneDistance = value; }
+        }
 
-		private IEngine _engine;
+
+        public float farPlaneDistance = 1000f;
+
+        public float FarPlaneDistance
+        {
+            get { return farPlaneDistance; }
+            set { farPlaneDistance = value; }
+        }
+
+        private IEngine _engine;
 
         private Matrix4x4 UserTrans
         {
@@ -53,27 +85,37 @@ namespace RhubarbEngine.Managers
 
 		public VRContext vrContext;
 
-		public GraphicsDevice gd;
+        public VRContext VrContext { get { return vrContext; } set { vrContext = value; } }
 
-		public Swapchain sc;
+        public GraphicsDevice gd;
+        public GraphicsDevice Gd { get { return gd; } set { gd = value; } }
 
-		private CommandList _eyesCL;
+        public Swapchain sc;
+        public Swapchain Sc { get { return sc; } set { sc = value; } }
 
-		public CommandList windowCL;
+        private CommandList _eyesCL;
 
-		public Skybox skybox;
+        private CommandList _windowCL;
 
-		public TextureView nulview;
+        private Skybox _skybox;
 
-		public TextureView gridview;
+        public TextureView nulview;
+        public TextureView Nulview { get { return nulview; } }
 
-		public TextureView rhubarbview;
+        public TextureView gridview;
+        public TextureView Gridview { get { return gridview; } }
 
-		public TextureView solidview;
+        public TextureView rhubarbview;
+        public TextureView Rhubarbview { get { return rhubarbview; } }
 
-		public TextureView rhubarbSolidview;
+        public TextureView solidview;
+        public TextureView Solidview { get { return solidview; } }
 
-		public TextureView[] cursors = new TextureView[50];
+        public TextureView rhubarbSolidview;
+        public TextureView RhubarbSolidview { get { return rhubarbSolidview; } }
+
+        public TextureView[] cursors = new TextureView[50];
+        public TextureView[] Cursors { get { return cursors; } }
 
         public MirrorTextureEyeSource EyeSource
         {
@@ -122,39 +164,39 @@ namespace RhubarbEngine.Managers
 			(gd, sc) = this._engine.WindowManager.MainWindow.CreateScAndGD(vrContext, backend);
 			this._engine.Backend = backend;
 			vrContext.Initialize(gd);
-			windowCL = gd.ResourceFactory.CreateCommandList();
+			_windowCL = gd.ResourceFactory.CreateCommandList();
 			_eyesCL = gd.ResourceFactory.CreateCommandList();
 			_mainQueue = new RenderQueue();
 			this._engine.WindowManager.MainWindow.window.Resized += Window_Resized;
 			Window_Resized();
-			var _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "nulltexture.jpg"), false, true).CreateDeviceTexture(this._engine.RenderManager.gd, this._engine.RenderManager.gd.ResourceFactory);
-            nulview = this._engine.RenderManager.gd.ResourceFactory.CreateTextureView(_texture);
-			var gridtexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Grid.jpg"), true, true).CreateDeviceTexture(this._engine.RenderManager.gd, this._engine.RenderManager.gd.ResourceFactory);
-            gridview = this._engine.RenderManager.gd.ResourceFactory.CreateTextureView(gridtexture);
+			var _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "nulltexture.jpg"), false, true).CreateDeviceTexture(this._engine.RenderManager.Gd, this._engine.RenderManager.Gd.ResourceFactory);
+            nulview = this._engine.RenderManager.Gd.ResourceFactory.CreateTextureView(_texture);
+			var gridtexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Grid.jpg"), true, true).CreateDeviceTexture(this._engine.RenderManager.Gd, this._engine.RenderManager.Gd.ResourceFactory);
+            gridview = this._engine.RenderManager.Gd.ResourceFactory.CreateTextureView(gridtexture);
 
-			var rhubatexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR2.png"), false, true).CreateDeviceTexture(this._engine.RenderManager.gd, this._engine.RenderManager.gd.ResourceFactory);
-            rhubarbview = this._engine.RenderManager.gd.ResourceFactory.CreateTextureView(rhubatexture);
+			var rhubatexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR2.png"), false, true).CreateDeviceTexture(this._engine.RenderManager.Gd, this._engine.RenderManager.Gd.ResourceFactory);
+            rhubarbview = this._engine.RenderManager.Gd.ResourceFactory.CreateTextureView(rhubatexture);
 
-			var rhubatextures = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR.png"), false, true).CreateDeviceTexture(this._engine.RenderManager.gd, this._engine.RenderManager.gd.ResourceFactory);
-            rhubarbSolidview = this._engine.RenderManager.gd.ResourceFactory.CreateTextureView(rhubatextures);
-			var solidTexture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, RNumerics.Colorf.White), false).CreateDeviceTexture(this._engine.RenderManager.gd, this._engine.RenderManager.gd.ResourceFactory);
-            solidview = this._engine.RenderManager.gd.ResourceFactory.CreateTextureView(solidTexture);
+			var rhubatextures = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "RhubarbVR.png"), false, true).CreateDeviceTexture(this._engine.RenderManager.Gd, this._engine.RenderManager.Gd.ResourceFactory);
+            rhubarbSolidview = this._engine.RenderManager.Gd.ResourceFactory.CreateTextureView(rhubatextures);
+			var solidTexture = new ImageSharpTexture(ImageSharpExtensions.CreateTextureColor(2, 2, RNumerics.Colorf.White), false).CreateDeviceTexture(this._engine.RenderManager.Gd, this._engine.RenderManager.Gd.ResourceFactory);
+            solidview = this._engine.RenderManager.Gd.ResourceFactory.CreateTextureView(solidTexture);
 			var index = 0;
 			foreach (Input.Cursors item in Enum.GetValues(typeof(RhubarbEngine.Input.Cursors)))
 			{
-				var tempTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Cursors", item + ".png"), false, true).CreateDeviceTexture(this._engine.RenderManager.gd, this._engine.RenderManager.gd.ResourceFactory);
-                cursors[index] = this._engine.RenderManager.gd.ResourceFactory.CreateTextureView(tempTexture);
+				var tempTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Cursors", item + ".png"), false, true).CreateDeviceTexture(this._engine.RenderManager.Gd, this._engine.RenderManager.Gd.ResourceFactory);
+                cursors[index] = this._engine.RenderManager.Gd.ResourceFactory.CreateTextureView(tempTexture);
 				index++;
 			}
 
-			skybox = new Skybox(
+			_skybox = new Skybox(
 	Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_ft.png")),
 	Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_bk.png")),
 	Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_lf.png")),
 	Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_rt.png")),
 	Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_up.png")),
 	Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_dn.png")));
-			skybox.CreateDeviceObjects(gd, vrContext.LeftEyeFramebuffer.OutputDescription);
+			_skybox.CreateDeviceObjects(gd, vrContext.LeftEyeFramebuffer.OutputDescription);
 
 			return this;
 		}
@@ -202,7 +244,7 @@ namespace RhubarbEngine.Managers
 			cl.SetFramebuffer(fb);
 			cl.ClearDepthStencil(1f);
 			cl.ClearColorTarget(0, RgbaFloat.CornflowerBlue);
-			skybox.Render(cl, fb, proj, view);
+			_skybox.Render(cl, fb, proj, view);
 			foreach (var renderObj in _mainQueue.Renderables)
 			{
 				renderObj.Render(gd, cl, new UBO(
@@ -351,12 +393,12 @@ namespace RhubarbEngine.Managers
 			}
 			if (_engine.WindowManager.MainWindowOpen)
 			{
-				windowCL.Begin();
-				windowCL.SetFramebuffer(sc.Framebuffer);
-				windowCL.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0.2f, 1f));
-				vrContext.RenderMirrorTexture(windowCL, sc.Framebuffer, (_engine.OutputType != OutputType.Screen) ? EyeSource : MirrorTextureEyeSource.LeftEye);
-				windowCL.End();
-				gd.SubmitCommands(windowCL);
+				_windowCL.Begin();
+				_windowCL.SetFramebuffer(sc.Framebuffer);
+				_windowCL.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0.2f, 1f));
+				vrContext.RenderMirrorTexture(_windowCL, sc.Framebuffer, (_engine.OutputType != OutputType.Screen) ? EyeSource : MirrorTextureEyeSource.LeftEye);
+				_windowCL.End();
+				gd.SubmitCommands(_windowCL);
 				gd.SwapBuffers(sc);
 				gd.WaitForIdle();
 			}

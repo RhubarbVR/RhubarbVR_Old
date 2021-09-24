@@ -16,9 +16,9 @@ namespace RhubarbEngine.Render.Material.Fields
 		{
 			field = new Sync<T>(this, newRefIds);
 			SetDefault();
-			field.Changed += valueUpdate;
+			field.Changed += ValueUpdate;
 		}
-		public override void setValue(Object val)
+		public override void SetValue(object val)
 		{
 			field.Value = (T)val;
 		}
@@ -28,18 +28,18 @@ namespace RhubarbEngine.Render.Material.Fields
 			field.Value = default;
 		}
 
-		private void valueUpdate(IChangeable e)
+		private void ValueUpdate(IChangeable e)
 		{
-			updateBuffer(Engine.RenderManager.gd);
+			UpdateBuffer(Engine.RenderManager.Gd);
 		}
 
-		unsafe public override void updateBuffer(GraphicsDevice gb)
+		unsafe public override void UpdateBuffer(GraphicsDevice gb)
 		{
-			IntPtr e = GCHandle.ToIntPtr(GCHandle.Alloc(field.Value));
+			var e = GCHandle.ToIntPtr(GCHandle.Alloc(field.Value));
 			gb.UpdateBuffer((DeviceBuffer)resource, 0, e, (uint)sizeof(T));
 		}
 
-		public unsafe override void createDeviceResource(ResourceFactory fact)
+		public unsafe override void CreateDeviceResource(ResourceFactory fact)
 		{
 			if (resource != null)
 			{

@@ -117,7 +117,7 @@ namespace RhubarbEngine.VirtualReality
 			{
 				_eng.Logger.Log("Error Loading Frame Buffer", true);
 			}
-			ChangeProject((float)(Math.PI / 180) * _eng.RenderManager.FieldOfView, _eng.RenderManager.AspectRatio, _eng.RenderManager.nearPlaneDistance, _eng.RenderManager.farPlaneDistance);
+			ChangeProject((float)(Math.PI / 180) * _eng.RenderManager.FieldOfView, _eng.RenderManager.AspectRatio, _eng.RenderManager.NearPlaneDistance, _eng.RenderManager.FarPlaneDistance);
 		}
 
 		private void Window_Resized()
@@ -142,7 +142,7 @@ namespace RhubarbEngine.VirtualReality
 				oldbuf.Dispose();
 				_mirrorTexture.ClearLeftSet();
 			}
-			ChangeProject((float)(Math.PI / 180) * _eng.RenderManager.FieldOfView, _eng.RenderManager.AspectRatio, _eng.RenderManager.nearPlaneDistance, _eng.RenderManager.farPlaneDistance);
+			ChangeProject((float)(Math.PI / 180) * _eng.RenderManager.FieldOfView, _eng.RenderManager.AspectRatio, _eng.RenderManager.NearPlaneDistance, _eng.RenderManager.FarPlaneDistance);
 		}
 
 		private Framebuffer CreateFramebuffer(uint width, uint height)

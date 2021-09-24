@@ -55,7 +55,7 @@ void main()
 }
 ";
 			;
-			shader.LoadShader(Engine.RenderManager.gd, Logger);
+			shader.LoadShader(Engine.RenderManager.Gd, Logger);
 			Load(shader);
 		}
 

@@ -615,7 +615,7 @@ namespace RhubarbEngine.Components.Interaction
                     }
 
                     _target = new UpdateDatingTexture2D();
-					_view = _target.InitializeView(((RenderHandler)_browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(Engine.RenderManager.gd, Engine.RenderManager.gd.ResourceFactory), Engine.RenderManager.gd);
+					_view = _target.InitializeView(((RenderHandler)_browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(Engine.RenderManager.Gd, Engine.RenderManager.Gd.ResourceFactory), Engine.RenderManager.Gd);
 					var e = new RTexture2D(_view);
 					e.AddDisposable(_target);
 					e.AddDisposable(_view);

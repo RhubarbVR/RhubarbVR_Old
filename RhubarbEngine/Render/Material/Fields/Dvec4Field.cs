@@ -13,7 +13,7 @@ namespace RhubarbEngine.Render.Material.Fields
 	public class Dvec4Field : GenericField<Vector4d>
 	{
 
-		public override void createDeviceResource(ResourceFactory fact)
+		public override void CreateDeviceResource(ResourceFactory fact)
 		{
 			if (resource != null)
 			{
@@ -21,7 +21,7 @@ namespace RhubarbEngine.Render.Material.Fields
 			}
 			resource = fact.CreateBuffer(new BufferDescription(256, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 		}
-		unsafe public override void updateBuffer(GraphicsDevice gb)
+		unsafe public override void UpdateBuffer(GraphicsDevice gb)
 		{
 			gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_dvec4(field.Value));
 		}
