@@ -32,6 +32,7 @@ namespace RhubarbEngine
     : IEngineInitializer where TRenderManager : IRenderManager, new() where TInputManager : IInputManager, new() 
         where TPlatformInfoManager : IPlatformInfoManager, new() where TWindowManager : IWindowManager, new()
         where TAudioManager : IAudioManager, new() where TNetApiManager : INetApiManager, new()
+         where TWorldManager : IWorldManager, new()
     {
 		private readonly Engine _engine;
 
@@ -96,7 +97,7 @@ namespace RhubarbEngine
 
 				intphase = "World Manager";
 				_engine.Logger.Log("Starting World Manager:");
-				_engine.worldManager = new WorldManager();
+				_engine.worldManager = new TWorldManager();
 				_engine.WorldManager.Initialize(_engine);
 
 				_engine.AudioManager.Task.Start();

@@ -84,7 +84,7 @@ namespace RhubarbEngine.World
         {
             get
             {
-                return World.worldManager.engine.Logger;
+                return World.worldManager.Engine.Logger;
             }
         }
 
@@ -92,7 +92,7 @@ namespace RhubarbEngine.World
         {
             get
             {
-                return World.worldManager.engine;
+                return World.worldManager.Engine;
             }
         }
 
@@ -108,7 +108,7 @@ namespace RhubarbEngine.World
         {
             get
             {
-                return World.worldManager.engine.PlatformInfo.DeltaSeconds;
+                return World.worldManager.Engine.PlatformInfo.DeltaSeconds;
             }
         }
 
@@ -271,7 +271,7 @@ namespace RhubarbEngine.World
 
             if (data == null)
             {
-                World.worldManager.engine.Logger.Log("Node did not exsets When loading Node: " + GetType().FullName);
+                Logger.Log("Node did not exsets When loading Node: " + GetType().FullName);
                 return;
             }
             if (NewRefIDs)

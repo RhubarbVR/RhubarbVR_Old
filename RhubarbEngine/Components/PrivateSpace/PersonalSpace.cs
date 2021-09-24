@@ -166,8 +166,8 @@ namespace RhubarbEngine.Components.PrivateSpace
 		{
 			var mang = Engine.WorldManager;
 
-			var pos = mang.worlds.IndexOf(mang.FocusedWorld) + 1;
-			if (pos == mang.worlds.Count)
+			var pos = mang.Worlds.IndexOf(mang.FocusedWorld) + 1;
+			if (pos == mang.Worlds.Count)
 			{
 				JoinNextIfBackground(0);
 			}
@@ -184,13 +184,13 @@ namespace RhubarbEngine.Components.PrivateSpace
 				return;
 			}
 			var mang = Engine.WorldManager;
-			if (mang.worlds[i].Focus == RhubarbEngine.World.World.FocusLevel.Background)
+			if (mang.Worlds[i].Focus == RhubarbEngine.World.World.FocusLevel.Background)
 			{
-				mang.worlds[i].Focus = RhubarbEngine.World.World.FocusLevel.Focused;
+				mang.Worlds[i].Focus = RhubarbEngine.World.World.FocusLevel.Focused;
 			}
 			else
 			{
-				if (i + 1 == mang.worlds.Count)
+				if (i + 1 == mang.Worlds.Count)
 				{
                     JoinNextIfBackground(0, count + 1);
 				}

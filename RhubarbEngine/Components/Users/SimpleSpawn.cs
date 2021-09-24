@@ -13,7 +13,7 @@ using System.Numerics;
 using RhubarbEngine.Input;
 using RhubarbEngine.Components.Assets.Procedural_Meshes;
 using RhubarbEngine.Components.Interaction;
-
+using RhubarbEngine.Helpers;
 
 namespace RhubarbEngine.Components.Users
 {
@@ -56,9 +56,9 @@ namespace RhubarbEngine.Components.Users
 				rightcomp.userroot.Target = userRoot;
 
 
-				var obj = Managers.WorldManager.AddMesh<ArrowMesh>(left);
-				var obj2 = Managers.WorldManager.AddMesh<ArrowMesh>(right);
-				var obj3 = Managers.WorldManager.AddMesh<ArrowMesh>(head);
+				var obj = MeshHelper.AddMesh<ArrowMesh>(left);
+				var obj2 = MeshHelper.AddMesh<ArrowMesh>(right);
+				var obj3 = MeshHelper.AddMesh<ArrowMesh>(head);
 
 				var ileft = left.AttachComponent<GrabbableHolder>();
 				var iright = right.AttachComponent<GrabbableHolder>();

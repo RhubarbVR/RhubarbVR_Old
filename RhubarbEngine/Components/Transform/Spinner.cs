@@ -34,7 +34,7 @@ namespace RhubarbEngine.Components.Transform
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			var deltaSeconds = (float)World.worldManager.engine.PlatformInfo.DeltaSeconds;
+			var deltaSeconds = (float)Engine.PlatformInfo.DeltaSeconds;
 			if (driver.Linked)
 			{
 				var newval = Entity.LocalTrans() * Matrix4x4.CreateFromQuaternion(offset.Value.ToSystemNumric()) * Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(speed.Value.x * deltaSeconds, speed.Value.y * deltaSeconds, speed.Value.z * deltaSeconds));

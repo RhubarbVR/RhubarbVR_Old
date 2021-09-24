@@ -181,7 +181,7 @@ namespace RhubarbEngine.World
 		{
 			if (data == null)
 			{
-				World.worldManager.engine.Logger.Log("Node did not exsets When loading SyncAbstractObjList");
+				World.worldManager.Engine.Logger.Log("Node did not exsets When loading SyncAbstractObjList");
 				return;
 			}
 			if (NewRefIDs)
@@ -208,7 +208,7 @@ namespace RhubarbEngine.World
 					ty = Type.GetType(((DataNode<string>)((DataNodeGroup)val.GetValue("Value")).GetValue("type")).Value, true);
 					if (ty == null)
 					{
-						World.worldManager.engine.Logger.Log("Component still not found" + ((DataNode<string>)val.GetValue("Type")).Value);
+						World.worldManager.Engine.Logger.Log("Component still not found" + ((DataNode<string>)val.GetValue("Type")).Value);
 						var obj = (T)Activator.CreateInstance(typeof(MissingComponent));
 						Add(obj, NewRefIDs).DeSerialize((DataNodeGroup)val.GetValue("Value"), onload, NewRefIDs, newRefID, latterResign);
 					}
@@ -221,7 +221,7 @@ namespace RhubarbEngine.World
 						}
 						else
 						{
-							World.worldManager.engine.Logger.Log("Something is broken or someone is messing with things", true);
+							World.worldManager.Engine.Logger.Log("Something is broken or someone is messing with things", true);
 						}
 					}
 				}
@@ -229,7 +229,7 @@ namespace RhubarbEngine.World
 				{
 					if (ty == null)
 					{
-						World.worldManager.engine.Logger.Log("Type not found" + ((DataNode<string>)val.GetValue("Type")).Value, true);
+						World.worldManager.Engine.Logger.Log("Type not found" + ((DataNode<string>)val.GetValue("Type")).Value, true);
 						if (typeof(T) == typeof(Component))
 						{
 							var obj = (T)Activator.CreateInstance(typeof(MissingComponent));

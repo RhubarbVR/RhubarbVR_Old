@@ -58,7 +58,7 @@ namespace RhubarbEngine.World.ECS
 		{
 			if (data == null)
 			{
-				World.worldManager.engine.Logger.Log("Node did not exsets When loading Node");
+				World.worldManager.Engine.Logger.Log("Node did not exsets When loading Node");
 				return;
 			}
 			if (NewRefIDs)

@@ -430,10 +430,10 @@ namespace RhubarbEngine.Input
 		}
 		private void ProsscesRayTestHit(Vector3 _sourcse, Vector3 _destination, Vector3 deriction)
 		{
-			if (!RayTestHitTest(_sourcse, _destination, _engine.WorldManager.privateOverlay))
+			if (!RayTestHitTest(_sourcse, _destination, _engine.WorldManager.PrivateOverlay))
 			{
 				var hittestbool = false;
-				foreach (var item in _engine.WorldManager.worlds)
+				foreach (var item in _engine.WorldManager.Worlds)
 				{
 					if ((item.Focus == World.World.FocusLevel.Overlay) && !hittestbool)
 					{
@@ -461,10 +461,10 @@ namespace RhubarbEngine.Input
 
 		private void ProsscesHit()
 		{
-			if (!HitTest(Sourcse, Destination, _engine.WorldManager.privateOverlay))
+			if (!HitTest(Sourcse, Destination, _engine.WorldManager.PrivateOverlay))
 			{
 				var hittestbool = false;
-				foreach (var item in _engine.WorldManager.worlds)
+				foreach (var item in _engine.WorldManager.Worlds)
 				{
 					if ((item.Focus == World.World.FocusLevel.Overlay) && !hittestbool)
 					{

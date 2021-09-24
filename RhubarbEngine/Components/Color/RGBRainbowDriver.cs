@@ -31,7 +31,7 @@ namespace RhubarbEngine.Components.Color
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			var deltaSeconds = (float)World.worldManager.engine.PlatformInfo.DeltaSeconds;
+			var deltaSeconds = (float)World.worldManager.Engine.PlatformInfo.DeltaSeconds;
 			if (driver.Linked)
 			{
 				ColorHSV color = driver.Drivevalue;

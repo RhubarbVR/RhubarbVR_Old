@@ -22,7 +22,7 @@ namespace RhubarbEngine.Components.Users
 		{
 			if (fps.Linked)
 			{
-				fps.Drivevalue = World.worldManager.engine.PlatformInfo.FrameRate;
+				fps.Drivevalue = World.worldManager.Engine.PlatformInfo.FrameRate;
 			}
 		}
 

@@ -275,7 +275,7 @@ namespace RhubarbEngine.Managers
 		public unsafe void RunOutput()
 		{
 			IPL.AudioBufferDeinterleave(iplContext, ee, ref iplOutputBuffer);
-			foreach (var world in _engine.WorldManager.worlds)
+			foreach (var world in _engine.WorldManager.Worlds)
 			{
 				if (world.Focus != World.World.FocusLevel.Background)
 				{

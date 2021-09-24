@@ -77,7 +77,7 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return (_engine.WorldManager.FocusedWorld != null) ? _engine.WorldManager.FocusedWorld.PlayerTrans : _engine.WorldManager.privateOverlay.PlayerTrans;
+                return (_engine.WorldManager.FocusedWorld != null) ? _engine.WorldManager.FocusedWorld.PlayerTrans : _engine.WorldManager.PrivateOverlay.PlayerTrans;
             }
         }
 
@@ -316,7 +316,7 @@ namespace RhubarbEngine.Managers
 
 		private void RenderRenderObjects()
 		{
-			foreach (var world in _engine.WorldManager.worlds)
+			foreach (var world in _engine.WorldManager.Worlds)
 			{
 				if (world.Focus != World.World.FocusLevel.Background)
 				{

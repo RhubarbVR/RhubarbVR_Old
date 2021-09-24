@@ -151,7 +151,7 @@ namespace RhubarbEngine.World
 			_value = Defalut();
 			if (data == null)
 			{
-				World.worldManager.engine.Logger.Log($"Node did not exsets When loading Sync Value { GetType().FullName}");
+				World.worldManager.Engine.Logger.Log($"Node did not exsets When loading Sync Value { GetType().FullName}");
 				return;
 			}
 			if (NewRefIDs)

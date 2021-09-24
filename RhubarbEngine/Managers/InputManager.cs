@@ -44,7 +44,7 @@ namespace RhubarbEngine.Managers
 
 		private IKeyboardStealer _keyboard;
 
-		public IKeyboardStealer Keyboard { get { return _keyboard; } set { if (value != null) { _engine.WorldManager.personalSpace?.OpenKeyboard(); } else { _engine.WorldManager.personalSpace?.CloseKeyboard(); } _keyboard = value; } }
+		public IKeyboardStealer Keyboard { get { return _keyboard; } set { if (value != null) { _engine.WorldManager.PersonalSpace?.OpenKeyboard(); } else { _engine.WorldManager.PersonalSpace?.CloseKeyboard(); } _keyboard = value; } }
 
         public bool IsKeyboardinuse
         {

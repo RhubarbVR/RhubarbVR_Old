@@ -16,7 +16,7 @@ namespace RhubarbEngine
 
         public string DataPath { get; }
 
-        public WorldManager WorldManager { get; }
+        public IWorldManager WorldManager { get; }
 
         public IInputManager InputManager { get; }
 
@@ -50,7 +50,7 @@ namespace RhubarbEngine
     {
         public bool verbose;
 
-        public WorldManager worldManager;
+        public IWorldManager worldManager;
 
         public IInputManager inputManager;
 
@@ -191,7 +191,7 @@ namespace RhubarbEngine
             }
         }
 
-        public WorldManager WorldManager
+        public IWorldManager WorldManager
         {
             get
             {
