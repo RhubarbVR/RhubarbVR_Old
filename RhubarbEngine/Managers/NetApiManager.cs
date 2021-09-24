@@ -7,13 +7,19 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Managers
 {
-	public class NetApiManager : IManager
-	{
+    public interface INetApiManager : IManager
+    {
+        bool Islogin { get; }
+        string Token { get; set; }
+    }
+
+    public class NetApiManager : INetApiManager
+    {
 		private IEngine _engine;
 
-		public string token = "";
+		public string Token { get; set; } = "";
 
-		public bool islogin = false;
+		public bool Islogin { get; private set; } = false;
 
 		public IManager Initialize(IEngine _engine)
 		{

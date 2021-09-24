@@ -129,15 +129,15 @@ namespace RhubarbEngine.Managers
 		{
 			this._engine = _engine;
 			var backend = this._engine.Backend;
-			if (this._engine.PlatformInfo.platform == PlatformInfo.Platform.OSX)
+			if (this._engine.PlatformInfo.Platform == PlatformInfo.Platform.OSX)
 			{
 				backend = GraphicsBackend.Metal;
 			}
-			if (backend == GraphicsBackend.Metal && this._engine.PlatformInfo.platform != PlatformInfo.Platform.OSX && this._engine.PlatformInfo.platform != PlatformInfo.Platform.iOS)
+			if (backend == GraphicsBackend.Metal && this._engine.PlatformInfo.Platform != PlatformInfo.Platform.OSX && this._engine.PlatformInfo.Platform != PlatformInfo.Platform.iOS)
 			{
 				backend = GraphicsBackend.Vulkan;
 			}
-			if (backend == GraphicsBackend.Direct3D11 && this._engine.PlatformInfo.platform != PlatformInfo.Platform.Windows)
+			if (backend == GraphicsBackend.Direct3D11 && this._engine.PlatformInfo.Platform != PlatformInfo.Platform.Windows)
 			{
 				backend = GraphicsBackend.Vulkan;
 			}

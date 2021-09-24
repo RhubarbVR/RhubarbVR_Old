@@ -142,7 +142,7 @@ namespace RhubarbEngine.World.Asset
 			var e = new ShaderUniform(name, vType, stype);
 			Fields.Remove(e);
 		}
-		public void LoadShader(GraphicsDevice gd, UnitLogs log)
+		public void LoadShader(GraphicsDevice gd, IUnitLogs log)
 		{
 			try
 			{

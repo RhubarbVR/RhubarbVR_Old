@@ -11,7 +11,7 @@ namespace RhubarbVR
         {
             try
             {
-                engine.Initialize(_args);
+                engine.Initialize<BaseEngineInitializer,UnitLogs>(_args);
                 engine.StartUpdateLoop();
             }
             catch (Exception e)

@@ -24,17 +24,17 @@ namespace RhubarbEngine
 
         public MainSettingsObject SettingsObject { get; }
 
-        public PlatformInfoManager PlatformInfo { get; }
+        public IPlatformInfoManager PlatformInfo { get; }
 
-        public Managers.WindowManager WindowManager { get; }
+        public IWindowManager WindowManager { get; }
 
-        public Managers.NetApiManager NetApiManager { get; }
+        public INetApiManager NetApiManager { get; }
 
-        public AudioManager AudioManager { get; }
+        public IAudioManager AudioManager { get; }
 
-        public UnitLogs Logger { get; }
+        public IUnitLogs Logger { get; }
 
-        public EngineInitializer EngineInitializer { get; }
+        public IEngineInitializer EngineInitializer { get; }
 
         public DiscordRpcClient DiscordRpcClient { get; }
 
@@ -42,6 +42,8 @@ namespace RhubarbEngine
 
         public GraphicsBackend Backend { get; set; }
 
+        void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool _Rendering = true)
+            where TEngineInitializer : IEngineInitializer where TUnitLogs : IUnitLogs;
     }
 
     public class Engine: IEngine
@@ -54,17 +56,17 @@ namespace RhubarbEngine
 
         public IRenderManager renderManager;
 
-        public PlatformInfoManager platformInfo;
+        public IPlatformInfoManager platformInfo;
 
-        public Managers.WindowManager windowManager;
+        public IWindowManager windowManager;
 
-        public Managers.NetApiManager netApiManager;
+        public INetApiManager netApiManager;
 
-        public AudioManager audioManager;
+        public IAudioManager audioManager;
 
-        public UnitLogs logger;
+        public IUnitLogs logger;
 
-        public EngineInitializer engineInitializer;
+        public IEngineInitializer engineInitializer;
 
         public DiscordRpcClient discordRpcClient;
 
@@ -76,9 +78,7 @@ namespace RhubarbEngine
 
 		public FileStream lockFile;
 
-#pragma warning disable IDE0060 // Remove unused parameter
-        public void Initialize(string[] _args, bool _verbose = false, bool _Rendering = true)
-#pragma warning restore IDE0060 // Remove unused parameter
+        public void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool _Rendering = true) where TEngineInitializer: IEngineInitializer where TUnitLogs : IUnitLogs
         {
 			try
 			{
@@ -121,9 +121,9 @@ namespace RhubarbEngine
 			catch { }
 
             verbose = _verbose;
-			logger = new UnitLogs(this);
-			engineInitializer = new EngineInitializer(this);
-			logger.Log("Loading Arguments:", true);
+            logger = (IUnitLogs)Activator.CreateInstance(typeof(TUnitLogs), this);
+            engineInitializer = (IEngineInitializer)Activator.CreateInstance(typeof(TEngineInitializer), this);
+            logger.Log("Loading Arguments:", true);
 			engineInitializer.LoadArguments(_args);
 			logger.Log("Datapath: " + dataPath);
 			//Build DataFolder
@@ -148,7 +148,7 @@ namespace RhubarbEngine
 				var liet = SettingsManager.getDataFromJson(text);
 				lists.Add(liet);
 			}
-			foreach (var item in engineInitializer.settings)
+			foreach (var item in engineInitializer.Settings)
 			{
 				var text = File.Exists(item) ? File.ReadAllText(item) : item;
                 try
@@ -170,9 +170,9 @@ namespace RhubarbEngine
 			engineInitializer = engineInitializer.Initialised ? null : throw new Exception("Engine not Initialised");
             while (windowManager.MainWindowOpen)
 			{
-				Loop(platformInfo.startTime, platformInfo.Frame);
+				Loop(platformInfo.StartTime, platformInfo.Frame);
 				platformInfo.Frame = DateTime.UtcNow;
-				platformInfo.FrameCount++;
+                platformInfo.NextFrame();
 			}
 		}
 
@@ -223,7 +223,7 @@ namespace RhubarbEngine
             }
         }
 
-        public PlatformInfoManager PlatformInfo
+        public IPlatformInfoManager PlatformInfo
         {
             get
             {
@@ -231,7 +231,7 @@ namespace RhubarbEngine
             }
         }
 
-        public Managers.WindowManager WindowManager
+        public IWindowManager WindowManager
         {
             get
             {
@@ -239,7 +239,7 @@ namespace RhubarbEngine
             }
         }
 
-        public NetApiManager NetApiManager
+        public INetApiManager NetApiManager
         {
             get
             {
@@ -247,7 +247,7 @@ namespace RhubarbEngine
             }
         }
 
-        public AudioManager AudioManager
+        public IAudioManager AudioManager
         {
             get
             {
@@ -255,7 +255,7 @@ namespace RhubarbEngine
             }
         }
 
-        public UnitLogs Logger
+        public IUnitLogs Logger
         {
             get
             {
@@ -263,7 +263,7 @@ namespace RhubarbEngine
             }
         }
 
-        public EngineInitializer EngineInitializer
+        public IEngineInitializer EngineInitializer
         {
             get
             {
@@ -316,7 +316,7 @@ namespace RhubarbEngine
         //For performance testing
         public void TimeMark(string mark)
 		{
-			var newtime = platformInfo.sw.Elapsed.TotalSeconds;
+			var newtime = platformInfo.Elapsed.TotalSeconds;
 			Console.WriteLine(mark + " : " + (newtime - lastTimemark).ToString());
 			lastTimemark = newtime;
 		}

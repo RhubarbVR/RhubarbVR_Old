@@ -115,10 +115,10 @@ namespace RhubarbEngine.Components.Transform
 				}
 
 				var from = Entity.GlobalPos();
-				var pos = Vector3f.Lerp(from, _targetPosition, (float)(Engine.PlatformInfo.deltaSeconds * positionSpeed.Value));
+				var pos = Vector3f.Lerp(from, _targetPosition, (float)(Engine.PlatformInfo.DeltaSeconds * positionSpeed.Value));
 				var ae = Entity.GlobalRot();
 				var rot = Quaternionf.CreateFromEuler(0f, 0f, 0f);
-				rot.SetToSlerp(ae, _targetRotation, (float)Engine.PlatformInfo.deltaSeconds * rotationSpeed.Value);
+				rot.SetToSlerp(ae, _targetRotation, (float)Engine.PlatformInfo.DeltaSeconds * rotationSpeed.Value);
 				Entity.SetGlobalTrans(Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(rot.ToSystemNumric()) * Matrix4x4.CreateTranslation(pos.ToSystemNumrics()));
 			}
 		}

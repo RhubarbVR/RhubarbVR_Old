@@ -16,8 +16,26 @@ using NAudio.Wave;
 
 namespace RhubarbEngine.Managers
 {
-	public class AudioManager : IManager
-	{
+    public interface IAudioManager : IManager
+    {
+        bool OpenAl { get; }
+        int SamplingRate { get; }
+        Stopwatch Stopwatch { get; }
+        int AudioFrameSize { get; }
+        int AudioFrameSizeInBytes { get; }
+        IPL._IPLContext_t IplContext { get; }
+        ref IPL._IPLContext_t RefIplContext { get; }
+        IPL.AudioSettings IplAudioSettings { get; }
+        ref IPL.AudioSettings RefIplAudioSettings { get; }
+        IPL._IPLHRTF_t Hrtf { get; }
+        Thread Task { get; }
+
+        void UnloadAll();
+    }
+
+
+    public class AudioManager : IAudioManager
+    {
 		private IEngine _engine;
 
         public bool OpenAl
@@ -71,18 +89,43 @@ namespace RhubarbEngine.Managers
 
 		public IPL._IPLHRTF_t hrtf;
 
-		//Steam Audio
-		public IPL._IPLContext_t iplContext;
-		public IPL.AudioBuffer iplOutputBuffer;
+        public IPL._IPLHRTF_t Hrtf
+        {
+            get
+            {
+                return hrtf;
+            }
+        }
+        //Steam Audio
+        public IPL._IPLContext_t iplContext;
+        public IPL._IPLContext_t IplContext { get { return iplContext; } }
+
+        public ref IPL._IPLContext_t RefIplContext
+        {
+            get
+            {
+                return ref iplContext;
+            }
+        }
+
+        public IPL.AudioBuffer iplOutputBuffer;
 
 		public IPL.AudioSettings iplAudioSettings;
+        public IPL.AudioSettings IplAudioSettings { get { return iplAudioSettings; } }
 
+        public ref IPL.AudioSettings RefIplAudioSettings
+        {
+            get
+            {
+                return ref iplAudioSettings;
+            }
+        }
 
-		public uint sourceId;
+        public uint sourceId;
 
 		private uint[] _alBuffers;
 
-		public Thread task;
+		public Thread Task { get; private set; }
 
 		public int audioframeTimeMs;
 
@@ -118,10 +161,10 @@ namespace RhubarbEngine.Managers
 
 			Console.WriteLine("Starting Audio task");
 			_running = true;
-			task = OpenAl ? new Thread(OpenALUpdater, 1024 * 4) : new Thread(NaudioUpdater, 1024 * 4);
-            task.Name = "Audio";
-			task.IsBackground = true;
-			task.Priority = ThreadPriority.Highest;
+			Task = OpenAl ? new Thread(OpenALUpdater, 1024 * 4) : new Thread(NaudioUpdater, 1024 * 4);
+            Task.Name = "Audio";
+			Task.IsBackground = true;
+			Task.Priority = ThreadPriority.Highest;
 			return this;
 		}
 
@@ -193,7 +236,7 @@ namespace RhubarbEngine.Managers
 
 
 			_engine.Logger.Log("Created SteamAudio context.");
-			IPL.AudioBufferAllocate(_engine.AudioManager.iplContext, 2, AudioFrameSize, ref iplOutputBuffer);
+			IPL.AudioBufferAllocate(_engine.AudioManager.IplContext, 2, AudioFrameSize, ref iplOutputBuffer);
 
             _engine.Logger.Log("SteamAudio is ready.");
 

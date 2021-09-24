@@ -307,7 +307,7 @@ namespace RhubarbEngine.Components.ImGUI
             try
 			{
 				var inputSnapshot = imputPlane.Target == null ? fakeInputSnapshot : (InputSnapshot)imputPlane.Target;
-                _igr.Update((float)Engine.PlatformInfo.deltaSeconds, inputSnapshot);
+                _igr.Update((float)Engine.PlatformInfo.DeltaSeconds, inputSnapshot);
 				ImGuiUpdate();
 				_uIcommandList.Begin();
 				_uIcommandList.SetFramebuffer(_framebuffer);

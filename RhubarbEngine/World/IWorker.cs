@@ -16,7 +16,7 @@ namespace RhubarbEngine.World
     public interface IWorker : IChangeable, IWorldObject, IDisposable
     {
 
-        public UnitLogs Logger { get; }
+        public IUnitLogs Logger { get; }
 
         public IEngine Engine { get; }
 
@@ -80,7 +80,7 @@ namespace RhubarbEngine.World
 
         public NetPointer ReferenceID { get; protected set; }
 
-        public UnitLogs Logger
+        public IUnitLogs Logger
         {
             get
             {
@@ -108,7 +108,7 @@ namespace RhubarbEngine.World
         {
             get
             {
-                return World.worldManager.engine.PlatformInfo.deltaSeconds;
+                return World.worldManager.engine.PlatformInfo.DeltaSeconds;
             }
         }
 

@@ -11,8 +11,28 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 namespace RhubarbEngine
 {
-	public class EngineInitializer
-	{
+    public interface IEngineInitializer
+    {
+        void InitializeManagers();
+        void LoadArguments(string[] _args);
+        bool Initialised { get; }
+        IEnumerable<string> Settings { get; }
+        string Session { get; }
+    }
+
+    public class BaseEngineInitializer: EngineInitializer<PlatformInfoManager,Managers.WindowManager,InputManager,RenderManager,AudioManager,NetApiManager,WorldManager>
+    {
+        public BaseEngineInitializer(Engine _engine):base(_engine)
+        {
+        }
+    }
+
+
+    public class EngineInitializer<TPlatformInfoManager, TWindowManager, TInputManager, TRenderManager , TAudioManager, TNetApiManager, TWorldManager> 
+    : IEngineInitializer where TRenderManager : IRenderManager, new() where TInputManager : IInputManager, new() 
+        where TPlatformInfoManager : IPlatformInfoManager, new() where TWindowManager : IWindowManager, new()
+        where TAudioManager : IAudioManager, new() where TNetApiManager : INetApiManager, new()
+    {
 		private readonly Engine _engine;
 
 		public string intphase;
@@ -34,14 +54,14 @@ namespace RhubarbEngine
 
 				intphase = "Platform Info Manager";
 				_engine.Logger.Log("Starting Platform Info Manager:");
-				_engine.platformInfo = new PlatformInfoManager();
+				_engine.platformInfo = new TPlatformInfoManager();
 				_engine.PlatformInfo.Initialize(_engine);
 
-				if (_engine.PlatformInfo.platform != Platform.Android)
+				if (_engine.PlatformInfo.Platform != Platform.Android)
 				{
 					intphase = "Window Manager";
 					_engine.Logger.Log("Starting Window Manager:");
-					_engine.windowManager = new Managers.WindowManager();
+					_engine.windowManager = new TWindowManager();
 					_engine.WindowManager.Initialize(_engine);
 				}
 				else
@@ -51,26 +71,26 @@ namespace RhubarbEngine
 
 				intphase = "Input Manager";
 				_engine.Logger.Log("Starting Input Manager:");
-				_engine.inputManager = new Managers.InputManager();
+				_engine.inputManager = new TInputManager();
 				_engine.InputManager.Initialize(_engine);
 
 				intphase = "Render Manager";
 				_engine.Logger.Log("Starting Render Manager:");
-				_engine.renderManager = new Managers.RenderManager();
+				_engine.renderManager = new TRenderManager();
 				_engine.RenderManager.Initialize(_engine);
 
 
 				intphase = "Audio Manager";
 				_engine.Logger.Log("Starting Audio Manager:");
-				_engine.audioManager = new Managers.AudioManager();
+				_engine.audioManager = new TAudioManager();
 				_engine.AudioManager.Initialize(_engine);
 
 				intphase = "Net Api Manager";
 				_engine.Logger.Log("Starting Net Api Manager:");
-				_engine.netApiManager = new Managers.NetApiManager();
+				_engine.netApiManager = new TNetApiManager();
 				if (token != null)
 				{
-					_engine.NetApiManager.token = token;
+					_engine.NetApiManager.Token = token;
 				}
 				_engine.NetApiManager.Initialize(_engine);
 
@@ -79,7 +99,7 @@ namespace RhubarbEngine
 				_engine.worldManager = new WorldManager();
 				_engine.WorldManager.Initialize(_engine);
 
-				_engine.AudioManager.task.Start();
+				_engine.AudioManager.Task.Start();
 				Initialised = true;
 			}
 			catch (Exception _e)
@@ -95,7 +115,31 @@ namespace RhubarbEngine
 
 		public IEnumerable<string> settings = Array.Empty<string>();
 
-		public void LoadArguments(string[] _args)
+        public IEnumerable<string> Settings
+        {
+            get
+            {
+                return settings;
+            }
+        }
+
+        bool IEngineInitializer.Initialised
+        {
+            get
+            {
+                return Initialised;
+            }
+        }
+
+        public string Session
+        {
+            get
+            {
+                return session;
+            }
+        }
+
+        public void LoadArguments(string[] _args)
 		{
 			foreach (var arg in _args)
 			{

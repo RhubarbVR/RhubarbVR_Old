@@ -93,7 +93,7 @@ namespace RhubarbEngine.Components.Users
                     return;
                 }
 
-                var deltaSeconds = (float)World.worldManager.engine.PlatformInfo.deltaSeconds;
+                var deltaSeconds = (float)World.worldManager.engine.PlatformInfo.DeltaSeconds;
 				var sprintFactor = World.worldManager.engine.InputManager.MainWindows.GetKey(Key.ControlLeft) || Engine.InputManager.PrimaryPress()
 				   ? 0.1f
 				   : World.worldManager.engine.InputManager.MainWindows.GetKey(Key.ShiftLeft)

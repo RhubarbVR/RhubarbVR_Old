@@ -205,7 +205,7 @@ namespace RhubarbEngine.Managers
 				localWorld.Focus = World.World.FocusLevel.Focused;
 				worlds.Add(localWorld);
 				FocusedWorld = localWorld;
-				if (engine.EngineInitializer.session != null)
+				if (engine.EngineInitializer.Session != null)
 				{
 					//JoinSessionFromUUID(engine.engineInitializer.session, true);
 				}

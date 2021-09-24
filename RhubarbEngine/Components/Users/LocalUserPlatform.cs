@@ -23,7 +23,7 @@ namespace RhubarbEngine.Components.Users
 		{
 			if (plat.Linked)
 			{
-				plat.Drivevalue = Engine.PlatformInfo.platform;
+				plat.Drivevalue = Engine.PlatformInfo.Platform;
 			}
 		}
 

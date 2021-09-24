@@ -83,7 +83,7 @@ namespace RhubarbEngine.Components.Interaction
 				}
 				Entity.SetGlobalPos(new Vector3f(newpos.x, newpos.y, newpos.z));
 			}
-			_volas = (((_lastValue - Entity.GlobalPos()) * (1 / (float)Engine.PlatformInfo.deltaSeconds)) + _volas) / 2;
+			_volas = (((_lastValue - Entity.GlobalPos()) * (1 / (float)Engine.PlatformInfo.DeltaSeconds)) + _volas) / 2;
 			_lastValue = Entity.GlobalPos();
 
 		}

@@ -8,7 +8,15 @@ using System.Reflection;
 
 namespace RhubarbEngine
 {
-	public class UnitLogs
+    public interface IUnitLogs
+    {
+        void CleanUP();
+        void Log(string _log, bool _alwaysLog = false);
+        bool WriteLog(string strMessage);
+    }
+
+
+    public class UnitLogs: IUnitLogs
 	{
 		private readonly IEngine _engine;
 
