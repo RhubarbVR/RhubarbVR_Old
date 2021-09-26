@@ -18,7 +18,7 @@ namespace RhubarbEngine.Render.Material.Fields
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			field = new AssetRef<RTexture2D>(this, newRefIds);
-			field.LoadChange += assetChange;
+			field.LoadChange += AssetChange;
 		}
 
 		public override void OnUpdate()
@@ -26,18 +26,18 @@ namespace RhubarbEngine.Render.Material.Fields
 			base.OnUpdate();
 			if (Input.MainWindows.GetKey(Key.F3))
 			{
-				loadTextureView(true);
+				LoadTextureView(true);
 			}
 
 		}
 
-		public override void SetValue(Object val)
+		public override void SetValue(object val)
 		{
 			field.Value = (NetPointer)val;
 		}
-		public void assetChange(RTexture2D newAsset)
+		public void AssetChange(RTexture2D newAsset)
 		{
-			loadTextureView();
+			LoadTextureView();
 		}
 
 		private void SetResource(BindableResource res, bool forceR = false)
@@ -48,7 +48,7 @@ namespace RhubarbEngine.Render.Material.Fields
 				RMaterial.ReloadBindableResources();
 			}
 		}
-		public void loadTextureView(bool forceR = false)
+		public void LoadTextureView(bool forceR = false)
 		{
 			if (field.Target != null)
 			{
@@ -77,7 +77,12 @@ namespace RhubarbEngine.Render.Material.Fields
 
 		public unsafe override void CreateDeviceResource(ResourceFactory fact)
 		{
-			loadTextureView();
+
+            if (fact is null)
+            {
+                return;
+            }
+            LoadTextureView();
 		}
 	}
 }

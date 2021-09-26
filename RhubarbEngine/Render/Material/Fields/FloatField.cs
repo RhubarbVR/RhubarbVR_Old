@@ -22,7 +22,12 @@ namespace RhubarbEngine.Render.Material.Fields
 		}
 		unsafe public override void UpdateBuffer(GraphicsDevice gb)
 		{
-			gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_float(field.Value));
+
+            if (gb is null)
+            {
+                return;
+            }
+            gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_float(field.Value));
 		}
 	}
 }

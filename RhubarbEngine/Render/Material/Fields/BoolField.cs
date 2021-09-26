@@ -21,8 +21,12 @@ namespace RhubarbEngine.Render.Material.Fields
 			resource = fact.CreateBuffer(new BufferDescription(16, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 		}
 		unsafe public override void UpdateBuffer(GraphicsDevice gb)
-		{
-			gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_bool(field.Value));
+        {
+            if (gb is null)
+            {
+                return;
+            }
+            gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_bool(field.Value));
 		}
 	}
 }
