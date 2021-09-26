@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: dotnet build "RhubarbVR" --no-restore /p:Configuration=Release /p:Platform="x64"
     - name: Test
-      run: dotnet test "RhubarbEngineTests" --no-restore --verbosity normal /p:Configuration=Release /p:Platform="x64"
+      run: dotnet test --no-restore /p:Configuration=Release /p:Platform="x64"
 
   UbuntuTest:
 
@@ -47,9 +47,10 @@ jobs:
     - name: Build
       run: dotnet build "RhubarbVR" --no-restore /p:Configuration=Release /p:Platform="x64"
     - name: Test
-      run: dotnet test "RhubarbEngineTests" --no-restore --verbosity normal /p:Configuration=Release /p:Platform="x64"
+      run: dotnet test --no-restore /p:Configuration=Release /p:Platform="x64"
 
   DiscordMessage:
+    needs: [WindowsTest,UbuntuTest]
     runs-on: ubuntu-latest
     steps:
       - uses: sarisia/actions-status-discord@v1
