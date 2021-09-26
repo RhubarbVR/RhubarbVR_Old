@@ -209,6 +209,7 @@ namespace RhubarbEngine.Managers
             {
                 try
                 {
+                    _engine.Logger.Log("Falling back to openGL", true);
                     //FallBack to openGL
                     backend = GraphicsBackend.OpenGL;
                     (gd, sc) = this._engine.WindowManager.MainWindow?.CreateScAndGD(vrContext, backend) ?? CreateGraphicsNoWindow(vrContext, backend);
@@ -216,8 +217,13 @@ namespace RhubarbEngine.Managers
                 }
                 catch
                 {
+                    _engine.Logger.Log("Well okay it seams like u don't have a gpu So no rendering",true);
                     _engine.Rendering = false;
-                    vrContext.Dispose();
+                    try
+                    {
+                        vrContext.Dispose();
+                    }
+                    catch { }
                     vrContext = null;
                     return this;
                 }
