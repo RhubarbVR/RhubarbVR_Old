@@ -91,7 +91,11 @@ namespace RhubarbEngine.Components.Rendering
 
 		private void LoadAllMaterials()
 		{
-			if (_wvpBuffer == null)
+            if (Gd is null)
+            {
+                return;
+            }
+            if (_wvpBuffer == null)
             {
                 return;
             }
@@ -320,7 +324,12 @@ namespace RhubarbEngine.Components.Rendering
 		}
 		public override void OnLoaded()
 		{
-			_wvpBuffer = Engine.RenderManager.Gd.ResourceFactory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            if (Gd is null)
+            {
+                Logger.Log("Loaded Mesh Render with no rendering");
+                return;
+            }
+            _wvpBuffer = Engine.RenderManager.Gd.ResourceFactory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 			AddDisposable(_wvpBuffer);
             Logger.Log("Loading Mesh Render");
 			LoadMesh(null);

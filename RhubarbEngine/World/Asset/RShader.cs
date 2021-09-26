@@ -144,6 +144,10 @@ namespace RhubarbEngine.World.Asset
 		}
 		public void LoadShader(GraphicsDevice gd, IUnitLogs log)
 		{
+            if(gd is null)
+            {
+                return;
+            }
 			try
 			{
 				Dispose();
