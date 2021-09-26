@@ -18,11 +18,11 @@ jobs:
     - name: Submodule update
       run: git submodule update
     - name: Restore dependencies
-      run: dotnet restore "RhubarbVR"
+      run: dotnet restore "RhubarbEngineTests"
     - name: Build
       run: dotnet build "RhubarbVR" --no-restore /p:Configuration=Release /p:Platform="x64"
     - name: Test
-      run: dotnet test --no-restore /p:Configuration=Release /p:Platform="x64"
+      run: dotnet test "RhubarbEngineTests" --no-restore /p:Configuration=Release /p:Platform="x64"
 
   UbuntuTest:
 
@@ -43,11 +43,11 @@ jobs:
     - name: Submodule update
       run: git submodule update
     - name: Restore dependencies
-      run: dotnet restore "RhubarbVR"
+      run: dotnet restore "RhubarbEngineTests"
     - name: Build
       run: dotnet build "RhubarbVR" --no-restore /p:Configuration=Release /p:Platform="x64"
     - name: Test
-      run: dotnet test --no-restore /p:Configuration=Release /p:Platform="x64"
+      run: dotnet test "RhubarbEngineTests" --no-restore /p:Configuration=Release /p:Platform="x64"
 
   DiscordMessage:
     needs: [WindowsTest,UbuntuTest]
