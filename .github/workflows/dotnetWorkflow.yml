@@ -49,23 +49,9 @@ jobs:
     - name: Test
       run: dotnet test "RhubarbEngineTests" --no-restore /p:Configuration=Release /p:Platform="x64"
 
-  DiscordMessage:
+  Release:
     needs: [WindowsTest,UbuntuTest]
-    if: always()
     runs-on: ubuntu-latest
+    if: contains('refs/heads/production', github.ref)
     steps:
-    - name:  SendDiscordMessageForWindows
-      uses: sarisia/actions-status-discord@v1
-      if: always()
-      with:
-       webhook: ${{ secrets.YOUR_DISCORD_WEBHOOK_URL }}
-       status: ${{ needs.UbuntuTest.outputs.job-status }}
-       title: WindowsTests
-    - name:  SendDiscordMessageForUbuntu
-      uses: sarisia/actions-status-discord@v1
-      if: always()
-      with:
-       webhook: ${{ secrets.YOUR_DISCORD_WEBHOOK_URL }}
-       status: ${{ needs.WindowsTest.outputs.job-status }}
-       title: UbuntuTests
-
+    - name: Temp
