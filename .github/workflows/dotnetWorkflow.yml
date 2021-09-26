@@ -29,10 +29,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: sarisia/actions-status-discord@v1
-      if: always()
-      with:
-         webhook: ${{ secrets.YOUR_DISCORD_WEBHOOK_URL }}
     - uses: actions/checkout@v2
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
@@ -53,6 +49,10 @@ jobs:
     needs: [WindowsTest,UbuntuTest]
     runs-on: ubuntu-latest
     if: contains('refs/heads/production', github.ref)
-    
+    steps:
+    - uses: sarisia/actions-status-discord@v1
+      if: always()
+      with:
+         webhook: ${{ secrets.YOUR_DISCORD_WEBHOOK_URL }}
 
 
