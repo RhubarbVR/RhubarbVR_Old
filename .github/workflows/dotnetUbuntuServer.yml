@@ -22,4 +22,4 @@ jobs:
     - name: Build
       run: dotnet build "RhubarbVR" --no-restore /p:Configuration=Release /p:Platform="x64" /warnaserror
     - name: Test
-      run: dotnet test --no-build --verbosity normal  /p:Configuration=Release /p:Platform="x64" /warnaserror
+      run: dotnet test /p:Configuration=Release /p:Platform="x64" /warnaserror
