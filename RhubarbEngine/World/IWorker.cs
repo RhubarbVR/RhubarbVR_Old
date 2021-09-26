@@ -309,8 +309,26 @@ namespace RhubarbEngine.World
                     {
                         throw new Exception("Sync not initialized on " + GetType().FullName + " Field: " + field.Name);
                     }
-                    ((IWorldObject)field.GetValue(this)).DeSerialize((DataNodeGroup)data.GetValue(field.Name), onload, NewRefIDs, newRefID, latterResign);
-                }
+                    try
+                    {
+                        var filedData = (DataNodeGroup)data.GetValue(field.Name);
+                        if (filedData is null)
+                        {
+                            if(field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0)
+                            {
+                                ((IWorldObject)field.GetValue(this)).DeSerialize(filedData, onload, NewRefIDs, newRefID, latterResign);
+                            }
+                        }
+                        else
+                        {
+                            ((IWorldObject)field.GetValue(this)).DeSerialize(filedData, onload, NewRefIDs, newRefID, latterResign);
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        throw new Exception($"Failed To DeSerialize Fieled {field.Name}", e);
+                    }
+                    }
             }
             if (typeof(IRenderObject).IsAssignableFrom(GetType()))
             {

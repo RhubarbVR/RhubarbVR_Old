@@ -693,17 +693,28 @@ namespace RhubarbEngine.World
 			{
 				if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && !(NewRefIDs && (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length > 0)) && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))
 				{
-					if (((IWorldObject)field.GetValue(this)) != null)
+					if (((IWorldObject)field.GetValue(this)) is not null)
 					{
-						try
-						{
-							((IWorldObject)field.GetValue(this)).DeSerialize((DataNodeGroup)data.GetValue(field.Name), onload, NewRefIDs, newRefID, latterResign);
-						}
-						catch (Exception e)
-						{
-                            worldManager.Engine.Logger.Log("Error Deserializeing on world Field name: " + field.Name + " Error:" + e.ToString(), true);
-						}
-					}
+                        try
+                        {
+                            var filedData = (DataNodeGroup)data.GetValue(field.Name);
+                            if (filedData is null)
+                            {
+                                if (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0)
+                                {
+                                    ((IWorldObject)field.GetValue(this)).DeSerialize(filedData, onload, NewRefIDs, newRefID, latterResign);
+                                }
+                            }
+                            else
+                            {
+                                ((IWorldObject)field.GetValue(this)).DeSerialize(filedData, onload, NewRefIDs, newRefID, latterResign);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            throw new Exception($"Failed To DeSerialize Fieled {field.Name}", e);
+                        }
+                    }
 				}
 			}
 			if (NewRefIDs)

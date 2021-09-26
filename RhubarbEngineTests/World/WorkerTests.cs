@@ -18,12 +18,19 @@ namespace RhubarbEngine.World.Tests
     {
         public void TestWorkerSaveing(Worker worker)
         {
-            var data = worker.Serialize(new WorkerSerializerObject(false));
-            var loadded = new List<Action>();
-            var val = CreateWorker(worker.GetType());
-            val.Initialize(testWorld, testWorld, true);
-            val.DeSerialize(data, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
-            engine.WaitForNextUpdate();
+            try
+            {
+                var data = worker.Serialize(new WorkerSerializerObject(false));
+                var loadded = new List<Action>();
+                var val = CreateWorker(worker.GetType());
+                val.Initialize(testWorld, testWorld, true);
+                val.DeSerialize(data, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+                engine.WaitForNextUpdate();
+            }
+            catch(Exception e)
+            {
+                throw new Exception($"Failed To Save {worker.GetType().GetFormattedName()}",e);
+            }
         }
 
         public void TestWorker(Worker worker)
