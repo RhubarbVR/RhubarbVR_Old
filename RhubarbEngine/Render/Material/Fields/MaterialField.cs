@@ -40,6 +40,10 @@ namespace RhubarbEngine.Render.Material.Fields
         public override void OnLoaded()
 		{
 			base.OnLoaded();
+            if(Engine.RenderManager.Gd is null)
+            {
+                return;
+            }
 			CreateDeviceResource(Engine.RenderManager.Gd.ResourceFactory);
 			UpdateBuffer(Engine.RenderManager.Gd);
 		}

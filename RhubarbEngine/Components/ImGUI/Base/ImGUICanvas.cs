@@ -128,6 +128,10 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void OnLoaded()
 		{
 			base.OnLoaded();
+            if(Engine.RenderManager.Gd is null)
+            {
+                return;
+            }
 			_uIcommandList = Engine.RenderManager.Gd.ResourceFactory.CreateCommandList();
 			LoadUI();
 		}
