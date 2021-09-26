@@ -10,6 +10,8 @@ using RhubarbEngine.World.DataStructure;
 using RhubarbDataTypes;
 using RhubarbEngine.World.ECS;
 using RhubarbEngine.World;
+#if Windows
+
 using RNumerics;
 using System.Numerics;
 using RhubarbEngine.World.Asset;
@@ -32,8 +34,6 @@ using Range = CefSharp.Structs.Range;
 using Size = System.Drawing.Size;
 using System.Drawing;
 using RhubarbEngine.Render;
-#if Windows
-//#if false
 
 namespace RhubarbEngine.Components.Interaction
 {

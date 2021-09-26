@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !Windows
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,8 +32,6 @@ using Chromely.Core;
 using Chromely.Core.Network;
 using Chromely.Core.Configuration;
 using Chromely.Core.Infrastructure;
-//#if !Windows
-#if true
 namespace RhubarbEngine.Components.Interaction
 {
 
