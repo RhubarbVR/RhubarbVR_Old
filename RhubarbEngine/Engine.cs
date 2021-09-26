@@ -47,7 +47,7 @@ namespace RhubarbEngine
 
         event Action OnEngineStarted;
 
-        void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool _Rendering = true, bool createLocalWorld = true)
+        void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool createLocalWorld = true)
             where TEngineInitializer : IEngineInitializer where TUnitLogs : IUnitLogs;
         void WaitForNextUpdate();
         void WaitForNextUpdates(int update);
@@ -91,9 +91,8 @@ namespace RhubarbEngine
 
         public event Action OnEngineStarted;
 
-        public void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool _Rendering = true, bool createLocalWorld = true) where TEngineInitializer: IEngineInitializer where TUnitLogs : IUnitLogs
+        public void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool createLocalWorld = true) where TEngineInitializer: IEngineInitializer where TUnitLogs : IUnitLogs
         {
-            Rendering = _Rendering;
             try
 			{
 				discordRpcClient = new DiscordRpcClient("678074691738402839");

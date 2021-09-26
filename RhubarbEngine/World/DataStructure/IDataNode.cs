@@ -34,26 +34,27 @@ namespace RhubarbEngine.World.DataStructure
                 typeof(DataNode<ulong>),
                 typeof(DataNode<byte>),
                 typeof(DataNode<sbyte>),
+                typeof(DataNode<short>),
+                typeof(DataNode<decimal>),
+                typeof(DataNode<byte[]>),
                 //Generic System Types
                 typeof(DataNode<NetPointer>),
                 typeof(DataNode<DateTime>),
-                typeof(DataNode<byte[]>),
+                typeof(DataNode<Playback>),
+                typeof(DataNode<ColorHSV>),
+                typeof(DataNode<DBNull>),
 
-                
-                //List Types
-                typeof(DataNode<List<int>>),
-                typeof(DataNode<List<float>>),
-                typeof(DataNode<List<double>>),
-                //list Types
 
                 //Numerics Types
                 typeof(DataNode<Vector2f>),
                 typeof(DataNode<Vector2d>),
+                typeof(DataNode<Vector3b>),
+                typeof(DataNode<Vector3i>),
+                typeof(DataNode<Vector2i>),
                 typeof(DataNode<Vector3f>),
                 typeof(DataNode<Vector4f>),
                 typeof(DataNode<Colorf>),
-
-
+                typeof(DataNode<Vector2b>),
 
                 typeof(DataNode<Vector3d>),
                 typeof(DataNode<Quaternionf>),
@@ -61,27 +62,20 @@ namespace RhubarbEngine.World.DataStructure
                 typeof(DataNode<AxisAlignedBox2d>),
                 typeof(DataNode<Vector2u>),
                 typeof(DataNode<Index2i>),
+
+                typeof(DataNode<Segment2d>),
+                typeof(DataNode<IParametricCurve2d>),
+                typeof(DataNode<PlanarSolid2d>),
+                typeof(DataNode<DMesh3>),
                 typeof(DataNode<DCurve3>),
                 typeof(DataNode<PolyLine2d>),
                 typeof(DataNode<Polygon2d>),
                 typeof(DataNode<GeneralPolygon2d>),
-                typeof(DataNode<Segment2d>),
                 typeof(DataNode<Arc2d>),
                 typeof(DataNode<Circle2d>),
                 typeof(DataNode<ParametricCurveSequence2>),
-                typeof(DataNode<IParametricCurve2d>),
-                typeof(DataNode<PlanarSolid2d>),
-                typeof(DataNode<DMesh3>),
                 //Numerics Types
-                               typeof(DataNode<Playback>),
 
-                //DVector Types
-                typeof(DataNode<DVector<double>>),
-                typeof(DataNode<DVector<float>>),
-                typeof(DataNode<DVector<int>>),
-                typeof(DataNode<DVector<short>>),
-                //DVector Types
-                typeof(DataNode<DVector<DateTime>>),
 
         };
         public static Type[] dataNode = _types;

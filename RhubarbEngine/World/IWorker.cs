@@ -268,11 +268,9 @@ namespace RhubarbEngine.World
 
         public virtual void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
         {
-
             if (data == null)
             {
-                Logger.Log("Node did not exsets When loading Node: " + GetType().FullName);
-                return;
+                throw new Exception("Node did not exsets When loading Node: " + GetType().FullName);
             }
             if (NewRefIDs)
             {

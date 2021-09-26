@@ -246,7 +246,8 @@ namespace RhubarbEngine.Managers
 
         public World.World CreateNewWorld(string Name = "New World",bool focus = true,int maxUsers = 16)
         {
-            var newworld = new World.World(this, Name, maxUsers);
+            Engine.Logger.Log($"Creating New World Name:'{Name}' Focus{focus}  MaxUsers {maxUsers}");
+            var newworld = new World.World(this, Name, maxUsers,false,false,null,true);
             Worlds.Add(newworld);
             newworld.Focus = focus ? World.World.FocusLevel.Focused : World.World.FocusLevel.Background;
             return newworld;

@@ -359,7 +359,11 @@ namespace Veldrid
 		public void Update(float deltaSeconds, InputSnapshot snapshot)
 		{
 			if (!_inshlized)
-			{
+            {
+                if( _gd is null)
+                {
+                    return;
+                }
 				_context = ImGui.CreateContext();
 				ImGui.SetCurrentContext(_context);
 				ImGui.GetIO().Fonts.AddFontDefault();

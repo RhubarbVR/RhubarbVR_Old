@@ -614,7 +614,7 @@ namespace RhubarbEngine.World
 		public Sync<bool> Eighteenandolder;
 		[NoSave]
 		public Sync<bool> Mobilefriendly;
-		public World(IWorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false, DataNodeGroup datanode = null) : this(_worldManager)
+        public World(IWorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false, DataNodeGroup datanode = null, bool CreateBlank = false) : this(_worldManager)
 		{
 			var random = new Random();
 			Posoffset = (byte)random.Next();
@@ -635,17 +635,17 @@ namespace RhubarbEngine.World
 			_maxUsers = new Sync<int>(this, this);
 			RootEntity = new Entity(this);
 			RootEntity.name.Value = "Root";
-			Name.Value = _Name;
-			this.MaxUsers = MaxUsers;
-			Userspace = _userspace;
-			Local = _local;
 			Correspondingworlduuid = new Sync<string>(this, this);
 			SessionTags = new SyncValueList<string>(this, this);
 			Thumbnailurl = new Sync<string>(this, this);
 			Eighteenandolder = new Sync<bool>(this, this);
 			Mobilefriendly = new Sync<bool>(this, this);
 			users = new SyncUserList(this, this);
-			if (!Userspace && !Local)
+            Name.Value = _Name;
+            this.MaxUsers = MaxUsers;
+            Userspace = _userspace;
+            Local = _local;
+            if (!Userspace && !Local)
 			{
 				NetModule = new RhuNetModule(this);
 			}
@@ -654,15 +654,20 @@ namespace RhubarbEngine.World
 				NetModule = new NUllNetModule(this);
 				LoadHostUser();
 			}
-			if (datanode != null)
-			{
-				var loadded = new List<Action>();
-				DeSerialize(datanode, loadded, true, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
-				foreach (var item in loadded)
-				{
-					item?.Invoke();
-				}
-			}
+            if (!CreateBlank && datanode is not null)
+            {
+                var loadded = new List<Action>();
+                DeSerialize(datanode, loadded, true, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+                foreach (var item in loadded)
+                {
+                    item?.Invoke();
+                }
+            }
+            else
+            {
+                worldManager.Engine.Logger.Log("Building Blank World");
+                MeshHelper.BlankWorld(this);
+            } 
 		}
 
 
@@ -673,49 +678,6 @@ namespace RhubarbEngine.World
 			users.Add();
 			userLoaded = true;
 			UserJoined(HostUser);
-		}
-
-
-		public World(IWorldManager _worldManager, string _Name, int MaxUsers, string worlduuid, bool isOver, bool mobilefriendly, string templet, DataNodeGroup datanode = null) : this(_worldManager, _Name, MaxUsers, false, false)
-		{
-			Correspondingworlduuid.Value = worlduuid;
-			Eighteenandolder.Value = isOver;
-			Mobilefriendly.Value = mobilefriendly;
-			if (templet != null)
-			{
-				var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WorldTemplets");
-				try
-				{
-					var data = File.ReadAllBytes(Path.Combine(path, templet + ".RWorld"));
-					var node = new DataNodeGroup(data);
-					var loadded = new List<Action>();
-					DeSerialize(node, loadded, true, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
-					foreach (var item in loadded)
-					{
-						item?.Invoke();
-					}
-				}
-				catch
-				{
-
-				}
-			}
-			else
-			{
-				if (datanode != null)
-				{
-					var loadded = new List<Action>();
-					DeSerialize(datanode, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
-					foreach (var item in loadded)
-					{
-						item?.Invoke();
-					}
-				}
-				else
-				{
-                    MeshHelper.BuildLocalWorld(this);
-				}
-			}
 		}
 
 		public NetPointer BuildRefID()
