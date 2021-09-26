@@ -122,6 +122,7 @@ namespace RhubarbEngine
             WaitForEngineStart();
             if(RhubarbInstanceCheck.testWorld is not null)
             {
+                //Fix despose
                 RhubarbInstanceCheck.testWorld.Dispose();
                 RhubarbInstanceCheck.testWorld = testWorld = null;
             }

@@ -760,14 +760,7 @@ namespace RhubarbEngine.World
             {
                 if (field.FieldType.IsAssignableTo(typeof(IDisposable))&& field.GetValue(this) is not null)
                 {
-                    try
-                    {
-                        ((IDisposable)field.GetValue(this)).Dispose();
-                    }
-                    catch
-                    {
-                        worldManager.Engine.Logger.Log($"Failed To Dispose {field.Name}", true);
-                    }
+                    ((IDisposable)field.GetValue(this)).Dispose();
                 }
             }
             worldManager.Worlds.Remove(this);
