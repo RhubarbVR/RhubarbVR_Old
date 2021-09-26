@@ -54,8 +54,17 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-    - name:  SendDiscordMessage
+    - name:  SendDiscordMessageForWindows
       uses: sarisia/actions-status-discord@v1
       if: always()
       with:
        webhook: ${{ secrets.YOUR_DISCORD_WEBHOOK_URL }}
+       status: ${{ jobs.UbuntuTest.status }}
+       title: Windows Tests
+    - name:  SendDiscordMessageForUbuntu
+      uses: sarisia/actions-status-discord@v1
+      if: always()
+      with:
+       webhook: ${{ secrets.YOUR_DISCORD_WEBHOOK_URL }}
+       status: ${{ jobs.WindowsTest.status }}
+       title: Ubuntu Tests
