@@ -31,8 +31,8 @@ using Chromely.Core;
 using Chromely.Core.Network;
 using Chromely.Core.Configuration;
 using Chromely.Core.Infrastructure;
-#if !Windows
-//#if true
+//#if !Windows
+#if true
 namespace RhubarbEngine.Components.Interaction
 {
 
@@ -65,7 +65,7 @@ namespace RhubarbEngine.Components.Interaction
             }
         }
 
-        readonly RollBuffer _frameInputBuffer;
+        RollBuffer _frameInputBuffer;
 
         public byte[] FrameInputBuffer
         {
@@ -327,6 +327,7 @@ namespace RhubarbEngine.Components.Interaction
 		public override void OnLoaded()
 		{
 			base.OnLoaded();
+            _frameInputBuffer = new RollBuffer(Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount);
             _browser = new CefGlueBrowser(this, this,this,this,new Xilium.CefGlue.Wrapper.CefMessageRouterBrowserSide(new Xilium.CefGlue.Wrapper.CefMessageRouterConfig()),new Xilium.CefGlue.CefBrowserSettings());
             _browser.Create(Xilium.CefGlue.CefWindowInfo.Create());
 		}
@@ -445,8 +446,9 @@ namespace RhubarbEngine.Components.Interaction
    //         }
 		}
 
-        readonly TextureView _view;
-        readonly UpdateDatingTexture2D _target;
+        //readonly TextureView _view;
+        //readonly UpdateDatingTexture2D _target;
+
 		public void Render()
 		{
 			if (!IsActive)
