@@ -84,7 +84,7 @@ namespace RhubarbEngine
 
 		public FileStream lockFile;
 
-        public bool Rendering { get; set; }
+        public bool Rendering { get; set; } = true;
 
         public event Action OnEngineStarted;
 

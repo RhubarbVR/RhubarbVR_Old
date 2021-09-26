@@ -164,7 +164,11 @@ namespace RhubarbEngine.Managers
 		{
 			this._engine = _engine;
 			var backend = this._engine.Backend;
-			if (this._engine.PlatformInfo.Platform == PlatformInfo.Platform.OSX)
+            if (!_engine.Rendering)
+            {
+                return this;
+            }
+            if (this._engine.PlatformInfo.Platform == PlatformInfo.Platform.OSX)
 			{
 				backend = GraphicsBackend.Metal;
 			}
@@ -203,10 +207,20 @@ namespace RhubarbEngine.Managers
             }
             catch
             {
-                //FallBack to openGL
-                backend = GraphicsBackend.OpenGL;
-                (gd, sc) = this._engine.WindowManager.MainWindow?.CreateScAndGD(vrContext, backend) ?? CreateGraphicsNoWindow(vrContext, backend);
-                this._engine.Backend = backend;
+                try
+                {
+                    //FallBack to openGL
+                    backend = GraphicsBackend.OpenGL;
+                    (gd, sc) = this._engine.WindowManager.MainWindow?.CreateScAndGD(vrContext, backend) ?? CreateGraphicsNoWindow(vrContext, backend);
+                    this._engine.Backend = backend;
+                }
+                catch
+                {
+                    _engine.Rendering = false;
+                    vrContext.Dispose();
+                    vrContext = null;
+                    return this;
+                }
             }
 			vrContext.Initialize(gd);
 			_windowCL = gd.ResourceFactory.CreateCommandList();
@@ -380,6 +394,10 @@ namespace RhubarbEngine.Managers
 
 		public async Task Update()
 		{
+            if (!_engine.Rendering)
+            {
+                return;
+            }
 			if (vrContext.Disposed)
 			{
 				Console.WriteLine("Going to screen Cuz Disposed");
