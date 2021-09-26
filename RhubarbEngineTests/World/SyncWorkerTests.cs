@@ -39,6 +39,7 @@ namespace RhubarbEngine.World.Tests
             {
                 foreach (var item in GetSyncMemberTestTypes(notsimple))
                 {
+                    Console.WriteLine(item.GetFormattedName());
                     TestSyncMember(item);
                 }
             }
