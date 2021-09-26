@@ -8,17 +8,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Set up Java JDK 11
-      uses: actions/setup-java@v2.1.0
+    - uses: sarisia/actions-status-discord@v1
+      if: always()
       with:
-        distribution: 'adopt'
-        java-version: '11'
-        java-package: jdk
-        architecture: x64
-    - name: Run Discord Webhook
-      uses: johnnyhuy/actions-discord-git-webhook@v0.0.1
-      with:
-        webhook_url: ${{ secrets.YOUR_DISCORD_WEBHOOK_URL }}
+         webhook: ${{ secrets.YOUR_DISCORD_WEBHOOK_URL }}
     - uses: actions/checkout@v2
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
