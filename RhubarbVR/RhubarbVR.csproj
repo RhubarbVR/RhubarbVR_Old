@@ -23,6 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="SDL2.dll" Condition=" '$(OS)' == 'Windows_NT' ">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libsdl2.dylib" Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' ">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="StaticAssets\Cursors\Alias.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
