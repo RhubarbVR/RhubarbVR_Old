@@ -423,6 +423,10 @@ namespace Veldrid
 
 		private unsafe void UpdateImGuiInput(InputSnapshot snapshot)
 		{
+            if(snapshot is null)
+            {
+                return;
+            }
 			var io = ImGui.GetIO();
 			// Determine if any of the mouse buttons were pressed during this snapshot period, even if they are no longer held.
 			var leftPressed = false;
