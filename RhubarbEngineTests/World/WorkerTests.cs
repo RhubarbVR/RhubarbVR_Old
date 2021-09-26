@@ -90,6 +90,7 @@ namespace RhubarbEngine.World.Tests
         [TestMethod()]
         public void AllWorkersTest()
         {
+            throw new Exception("TempTest");
             NewTestWorld();
             var assem = Assembly.GetAssembly(typeof(Component));
             var types =
