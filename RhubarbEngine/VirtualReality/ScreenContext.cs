@@ -86,10 +86,10 @@ namespace RhubarbEngine.VirtualReality
             }
         }
 
-        private readonly Engine _eng;
+        private readonly IEngine _eng;
 
 
-		public ScreenContext(VRContextOptions options, Engine eng)
+		public ScreenContext(VRContextOptions options, IEngine eng)
 		{
 			_options = options;
 			_eng = eng;
@@ -109,25 +109,28 @@ namespace RhubarbEngine.VirtualReality
 		public override void Initialize(GraphicsDevice gd)
 		{
 			GraphicsDevice = gd;
-			_leftEyeFB = _eng.settingsObject.RenderSettings.DesktopRenderSettings.auto
-                ? CreateFramebuffer((uint)_eng.windowManager.MainWindow.Width, (uint)_eng.windowManager.MainWindow.Height)
-                : CreateFramebuffer((uint)_eng.settingsObject.RenderSettings.DesktopRenderSettings.x, (uint)_eng.settingsObject.RenderSettings.DesktopRenderSettings.y);
-            _eng.windowManager.MainWindow.window.Resized += Window_Resized;
-			if (_leftEyeFB == null)
-			{
-				Logger.Log("Error Loading Frame Buffer", true);
-			}
-			ChangeProject((float)(Math.PI / 180) * _eng.renderManager.FieldOfView, _eng.renderManager.AspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
+			_leftEyeFB = _eng.SettingsObject.RenderSettings.DesktopRenderSettings.auto
+                ? CreateFramebuffer((uint)(_eng.WindowManager.MainWindow?.Width??640), (uint)(_eng.WindowManager.MainWindow?.Height ?? 640))
+                : CreateFramebuffer((uint)_eng.SettingsObject.RenderSettings.DesktopRenderSettings.x, (uint)_eng.SettingsObject.RenderSettings.DesktopRenderSettings.y);
+            if (_leftEyeFB == null)
+            {
+                _eng.Logger.Log("Error Loading Frame Buffer", true);
+            }
+            if (_eng.WindowManager.MainWindow is not null)
+            {
+                _eng.WindowManager.MainWindow.window.Resized += Window_Resized;
+            }
+			ChangeProject((float)(Math.PI / 180) * _eng.RenderManager.FieldOfView, _eng.RenderManager.AspectRatio, _eng.RenderManager.NearPlaneDistance, _eng.RenderManager.FarPlaneDistance);
 		}
 
 		private void Window_Resized()
 		{
-			if (_eng.settingsObject.RenderSettings.DesktopRenderSettings.auto)
+			if (_eng.SettingsObject.RenderSettings.DesktopRenderSettings.auto)
 			{
 				var oldbuf = _leftEyeFB;
-				Console.WriteLine(_eng.windowManager.MainWindow.Width.ToString());
+				Console.WriteLine(_eng.WindowManager.MainWindow.Width.ToString());
 
-				_leftEyeFB = CreateFramebuffer((uint)_eng.windowManager.MainWindow.Width, (uint)_eng.windowManager.MainWindow.Height);
+				_leftEyeFB = CreateFramebuffer((uint)_eng.WindowManager.MainWindow.Width, (uint)_eng.WindowManager.MainWindow.Height);
 				oldbuf.ColorTargets[0].Target.Dispose();
 				oldbuf.DepthTarget?.Target.Dispose();
 				oldbuf.Dispose();
@@ -136,13 +139,13 @@ namespace RhubarbEngine.VirtualReality
 			else
 			{
 				var oldbuf = _leftEyeFB;
-				_leftEyeFB = CreateFramebuffer((uint)_eng.settingsObject.RenderSettings.DesktopRenderSettings.x, (uint)_eng.settingsObject.RenderSettings.DesktopRenderSettings.y);
+				_leftEyeFB = CreateFramebuffer((uint)_eng.SettingsObject.RenderSettings.DesktopRenderSettings.x, (uint)_eng.SettingsObject.RenderSettings.DesktopRenderSettings.y);
 				oldbuf.ColorTargets[0].Target.Dispose();
 				oldbuf.DepthTarget?.Target.Dispose();
 				oldbuf.Dispose();
 				_mirrorTexture.ClearLeftSet();
 			}
-			ChangeProject((float)(Math.PI / 180) * _eng.renderManager.FieldOfView, _eng.renderManager.AspectRatio, _eng.renderManager.nearPlaneDistance, _eng.renderManager.farPlaneDistance);
+			ChangeProject((float)(Math.PI / 180) * _eng.RenderManager.FieldOfView, _eng.RenderManager.AspectRatio, _eng.RenderManager.NearPlaneDistance, _eng.RenderManager.FarPlaneDistance);
 		}
 
 		private Framebuffer CreateFramebuffer(uint width, uint height)
@@ -204,29 +207,33 @@ namespace RhubarbEngine.VirtualReality
 		public void UpdateInput()
 		{
 			Vector2 mouseDelta = default;
-			if (_eng.inputManager.mainWindows.GetKeyDown(Key.R))
+			if (_eng.InputManager.MainWindows?.GetKeyDown(Key.R)??false)
 			{
 				if (!_mousePressed)
 				{
 					_mousePressed = true;
-					_mousePressedPos = new Vector2(_eng.windowManager.MainWindow.window.Width / 2, _eng.windowManager.MainWindow.window.Height / 2);
+					_mousePressedPos = new Vector2(_eng.WindowManager.MainWindow.window.Width / 2, _eng.WindowManager.MainWindow.window.Height / 2);
 					Sdl2Native.SDL_ShowCursor(0);
-					Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.MainWindow.window.SdlWindowHandle, true);
+					Sdl2Native.SDL_SetWindowGrab(_eng.WindowManager.MainWindow.window.SdlWindowHandle, true);
 				}
 				else
 				{
-					Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.MainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
-					Sdl2Native.SDL_SetWindowGrab(_eng.windowManager.MainWindow.window.SdlWindowHandle, false);
+					Sdl2Native.SDL_WarpMouseInWindow(_eng.WindowManager.MainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
+					Sdl2Native.SDL_SetWindowGrab(_eng.WindowManager.MainWindow.window.SdlWindowHandle, false);
 					Sdl2Native.SDL_ShowCursor(1);
 					_mousePressed = false;
 				}
 				mouseDelta = Vector2.Zero;
-				Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.MainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
+				Sdl2Native.SDL_WarpMouseInWindow(_eng.WindowManager.MainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
 			}
 			else if (_mousePressed)
 			{
-				mouseDelta = _mousePressedPos - _eng.inputManager.mainWindows.MousePosition;
-				Sdl2Native.SDL_WarpMouseInWindow(_eng.windowManager.MainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
+                if(_eng.InputManager.MainWindows is null)
+                {
+                    return;
+                } 
+				mouseDelta = _mousePressedPos - _eng.InputManager.MainWindows.MousePosition;
+				Sdl2Native.SDL_WarpMouseInWindow(_eng.WindowManager.MainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
 			}
 			if (mouseDelta != default)
 			{

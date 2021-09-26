@@ -10,6 +10,8 @@ namespace RhubarbEngine.World
 {
 	public class Driver<T> : SyncRef<IDriveMember<T>>, IDriver where T : IConvertible
 	{
+        public Driver() { }
+
         public T Drivevalue
 		{
 			get

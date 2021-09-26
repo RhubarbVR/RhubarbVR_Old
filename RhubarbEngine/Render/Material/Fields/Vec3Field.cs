@@ -13,7 +13,7 @@ namespace RhubarbEngine.Render.Material.Fields
 	public class Vec3Field : GenericField<Vector3f>
 	{
 
-		public override void createDeviceResource(ResourceFactory fact)
+		public override void CreateDeviceResource(ResourceFactory fact)
 		{
 			if (resource != null)
 			{
@@ -21,9 +21,13 @@ namespace RhubarbEngine.Render.Material.Fields
 			}
 			resource = fact.CreateBuffer(new BufferDescription(96, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 		}
-		unsafe public override void updateBuffer(GraphicsDevice gb)
-		{
-			gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_vec3(field.Value));
+		unsafe public override void UpdateBuffer(GraphicsDevice gb)
+        {
+            if (gb is null)
+            {
+                return;
+            }
+            gb.UpdateBuffer((DeviceBuffer)resource, 0, new Val_vec3(field.Value));
 		}
 	}
 }

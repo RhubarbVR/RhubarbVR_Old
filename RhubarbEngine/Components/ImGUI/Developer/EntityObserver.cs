@@ -87,11 +87,11 @@ namespace RhubarbEngine.Components.ImGUI
 				//I should remove on change update before initialized or add a on initialized check inside this function
 				foreach (var field in fields)
 				{
-					if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
+					if (typeof(IWorker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
 					{
 						var obs = _e.AttachComponent<WorkerObserver>();
 						obs.fieldName.Value = field.Name;
-                        obs.target.Target = (Worker)field.GetValue(target.Target);
+                        obs.target.Target = (IWorker)field.GetValue(target.Target);
 						children.Add().Target = obs;
 					}
 				}

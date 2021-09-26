@@ -64,12 +64,12 @@ namespace RhubarbEngine.Components.Assets
             try
             {
                 Logger.Log("Downloaded");
-                var _texture = new ImageSharpTexture(streamToReadFrom, true, true).CreateDeviceTexture(Engine.renderManager.gd, Engine.renderManager.gd.ResourceFactory);
-                Load(new RTexture2D(Engine.renderManager.gd.ResourceFactory.CreateTextureView(_texture)), true);
+                var _texture = new ImageSharpTexture(streamToReadFrom, true, true).CreateDeviceTexture(Engine.RenderManager.Gd, Engine.RenderManager.Gd.ResourceFactory);
+                Load(new RTexture2D(Engine.RenderManager.Gd.ResourceFactory.CreateTextureView(_texture)), true);
             }
             catch (Exception e)
             {
-                RhubarbEngine.Logger.Log($"Failed to Initialize image Error:{e}", true);
+                Logger.Log($"Failed to Initialize image Error:{e}", true);
             }
 
 

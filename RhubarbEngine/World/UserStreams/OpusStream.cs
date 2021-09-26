@@ -135,7 +135,7 @@ namespace RhubarbEngine.World
 
 		public void Update()
 		{
-			_encoder = OpusEncoder.Create(Engine.audioManager.SamplingRate, channels.Value, OpusApplication.OPUS_APPLICATION_AUDIO);
+			_encoder = OpusEncoder.Create(Engine.AudioManager.SamplingRate, channels.Value, OpusApplication.OPUS_APPLICATION_AUDIO);
 			_encoder.Bitrate = bitrate.Value * 1024;
 			_encoder.Complexity = complexity.Value;
 			_encoder.UseVBR = vbr.Value;
@@ -150,7 +150,7 @@ namespace RhubarbEngine.World
 
 		private int GetFrameSize()
 		{
-			return Engine.audioManager.AudioFrameSizeInBytes;
+			return Engine.AudioManager.AudioFrameSizeInBytes;
 		}
 
 

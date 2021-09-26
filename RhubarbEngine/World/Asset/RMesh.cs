@@ -37,7 +37,11 @@ namespace RhubarbEngine.World.Asset
 
 		public void CreateMeshesBuffers(GraphicsDevice _gd)
 		{
-			foreach (var mesh in Meshes)
+            if (_gd is null)
+            {
+                return;
+            }
+            foreach (var mesh in Meshes)
 			{
 				IList<Vector3> Vertices = new List<Vector3>(mesh.VertexCount);
 				IList<Vector2> UV = new List<Vector2>(mesh.VertexCount);

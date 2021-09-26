@@ -24,7 +24,6 @@ using RhubarbEngine.Components.PrivateSpace;
 using RhubarbEngine.Components.Interaction;
 using Veldrid;
 using ImGuiNET;
-
 namespace RhubarbEngine.Components.Interaction
 {
 	public class Window : UIWidget

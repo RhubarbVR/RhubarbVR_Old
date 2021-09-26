@@ -46,7 +46,7 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			ImGui.Columns(Columns.Value, null);
 			ImGui.Separator();
-			for (var i = 0; i < labels.Count; i++)
+			for (var i = 0; i < labels.Count(); i++)
 			{
 				var label = labels[i].Value;
 

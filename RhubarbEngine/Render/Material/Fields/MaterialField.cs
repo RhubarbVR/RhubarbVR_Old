@@ -11,7 +11,8 @@ using RhubarbEngine.Components.Assets;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
-	public abstract class MaterialField : Worker, IWorldObject
+    [NoneTest(TestType.Worker)]
+    public abstract class MaterialField : Worker, IWorldObject
 	{
 		public ShaderValueType valueType;
 
@@ -25,19 +26,29 @@ namespace RhubarbEngine.Render.Material.Fields
 		[NoSync]
 		public BindableResource resource;
 
-		[NoShow]
-		[NoSave]
-		[NoSync]
-		public RMaterial rMaterial => (RMaterial)parent.Parent;
+        [NoShow]
+        [NoSave]
+        [NoSync]
+        public RMaterial RMaterial
+        {
+            get
+            {
+                return (RMaterial)parent.Parent;
+            }
+        }
 
-		public override void OnLoaded()
+        public override void OnLoaded()
 		{
 			base.OnLoaded();
-			createDeviceResource(Engine.renderManager.gd.ResourceFactory);
-			updateBuffer(Engine.renderManager.gd);
+            if(Engine.RenderManager.Gd is null)
+            {
+                return;
+            }
+			CreateDeviceResource(Engine.RenderManager.Gd.ResourceFactory);
+			UpdateBuffer(Engine.RenderManager.Gd);
 		}
 
-		public virtual void setValue(Object val)
+		public virtual void SetValue(object val)
 		{
 
 		}
@@ -48,12 +59,12 @@ namespace RhubarbEngine.Render.Material.Fields
 			fieldName = new Sync<string>(this, newRefIds);
 		}
 
-		public virtual void updateBuffer(GraphicsDevice gb)
+		public virtual void UpdateBuffer(GraphicsDevice gb)
 		{
 
 		}
 
-		public virtual void createDeviceResource(ResourceFactory fact)
+		public virtual void CreateDeviceResource(ResourceFactory fact)
 		{
 		}
 	}

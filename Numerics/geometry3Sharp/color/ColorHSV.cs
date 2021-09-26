@@ -13,11 +13,14 @@ namespace RNumerics
 		public float a;
 
 		public ColorHSV(float h, float s, float v, float a = 1) { this.h = h; this.s = s; this.v = v; this.a = a; }
-		public ColorHSV(Colorf rgb) => ConvertFromRGB(rgb);
+        public ColorHSV(Colorf rgb)
+        {
+            ConvertFromRGB(rgb);
+        }
 
-		public ColorHSV updateHue(float val)
+        public ColorHSV UpdateHue(float val)
 		{
-			float newh = (h + val) % 360f;
+			var newh = (h + val) % 360f;
 			return new ColorHSV(newh, s, v, a);
 		}
 
@@ -34,22 +37,28 @@ namespace RNumerics
 
 		public Colorf ConvertToRGB()
 		{
-			float h = this.h;
-			float s = this.s;
-			float v = this.v;
+			var h = this.h;
+			var s = this.s;
+			var v = this.v;
 
 			if (h > 360)
-				h -= 360;
-			if (h < 0)
-				h += 360;
-			h = MathUtil.Clamp(h, 0.0f, 360.0f);
+            {
+                h -= 360;
+            }
+
+            if (h < 0)
+            {
+                h += 360;
+            }
+
+            h = MathUtil.Clamp(h, 0.0f, 360.0f);
 			s = MathUtil.Clamp(s, 0.0f, 1.0f);
 			v = MathUtil.Clamp(v, 0.0f, 1.0f);
-			float c = v * s;
-			float x = c * (1 - Math.Abs(((h / 60.0f) % 2) - 1));
-			float m = v - c;
-			float rp, gp, bp;
-			int a = (int)(h / 60.0f);
+			var c = v * s;
+            var x = c * (1 - Math.Abs((h / 60.0f % 2) - 1));
+			var m = v - c;
+            float rp, gp, bp;
+			var a = (int)(h / 60.0f);
 
 			switch (a)
 			{
@@ -99,23 +108,23 @@ namespace RNumerics
 
 		public void ConvertFromRGB(Colorf rgb)
 		{
-			this.a = rgb.a;
+			a = rgb.a;
 			float rp = rgb.r, gp = rgb.g, bp = rgb.b;
 
-			float cmax = rp;
-			int cmaxwhich = 0; /* faster comparison afterwards */
+			var cmax = rp;
+			var cmaxwhich = 0; /* faster comparison afterwards */
 			if (gp > cmax)
 			{ cmax = gp; cmaxwhich = 1; }
 			if (bp > cmax)
 			{ cmax = bp; cmaxwhich = 2; }
-			float cmin = rp;
+			var cmin = rp;
 			//int cminwhich = 0;
 			if (gp < cmin)
 			{ cmin = gp; /*cminwhich = 1;*/ }
 			if (bp < cmin)
 			{ cmin = bp; /*cminwhich = 2;*/ }
 
-			float delta = cmax - cmin;
+			var delta = cmax - cmin;
 
 			/* HUE */
 			if (delta == 0)
@@ -127,7 +136,7 @@ namespace RNumerics
 				switch (cmaxwhich)
 				{
 					case 0: /* cmax == rp */
-						h = 60.0f * (((gp - bp) / delta) % 6.0f);
+                        h = 60.0f * ((gp - bp) / delta % 6.0f);
 						break;
 
 					case 1: /* cmax == gp */
@@ -139,8 +148,10 @@ namespace RNumerics
 						break;
 				}
 				if (h < 0)
-					h += 360.0f;
-			}
+                {
+                    h += 360.0f;
+                }
+            }
 
 			/* LIGHTNESS/VALUE */
 			//l = (cmax + cmin) / 2;
@@ -152,15 +163,8 @@ namespace RNumerics
             } else {
               *r_s = delta / (1 - fabs (1 - (2 * (l - 1))));
             }*/
-			if (cmax == 0)
-			{
-				s = 0;
-			}
-			else
-			{
-				s = delta / cmax;
-			}
-		}
+			s = cmax == 0 ? 0 : delta / cmax;
+        }
 
 		public TypeCode GetTypeCode()
 		{

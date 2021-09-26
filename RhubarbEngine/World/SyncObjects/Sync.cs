@@ -126,7 +126,12 @@ namespace RhubarbEngine.World
 			World.NetModule?.AddToQueue(Net.ReliabilityLevel.LatestOnly, obj, ReferenceID.id);
 		}
 
-		public Sync(World _world, IWorldObject _parent, bool newref = true, T val = default) : base(_world, _parent, newref)
+        public Sync()
+        {
+
+        }
+
+        public Sync(World _world, IWorldObject _parent, bool newref = true, T val = default) : base(_world, _parent, newref)
 		{
 			Value = val;
 		}
@@ -151,7 +156,7 @@ namespace RhubarbEngine.World
 			_value = Defalut();
 			if (data == null)
 			{
-				World.worldManager.engine.logger.Log($"Node did not exsets When loading Sync Value { GetType().FullName}");
+				World.worldManager.Engine.Logger.Log($"Node did not exsets When loading Sync Value { GetType().FullName}");
 				return;
 			}
 			if (NewRefIDs)

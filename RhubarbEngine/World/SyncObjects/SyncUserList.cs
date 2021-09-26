@@ -116,7 +116,7 @@ namespace RhubarbEngine.World
 		{
 			if (data == null)
 			{
-				World.worldManager.engine.logger.Log("Node did not exsets When loading SyncUserList");
+				World.worldManager.Engine.Logger.Log("Node did not exsets When loading SyncUserList");
 				return;
 			}
 			if (NewRefIDs)

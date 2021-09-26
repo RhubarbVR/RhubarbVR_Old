@@ -518,7 +518,7 @@ namespace RhubarbEngine.World.ECS
 			}
 			catch (Exception e)
 			{
-                RhubarbEngine.Logger.Log("Failed To run Attach On Component" + typeof(T).Name + " Error:" + e.ToString());
+                Logger.Log("Failed To run Attach On Component" + typeof(T).Name + " Error:" + e.ToString());
 			}
 			newcomp.OnLoaded();
 			return newcomp;
@@ -537,7 +537,7 @@ namespace RhubarbEngine.World.ECS
 			}
 			catch (Exception e)
 			{
-                RhubarbEngine.Logger.Log("Failed To run Attach On Component" + type.Name + " Error:" + e.ToString());
+                Logger.Log("Failed To run Attach On Component" + type.Name + " Error:" + e.ToString());
 			}
 			newcomp.OnLoaded();
 			return newcomp;

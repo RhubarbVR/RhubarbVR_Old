@@ -63,14 +63,29 @@ namespace RNumerics
 		[IgnoreMember]
 		public float this[int key]
 		{
-			get { if (key == 0) return r; else if (key == 1) return g; else if (key == 2) return b; else return a; }
-			set { if (key == 0) r = value; else if (key == 1) g = value; else if (key == 2) b = value; else a = value; }
+            get
+            {
+                return key == 0 ? r : key == 1 ? g : key == 2 ? b : a;
+            }
+            set
+            {
+                if (key == 0)
+                { r = value; }
+                else if (key == 1)
+                { g = value; }
+                else if (key == 2)
+                { b = value; }
+                else
+                {
+                    a = value;
+                }
+            }
 		}
 
 		public float SqrDistance(Colorf v2)
 		{
-			float a = (r - v2.r), b = (g - v2.g), c = (b - v2.b), d = (a - v2.a);
-			return a * a + b * b + c * c + d * d;
+			float a = r - v2.r, b = g - v2.g, c = b - v2.b, d = a - v2.a;
+            return (a * a) + (b * b) + (c * c) + (d * d);
 		}
 
 		public Vector3f ToRGB()
@@ -156,11 +171,11 @@ namespace RNumerics
 
 		public static bool operator ==(Colorf a, Colorf b)
 		{
-			return (a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a);
+			return a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a;
 		}
 		public static bool operator !=(Colorf a, Colorf b)
 		{
-			return (a.r != b.r || a.g != b.g || a.b != b.b || a.a != b.a);
+			return a.r != b.r || a.g != b.g || a.b != b.b || a.a != b.a;
 		}
 		public override bool Equals(object obj)
 		{
@@ -173,25 +188,34 @@ namespace RNumerics
 		public int CompareTo(Colorf other)
 		{
 			if (r != other.r)
-				return r < other.r ? -1 : 1;
-			else if (g != other.g)
-				return g < other.g ? -1 : 1;
-			else if (b != other.b)
-				return b < other.b ? -1 : 1;
-			else if (a != other.a)
-				return a < other.a ? -1 : 1;
-			return 0;
+            {
+                return r < other.r ? -1 : 1;
+            }
+            else if (g != other.g)
+            {
+                return g < other.g ? -1 : 1;
+            }
+            else if (b != other.b)
+            {
+                return b < other.b ? -1 : 1;
+            }
+            else if (a != other.a)
+            {
+                return a < other.a ? -1 : 1;
+            }
+
+            return 0;
 		}
 		public bool Equals(Colorf other)
 		{
-			return (r == other.r && g == other.g && b == other.b && a == other.a);
+			return r == other.r && g == other.g && b == other.b && a == other.a;
 		}
 
 
 		public static Colorf Lerp(Colorf a, Colorf b, float t)
 		{
-			float s = 1 - t;
-			return new Colorf(s * a.r + t * b.r, s * a.g + t * b.g, s * a.b + t * b.b, s * a.a + t * b.a);
+			var s = 1 - t;
+            return new Colorf((s * a.r) + (t * b.r), (s * a.g) + (t * b.g), (s * a.b) + (t * b.b), (s * a.a) + (t * b.a));
 		}
 
 
@@ -421,7 +445,7 @@ namespace RNumerics
 
 		public static implicit operator ColorHSV(Colorf color)
 		{
-			ColorHSV outval = new ColorHSV(0, 0, 0, color.a);
+			var outval = new ColorHSV(0, 0, 0, color.a);
 			outval.ConvertFromRGB(color);
 			return outval;
 		}

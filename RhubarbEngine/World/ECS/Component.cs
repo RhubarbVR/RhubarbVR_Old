@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.World.ECS
 {
+    [NoneTest(TestType.Worker)]
 	public abstract class Component : Worker
 	{
 		public Sync<bool> enabled;

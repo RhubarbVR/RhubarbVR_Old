@@ -11,9 +11,10 @@ using System.Collections;
 
 namespace RhubarbEngine.World
 {
-	public class SyncAbstractObjList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : Worker
+	public class SyncAbstractObjList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : IWorker
 	{
-		private readonly SynchronizedCollection<T> _synclist = new(25);
+        public SyncAbstractObjList() { }
+        private readonly SynchronizedCollection<T> _synclist = new(25);
 
 		public T this[int i]
 		{
@@ -72,7 +73,7 @@ namespace RhubarbEngine.World
 			RemoveDisposable(value);
 		}
 
-		private void Value_onDispose(Worker worker)
+		private void Value_onDispose(IWorker worker)
 		{
 			try
 			{
@@ -181,7 +182,7 @@ namespace RhubarbEngine.World
 		{
 			if (data == null)
 			{
-				World.worldManager.engine.logger.Log("Node did not exsets When loading SyncAbstractObjList");
+				World.worldManager.Engine.Logger.Log("Node did not exsets When loading SyncAbstractObjList");
 				return;
 			}
 			if (NewRefIDs)
@@ -208,7 +209,7 @@ namespace RhubarbEngine.World
 					ty = Type.GetType(((DataNode<string>)((DataNodeGroup)val.GetValue("Value")).GetValue("type")).Value, true);
 					if (ty == null)
 					{
-						World.worldManager.engine.logger.Log("Component still not found" + ((DataNode<string>)val.GetValue("Type")).Value);
+						World.worldManager.Engine.Logger.Log("Component still not found" + ((DataNode<string>)val.GetValue("Type")).Value);
 						var obj = (T)Activator.CreateInstance(typeof(MissingComponent));
 						Add(obj, NewRefIDs).DeSerialize((DataNodeGroup)val.GetValue("Value"), onload, NewRefIDs, newRefID, latterResign);
 					}
@@ -221,7 +222,7 @@ namespace RhubarbEngine.World
 						}
 						else
 						{
-							World.worldManager.engine.logger.Log("Something is broken or someone is messing with things", true);
+							World.worldManager.Engine.Logger.Log("Something is broken or someone is messing with things", true);
 						}
 					}
 				}
@@ -229,7 +230,7 @@ namespace RhubarbEngine.World
 				{
 					if (ty == null)
 					{
-						World.worldManager.engine.logger.Log("Type not found" + ((DataNode<string>)val.GetValue("Type")).Value, true);
+						World.worldManager.Engine.Logger.Log("Type not found" + ((DataNode<string>)val.GetValue("Type")).Value, true);
 						if (typeof(T) == typeof(Component))
 						{
 							var obj = (T)Activator.CreateInstance(typeof(MissingComponent));

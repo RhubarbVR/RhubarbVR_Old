@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>.NETCoreApp,Version=v5.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
 
@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RhubarbEngine\RhubarbEngine.csproj" />
+    <ProjectReference Include="..\RhubarbVR\RhubarbVR.csproj" />
   </ItemGroup>
 
 </Project>

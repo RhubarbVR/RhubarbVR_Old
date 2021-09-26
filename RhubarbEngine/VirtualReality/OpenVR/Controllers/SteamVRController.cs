@@ -180,7 +180,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
 		{
 			this.openVRContext = openVRContext;
 			this.ControllerName = ControllerName;
-			Logger.Log($"{ControllerName}  index: {deviceindex} Creality:{Creality} Handle: {Handle}");
+			Console.WriteLine($"{ControllerName}  index: {deviceindex} Creality:{Creality} Handle: {Handle}");
 			this.deviceindex = deviceindex;
 			this.Creality = Creality;
 			this.handle = Handle;
@@ -208,52 +208,52 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
 			var error = OVR.Input.GetDigitalActionData(_generalmTriggerTouchingHandle, ref _triggerTouchingData, Digsize, handle);
 			if (error != 0)
 			{
-				Logger.Log(error.ToString());
+                Console.WriteLine(error.ToString());
 			}
 			var errora = OVR.Input.GetDigitalActionData(_generalmAxisTouchingHandle, ref _axisTouchingData, Digsize, handle);
 			if (errora != 0)
 			{
-				Logger.Log(error.ToString());
+                Console.WriteLine(error.ToString());
 			}
 			var errorb = OVR.Input.GetDigitalActionData(_generalmPrimaryPressHandle, ref _primaryPressData, Digsize, handle);
 			if (errorb != 0)
 			{
-				Logger.Log(error.ToString());
+                Console.WriteLine(error.ToString());
 			}
 			var errorc = OVR.Input.GetDigitalActionData(_generalmSecondaryPressHandle, ref _generalmSecondaryPressData, Digsize, handle);
 			if (errorc != 0)
 			{
-				Logger.Log(error.ToString());
+                Console.WriteLine(error.ToString());
 			}
 			var errord = OVR.Input.GetDigitalActionData(_generalmMenuPressHandle, ref _generalmMenuPressData, Digsize, handle);
 			if (errord != 0)
 			{
-				Logger.Log(error.ToString());
+                Console.WriteLine(error.ToString());
 			}
 			var errore = OVR.Input.GetDigitalActionData(_generalmSystemPressHandle, ref _generalmSystemPressData, Digsize, handle);
 			if (errore != 0)
 			{
-				Logger.Log(error.ToString());
+                Console.WriteLine(error.ToString());
 			}
 			var errori = OVR.Input.GetDigitalActionData(_generalmGrabPressHandle, ref _generalmGrabPressData, Digsize, handle);
 			if (errori != 0)
 			{
-				Logger.Log(error.ToString());
+                Console.WriteLine(error.ToString());
 			}
 			var errorf = OVR.Input.GetAnalogActionData(_generalmAxisHandle, ref _generalmAxisData, Analogsize, handle);
 			if (errorf != 0)
 			{
-				Logger.Log(error.ToString());
+                Console.WriteLine(error.ToString());
 			}
 			var errorg = OVR.Input.GetAnalogActionData(_generalmTriggerAixHandle, ref _generalmTriggerAixData, Analogsize, handle);
 			if (errorg != 0)
 			{
-				Logger.Log(error.ToString());
+                Console.WriteLine(error.ToString());
 			}
 			var errorh = OVR.Input.GetPoseActionDataRelativeToNow(_generalmPosistionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0f, ref _generalmPosistionData, Possize, handle);
 			if (errorh != 0)
 			{
-				Logger.Log(error.ToString());
+                Console.WriteLine(error.ToString());
 			}
 		}
 

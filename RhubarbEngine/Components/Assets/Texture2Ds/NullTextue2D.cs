@@ -35,7 +35,7 @@ namespace RhubarbEngine.Components.Assets
 	{
 		public override void OnLoaded()
 		{
-			Load(new RTexture2D(Engine.renderManager.nulview));
+			Load(new RTexture2D(Engine.RenderManager.Nulview));
 		}
 
 		public override void BuildSyncObjs(bool newRefIds)

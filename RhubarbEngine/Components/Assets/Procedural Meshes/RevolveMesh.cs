@@ -43,8 +43,8 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		}
 		public override void OnLoaded()
 		{
-			var tempArray = new Vector3d[Curve.Count];
-			for (var i = 0; i < Curve.Count; i++)
+			var tempArray = new Vector3d[Curve.Count()];
+			for (var i = 0; i < Curve.Count(); i++)
 			{
 				tempArray[i] = Curve[i].Value;
 			}
@@ -58,7 +58,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		private void UpdateMesh()
 		{
 			var tempMesh = new RMesh(_generator.Generate().MakeDMesh());
-			tempMesh.CreateMeshesBuffers(World.worldManager.engine.renderManager.gd);
+			tempMesh.CreateMeshesBuffers(World.worldManager.Engine.RenderManager.Gd);
 			Load(tempMesh, true);
 		}
 

@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.World
 {
-	public interface ISyncList : IWorldObject, IEnumerable<IWorldObject>
+	public interface ISyncList : ISyncMember, IEnumerable<IWorldObject>
 	{
 		public int Count();
+
+        public void Clear();
 
 		public void Remove(int index);
 

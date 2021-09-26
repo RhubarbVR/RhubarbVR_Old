@@ -111,7 +111,13 @@ namespace RhubarbEngine.World
 		{
 			Value = new Playback { Looping = Value.Looping, Offset = Value.Offset, Playing = true, Speed = Value.Speed, Position = Value.Position };
 		}
-		public SyncPlayback(World _world, IWorldObject _parent, bool newref = true) : base(_world, _parent, newref)
+
+        public SyncPlayback()
+        {
+
+        }
+
+        public SyncPlayback(World _world, IWorldObject _parent, bool newref = true) : base(_world, _parent, newref)
 		{
 
 		}

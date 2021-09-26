@@ -103,11 +103,11 @@ namespace RhubarbEngine.Components.Assets
 				{
 					if (typeof(IWorldObject).IsAssignableFrom(typeof(T)))
 					{
-						item.setValue(((IWorldObject)value).ReferenceID);
+						item.SetValue(((IWorldObject)value).ReferenceID);
 					}
 					else
 					{
-						item.setValue(value);
+						item.SetValue(value);
 					}
 					return;
 				}

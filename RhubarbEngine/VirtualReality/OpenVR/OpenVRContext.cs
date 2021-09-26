@@ -126,27 +126,27 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 				throw new VeldridException("Failed to access the OpenVR Compositor.");
 			}
 
-			Logger.Log("Loading app.vrmanifest");
+            Console.WriteLine("Loading app.vrmanifest");
             var apperro = OVR.Applications.AddApplicationManifest(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.vrmanifest"), false);
             if (apperro != EVRApplicationError.None)
             {
-                Logger.Log($"Failed to load Application Manifest: {Enum.GetName(typeof(EVRApplicationError), apperro)}", true);
+                Console.WriteLine($"Failed to load Application Manifest: {Enum.GetName(typeof(EVRApplicationError), apperro)}", true);
             }
             else
             {
-                Logger.Log("Application manifest loaded successfully.");
+                Console.WriteLine("Application manifest loaded successfully.");
             }
 
             _mirrorTexture = new OpenVRMirrorTexture(this);
 			var error = OVR.Input.SetActionManifestPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SteamVR", "steamvr_manifest.json"));
 			if (error != EVRInputError.None)
 			{
-				Logger.Log($"Action manifest error {error}");
+                Console.WriteLine($"Action manifest error {error}");
 			}
 
 			if (error != EVRInputError.None)
 			{
-				Logger.Log($"Action Get Action Handl error {error}");
+                Console.WriteLine($"Action Get Action Handl error {error}");
 			}
 			generalActionSet = SetUPActionSet("/actions/General");
 			viveActionSet = SetUPActionSet("/actions/HTCVive");
@@ -189,7 +189,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			OVR.Input.GetInputSourceHandle("/user/hand/left", ref _leftHandle);
 			OVR.Input.GetInputSourceHandle("/user/hand/right", ref _rightHandle);
 
-			Logger.Log($"Left: {_leftHandle} Right: {_rightHandle}");
+            Console.WriteLine($"Left: {_leftHandle} Right: {_rightHandle}");
 			for (uint i = 0; i < OVR.k_unMaxTrackedDeviceCount; i++)
 			{
 				var device = OVR.System.GetTrackedDeviceClass(i);
@@ -234,7 +234,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			var error = OVR.Input.GetActionSetHandle(path, ref handle);
 			if (error != EVRInputError.None)
 			{
-				Logger.Log($"Action Set Handle  {path}  error {error}");
+                Console.WriteLine($"Action Set Handle  {path}  error {error}");
 			}
 			var actionSet = new VRActiveActionSet_t
 			{
@@ -271,7 +271,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 				512u,
 				ref error);
 			_deviceName = error != ETrackedPropertyError.TrackedProp_Success ? "<Unknown OpenVR Device>" : sb.ToString();
-            Logger.Log("Head Set Type: " + _deviceName);
+            Console.WriteLine("Head Set Type: " + _deviceName);
 
 			uint eyeWidth = 0;
 			uint eyeHeight = 0;
@@ -308,7 +308,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 			if (error != EVRInputError.None)
 			{
-				Logger.Log($"Input error {error}");
+                Console.WriteLine($"Input error {error}");
 			}
 			try
 			{

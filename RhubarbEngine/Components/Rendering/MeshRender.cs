@@ -91,7 +91,11 @@ namespace RhubarbEngine.Components.Rendering
 
 		private void LoadAllMaterials()
 		{
-			if (_wvpBuffer == null)
+            if (Gd is null)
+            {
+                return;
+            }
+            if (_wvpBuffer == null)
             {
                 return;
             }
@@ -129,7 +133,7 @@ namespace RhubarbEngine.Components.Rendering
 				PrimitiveTopology.TriangleList,
 				new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.mainVertShader, mit.Shader.Asset.mainFragShader }),
 				mit.Shader.Asset.mainresourceLayout,
-				Engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
+				Engine.RenderManager.VrContext.LeftEyeFramebuffer.OutputDescription));
 								AddDisposable(mainPipeline);
 								_mainPipeline.Add(mainPipeline);
 
@@ -141,7 +145,7 @@ namespace RhubarbEngine.Components.Rendering
 				PrimitiveTopology.TriangleList,
 				new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.shadowVertShader, mit.Shader.Asset.shadowFragShader }),
 				mit.Shader.Asset.shadowresourceLayout,
-				Engine.renderManager.vrContext.LeftEyeFramebuffer.OutputDescription));
+				Engine.RenderManager.VrContext.LeftEyeFramebuffer.OutputDescription));
 								AddDisposable(shadowPipeline);
 								_shadowpipeline.Add(mainPipeline);
 
@@ -255,7 +259,7 @@ namespace RhubarbEngine.Components.Rendering
         {
             get
             {
-                return Engine.renderManager.gd;
+                return Engine.RenderManager.Gd;
             }
         }
 
@@ -320,9 +324,14 @@ namespace RhubarbEngine.Components.Rendering
 		}
 		public override void OnLoaded()
 		{
-			_wvpBuffer = Engine.renderManager.gd.ResourceFactory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            if (Gd is null)
+            {
+                Logger.Log("Loaded Mesh Render with no rendering");
+                return;
+            }
+            _wvpBuffer = Engine.RenderManager.Gd.ResourceFactory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 			AddDisposable(_wvpBuffer);
-            RhubarbEngine.Logger.Log("Loading Mesh Render");
+            Logger.Log("Loading Mesh Render");
 			LoadMesh(null);
 			LoadMaterial(null);
 		}

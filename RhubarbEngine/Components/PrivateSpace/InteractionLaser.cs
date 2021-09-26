@@ -65,12 +65,12 @@ namespace RhubarbEngine.Components.PrivateSpace
                 return;
             }
 
-            if ((Engine.outputType == VirtualReality.OutputType.Screen) && (source.Value != InteractionSource.HeadLaser))
+            if ((Engine.OutputType == VirtualReality.OutputType.Screen) && (source.Value != InteractionSource.HeadLaser))
             {
                 return;
             }
 
-            if ((Engine.outputType != VirtualReality.OutputType.Screen) && (source.Value == InteractionSource.HeadLaser))
+            if ((Engine.OutputType != VirtualReality.OutputType.Screen) && (source.Value == InteractionSource.HeadLaser))
             {
                 return;
             }
@@ -79,12 +79,12 @@ namespace RhubarbEngine.Components.PrivateSpace
 			{
 				if (source.Value == InteractionSource.HeadLaser)
 				{
-					var mousepos = Engine.inputManager.mainWindows.MousePosition;
-					var size = new System.Numerics.Vector2(Engine.windowManager.MainWindow.Width, Engine.windowManager.MainWindow.Height);
+					var mousepos = Engine.InputManager.MainWindows.MousePosition;
+					var size = new System.Numerics.Vector2(Engine.WindowManager.MainWindow?.Width??640, Engine.WindowManager.MainWindow?.Height??640);
 					var x = (2.0f * mousepos.X / size.X) - 1.0f;
 					var y = (2.0f * mousepos.Y / size.Y) - 1.0f;
 					var ar = size.X / size.Y;
-					var tan = (float)Math.Tan(Engine.settingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
+					var tan = (float)Math.Tan(Engine.SettingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
 					var vectforward = new Vector3f(-x * tan * ar, y * tan, 1);
 					var vectup = new Vector3f(0, 1, 0);
 					Entity.rotation.Value = Quaternionf.LookRotation(vectforward, vectup);

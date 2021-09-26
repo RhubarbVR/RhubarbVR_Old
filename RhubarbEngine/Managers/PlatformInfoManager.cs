@@ -9,42 +9,72 @@ using RhubarbEngine.PlatformInfo;
 using System.Threading;
 namespace RhubarbEngine.Managers
 {
-	public class PlatformInfoManager : IManager
-	{
-		private Engine _engine;
+    public interface IPlatformInfoManager : IManager
+    {
+        string CPU { get; }
+        string GPU { get; }
+        long MemoryBytes { get; }
+        long VRAM_Bytes { get; }
+        Platform Platform { get; }
+        int ThreadCount { get; }
+        float AvrageFrameRate { get; }
+        float FrameRate { get; }
+        ulong FrameCount { get; }
+        double DeltaSeconds { get; }
+        DateTime Frame { get; set; }
+        DateTime StartTime { get; set; }
+        TimeSpan Elapsed { get; }
+        void NextFrame();
+    }
+
+
+    public class PlatformInfoManager : IPlatformInfoManager
+    {
+		private IEngine _engine;
 
 		private readonly OperatingSystem _os = Environment.OSVersion;
 
 		public Platform platform = Platform.UNKNOWN;
-		public string CPU { get; private set; } = "UNKNOWN";
+        public Platform Platform { get { return platform; } }
+
+        public string CPU { get; private set; } = "UNKNOWN";
 		public string GPU { get; private set; } = "UNKNOWN";
 		public long MemoryBytes { get; private set; } = -1L;
 
 		public long VRAM_Bytes { get; private set; } = -1L;
 
-		public DateTime startTime = DateTime.UtcNow;
+		public DateTime StartTime { get; set; } = DateTime.UtcNow;
 
-		public DateTime Frame = DateTime.UtcNow;
+		public DateTime Frame { get; set; } = DateTime.UtcNow;
 
-		public ulong FrameCount = 0;
+		public ulong FrameCount { get; private set; }
 
-		public float FrameRate;
+        public float FrameRate { get; private set; }
 
-		public float AvrageFrameRate;
+        public float AvrageFrameRate { get; private set; }
 
-		public long previousFrameTicks = 0;
+        public long previousFrameTicks = 0;
 
 		public Stopwatch sw;
 
-		public double deltaSeconds;
+		public double DeltaSeconds { get; private set; }
 
-		public int ThreadCount;
+        public int ThreadCount { get; private set; }
 
-		public IManager Initialize(Engine _engine)
+        public TimeSpan Elapsed
+        {
+            get
+            {
+                return sw.Elapsed;
+            }
+        }
+
+        public IManager Initialize(IEngine _engine)
 		{
 			this._engine = _engine;
 			sw = new Stopwatch();
-			sw.Start();
+
+            sw.Start();
 
 			ThreadCount = Environment.ProcessorCount;
 
@@ -74,10 +104,10 @@ namespace RhubarbEngine.Managers
 			}
 			catch (Exception e)
 			{
-				this._engine.logger.Log("Failed to get CPU: " + e);
+				this._engine.Logger.Log("Failed to get CPU: " + e);
 			}
 
-			this._engine.logger.Log("Platform: " + platform.ToString() + "/" + _os.Platform + " CPU: " + CPU + " RamBytes: " + MemoryBytes + " GPU: " + GPU + " VRAMBytes: " + VRAM_Bytes, true);
+			this._engine.Logger.Log("Platform: " + platform.ToString() + "/" + _os.Platform + " CPU: " + CPU + " RamBytes: " + MemoryBytes + " GPU: " + GPU + " VRAMBytes: " + VRAM_Bytes, true);
 			return this;
 		}
 		long _currentFrameTicks;
@@ -86,17 +116,22 @@ namespace RhubarbEngine.Managers
 		{
 			previousFrameTicks = _currentFrameTicks;
 			_currentFrameTicks = sw.ElapsedTicks;
-			deltaSeconds = (_currentFrameTicks - previousFrameTicks) / (double)Stopwatch.Frequency;
-			FrameRate = 1f / (float)deltaSeconds;
+			DeltaSeconds = (_currentFrameTicks - previousFrameTicks) / (double)Stopwatch.Frequency;
+			FrameRate = 1f / (float)DeltaSeconds;
 			AvrageFrameRate = (FrameRate * 0.8f) + (AvrageFrameRate * 0.2f);
 			if (_vsync != 0)
 			{
-				var sleepTime = (int)(((1 / _vsync) - deltaSeconds) * 1000);
+				var sleepTime = (int)(((1 / _vsync) - DeltaSeconds) * 1000);
 				if (sleepTime > 0)
                 {
                     Thread.Sleep(sleepTime);
                 }
             }
 		}
-	}
+
+        public void NextFrame()
+        {
+            FrameCount++;
+        }
+    }
 }

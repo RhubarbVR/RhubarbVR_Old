@@ -35,7 +35,7 @@ namespace RhubarbEngine.Components.Users
 		{
 			if (World.Userspace)
 			{
-				var val = Engine.renderManager.vrContext.Headpos;
+				var val = Engine.RenderManager.VrContext.Headpos;
 				Entity.SetLocalTrans(val);
 				return;
 			}
@@ -45,7 +45,7 @@ namespace RhubarbEngine.Components.Users
 			}
 			if (userroot.Target.user.Target == World.LocalUser)
 			{
-				var val = Engine.renderManager.vrContext.Headpos;
+				var val = Engine.RenderManager.VrContext.Headpos;
 				Entity.SetLocalTrans(val);
 				var userpos = World.LocalUser.FindOrCreateUserStream<SyncStream<Vector3f>>($"HeadPos");
 				var userrot = World.LocalUser.FindOrCreateUserStream<SyncStream<Quaternionf>>($"HeadRot");

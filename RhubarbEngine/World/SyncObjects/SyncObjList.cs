@@ -10,9 +10,10 @@ using System.Collections;
 
 namespace RhubarbEngine.World
 {
-	public class SyncObjList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : Worker, new()
-	{
-		private readonly SynchronizedCollection<T> _synclist = new(25);
+    public class SyncObjList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : IWorker, new()
+    {
+        public SyncObjList() { }
+        private readonly SynchronizedCollection<T> _synclist = new(25);
 
 		public T this[int i]
 		{
@@ -48,7 +49,7 @@ namespace RhubarbEngine.World
 			return _synclist.IndexOf(val);
 		}
 
-		private void Value_onDispose(Worker worker)
+		private void Value_onDispose(IWorker worker)
 		{
 			try
 			{
@@ -159,7 +160,7 @@ namespace RhubarbEngine.World
 		{
 			if (data == null)
 			{
-				World.worldManager.engine.logger.Log("Node did not exsets When loading SyncObjList");
+				World.worldManager.Engine.Logger.Log("Node did not exsets When loading SyncObjList");
 				return;
 			}
 			if (NewRefIDs)
@@ -215,7 +216,7 @@ namespace RhubarbEngine.World
 		}
 		public void Remove(int index)
 		{
-			throw new NotImplementedException();
+            _synclist[index].Dispose();
 		}
 	}
 }

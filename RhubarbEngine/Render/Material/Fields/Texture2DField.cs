@@ -18,26 +18,26 @@ namespace RhubarbEngine.Render.Material.Fields
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			field = new AssetRef<RTexture2D>(this, newRefIds);
-			field.LoadChange += assetChange;
+			field.LoadChange += AssetChange;
 		}
 
 		public override void OnUpdate()
 		{
 			base.OnUpdate();
-			if (Input.mainWindows.GetKey(Key.F3))
+			if (Input.MainWindows.GetKey(Key.F3))
 			{
-				loadTextureView(true);
+				LoadTextureView(true);
 			}
 
 		}
 
-		public override void setValue(Object val)
+		public override void SetValue(object val)
 		{
 			field.Value = (NetPointer)val;
 		}
-		public void assetChange(RTexture2D newAsset)
+		public void AssetChange(RTexture2D newAsset)
 		{
-			loadTextureView();
+			LoadTextureView();
 		}
 
 		private void SetResource(BindableResource res, bool forceR = false)
@@ -45,10 +45,10 @@ namespace RhubarbEngine.Render.Material.Fields
 			if ((resource != res) || forceR)
 			{
 				resource = res;
-				rMaterial.ReloadBindableResources();
+				RMaterial.ReloadBindableResources();
 			}
 		}
-		public void loadTextureView(bool forceR = false)
+		public void LoadTextureView(bool forceR = false)
 		{
 			if (field.Target != null)
 			{
@@ -60,24 +60,29 @@ namespace RhubarbEngine.Render.Material.Fields
 					}
 					else
 					{
-						SetResource(Engine.renderManager.nulview);
+						SetResource(Engine.RenderManager.Nulview);
 					}
 				}
 				else
 				{
-					SetResource(Engine.renderManager.nulview);
+					SetResource(Engine.RenderManager.Nulview);
 				}
 			}
 			else
 			{
-				SetResource(Engine.renderManager.solidview);
+				SetResource(Engine.RenderManager.Solidview);
 			}
 
 		}
 
-		public unsafe override void createDeviceResource(ResourceFactory fact)
+		public unsafe override void CreateDeviceResource(ResourceFactory fact)
 		{
-			loadTextureView();
+
+            if (fact is null)
+            {
+                return;
+            }
+            LoadTextureView();
 		}
 	}
 }

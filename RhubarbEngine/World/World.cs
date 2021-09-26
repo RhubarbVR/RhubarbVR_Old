@@ -20,6 +20,7 @@ using BulletSharp.Math;
 using System.Net;
 using RhubarbEngine.Components.Interaction;
 using System.Collections.Concurrent;
+using RhubarbEngine.Helpers;
 
 namespace RhubarbEngine.World
 {
@@ -168,7 +169,7 @@ namespace RhubarbEngine.World
 					{
 						if (((DataNode<string>)dataNodeGroup.GetValue("responses")).Value == "WorldSync")
 						{
-							Logger.Log("Loading Start State");
+                            worldManager.Engine.Logger.Log("Loading Start State");
 							try
 							{
 								var node = (DataNodeGroup)dataNodeGroup.GetValue("data");
@@ -183,7 +184,7 @@ namespace RhubarbEngine.World
 							}
 							catch (Exception e)
 							{
-								Logger.Log("Failed To Load Start State Error" + e.ToString());
+                                worldManager.Engine.Logger.Log("Failed To Load Start State Error" + e.ToString());
 							}
 
 						}
@@ -222,16 +223,16 @@ namespace RhubarbEngine.World
 			}
 			catch (Exception e)
 			{
-				Logger.Log("Error With Net Reqwest Size: " + vale.Length + " Error: " + e.ToString(), true);
+                worldManager.Engine.Logger.Log("Error With Net Reqwest Size: " + vale.Length + " Error: " + e.ToString(), true);
 			}
 		}
 
 		public void PeerConnectedEvent(Peer peer)
 		{
-			Logger.Log("We got connection");
+            worldManager.Engine.Logger.Log("We got connection");
 			if (!_waitingForInitSync)
 			{
-				Logger.Log("Sent start state");
+                worldManager.Engine.Logger.Log("Sent start state");
 				var send = new DataNodeGroup();
 				send.SetValue("responses", new DataNode<string>("WorldSync"));
 				var value = Serialize(new WorkerSerializerObject(true));
@@ -360,7 +361,7 @@ namespace RhubarbEngine.World
 		}
 		public DateTime LastFocusChange { get; private set; }
 
-		public WorldManager worldManager;
+		public IWorldManager worldManager;
 
 		private readonly DefaultCollisionConfiguration _collisionConfiguration;
 
@@ -425,7 +426,7 @@ namespace RhubarbEngine.World
 			}
 			catch
 			{
-				worldManager.engine.logger.Log("RefId already existed: " + obj.ReferenceID.getID().ToString());
+				worldManager.Engine.Logger.Log("RefId already existed: " + obj.ReferenceID.getID().ToString());
 			}
 		}
 
@@ -511,8 +512,8 @@ namespace RhubarbEngine.World
 		public void Update(DateTime startTime, DateTime Frame)
 		{
 			PhysicsWorld.UpdateAabbs();
-			PhysicsWorld.UpdateVehicles(worldManager.engine.platformInfo.deltaSeconds);
-			PhysicsWorld.StepSimulation(worldManager.engine.platformInfo.deltaSeconds);
+			PhysicsWorld.UpdateVehicles(worldManager.Engine.PlatformInfo.DeltaSeconds);
+			PhysicsWorld.StepSimulation(worldManager.Engine.PlatformInfo.DeltaSeconds);
 			PhysicsWorld.ComputeOverlappingPairs();
 			try
 			{
@@ -525,9 +526,9 @@ namespace RhubarbEngine.World
 			{
 				Parallel.ForEach(_worldObjects.Values, val =>
 				{
-					if (((Worker)val) != null)
+					if (((IWorker)val) != null)
 					{
-						((Worker)val).OnUpdate();
+						((IWorker)val).OnUpdate();
 					}
 				});
 			}
@@ -543,9 +544,9 @@ namespace RhubarbEngine.World
 		{
 			foreach (var val in _worldObjects.Values)
 			{
-				if (((Worker)val) != null)
+				if (((IWorker)val) != null)
 				{
-					((Worker)val).OnUserJoined(user);
+					((IWorker)val).OnUserJoined(user);
 				}
 			}
 		}
@@ -554,21 +555,21 @@ namespace RhubarbEngine.World
 
 		private readonly ConstraintSolverPoolMultiThreaded _constraintSolver;
 
-		public World(WorldManager _worldManager)
+		public World(IWorldManager _worldManager)
 		{
 			worldManager = _worldManager;
 			_collisionConfiguration = new DefaultCollisionConfiguration();
 			_dispatcher = new CollisionDispatcher(_collisionConfiguration);
 			_broadphase = new DbvtBroadphase();
-			_constraintSolver = worldManager.engine.settingsObject.PhysicsSettings.ThreadCount == -1
-                ? new ConstraintSolverPoolMultiThreaded(worldManager.engine.platformInfo.ThreadCount - 1)
-                : new ConstraintSolverPoolMultiThreaded(worldManager.engine.settingsObject.PhysicsSettings.ThreadCount);
+			_constraintSolver = worldManager.Engine.SettingsObject.PhysicsSettings.ThreadCount == -1
+                ? new ConstraintSolverPoolMultiThreaded(worldManager.Engine.PlatformInfo.ThreadCount - 1)
+                : new ConstraintSolverPoolMultiThreaded(worldManager.Engine.SettingsObject.PhysicsSettings.ThreadCount);
             PhysicsWorld = new DiscreteDynamicsWorld(_dispatcher, _broadphase, _constraintSolver, _collisionConfiguration);
 			staticAssets = new StaticAssets(this);
 		}
 
 
-		public World(WorldManager _worldManager, DataNodeGroup node, bool networkload = false) : this(_worldManager)
+		public World(IWorldManager _worldManager, DataNodeGroup node, bool networkload = false) : this(_worldManager)
 		{
 			var random = new Random();
 			Posoffset = (byte)random.Next();
@@ -613,7 +614,7 @@ namespace RhubarbEngine.World
 		public Sync<bool> Eighteenandolder;
 		[NoSave]
 		public Sync<bool> Mobilefriendly;
-		public World(WorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false, DataNodeGroup datanode = null) : this(_worldManager)
+		public World(IWorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false, DataNodeGroup datanode = null) : this(_worldManager)
 		{
 			var random = new Random();
 			Posoffset = (byte)random.Next();
@@ -675,7 +676,7 @@ namespace RhubarbEngine.World
 		}
 
 
-		public World(WorldManager _worldManager, string _Name, int MaxUsers, string worlduuid, bool isOver, bool mobilefriendly, string templet, DataNodeGroup datanode = null) : this(_worldManager, _Name, MaxUsers, false, false)
+		public World(IWorldManager _worldManager, string _Name, int MaxUsers, string worlduuid, bool isOver, bool mobilefriendly, string templet, DataNodeGroup datanode = null) : this(_worldManager, _Name, MaxUsers, false, false)
 		{
 			Correspondingworlduuid.Value = worlduuid;
 			Eighteenandolder.Value = isOver;
@@ -685,7 +686,7 @@ namespace RhubarbEngine.World
 				var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WorldTemplets");
 				try
 				{
-					var data = System.IO.File.ReadAllBytes(Path.Combine(path, templet + ".RWorld"));
+					var data = File.ReadAllBytes(Path.Combine(path, templet + ".RWorld"));
 					var node = new DataNodeGroup(data);
 					var loadded = new List<Action>();
 					DeSerialize(node, loadded, true, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
@@ -712,7 +713,7 @@ namespace RhubarbEngine.World
 				}
 				else
 				{
-                    WorldManager.BuildLocalWorld(this);
+                    MeshHelper.BuildLocalWorld(this);
 				}
 			}
 		}
@@ -738,7 +739,7 @@ namespace RhubarbEngine.World
 						}
 						catch (Exception e)
 						{
-							Logger.Log("Error Deserializeing on world Field name: " + field.Name + " Error:" + e.ToString(), true);
+                            worldManager.Engine.Logger.Log("Error Deserializeing on world Field name: " + field.Name + " Error:" + e.ToString(), true);
 						}
 					}
 				}
@@ -754,7 +755,15 @@ namespace RhubarbEngine.World
 		}
 		public virtual void Dispose()
 		{
-
+            var fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            foreach (var field in fields)
+            {
+                if (field.FieldType.IsAssignableTo(typeof(IDisposable))&& field.GetValue(this) is not null)
+                {
+                    ((IDisposable)field.GetValue(this)).Dispose();
+                }
+            }
+            worldManager.Worlds.Remove(this);
 		}
 
 		public DataNodeGroup Serialize()
@@ -766,5 +775,6 @@ namespace RhubarbEngine.World
         {
             return serializerObject.CommonWorkerSerialize(this);
         }
+
     }
 }

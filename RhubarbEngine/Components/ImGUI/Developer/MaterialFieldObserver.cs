@@ -74,11 +74,11 @@ namespace RhubarbEngine.Components.ImGUI
                 var fields = target.Target.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 				foreach (var field in fields)
 				{
-					if (typeof(Worker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
+					if (typeof(IWorker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
 					{
 						var obs = Entity.AttachComponent<WorkerObserver>();
 						obs.fieldName.Value = field.Name;
-						obs.target.Target = ((Worker)field.GetValue(target.Target));
+						obs.target.Target = ((IWorker)field.GetValue(target.Target));
 						children.Add().Target = obs;
 					}
 				}

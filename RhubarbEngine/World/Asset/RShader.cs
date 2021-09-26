@@ -67,16 +67,16 @@ namespace RhubarbEngine.World.Asset
 				switch (field.shaderType)
 				{
 					case ShaderType.MainVert:
-						mvert += field.getCode(loc);
+						mvert += field.GetCode(loc);
 						break;
 					case ShaderType.MainFrag:
-						mfrag += field.getCode(loc);
+						mfrag += field.GetCode(loc);
 						break;
 					case ShaderType.ShadowVert:
-						svert += field.getCode(loc);
+						svert += field.GetCode(loc);
 						break;
 					case ShaderType.ShadowFrag:
-						sfrag += field.getCode(loc);
+						sfrag += field.GetCode(loc);
 						break;
 					default:
 						break;
@@ -114,11 +114,11 @@ namespace RhubarbEngine.World.Asset
 			{
 				if ((int)field.shaderType <= 2)
 				{
-					mainElements.Add(field.getResourceLayoutElementDescription());
+					mainElements.Add(field.GetResourceLayoutElementDescription());
 				}
 				else
 				{
-					shadowElements.Add(field.getResourceLayoutElementDescription());
+					shadowElements.Add(field.GetResourceLayoutElementDescription());
 				}
 			}
 
@@ -142,8 +142,12 @@ namespace RhubarbEngine.World.Asset
 			var e = new ShaderUniform(name, vType, stype);
 			Fields.Remove(e);
 		}
-		public void LoadShader(GraphicsDevice gd, UnitLogs log)
+		public void LoadShader(GraphicsDevice gd, IUnitLogs log)
 		{
+            if(gd is null)
+            {
+                return;
+            }
 			try
 			{
 				Dispose();

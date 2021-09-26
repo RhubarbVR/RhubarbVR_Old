@@ -90,7 +90,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				mkey |= ModifierKeys.Gui;
 			}
-			var i = Input.mainWindows.FrameSnapshot;
+			var i = Input.MainWindows.FrameSnapshot;
 			if (key.Length > 1)
 			{
 				switch (key)
@@ -151,10 +151,10 @@ namespace RhubarbEngine.Components.ImGUI
 						ReloadKeyboard();
 						break;
 					case "Enter":
-						Input.mainWindows.FrameSnapshot.PressChar('\n', mkey);
+						Input.MainWindows.FrameSnapshot.PressChar('\n', mkey);
 						break;
 					case "Space":
-						Input.mainWindows.FrameSnapshot.PressChar(' ', mkey);
+						Input.MainWindows.FrameSnapshot.PressChar(' ', mkey);
 						break;
 					case "Caps\nLock":
 						i.PressKey(Key.F1, mkey);
@@ -187,7 +187,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			else
 			{
-				Input.mainWindows.FrameSnapshot.PressChar(key.ToCharArray()[0], mkey);
+				Input.MainWindows.FrameSnapshot.PressChar(key.ToCharArray()[0], mkey);
 			}
 
 		}

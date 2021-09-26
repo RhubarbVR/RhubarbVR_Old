@@ -53,8 +53,8 @@ namespace RhubarbEngine.Components.PrivateSpace
 				var e = keyboard;
 
 				var bmesh = e.AttachComponent<CurvedPlaneMesh>();
-				bmesh.BottomRadius.Value = Engine.settingsObject.UISettings.KeyBoardCurve;
-				bmesh.TopRadius.Value = Engine.settingsObject.UISettings.KeyBoardCurve + 10f;
+				bmesh.BottomRadius.Value = Engine.SettingsObject.UISettings.KeyBoardCurve;
+				bmesh.TopRadius.Value = Engine.SettingsObject.UISettings.KeyBoardCurve + 10f;
 				bmesh.Height.Value = 0.4f;
 				bmesh.Width.Value = 0.5f;
 				var bmeshcol = e.AttachComponent<MeshInputPlane>();
@@ -156,7 +156,7 @@ namespace RhubarbEngine.Components.PrivateSpace
                 return;
             }
 
-            if ((Input.mainWindows.GetKeyDown(Veldrid.Key.Tab) && (Input.mainWindows.GetKey(Veldrid.Key.AltLeft) || Input.mainWindows.GetKey(Veldrid.Key.AltRight))) || Input.SecondaryPress(RhubarbEngine.Input.Creality.None))
+            if ((Input.MainWindows.GetKeyDown(Veldrid.Key.Tab) && (Input.MainWindows.GetKey(Veldrid.Key.AltLeft) || Input.MainWindows.GetKey(Veldrid.Key.AltRight))) || Input.SecondaryPress(RhubarbEngine.Input.Creality.None))
 			{
                 SwitchWorld();
 			}
@@ -164,10 +164,10 @@ namespace RhubarbEngine.Components.PrivateSpace
 
 		public void SwitchWorld()
 		{
-			var mang = Engine.worldManager;
+			var mang = Engine.WorldManager;
 
-			var pos = mang.worlds.IndexOf(mang.FocusedWorld) + 1;
-			if (pos == mang.worlds.Count)
+			var pos = mang.Worlds.IndexOf(mang.FocusedWorld) + 1;
+			if (pos == mang.Worlds.Count)
 			{
 				JoinNextIfBackground(0);
 			}
@@ -183,14 +183,14 @@ namespace RhubarbEngine.Components.PrivateSpace
 			{
 				return;
 			}
-			var mang = Engine.worldManager;
-			if (mang.worlds[i].Focus == RhubarbEngine.World.World.FocusLevel.Background)
+			var mang = Engine.WorldManager;
+			if (mang.Worlds[i].Focus == RhubarbEngine.World.World.FocusLevel.Background)
 			{
-				mang.worlds[i].Focus = RhubarbEngine.World.World.FocusLevel.Focused;
+				mang.Worlds[i].Focus = RhubarbEngine.World.World.FocusLevel.Focused;
 			}
 			else
 			{
-				if (i + 1 == mang.worlds.Count)
+				if (i + 1 == mang.Worlds.Count)
 				{
                     JoinNextIfBackground(0, count + 1);
 				}

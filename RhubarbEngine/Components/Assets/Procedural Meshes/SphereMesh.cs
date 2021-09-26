@@ -43,7 +43,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			_sphereGen.NoSharedVertices = NoSharedVertices.Value;
 			var newmesh = _sphereGen.Generate();
 			var kite = new RMesh(newmesh.MakeDMesh());
-			kite.CreateMeshesBuffers(World.worldManager.engine.renderManager.gd);
+			kite.CreateMeshesBuffers(World.worldManager.Engine.RenderManager.Gd);
 			Load(kite, true);
 		}
 		public override void OnLoaded()

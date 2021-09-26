@@ -59,7 +59,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			_generator.UVMode = UVMode.Value;
 			var newmesh = _generator.Generate();
 			var kite = new RMesh(newmesh.MakeDMesh());
-			kite.CreateMeshesBuffers(World.worldManager.engine.renderManager.gd);
+			kite.CreateMeshesBuffers(World.worldManager.Engine.RenderManager.Gd);
 			Load(kite, true);
 		}
 		public override void OnLoaded()

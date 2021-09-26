@@ -73,11 +73,11 @@ namespace RhubarbEngine.Components.ImGUI
 			var index = 0;
 			foreach (var item in target.Target)
 			{
-				if (typeof(Worker).IsAssignableFrom(item.GetType()))
+				if (typeof(IWorker).IsAssignableFrom(item.GetType()))
 				{
 					var obs = childrenHolder.Target.AttachComponent<WorkerObserver>();
 					obs.fieldName.Value = index.ToString();
-					obs.target.Target = (Worker)item;
+					obs.target.Target = (IWorker)item;
 					children.Add().Target = obs;
 				}
 				index++;

@@ -7,48 +7,94 @@ using RhubarbEngine.Settings;
 using RhuSettings;
 using System.Collections.Generic;
 using DiscordRPC;
+using System.Threading;
 
 namespace RhubarbEngine
 {
-	public class Engine
-	{
-		public bool verbose;
+    public interface IEngine
+    {
+        public bool Verbose { get; set; }
 
-        public WorldManager worldManager;
+        public string DataPath { get; }
 
-		public InputManager inputManager;
+        public IWorldManager WorldManager { get; }
 
-		public RenderManager renderManager;
+        public IInputManager InputManager { get; }
 
-		public MainSettingsObject settingsObject;
+        public IRenderManager RenderManager { get; }
 
-		public PlatformInfoManager platformInfo;
+        public MainSettingsObject SettingsObject { get; }
 
-		public GraphicsBackend backend = GraphicsBackend.Vulkan;
+        public IPlatformInfoManager PlatformInfo { get; }
+
+        public IWindowManager WindowManager { get; }
+
+        public INetApiManager NetApiManager { get; }
+
+        public IAudioManager AudioManager { get; }
+
+        public IUnitLogs Logger { get; }
+
+        public IEngineInitializer EngineInitializer { get; }
+
+        public DiscordRpcClient DiscordRpcClient { get; }
+
+        public OutputType OutputType { get; set; }
+
+        public GraphicsBackend Backend { get; set; }
+        bool Rendering { get; set; }
+        bool Audio { get; set; }
+
+        event Action OnEngineStarted;
+
+        void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool _Rendering = true, bool createLocalWorld = true)
+            where TEngineInitializer : IEngineInitializer where TUnitLogs : IUnitLogs;
+        void WaitForNextUpdate();
+        void WaitForNextUpdates(int update);
+    }
+
+    public class Engine: IEngine
+    {
+        public bool verbose;
+
+        public IWorldManager worldManager;
+
+        public IInputManager inputManager;
+
+        public IRenderManager renderManager;
+
+        public IPlatformInfoManager platformInfo;
+
+        public IWindowManager windowManager;
+
+        public INetApiManager netApiManager;
+
+        public IAudioManager audioManager;
+
+        public IUnitLogs logger;
+
+        public IEngineInitializer engineInitializer;
+
+        public DiscordRpcClient discordRpcClient;
+
+        public MainSettingsObject settingsObject;
+        public GraphicsBackend backend = GraphicsBackend.Vulkan;
 
 		public OutputType outputType;
-
-		public Managers.WindowManager windowManager;
-
-		public Managers.NetApiManager netApiManager;
-
-		public AudioManager audioManager;
-
-		public UnitLogs logger;
-
-		public string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RhubarbVR");
+        public string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RhubarbVR");
 
 		public FileStream lockFile;
 
-		public EngineInitializer engineInitializer;
+        public bool Rendering { get; set; } = true;
 
-		public DiscordRpcClient discordRpcClient;
+        public bool Audio { get; set; } = true;
 
-#pragma warning disable IDE0060 // Remove unused parameter
-        public void Initialize(string[] _args, bool _verbose = false, bool _Rendering = true)
-#pragma warning restore IDE0060 // Remove unused parameter
+        public event Action OnEngineStarted;
+
+        public void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool _Rendering = true, bool createLocalWorld = true) where TEngineInitializer: IEngineInitializer where TUnitLogs : IUnitLogs
         {
-			try
+            Rendering = _Rendering;
+            try
 			{
 				discordRpcClient = new DiscordRpcClient("678074691738402839");
 				//Subscribe to events
@@ -88,11 +134,11 @@ namespace RhubarbEngine
 			}
 			catch { }
 
-			verbose = _verbose;
-			logger = new UnitLogs(this);
-			Logger.Init(this);
-			engineInitializer = new EngineInitializer(this);
-			logger.Log("Loading Arguments:", true);
+            verbose = _verbose;
+            logger = (IUnitLogs)Activator.CreateInstance(typeof(TUnitLogs), this);
+            engineInitializer = (IEngineInitializer)Activator.CreateInstance(typeof(TEngineInitializer), this);
+            engineInitializer.CreateLocalWorld = createLocalWorld;
+            logger.Log("Loading Arguments:", true);
 			engineInitializer.LoadArguments(_args);
 			logger.Log("Datapath: " + dataPath);
 			//Build DataFolder
@@ -117,7 +163,7 @@ namespace RhubarbEngine
 				var liet = SettingsManager.getDataFromJson(text);
 				lists.Add(liet);
 			}
-			foreach (var item in engineInitializer.settings)
+			foreach (var item in engineInitializer.Settings)
 			{
 				var text = File.Exists(item) ? File.ReadAllText(item) : item;
                 try
@@ -137,32 +183,186 @@ namespace RhubarbEngine
 		public void StartUpdateLoop()
 		{
 			engineInitializer = engineInitializer.Initialised ? null : throw new Exception("Engine not Initialised");
-            while (windowManager.MainWindowOpen)
+            OnEngineStarted?.Invoke();
+            while (windowManager.MainWindowOpen||!Rendering)
 			{
-				Loop(platformInfo.startTime, platformInfo.Frame);
+				Loop(platformInfo.StartTime, platformInfo.Frame);
 				platformInfo.Frame = DateTime.UtcNow;
-				platformInfo.FrameCount++;
+                platformInfo.NextFrame();
 			}
 		}
 
 		public double lastTimemark;
-		//For performance testing
-		public void TimeMark(string mark)
+
+        public bool Verbose
+        {
+            get
+            {
+                return verbose;
+            }
+
+            set
+            {
+                verbose = value;
+            }
+        }
+
+        public IWorldManager WorldManager
+        {
+            get
+            {
+                return worldManager;
+            }
+        }
+
+        public IInputManager InputManager
+        {
+            get
+            {
+                return inputManager;
+            }
+        }
+
+        public IRenderManager RenderManager
+        {
+            get
+            {
+                return renderManager;
+            }
+        }
+
+        public MainSettingsObject SettingsObject
+        {
+            get
+            {
+                return settingsObject;
+            }
+        }
+
+        public IPlatformInfoManager PlatformInfo
+        {
+            get
+            {
+                return platformInfo;
+            }
+        }
+
+        public IWindowManager WindowManager
+        {
+            get
+            {
+                return windowManager;
+            }
+        }
+
+        public INetApiManager NetApiManager
+        {
+            get
+            {
+                return netApiManager;
+            }
+        }
+
+        public IAudioManager AudioManager
+        {
+            get
+            {
+                return audioManager;
+            }
+        }
+
+        public IUnitLogs Logger
+        {
+            get
+            {
+                return logger;
+            }
+        }
+
+        public IEngineInitializer EngineInitializer
+        {
+            get
+            {
+                return engineInitializer;
+            }
+        }
+
+        public DiscordRpcClient DiscordRpcClient
+        {
+            get
+            {
+                return discordRpcClient;
+            }
+        }
+
+        public string DataPath
+        {
+            get
+            {
+                return dataPath;
+            }
+        }
+
+        public OutputType OutputType
+        {
+            get
+            {
+                return outputType;
+            }
+
+            set
+            {
+                outputType = value;
+            }
+        }
+
+        public GraphicsBackend Backend
+        {
+            get
+            {
+                return backend;
+            }
+
+            set
+            {
+                backend = value;
+            }
+        }
+
+        //For performance testing
+        public void TimeMark(string mark)
 		{
-			var newtime = platformInfo.sw.Elapsed.TotalSeconds;
+			var newtime = platformInfo.Elapsed.TotalSeconds;
 			Console.WriteLine(mark + " : " + (newtime - lastTimemark).ToString());
 			lastTimemark = newtime;
 		}
 
-		public void Loop(DateTime startTime, DateTime Frame)
+        private readonly ManualResetEvent _waiter = new(false);
+
+        public void Loop(DateTime startTime, DateTime Frame)
 		{
-			platformInfo.Update();
+            _waiter.Set();
+            _waiter.Reset();
+            platformInfo.Update();
 			discordRpcClient.Invoke();
 			windowManager.Update();
 			inputManager.Update();
 			worldManager.Update(startTime, Frame);
-			renderManager.Update().Wait();
+			renderManager.Update();
 		}
+
+        public void WaitForNextUpdates(int update)
+        {
+            for (var i = 0; i < update; i++)
+            {
+                WaitForNextUpdate();
+            }
+        }
+
+        public void WaitForNextUpdate()
+        {
+            _waiter.WaitOne();
+        }
 
 		public void CleanUP()
 		{

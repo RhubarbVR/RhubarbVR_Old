@@ -13,7 +13,8 @@ namespace RhubarbEngine.World
 {
 	public class SyncAssetRefList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : IAsset
 	{
-		private readonly SynchronizedCollection<AssetRef<T>> _syncreflist = new (5);
+        public SyncAssetRefList() { }
+        private readonly SynchronizedCollection<AssetRef<T>> _syncreflist = new (5);
 
 		public AssetRef<T> this[int i]
 		{
@@ -124,7 +125,7 @@ namespace RhubarbEngine.World
 		{
 			if (data == null)
 			{
-				World.worldManager.engine.logger.Log("Node did not exsets When loading SyncAssetRefList");
+				World.worldManager.Engine.Logger.Log("Node did not exsets When loading SyncAssetRefList");
 				return;
 			}
 			if (NewRefIDs)
@@ -181,7 +182,7 @@ namespace RhubarbEngine.World
 		}
 		public void Remove(int index)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 	}

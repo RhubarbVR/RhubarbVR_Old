@@ -9,8 +9,8 @@ using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
-	public interface ISyncRef : IWorldObject
-	{
+	public interface ISyncRef : ISyncMember
+    {
 		public bool Driven { get; }
 
 		public NetPointer Value
@@ -188,7 +188,7 @@ namespace RhubarbEngine.World
 		{
 			if (data == null)
 			{
-				World.worldManager.engine.logger.Log("Node did not exsets When loading SyncRef");
+				Logger.Log("Node did not exsets When loading SyncRef");
 				return;
 			}
 			_temp = ((DataNode<NetPointer>)data.GetValue("targetRefID")).Value;

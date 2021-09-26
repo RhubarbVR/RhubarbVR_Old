@@ -7,21 +7,30 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Managers
 {
-	public class NetApiManager : IManager
-	{
-		private Engine _engine;
+    public interface INetApiManager : IManager
+    {
+        bool Islogin { get; }
+        string Token { get; set; }
+    }
 
-		public string token = "";
+    public class NetApiManager : INetApiManager
+    {
+		private IEngine _engine;
 
-		public bool islogin = false;
+		public string Token { get; set; } = "";
 
-		public IManager Initialize(Engine _engine)
+		public bool Islogin { get; private set; } = false;
+
+		public IManager Initialize(IEngine _engine)
 		{
 			this._engine = _engine;
-			this._engine.logger.Log("Starting Cloud Interface");
+			this._engine.Logger.Log("Starting Cloud Interface");
 
 			return this;
 		}
+        public void Update()
+        {
 
+        }
 	}
 }
