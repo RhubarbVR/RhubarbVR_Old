@@ -128,34 +128,36 @@ namespace RhubarbEngine.Managers
 
         private (GraphicsDevice gd, Swapchain sc) CreateGraphicsNoWindow(VRContext vrc, GraphicsBackend backend)
         {
-            var windowCI = new WindowCreateInfo()
-            {
-                X = 100,
-                Y = 100,
-                WindowWidth = 960,
-                WindowHeight = 540,
-                WindowTitle = "Hidden Window",
-                WindowInitialState = WindowState.Hidden,
-            };
-            var window = VeldridStartup.CreateWindow(ref windowCI);
-            var gdo = new GraphicsDeviceOptions(false, null, false, ResourceBindingModel.Improved, true, true, true);
-            if (backend == GraphicsBackend.Vulkan)
-            {
-                (var instance, var device) = vrc.GetRequiredVulkanExtensions();
-                var vdo = new VulkanDeviceOptions(instance, device);
-                var gd = GraphicsDevice.CreateVulkan(gdo, vdo);
-                var sc = gd.ResourceFactory.CreateSwapchain(new SwapchainDescription(
-                    VeldridStartup.GetSwapchainSource(window),
-                    640, 480,
-                    gdo.SwapchainDepthFormat, gdo.SyncToVerticalBlank, true));
-                return (gd, sc);
-            }
-            else
-            {
-                var gd = VeldridStartup.CreateGraphicsDevice(window, gdo, backend);
-                var sc = gd.MainSwapchain;
-                return (gd, sc);
-            }
+
+                var windowCI = new WindowCreateInfo()
+                {
+                    X = 100,
+                    Y = 100,
+                    WindowWidth = 960,
+                    WindowHeight = 540,
+                    WindowTitle = "Hidden Window",
+                    WindowInitialState = WindowState.Hidden,
+                };
+                var window = VeldridStartup.CreateWindow(ref windowCI);
+                var gdo = new GraphicsDeviceOptions(false, null, false, ResourceBindingModel.Improved, true, true, true);
+                if (backend == GraphicsBackend.Vulkan)
+                {
+                    (var instance, var device) = vrc.GetRequiredVulkanExtensions();
+                    var vdo = new VulkanDeviceOptions(instance, device);
+                    var gd = GraphicsDevice.CreateVulkan(gdo, vdo);
+                    var sc = gd.ResourceFactory.CreateSwapchain(new SwapchainDescription(
+                        VeldridStartup.GetSwapchainSource(window),
+                        640, 480,
+                        gdo.SwapchainDepthFormat, gdo.SyncToVerticalBlank, true));
+                    return (gd, sc);
+                }
+                else
+                {
+                    var gd = VeldridStartup.CreateGraphicsDevice(window, gdo, backend);
+                    var sc = gd.MainSwapchain;
+                    return (gd, sc);
+                }
+
         }
 
         public IManager Initialize(IEngine _engine)
@@ -194,8 +196,18 @@ namespace RhubarbEngine.Managers
 			}
 			this._engine.Logger.Log("Output Device:" + this._engine.OutputType.ToString(), true);
 			vrContext = BuildVRContext();
-			(gd, sc) = this._engine.WindowManager.MainWindow?.CreateScAndGD(vrContext, backend)?? CreateGraphicsNoWindow(vrContext, backend);
-			this._engine.Backend = backend;
+            try
+            {
+                (gd, sc) = this._engine.WindowManager.MainWindow?.CreateScAndGD(vrContext, backend) ?? CreateGraphicsNoWindow(vrContext, backend);
+                this._engine.Backend = backend;
+            }
+            catch
+            {
+                //FallBack to openGLES
+                backend = GraphicsBackend.OpenGLES;
+                (gd, sc) = this._engine.WindowManager.MainWindow?.CreateScAndGD(vrContext, backend) ?? CreateGraphicsNoWindow(vrContext, backend);
+                this._engine.Backend = backend;
+            }
 			vrContext.Initialize(gd);
 			_windowCL = gd.ResourceFactory.CreateCommandList();
 			_eyesCL = gd.ResourceFactory.CreateCommandList();
