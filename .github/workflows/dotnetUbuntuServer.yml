@@ -16,7 +16,7 @@ jobs:
         java-package: jdk
         architecture: x64
     - name: Run Discord Webhook
-      uses: johnnyhuy/discord-webhook@main
+      uses: johnnyhuy/actions-discord-git-webhook@v0.0.1
       with:
         webhook_url: ${{ secrets.YOUR_DISCORD_WEBHOOK_URL }}
     - uses: actions/checkout@v2
