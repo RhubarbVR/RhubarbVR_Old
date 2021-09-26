@@ -59,13 +59,13 @@ jobs:
       if: always()
       with:
        webhook: ${{ secrets.YOUR_DISCORD_WEBHOOK_URL }}
-       status: ${{ jobs.UbuntuTest.status }}
+       status: ${{ needs.UbuntuTest.outputs.job-status }}
        title: WindowsTests
     - name:  SendDiscordMessageForUbuntu
       uses: sarisia/actions-status-discord@v1
       if: always()
       with:
        webhook: ${{ secrets.YOUR_DISCORD_WEBHOOK_URL }}
-       status: ${{ jobs.WindowsTest.status }}
+       status: ${{ needs.WindowsTest.outputs.job-status }}
        title: UbuntuTests
 
