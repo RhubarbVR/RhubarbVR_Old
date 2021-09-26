@@ -32,6 +32,7 @@ using Chromely.Core.Network;
 using Chromely.Core.Configuration;
 using Chromely.Core.Infrastructure;
 #if !Windows
+//#if true
 namespace RhubarbEngine.Components.Interaction
 {
 
@@ -64,7 +65,7 @@ namespace RhubarbEngine.Components.Interaction
             }
         }
 
-        RollBuffer _frameInputBuffer;
+        readonly RollBuffer _frameInputBuffer;
 
         public byte[] FrameInputBuffer
         {
@@ -126,7 +127,7 @@ namespace RhubarbEngine.Components.Interaction
         {
             get
             {
-                return Engine.platformInfo.platform switch
+                return Engine.PlatformInfo.Platform switch
                 {
                     PlatformInfo.Platform.UNKNOWN => ChromelyPlatform.NotSupported,
                     PlatformInfo.Platform.Windows => ChromelyPlatform.Windows,
@@ -307,7 +308,6 @@ namespace RhubarbEngine.Components.Interaction
 		public Sync<bool> globalAudio;
 		public Sync<bool> noKeyboard;
 		public Sync<AudioType> audioType;
-        private bool _updateUrl = false;
 
 		CefGlueBrowser _browser;
 
@@ -388,7 +388,7 @@ namespace RhubarbEngine.Components.Interaction
 			IsActive = false;
 			try
 			{
-				_frameInputBuffer.Push(new byte[Engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
+				_frameInputBuffer.Push(new byte[Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount]);
 				_browser.Dispose();
 			}
 			catch { }
@@ -404,7 +404,7 @@ namespace RhubarbEngine.Components.Interaction
 
             if (globalAudio.Value)
 			{
-				_frameInputBuffer.Push(new byte[Engine.audioManager.AudioFrameSizeInBytes * ChannelCount]);
+				_frameInputBuffer.Push(new byte[Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount]);
 				//_browser.AudioHandler = null;
 			}
 			else
@@ -445,8 +445,8 @@ namespace RhubarbEngine.Components.Interaction
    //         }
 		}
 
-		TextureView _view;
-		UpdateDatingTexture2D _target;
+        readonly TextureView _view;
+        readonly UpdateDatingTexture2D _target;
 		public void Render()
 		{
 			if (!IsActive)
@@ -530,7 +530,7 @@ namespace RhubarbEngine.Components.Interaction
                 return;
             }
 
-            var imp = imputPlane.Target;
+            //var imp = imputPlane.Target;
 			//foreach (var item in imp.KeyEvents)
 			//{
 			//	var k = new CefSharp.KeyEvent();

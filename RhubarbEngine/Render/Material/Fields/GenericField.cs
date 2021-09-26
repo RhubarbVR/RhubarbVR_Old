@@ -35,6 +35,10 @@ namespace RhubarbEngine.Render.Material.Fields
 
 		unsafe public override void UpdateBuffer(GraphicsDevice gb)
 		{
+            if(gb is null)
+            {
+                return;
+            }
 			var e = GCHandle.ToIntPtr(GCHandle.Alloc(field.Value));
 			gb.UpdateBuffer((DeviceBuffer)resource, 0, e, (uint)sizeof(T));
 		}

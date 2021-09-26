@@ -17,7 +17,11 @@ namespace RhubarbEngine.World.Tests
     {
         public void TestFieldValueChanges(ISyncMember syncMember, Worker worker)
         {
-
+            if(syncMember.Engine != worker.Engine)
+            {
+                throw new Exception("Not from same engine");
+            }
+            
         }
 
         [TestMethod()]
