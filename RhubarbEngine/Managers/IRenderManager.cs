@@ -203,8 +203,8 @@ namespace RhubarbEngine.Managers
             }
             catch
             {
-                //FallBack to openGLES
-                backend = GraphicsBackend.OpenGLES;
+                //FallBack to openGL
+                backend = GraphicsBackend.OpenGL;
                 (gd, sc) = this._engine.WindowManager.MainWindow?.CreateScAndGD(vrContext, backend) ?? CreateGraphicsNoWindow(vrContext, backend);
                 this._engine.Backend = backend;
             }
