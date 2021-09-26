@@ -686,7 +686,7 @@ namespace RhubarbEngine.World
 				var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WorldTemplets");
 				try
 				{
-					var data = System.IO.File.ReadAllBytes(Path.Combine(path, templet + ".RWorld"));
+					var data = File.ReadAllBytes(Path.Combine(path, templet + ".RWorld"));
 					var node = new DataNodeGroup(data);
 					var loadded = new List<Action>();
 					DeSerialize(node, loadded, true, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
@@ -755,7 +755,22 @@ namespace RhubarbEngine.World
 		}
 		public virtual void Dispose()
 		{
-
+            var fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            foreach (var field in fields)
+            {
+                if (field.FieldType.IsAssignableTo(typeof(IDisposable))&& field.GetValue(this) is not null)
+                {
+                    try
+                    {
+                        ((IDisposable)field.GetValue(this)).Dispose();
+                    }
+                    catch
+                    {
+                        worldManager.Engine.Logger.Log($"Failed To Dispose {field.Name}", true);
+                    }
+                }
+            }
+            worldManager.Worlds.Remove(this);
 		}
 
 		public DataNodeGroup Serialize()
@@ -767,5 +782,6 @@ namespace RhubarbEngine.World
         {
             return serializerObject.CommonWorkerSerialize(this);
         }
+
     }
 }

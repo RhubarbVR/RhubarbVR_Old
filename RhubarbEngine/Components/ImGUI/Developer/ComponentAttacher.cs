@@ -226,7 +226,7 @@ namespace RhubarbEngine.Components.ImGUI
 							}
 							path.Value += "`1";
 						}
-						else if (constra.Contains(typeof(IWorldObject)))
+						else if (constra.Contains(typeof(IWorldObject)) || constra.Contains(typeof(IWorker)))
 						{
 							if (_list != null)
                             {
@@ -237,8 +237,8 @@ namespace RhubarbEngine.Components.ImGUI
 							_list.persistence.Value = false;
 							var IConvertibleTypes =
 								 from t in Assembly.GetAssembly(typeof(IWorldObject)).GetTypes().AsParallel()
-								 where typeof(IAsset).IsAssignableFrom(t)
-								 where !t.IsEnum
+                                 where typeof(Worker).IsAssignableFrom(t)
+                                 where !t.IsEnum
 								 select t;
 							var comp = _list.AttachComponent<ComponentAttacherPath>();
 							children.Add().Target = comp;

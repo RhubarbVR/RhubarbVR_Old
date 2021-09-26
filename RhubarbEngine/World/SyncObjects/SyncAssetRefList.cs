@@ -13,7 +13,8 @@ namespace RhubarbEngine.World
 {
 	public class SyncAssetRefList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : IAsset
 	{
-		private readonly SynchronizedCollection<AssetRef<T>> _syncreflist = new (5);
+        public SyncAssetRefList() { }
+        private readonly SynchronizedCollection<AssetRef<T>> _syncreflist = new (5);
 
 		public AssetRef<T> this[int i]
 		{
@@ -181,7 +182,7 @@ namespace RhubarbEngine.World
 		}
 		public void Remove(int index)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 	}

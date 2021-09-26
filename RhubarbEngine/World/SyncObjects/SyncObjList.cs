@@ -10,9 +10,10 @@ using System.Collections;
 
 namespace RhubarbEngine.World
 {
-	public class SyncObjList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : IWorker, new()
-	{
-		private readonly SynchronizedCollection<T> _synclist = new(25);
+    public class SyncObjList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : IWorker, new()
+    {
+        public SyncObjList() { }
+        private readonly SynchronizedCollection<T> _synclist = new(25);
 
 		public T this[int i]
 		{
@@ -215,7 +216,7 @@ namespace RhubarbEngine.World
 		}
 		public void Remove(int index)
 		{
-			throw new NotImplementedException();
+            _synclist[index].Dispose();
 		}
 	}
 }

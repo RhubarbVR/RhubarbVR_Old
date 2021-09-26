@@ -11,7 +11,8 @@ using RhubarbEngine.Components.Assets;
 
 namespace RhubarbEngine.Render.Material.Fields
 {
-	public abstract class MaterialField : Worker, IWorldObject
+    [NoneTest(TestType.Worker)]
+    public abstract class MaterialField : Worker, IWorldObject
 	{
 		public ShaderValueType valueType;
 

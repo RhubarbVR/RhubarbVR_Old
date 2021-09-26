@@ -28,18 +28,22 @@ namespace RhubarbEngine
 
 		public StreamWriter objStreamWriter;
 
-		public UnitLogs(IEngine _engine)
+		public UnitLogs(IEngine _engine): this()
 		{
 			this._engine = _engine;
-			if (!Directory.Exists(logDir))
-			{
-				Directory.CreateDirectory(logDir);
-			}
-			objFilestream = new FileStream(Path.Combine(logDir, logFile), FileMode.OpenOrCreate, FileAccess.ReadWrite);
-			objStreamWriter = new StreamWriter((Stream)objFilestream);
 		}
 
-		public void Log(string _log, bool _alwaysLog = false)
+        public UnitLogs()
+        {
+            if (!Directory.Exists(logDir))
+            {
+                Directory.CreateDirectory(logDir);
+            }
+            objFilestream = new FileStream(Path.Combine(logDir, logFile), FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            objStreamWriter = new StreamWriter((Stream)objFilestream);
+        }
+
+        public void Log(string _log, bool _alwaysLog = false)
 		{
 			Console.WriteLine(string.Format("{0}: {1}", DateTime.Now, _log));
 			if (_alwaysLog || _engine.Verbose)

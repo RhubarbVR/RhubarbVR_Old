@@ -45,6 +45,8 @@ namespace RhubarbEngine.Managers
 
         void AddToRenderQueue(RenderQueue gu, RemderLayers layer, BoundingFrustum frustum, Matrix4x4 view);
         void CleanUp();
+        void CloseWorld(World.World world);
+        World.World CreateNewWorld(string Name = "New World", bool focus = true, int maxUsers = 16);
         byte[] FocusedWorldToBytes();
         World.World LoadWorldFromBytes(byte[] data);
         void Update(DateTime startTime, DateTime Frame);
@@ -192,49 +194,43 @@ namespace RhubarbEngine.Managers
 			PersonalSpace = PrivateOverlay.RootEntity.AttachComponent<PersonalSpace>();
 			Worlds.Add(PrivateOverlay);
 			PrivateOverlay.Focus = World.World.FocusLevel.PrivateOverlay;
-
-			Task.Run(() =>
-			{
-				Engine.Logger.Log("Starting Local World");
-				if (File.Exists(Engine.DataPath + "/LocalWorld.RWorld"))
-				{
-					try
-					{
-						var node = new DataNodeGroup(File.ReadAllBytes(Engine.DataPath + "/LocalWorld.RWorld"));
-						LocalWorld = new World.World(this, "LocalWorld", 16, false, true, node);
-					}
-					catch (Exception e)
-					{
-						DontSaveLocal = true;
-                        _engine.Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
-						LocalWorld = new World.World(this, "TempLoaclWorld", 16, false, true);
-                        MeshHelper.BuildLocalWorld(LocalWorld);
-					}
-				}
-				else
-				{
-					try
-					{
-						LocalWorld = new World.World(this, "LocalWorld", 16, false, true);
-                        MeshHelper.BuildLocalWorld(LocalWorld);
-					}
-					catch (Exception e)
-					{
-                        _engine.Logger.Log("Failed To start New localWorld" + e.ToString());
-					}
-				}
-				LocalWorld.Focus = World.World.FocusLevel.Focused;
-				Worlds.Add(LocalWorld);
-				FocusedWorld = LocalWorld;
-				if (Engine.EngineInitializer.Session != null)
-				{
-					//JoinSessionFromUUID(engine.engineInitializer.session, true);
-				}
-				else
-				{
-					//   createNewWorld(AccessLevel.Anyone, SessionsType.Casual, "Faolan World", "", false, 16, false, "Basic");
-				}
-			});
+            if (Engine.EngineInitializer.CreateLocalWorld)
+            {
+                Task.Run(() =>
+                {
+                    Engine.Logger.Log("Starting Local World");
+                    if (File.Exists(Engine.DataPath + "/LocalWorld.RWorld"))
+                    {
+                        try
+                        {
+                            var node = new DataNodeGroup(File.ReadAllBytes(Engine.DataPath + "/LocalWorld.RWorld"));
+                            LocalWorld = new World.World(this, "LocalWorld", 16, false, true, node);
+                        }
+                        catch (Exception e)
+                        {
+                            DontSaveLocal = true;
+                            _engine.Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
+                            LocalWorld = new World.World(this, "TempLoaclWorld", 16, false, true);
+                            MeshHelper.BuildLocalWorld(LocalWorld);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            LocalWorld = new World.World(this, "LocalWorld", 16, false, true);
+                            MeshHelper.BuildLocalWorld(LocalWorld);
+                        }
+                        catch (Exception e)
+                        {
+                            _engine.Logger.Log("Failed To start New localWorld" + e.ToString());
+                        }
+                    }
+                    LocalWorld.Focus = World.World.FocusLevel.Focused;
+                    Worlds.Add(LocalWorld);
+                    FocusedWorld = LocalWorld;
+                });
+            }
 			return this;
 		}
 
@@ -243,8 +239,20 @@ namespace RhubarbEngine.Managers
         //    throw new NotImplementedException();
         //}
 
+        public void CloseWorld(World.World world)
+        {
+            world.Dispose();
+        }
 
-		public void Update(DateTime startTime, DateTime Frame)
+        public World.World CreateNewWorld(string Name = "New World",bool focus = true,int maxUsers = 16)
+        {
+            var newworld = new World.World(this, Name, maxUsers);
+            Worlds.Add(newworld);
+            newworld.Focus = focus ? World.World.FocusLevel.Focused : World.World.FocusLevel.Background;
+            return newworld;
+        }
+
+        public void Update(DateTime startTime, DateTime Frame)
 		{
 			try
 			{

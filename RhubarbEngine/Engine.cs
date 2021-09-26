@@ -7,6 +7,7 @@ using RhubarbEngine.Settings;
 using RhuSettings;
 using System.Collections.Generic;
 using DiscordRPC;
+using System.Threading;
 
 namespace RhubarbEngine
 {
@@ -41,9 +42,14 @@ namespace RhubarbEngine
         public OutputType OutputType { get; set; }
 
         public GraphicsBackend Backend { get; set; }
+        bool Rendering { get; set; }
 
-        void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool _Rendering = true)
+        event Action OnEngineStarted;
+
+        void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool _Rendering = true, bool createLocalWorld = true)
             where TEngineInitializer : IEngineInitializer where TUnitLogs : IUnitLogs;
+        void WaitForNextUpdate();
+        void WaitForNextUpdates(int update);
     }
 
     public class Engine: IEngine
@@ -78,9 +84,14 @@ namespace RhubarbEngine
 
 		public FileStream lockFile;
 
-        public void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool _Rendering = true) where TEngineInitializer: IEngineInitializer where TUnitLogs : IUnitLogs
+        public bool Rendering { get; set; }
+
+        public event Action OnEngineStarted;
+
+        public void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool _Rendering = true, bool createLocalWorld = true) where TEngineInitializer: IEngineInitializer where TUnitLogs : IUnitLogs
         {
-			try
+            Rendering = _Rendering;
+            try
 			{
 				discordRpcClient = new DiscordRpcClient("678074691738402839");
 				//Subscribe to events
@@ -123,6 +134,7 @@ namespace RhubarbEngine
             verbose = _verbose;
             logger = (IUnitLogs)Activator.CreateInstance(typeof(TUnitLogs), this);
             engineInitializer = (IEngineInitializer)Activator.CreateInstance(typeof(TEngineInitializer), this);
+            engineInitializer.CreateLocalWorld = createLocalWorld;
             logger.Log("Loading Arguments:", true);
 			engineInitializer.LoadArguments(_args);
 			logger.Log("Datapath: " + dataPath);
@@ -168,7 +180,8 @@ namespace RhubarbEngine
 		public void StartUpdateLoop()
 		{
 			engineInitializer = engineInitializer.Initialised ? null : throw new Exception("Engine not Initialised");
-            while (windowManager.MainWindowOpen)
+            OnEngineStarted?.Invoke();
+            while (windowManager.MainWindowOpen||!Rendering)
 			{
 				Loop(platformInfo.StartTime, platformInfo.Frame);
 				platformInfo.Frame = DateTime.UtcNow;
@@ -321,15 +334,32 @@ namespace RhubarbEngine
 			lastTimemark = newtime;
 		}
 
-		public void Loop(DateTime startTime, DateTime Frame)
+        private readonly ManualResetEvent _waiter = new(false);
+
+        public void Loop(DateTime startTime, DateTime Frame)
 		{
-			platformInfo.Update();
+            _waiter.Set();
+            _waiter.Reset();
+            platformInfo.Update();
 			discordRpcClient.Invoke();
 			windowManager.Update();
 			inputManager.Update();
 			worldManager.Update(startTime, Frame);
 			renderManager.Update();
 		}
+
+        public void WaitForNextUpdates(int update)
+        {
+            for (var i = 0; i < update; i++)
+            {
+                WaitForNextUpdate();
+            }
+        }
+
+        public void WaitForNextUpdate()
+        {
+            _waiter.WaitOne();
+        }
 
 		public void CleanUP()
 		{

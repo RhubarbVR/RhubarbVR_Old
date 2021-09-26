@@ -95,7 +95,7 @@ namespace RhubarbEngine.Components.Interaction
             if (source.Value == InteractionSource.HeadLaser)
 			{
 				var mousepos = Engine.InputManager.MainWindows.MousePosition;
-				var size = new System.Numerics.Vector2(Engine.WindowManager.MainWindow.Width, Engine.WindowManager.MainWindow.Height);
+				var size = new System.Numerics.Vector2(Engine.WindowManager.MainWindow?.Width??640, Engine.WindowManager.MainWindow?.Height??640);
 				var x = (2.0f * mousepos.X / size.X) - 1.0f;
 				var y = (2.0f * mousepos.Y / size.Y) - 1.0f;
 				var ar = size.X / size.Y;

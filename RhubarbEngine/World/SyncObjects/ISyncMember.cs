@@ -9,7 +9,7 @@ using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
-	public interface ISyncMember
+	public interface ISyncMember: IWorker
 	{
 		void ReceiveData(DataNodeGroup data, Peer peer);
 	}

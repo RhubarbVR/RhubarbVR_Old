@@ -52,7 +52,10 @@ namespace RhubarbEngine.Components.Audio
                     return 1;
                 }
             }
-
+            [NoSave]
+            [NoShow]
+            [NoSync]
+            [NonSerialized]
             public AudioSplitter audioParent;
 
             public byte[] FrameInputBuffer

@@ -110,13 +110,16 @@ namespace RhubarbEngine.VirtualReality
 		{
 			GraphicsDevice = gd;
 			_leftEyeFB = _eng.SettingsObject.RenderSettings.DesktopRenderSettings.auto
-                ? CreateFramebuffer((uint)_eng.WindowManager.MainWindow.Width, (uint)_eng.WindowManager.MainWindow.Height)
+                ? CreateFramebuffer((uint)(_eng.WindowManager.MainWindow?.Width??640), (uint)(_eng.WindowManager.MainWindow?.Height ?? 640))
                 : CreateFramebuffer((uint)_eng.SettingsObject.RenderSettings.DesktopRenderSettings.x, (uint)_eng.SettingsObject.RenderSettings.DesktopRenderSettings.y);
-            _eng.WindowManager.MainWindow.window.Resized += Window_Resized;
-			if (_leftEyeFB == null)
-			{
-				_eng.Logger.Log("Error Loading Frame Buffer", true);
-			}
+            if (_leftEyeFB == null)
+            {
+                _eng.Logger.Log("Error Loading Frame Buffer", true);
+            }
+            if (_eng.WindowManager.MainWindow is not null)
+            {
+                _eng.WindowManager.MainWindow.window.Resized += Window_Resized;
+            }
 			ChangeProject((float)(Math.PI / 180) * _eng.RenderManager.FieldOfView, _eng.RenderManager.AspectRatio, _eng.RenderManager.NearPlaneDistance, _eng.RenderManager.FarPlaneDistance);
 		}
 
@@ -204,7 +207,7 @@ namespace RhubarbEngine.VirtualReality
 		public void UpdateInput()
 		{
 			Vector2 mouseDelta = default;
-			if (_eng.InputManager.MainWindows.GetKeyDown(Key.R))
+			if (_eng.InputManager.MainWindows?.GetKeyDown(Key.R)??false)
 			{
 				if (!_mousePressed)
 				{
@@ -225,6 +228,10 @@ namespace RhubarbEngine.VirtualReality
 			}
 			else if (_mousePressed)
 			{
+                if(_eng.InputManager.MainWindows is null)
+                {
+                    return;
+                } 
 				mouseDelta = _mousePressedPos - _eng.InputManager.MainWindows.MousePosition;
 				Sdl2Native.SDL_WarpMouseInWindow(_eng.WindowManager.MainWindow.window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
 			}

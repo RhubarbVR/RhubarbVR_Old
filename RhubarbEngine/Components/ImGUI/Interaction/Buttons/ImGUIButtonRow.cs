@@ -46,7 +46,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			for (var i = 0; i < labels.Count; i++)
+			for (var i = 0; i < labels.Count(); i++)
 			{
 				var label = labels[i].Value;
 				ImGui.SameLine();

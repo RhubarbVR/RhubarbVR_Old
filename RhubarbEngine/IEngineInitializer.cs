@@ -18,6 +18,7 @@ namespace RhubarbEngine
         bool Initialised { get; }
         IEnumerable<string> Settings { get; }
         string Session { get; }
+        bool CreateLocalWorld { get; set; }
     }
 
     public class BaseEngineInitializer: EngineInitializer<PlatformInfoManager,Managers.WindowManager,InputManager,RenderManager,AudioManager,NetApiManager,WorldManager>
@@ -40,6 +41,8 @@ namespace RhubarbEngine
 
 		public bool Initialised = false;
 
+        public bool CreateLocalWorld { get; set; }
+
 		public EngineInitializer(Engine _engine)
 		{
 			this._engine = _engine;
@@ -49,8 +52,7 @@ namespace RhubarbEngine
 		{
 			//This is to make finding memory problems easier
 			//System.Runtime.GCSettings.LatencyMode = System.Runtime.GCLatencyMode.LowLatency;
-			try
-			{
+
 				_engine.Logger.Log("Starting Managers");
 
 				intphase = "Platform Info Manager";
@@ -102,12 +104,6 @@ namespace RhubarbEngine
 
 				_engine.AudioManager.Task.Start();
 				Initialised = true;
-			}
-			catch (Exception _e)
-			{
-				_engine.Logger.Log("Failed at " + intphase + " Error: " + _e);
-			}
-
 		}
 
 		public string token;
@@ -147,7 +143,7 @@ namespace RhubarbEngine
 				_engine.Logger.Log(arg, true);
 			}
 			Parser.Default.ParseArguments<CommandLineOptions>(_args)
-				.WithParsed<CommandLineOptions>(o =>
+				.WithParsed(o =>
 				{
 					if (o.Verbose)
 					{

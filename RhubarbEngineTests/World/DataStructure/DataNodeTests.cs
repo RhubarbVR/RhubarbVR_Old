@@ -12,26 +12,26 @@ namespace RhubarbEngine.World.DataStructure.Tests
 	public class DataNodeTests
 	{
 		[TestMethod()]
-		public void setByteArrayTest()
+		public void SetByteArrayTest()
 		{
-			testSerlizer();
+			TestSerlizer();
 		}
 
 
 		[TestMethod()]
-		public void getByteArrayTest()
+		public void GetByteArrayTest()
 		{
-			testSerlizer();
+			TestSerlizer();
 		}
 
 
-		public void testSerlizer()
+		public void TestSerlizer()
 		{
 			var testValue = new Vector3f(1, 321, 1232);
-			DataNode<Vector3f> val = new DataNode<Vector3f>(testValue);
+			var val = new DataNode<Vector3f>(testValue);
 			var e = val.GetByteArray();
 
-			DataNode<Vector3f> newval = new DataNode<Vector3f>();
+			var newval = new DataNode<Vector3f>();
 			newval.SetByteArray(e);
 
 			Assert.AreNotSame(testValue, newval.Value);

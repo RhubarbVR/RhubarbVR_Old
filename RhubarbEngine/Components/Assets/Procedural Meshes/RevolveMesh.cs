@@ -43,8 +43,8 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 		}
 		public override void OnLoaded()
 		{
-			var tempArray = new Vector3d[Curve.Count];
-			for (var i = 0; i < Curve.Count; i++)
+			var tempArray = new Vector3d[Curve.Count()];
+			for (var i = 0; i < Curve.Count(); i++)
 			{
 				tempArray[i] = Curve[i].Value;
 			}

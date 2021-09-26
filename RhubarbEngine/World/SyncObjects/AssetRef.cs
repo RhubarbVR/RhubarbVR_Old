@@ -44,7 +44,12 @@ namespace RhubarbEngine.World
 				LoadedCall(base.Target.Value);
 			}
 		}
-		public AssetRef(IWorldObject _parent, bool newrefid = true) : base(_parent, newrefid)
+        public AssetRef()
+        {
+
+        }
+
+        public AssetRef(IWorldObject _parent, bool newrefid = true) : base(_parent, newrefid)
 		{
 		}
 	}

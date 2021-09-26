@@ -9,8 +9,8 @@ using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
-	public interface ISyncRef : IWorldObject
-	{
+	public interface ISyncRef : ISyncMember
+    {
 		public bool Driven { get; }
 
 		public NetPointer Value

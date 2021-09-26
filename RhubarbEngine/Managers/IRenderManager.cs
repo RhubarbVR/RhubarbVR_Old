@@ -14,6 +14,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System.IO;
 using Veldrid.ImageSharp;
+using Veldrid.StartupUtilities;
 
 namespace RhubarbEngine.Managers
 {
@@ -50,7 +51,7 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return _engine.WindowManager.MainWindow.AspectRatio;
+                return _engine.WindowManager.MainWindow?.AspectRatio??1;
             }
         }
 
@@ -125,6 +126,38 @@ namespace RhubarbEngine.Managers
             }
         }
 
+        private (GraphicsDevice gd, Swapchain sc) CreateGraphicsNoWindow(VRContext vrc, GraphicsBackend backend)
+        {
+            var windowCI = new WindowCreateInfo()
+            {
+                X = 100,
+                Y = 100,
+                WindowWidth = 960,
+                WindowHeight = 540,
+                WindowTitle = "Hidden Window",
+                WindowInitialState = WindowState.Hidden,
+            };
+            var window = VeldridStartup.CreateWindow(ref windowCI);
+            var gdo = new GraphicsDeviceOptions(false, null, false, ResourceBindingModel.Improved, true, true, true);
+            if (backend == GraphicsBackend.Vulkan)
+            {
+                (var instance, var device) = vrc.GetRequiredVulkanExtensions();
+                var vdo = new VulkanDeviceOptions(instance, device);
+                var gd = GraphicsDevice.CreateVulkan(gdo, vdo);
+                var sc = gd.ResourceFactory.CreateSwapchain(new SwapchainDescription(
+                    VeldridStartup.GetSwapchainSource(window),
+                    640, 480,
+                    gdo.SwapchainDepthFormat, gdo.SyncToVerticalBlank, true));
+                return (gd, sc);
+            }
+            else
+            {
+                var gd = VeldridStartup.CreateGraphicsDevice(window, gdo, backend);
+                var sc = gd.MainSwapchain;
+                return (gd, sc);
+            }
+        }
+
         public IManager Initialize(IEngine _engine)
 		{
 			this._engine = _engine;
@@ -161,14 +194,17 @@ namespace RhubarbEngine.Managers
 			}
 			this._engine.Logger.Log("Output Device:" + this._engine.OutputType.ToString(), true);
 			vrContext = BuildVRContext();
-			(gd, sc) = this._engine.WindowManager.MainWindow.CreateScAndGD(vrContext, backend);
+			(gd, sc) = this._engine.WindowManager.MainWindow?.CreateScAndGD(vrContext, backend)?? CreateGraphicsNoWindow(vrContext, backend);
 			this._engine.Backend = backend;
 			vrContext.Initialize(gd);
 			_windowCL = gd.ResourceFactory.CreateCommandList();
 			_eyesCL = gd.ResourceFactory.CreateCommandList();
 			_mainQueue = new RenderQueue();
-			this._engine.WindowManager.MainWindow.window.Resized += Window_Resized;
-			Window_Resized();
+            if(this._engine.WindowManager.MainWindow is not null)
+            {
+                this._engine.WindowManager.MainWindow.window.Resized += Window_Resized;
+                Window_Resized();
+            }
 			var _texture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "nulltexture.jpg"), false, true).CreateDeviceTexture(this._engine.RenderManager.Gd, this._engine.RenderManager.Gd.ResourceFactory);
             nulview = this._engine.RenderManager.Gd.ResourceFactory.CreateTextureView(_texture);
 			var gridtexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "StaticAssets", "Grid.jpg"), true, true).CreateDeviceTexture(this._engine.RenderManager.Gd, this._engine.RenderManager.Gd.ResourceFactory);
@@ -203,7 +239,12 @@ namespace RhubarbEngine.Managers
 
 		private void Window_Resized()
 		{
-			if (_engine.SettingsObject.RenderSettings.DesktopRenderSettings.auto)
+            if (_engine.WindowManager.MainWindow is null)
+            {
+                return;
+            }
+
+            if (_engine.SettingsObject.RenderSettings.DesktopRenderSettings.auto)
 			{
 				sc.Resize((uint)_engine.WindowManager.MainWindow.window.Width, (uint)_engine.WindowManager.MainWindow.window.Height);
 			}

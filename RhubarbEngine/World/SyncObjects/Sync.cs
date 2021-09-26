@@ -126,7 +126,12 @@ namespace RhubarbEngine.World
 			World.NetModule?.AddToQueue(Net.ReliabilityLevel.LatestOnly, obj, ReferenceID.id);
 		}
 
-		public Sync(World _world, IWorldObject _parent, bool newref = true, T val = default) : base(_world, _parent, newref)
+        public Sync()
+        {
+
+        }
+
+        public Sync(World _world, IWorldObject _parent, bool newref = true, T val = default) : base(_world, _parent, newref)
 		{
 			Value = val;
 		}

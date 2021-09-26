@@ -38,27 +38,34 @@ namespace RhubarbEngine.World
 
         public DataNodeGroup CommonWorkerSerialize(IWorldObject @object)
         {
-            var fields = @object.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            DataNodeGroup obj = null;
+                var fields = @object.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                DataNodeGroup obj = null;
             if (@object.IsPersistent || _netsync)
-            {
-                obj = new DataNodeGroup();
-                foreach (var field in fields)
                 {
-                    if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || (_netsync && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))))
+                    obj = new DataNodeGroup();
+                    foreach (var field in fields)
                     {
+                        if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || (_netsync && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))))
+                        {
                         //This is for debug purposes 
                         //if (!netsync)
                         //{
                         //    Console.WriteLine(field.FieldType.FullName + "Name: " + field.Name);
                         //}
-                        obj.SetValue(field.Name, ((IWorldObject)field.GetValue(@object)).Serialize(this));
+                        try
+                        {
+                            obj.SetValue(field.Name, ((IWorldObject)field.GetValue(@object)).Serialize(this));
+                        }
+                        catch
+                        {
+                            throw new Exception($"Failed To Serialize {@object.GetType()} , Field {field.Name} , Field Type {field.FieldType.GetFormattedName()}");
+                        }
+                        }
                     }
+                    var Refid = new DataNode<NetPointer>(@object.ReferenceID);
+                    obj.SetValue("referenceID", Refid);
                 }
-                var Refid = new DataNode<NetPointer>(@object.ReferenceID);
-                obj.SetValue("referenceID", Refid);
-            }
-            return obj;
+                return obj;
         }
 
         public DataNodeGroup CommonListAbstactSerialize<T>(IWorldObject @object, IEnumerable<T> worldObjects) where T : IWorker
