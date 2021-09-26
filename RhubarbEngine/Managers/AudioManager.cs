@@ -131,6 +131,10 @@ namespace RhubarbEngine.Managers
 
 		public unsafe IManager Initialize(IEngine _engine)
 		{
+            if(!_engine.Audio)
+            {
+                return this;
+            }
 			audioframeTimeMs = AudioFrameSize / (SamplingRate / 1000);
 			ee = new float[AudioFrameSize * 2];
 			iplAudioSettings = new IPL.AudioSettings { frameSize = AudioFrameSize, samplingRate = SamplingRate };
@@ -143,8 +147,18 @@ namespace RhubarbEngine.Managers
 
 			if (OpenAl)
 			{
-				PrepareOpenAL();
-			}
+                try
+                {
+                    PrepareOpenAL();
+                }
+                catch(Exception e)
+                {
+                    _engine.Logger.Log(e.Message, true);
+                    _engine.Audio = false;
+                    return this;
+                }
+
+            }
 			else
 			{
 				PrepareNAudio();

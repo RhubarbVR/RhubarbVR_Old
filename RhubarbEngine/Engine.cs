@@ -43,6 +43,7 @@ namespace RhubarbEngine
 
         public GraphicsBackend Backend { get; set; }
         bool Rendering { get; set; }
+        bool Audio { get; set; }
 
         event Action OnEngineStarted;
 
@@ -85,6 +86,8 @@ namespace RhubarbEngine
 		public FileStream lockFile;
 
         public bool Rendering { get; set; } = true;
+
+        public bool Audio { get; set; } = true;
 
         public event Action OnEngineStarted;
 
