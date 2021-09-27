@@ -20,9 +20,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore "RhubarbEngineTests"
     - name: Build
-      run: dotnet build "RhubarbVR" --no-restore /p:Configuration=Release /p:Platform="x64"
+      run: dotnet build "RhubarbEngineTests" --no-restore /p:Configuration=Release /p:Platform="x64"
     - name: Test
-      run: dotnet test "RhubarbEngineTests" --no-restore /p:Configuration=Release /p:Platform="x64" --logger "console;verbosity=detailed"
+      run: dotnet test "RhubarbEngineTests" --no-build --no-restore /p:Configuration=Release /p:Platform="x64" --logger "console;verbosity=detailed"
 
   UbuntuTest:
 

@@ -90,7 +90,9 @@ namespace RhubarbEngine.World.Tests
         [TestMethod()]
         public void AllWorkersTest()
         {
+            Console.WriteLine("All Workers Test Start");
             NewTestWorld();
+            Console.WriteLine("Done Clreaing last Test");
             var assem = Assembly.GetAssembly(typeof(Component));
             var types =
               from t in assem.GetTypes().AsParallel()
