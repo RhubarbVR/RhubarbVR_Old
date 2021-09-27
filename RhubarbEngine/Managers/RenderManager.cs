@@ -352,7 +352,7 @@ namespace RhubarbEngine.Managers
 				{
 					try
 					{
-						//noneThreaded.Render();
+						noneThreaded.Render();
 					}
 					catch (Exception e)
 					{
