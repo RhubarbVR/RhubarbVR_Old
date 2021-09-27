@@ -69,7 +69,7 @@ namespace RhubarbEngine.Components.Assets
             }
             catch (Exception e)
             {
-                Logger.Log($"Failed to Initialize image Error:{e}", true);
+                Logger.Log($"Failed to Initialize image");
             }
 
 
