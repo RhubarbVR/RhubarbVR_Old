@@ -665,8 +665,12 @@ namespace RhubarbEngine.World
             }
             else
             {
-                worldManager.Engine.Logger.Log("Building Blank World");
-                MeshHelper.BlankWorld(this);
+                if (!_userspace && !_local)
+                {
+                    worldManager.Engine.Logger.Log("Building Blank World");
+                    MeshHelper.BlankWorld(this);
+                }
+
             } 
 		}
 
