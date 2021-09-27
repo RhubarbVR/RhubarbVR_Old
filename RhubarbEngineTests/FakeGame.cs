@@ -60,8 +60,6 @@ namespace RhubarbEngine
     {
         public static bool InstanceCheck;
         public static Engine engine;
-        public static World.World testWorld;
-
     }
 
 
@@ -120,12 +118,12 @@ namespace RhubarbEngine
         public void NewTestWorld(string name = "The Test World")
         {
             WaitForEngineStart();
-            if(RhubarbInstanceCheck.testWorld is not null)
+            if(testWorld is not null)
             {
-                RhubarbInstanceCheck.testWorld.Dispose();
-                RhubarbInstanceCheck.testWorld = testWorld = null;
+                testWorld.Dispose();
+                testWorld = null;
             }
-            RhubarbInstanceCheck.testWorld = testWorld = engine.worldManager.CreateNewWorld(name);
+            testWorld = engine.worldManager.CreateNewWorld(name);
         }
 
     }
