@@ -55,7 +55,7 @@
   <Import Project="$(SolutionDir)SolutionDefines.targets" Condition="exists('$(SolutionDir)SolutionDefines.targets')" />
 
   <ItemGroup>
-    <None Update="Natives\Linux64\libopenal.so.1">
+    <None Update="Natives\Linux64\libopenal.so">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Natives\Linux64\libphonon.so">

@@ -9,11 +9,11 @@ namespace OpenAL
 #if Windows
 		public const string LIBRARY = "Natives\\Windows64\\soft_oal.dll";
 #elif Linux
-        public const string Library = "Natives/Linux64/libopenal.so";
+        public const string LIBRARY = "Natives/Linux64/libopenal.so";
 #elif OSX
-        public const string Library = "Natives/OSX64/libopenal.dylib";
+        public const string LIBRARY = "Natives/OSX64/libopenal.dylib";
 #endif
-		public enum SourceState
+        public enum SourceState
 		{
 			Initial = 0x1011,
 			Playing = 0x1012,
