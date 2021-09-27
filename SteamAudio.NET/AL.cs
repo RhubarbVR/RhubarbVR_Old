@@ -7,9 +7,9 @@ namespace OpenAL
 	public unsafe static class AL
 	{
 #if Windows
-		public const string Library = "Natives\\Windows64\\soft_oal.dll";
+		public const string LIBRARY = "Natives\\Windows64\\soft_oal.dll";
 #elif Linux
-        public const string Library = "SteamAudio.NET/Natives/Linux64/libopenal.so.1";
+        public const string Library = "Natives/Linux64/libopenal.so";
 #elif OSX
         public const string Library = "Natives/OSX64/libopenal.dylib";
 #endif
@@ -42,21 +42,21 @@ namespace OpenAL
 
 		//General
 
-		[DllImport(Library, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alIsExtensionPresent")]
+		[DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alIsExtensionPresent")]
 		public static extern bool IsExtensionPresent([In][MarshalAs(UnmanagedType.LPStr)] string extName);
 
-		[DllImport(Library, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alGetError")]
+		[DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alGetError")]
 		public static extern Error GetError();
 
 		//Buffers
 
-		[DllImport(Library, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alGenBuffers")]
+		[DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alGenBuffers")]
 		public static extern void GenBuffers(int numBuffers, uint[] bufferIdOutputArray);
 
-		[DllImport(Library, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alBufferData")]
+		[DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alBufferData")]
 		public static extern void BufferData(uint buffer, uint format, IntPtr data, int size, int frequency);
 
-		[DllImport(Library, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alBufferData")]
+		[DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alBufferData")]
 		public static extern void BufferData(uint buffer, uint format, byte[] data, int size, int frequency);
 
 		//Sources
@@ -69,19 +69,19 @@ namespace OpenAL
 			}
 		}
 
-		[DllImport(Library, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alGenSources")]
+		[DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alGenSources")]
 		private static extern void GenSources(int numSources, [Out] uint* sourceIds);
 
-		[DllImport(Library, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alGetSourcei")]
+		[DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alGetSourcei")]
 		public static extern void GetSource(uint sourceId, GetSourceInt parameter, out int value);
 
-		[DllImport(Library, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alSourcePlay")]
+		[DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alSourcePlay")]
 		public static extern void SourcePlay(uint sourceId);
 
-		[DllImport(Library, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alSourceQueueBuffers")]
+		[DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alSourceQueueBuffers")]
 		public unsafe static extern void SourceQueueBuffers(uint sourceId, int numBuffers, [Out] uint* bufferIds);
 
-		[DllImport(Library, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alSourceUnqueueBuffers")]
+		[DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alSourceUnqueueBuffers")]
 		public unsafe static extern void SourceUnqueueBuffers(uint sourceId, int numBuffers, [Out] uint* bufferIds);
 	}
 }
