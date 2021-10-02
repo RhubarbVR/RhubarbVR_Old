@@ -59,9 +59,9 @@ namespace RhubarbEngine.Components.Physics.Colliders
 			for (var i = 0; i < vertices.Length; i++)
 			{
 				vertices[i] = new BulletSharp.Math.Vector3(
-					mesh.Asset.Meshes[0].GetVertex(i).x,
-					mesh.Asset.Meshes[0].GetVertex(i).y,
-					mesh.Asset.Meshes[0].GetVertex(i).z);
+					(float)mesh.Asset.Meshes[0].GetVertex(i).x,
+                    (float)mesh.Asset.Meshes[0].GetVertex(i).y,
+                    (float)mesh.Asset.Meshes[0].GetVertex(i).z);
 			}
 			var e = mesh.Asset.Meshes[0].RenderIndices().ToArray();
 

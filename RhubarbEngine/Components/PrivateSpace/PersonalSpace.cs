@@ -116,10 +116,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 			rootent.persistence.Value = false;
 			var userRoot = rootent.AttachComponent<UserRoot>();
 			userRoot.user.Target = World.LocalUser;
-            if (World.LocalUser is null)
-            {
-                World.LocalUser.userroot.Target = userRoot;
-            }
+            World.LocalUser.userroot.Target = userRoot;
 			var head = rootent.AddChild("Head");
 			head.AttachComponent<Head>();
 			head.AddChild("Laser").AttachComponent<InteractionLaser>().source.Value = InteractionSource.HeadLaser;

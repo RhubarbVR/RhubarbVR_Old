@@ -512,8 +512,8 @@ namespace RhubarbEngine.World
 		public void Update(DateTime startTime, DateTime Frame)
 		{
 			PhysicsWorld.UpdateAabbs();
-			PhysicsWorld.UpdateVehicles(worldManager.Engine.PlatformInfo.DeltaSeconds);
-			PhysicsWorld.StepSimulation(worldManager.Engine.PlatformInfo.DeltaSeconds);
+			PhysicsWorld.UpdateVehicles((float)worldManager.Engine.PlatformInfo.DeltaSeconds);
+			PhysicsWorld.StepSimulation((float)worldManager.Engine.PlatformInfo.DeltaSeconds);
 			PhysicsWorld.ComputeOverlappingPairs();
 			try
 			{

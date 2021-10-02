@@ -19,14 +19,14 @@ namespace RhubarbEngine.Components.Physics.Colliders
 	[Category(new string[] { "Physics/Colliders" })]
 	public class SphereCollider : Collider
 	{
-		public Sync<double> radius;
+		public Sync<float> radius;
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			base.BuildSyncObjs(newRefIds);
-            radius = new Sync<double>(this, newRefIds)
+            radius = new Sync<float>(this, newRefIds)
             {
-                Value = 0.5
+                Value = 0.5f
             };
             radius.Changed += UpdateChange;
 		}

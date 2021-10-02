@@ -95,6 +95,7 @@ namespace RhubarbEngine
         {
             try
 			{
+                BulletSharp.Loader.Start();
 				discordRpcClient = new DiscordRpcClient("678074691738402839");
 				//Subscribe to events
 				discordRpcClient.RegisterUriScheme("740251");

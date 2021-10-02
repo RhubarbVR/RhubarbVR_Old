@@ -57,14 +57,14 @@
 
   <ItemGroup>
     <PackageReference Include="BEPUik" Version="1.5.1" />
-    <PackageReference Include="BulletSharp.x64" Version="0.12.0" />
-    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="93.1.111" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="94.4.20" />
     <PackageReference Include="Chromely.CefGlue" Version="5.0.83" />
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
     <PackageReference Include="Concentus" Version="1.1.7" />
     <PackageReference Include="DiscordRichPresence" Version="1.0.175" />
-    <PackageReference Include="MessagePack" Version="2.3.75" />
+    <PackageReference Include="MessagePack" Version="2.3.85" />
     <PackageReference Include="NAudio.Core" Version="2.0.0" />
+    <PackageReference Include="RhubarbBulletSharpNET5" Version="1.0.3" />
     <PackageReference Include="RhuSettings" Version="1.0.0" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="4.8.1" />
     <PackageReference Include="Veldrid.SPIRV" Version="1.0.14" />
@@ -84,6 +84,18 @@
 
   <ItemGroup>
     <None Update="app.vrmanifest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="libbulletc-linux-x64.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="libbulletc-linux-x86.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="libbulletc-windows-x64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="libbulletc-windows-x86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="skybox\miramar_bk.png">
@@ -141,7 +153,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="93.1.11" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="94.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="94.4.2" />
   </ItemGroup>
 
 </Project>

@@ -19,7 +19,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RhubarbEngine\RhubarbEngine.csproj" />
+    <ProjectReference Include="..\RhubarbEngine\RhubarbEngine.csproj">
+      <Private>true</Private>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
