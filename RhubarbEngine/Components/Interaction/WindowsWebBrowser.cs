@@ -373,18 +373,28 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			base.OnLoaded();
 			_frameInputBuffer = new RollBuffer(Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount);
-			if (!Cef.IsInitialized) // Check before init
-			{
-				Console.WriteLine("Init Cef");
-                var cefSettings = new CefSettings
+            
+            try
+            {
+                if (!Cef.IsInitialized) // Check before init
                 {
-                    CachePath = Path.Combine(Engine.DataPath, "WebBrowser")
-                };
-                cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
-				cefSettings.CefCommandLineArgs.Add("disable-usb-keyboard-detect", "1");
-				cefSettings.EnableAudio();
-				Cef.Initialize(cefSettings);
-			}
+                    Console.WriteLine("Init Cef");
+                    var cefSettings = new CefSettings
+                    {
+                        CachePath = Path.Combine(Engine.DataPath, "WebBrowser")
+                    };
+                    cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
+                    cefSettings.CefCommandLineArgs.Add("disable-usb-keyboard-detect", "1");
+                    cefSettings.EnableAudio();
+                    Cef.Initialize(cefSettings);
+                }
+            }
+            catch
+            {
+                _browser = null;
+                IsActive = false;
+                return;
+            }
             _browser = new ChromiumWebBrowser(path.Value, null, null, false, OnAfterBrowserCreated)
             {
                 MenuHandler = new CustomMenuHandler()
