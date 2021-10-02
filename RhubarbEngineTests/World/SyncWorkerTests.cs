@@ -131,6 +131,8 @@ namespace RhubarbEngine.World.Tests
                          from t in assem.GetTypes().AsParallel()
                          where typeof(IConvertible).IsAssignableFrom(t)
                          where !t.IsGenericType
+                         where !t.IsInterface
+                         where !t.IsAbstract
                          where !t.IsEnum
                          select t;
                     foreach (var item in IConvertibleTypes)
@@ -163,6 +165,7 @@ namespace RhubarbEngine.World.Tests
             var syncMemberType = syncMember.GetType();
             if (syncMemberType.IsAssignableTo(typeof(ISyncList)))
             {
+                Console.WriteLine(syncMemberType.GetFormattedName());
                 var canRemove = true;
                 var value = (ISyncList)syncMember;
                 try

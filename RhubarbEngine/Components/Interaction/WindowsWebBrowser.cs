@@ -373,18 +373,31 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			base.OnLoaded();
 			_frameInputBuffer = new RollBuffer(Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount);
-			if (!Cef.IsInitialized) // Check before init
-			{
-				Console.WriteLine("Init Cef");
-                var cefSettings = new CefSettings
+            if (!Engine.Rendering)
+            {
+                return;
+            }
+            try
+            {
+                if (!Cef.IsInitialized) // Check before init
                 {
-                    CachePath = Path.Combine(Engine.DataPath, "WebBrowser")
-                };
-                cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
-				cefSettings.CefCommandLineArgs.Add("disable-usb-keyboard-detect", "1");
-				cefSettings.EnableAudio();
-				Cef.Initialize(cefSettings);
-			}
+                    Console.WriteLine("Init Cef");
+                    var cefSettings = new CefSettings
+                    {
+                        CachePath = Path.Combine(Engine.DataPath, "WebBrowser")
+                    };
+                    cefSettings.CefCommandLineArgs.Add("enable-media-stream", "1");
+                    cefSettings.CefCommandLineArgs.Add("disable-usb-keyboard-detect", "1");
+                    cefSettings.EnableAudio();
+                    Cef.Initialize(cefSettings);
+                }
+            }
+            catch
+            {
+                _browser = null;
+                IsActive = false;
+                return;
+            }
             _browser = new ChromiumWebBrowser(path.Value, null, null, false, OnAfterBrowserCreated)
             {
                 MenuHandler = new CustomMenuHandler()
@@ -561,15 +574,22 @@ namespace RhubarbEngine.Components.Interaction
 
 		TextureView _view;
 		UpdateDatingTexture2D _target;
-		public void Render()
-		{
-			if (!IsActive)
+        Task _task;
+        public void Render()
+        {
+            if (!IsActive)
             {
                 return;
             }
-
-            StartRenderTask();
-			UpdateInpute();
+            if (_task is null)
+            {
+                _task = Task.Run(RenderTask);
+                return;
+            }
+            if (_task.IsCompleted || _task.IsCanceled || _task.IsFaulted || _task.Status != TaskStatus.Running)
+            {
+                _task = Task.Run(RenderTask);
+            }
 		}
 		public override void LoadListObject()
 		{
@@ -589,24 +609,8 @@ namespace RhubarbEngine.Components.Interaction
 			catch { }
 		}
 
-		private Task _lastTask;
-
-		public void StartRenderTask()
-		{
-			if (_lastTask != null)
-			{
-				if ((!_lastTask.IsFaulted) && !_lastTask.IsCompleted)
-				{
-					return;
-				}
-			}
-			_lastTask = Task.Run(RenderTask);
-		}
-
 		private void RenderTask()
 		{
-			try
-			{
 				if (_view == null)
 				{
 					var thing = ScreenshotOrNull(_browser, PopupBlending.Main);
@@ -629,15 +633,9 @@ namespace RhubarbEngine.Components.Interaction
 					((RenderHandler)_browser.RenderHandler).renderEvent.Reset();
 					_target.UpdateBitmap(((RenderHandler)_browser.RenderHandler).BitmapBuffer);
 				}
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("WebBrowser Render Error" + e.ToString());
-			}
-			_lastTask = null;
-		}
+        }
 
-		public static Bitmap ScreenshotOrNull(ChromiumWebBrowser browser, PopupBlending blend = PopupBlending.Main)
+        public static Bitmap ScreenshotOrNull(ChromiumWebBrowser browser, PopupBlending blend = PopupBlending.Main)
 		{
 			if (browser.RenderHandler == null)
 			{
@@ -822,7 +820,17 @@ namespace RhubarbEngine.Components.Interaction
 			}
 		}
 
-		public void OnAudioStreamStopped(IWebBrowser chromiumWebBrowser, IBrowser browser)
+        public override void CommonUpdate(DateTime startTime, DateTime Frame)
+        {
+            base.CommonUpdate(startTime, Frame);
+            if (!IsActive)
+            {
+                return;
+            }
+            UpdateInpute();
+        }
+
+        public void OnAudioStreamStopped(IWebBrowser chromiumWebBrowser, IBrowser browser)
 		{
 
 		}

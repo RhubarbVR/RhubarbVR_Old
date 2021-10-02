@@ -19,23 +19,23 @@ namespace RhubarbEngine.Components.Physics.Colliders
 	[Category(new string[] { "Physics/Colliders" })]
 	public class CapsuleCollider : Collider
 	{
-		public Sync<double> radius;
-		public Sync<double> height;
+		public Sync<float> radius;
+		public Sync<float> height;
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			// Change the default values I guess
 
 			base.BuildSyncObjs(newRefIds);
-            radius = new Sync<double>(this, newRefIds)
+            radius = new Sync<float>(this, newRefIds)
             {
-                Value = 0.5
+                Value = 0.5f
             };
             radius.Changed += UpdateChange;
 
-            height = new Sync<double>(this, newRefIds)
+            height = new Sync<float>(this, newRefIds)
             {
-                Value = 1.0
+                Value = 1.0f
             };
             height.Changed += UpdateChange;
 		}

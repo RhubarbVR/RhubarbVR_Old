@@ -100,6 +100,10 @@ namespace RhubarbEngine.Components.PrivateSpace
 		public override void OnAttach()
 		{
 			base.OnLoaded();
+            if (!World.Userspace)
+            {
+                throw new Exception("This should be in the Persinal space");
+            }
 			var d = World.RootEntity.AddChild("User Follower");
 			FollowUser.Target = d;
 
@@ -112,7 +116,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 			rootent.persistence.Value = false;
 			var userRoot = rootent.AttachComponent<UserRoot>();
 			userRoot.user.Target = World.LocalUser;
-			World.LocalUser.userroot.Target = userRoot;
+            World.LocalUser.userroot.Target = userRoot;
 			var head = rootent.AddChild("Head");
 			head.AttachComponent<Head>();
 			head.AddChild("Laser").AttachComponent<InteractionLaser>().source.Value = InteractionSource.HeadLaser;

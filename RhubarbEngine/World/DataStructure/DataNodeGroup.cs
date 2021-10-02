@@ -15,8 +15,6 @@ namespace RhubarbEngine.World.DataStructure
         private readonly Dictionary<string, IDataNode> _nodeGroup = new();
         public byte[] GetByteArray()
         {
-            try
-            {
                 var keyValuePairs = new Dictionary<byte[], byte[]>();
                 foreach (var item in _nodeGroup.Keys)
                 {
@@ -36,12 +34,6 @@ namespace RhubarbEngine.World.DataStructure
                     ps.Add((item, keyValuePairs[item]));
                 }
                 return MessagePackSerializer.Serialize(ps.ToArray());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Failed to serialize. Group Reason: " + e.Message);
-                return Array.Empty<byte>();
-            }
         }
         //31 max hardpack values
 

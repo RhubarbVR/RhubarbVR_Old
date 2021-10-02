@@ -595,12 +595,11 @@ namespace RhubarbEngine.World.ECS
 
 		public override void Dispose()
 		{
-			Logger.Log("Entity Remove");
-			base.Dispose();
 			World.RemoveWorldEntity(this);
-		}
+            base.Dispose();
+        }
 
-		public void Update(DateTime startTime, DateTime Frame)
+        public void Update(DateTime startTime, DateTime Frame)
 		{
 			if (base.IsRemoved)
             {

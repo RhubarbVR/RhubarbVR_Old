@@ -160,8 +160,7 @@ namespace RhubarbEngine.World
 		{
 			if (data == null)
 			{
-				World.worldManager.Engine.Logger.Log("Node did not exsets When loading SyncObjList");
-				return;
+                throw new Exception("Node did not exsets When loading SyncObjList");
 			}
 			if (NewRefIDs)
 			{

@@ -366,7 +366,7 @@ namespace RhubarbEngine.Input
 
 		private static Vector3 Lerp(Vector3 v1, Vector3 v2, double pos)
 		{
-			return v1 + ((v2 - v1) * pos);
+			return v1 + ((v2 - v1) * (float)pos);
 		}
 		private static bool Aprogamtly(double v1, double v2, double pos)
 		{

@@ -18,12 +18,19 @@ namespace RhubarbEngine.World.Tests
     {
         public void TestWorkerSaveing(Worker worker)
         {
-            var data = worker.Serialize(new WorkerSerializerObject(false));
-            var loadded = new List<Action>();
-            var val = CreateWorker(worker.GetType());
-            val.Initialize(testWorld, testWorld, true);
-            val.DeSerialize(data, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
-            engine.WaitForNextUpdate();
+            try
+            {
+                var data = worker.Serialize(new WorkerSerializerObject(false));
+                var loadded = new List<Action>();
+                var val = CreateWorker(worker.GetType());
+                val.Initialize(testWorld, testWorld, true);
+                val.DeSerialize(data, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+                engine.WaitForNextUpdate();
+            }
+            catch(Exception e)
+            {
+                throw new Exception($"Failed To Save {worker.GetType().GetFormattedName()}",e);
+            }
         }
 
         public void TestWorker(Worker worker)
@@ -74,6 +81,7 @@ namespace RhubarbEngine.World.Tests
             {
                 return;
             }
+            Console.WriteLine(type.GetFormattedName());
             var val = CreateWorker(type);
             TestWorker(val);
             val.Dispose();
@@ -83,7 +91,9 @@ namespace RhubarbEngine.World.Tests
         [TestMethod()]
         public void AllWorkersTest()
         {
+            Console.WriteLine("All Workers Test Start");
             NewTestWorld();
+            Console.WriteLine("Done Clreaing last Test");
             var assem = Assembly.GetAssembly(typeof(Component));
             var types =
               from t in assem.GetTypes().AsParallel()

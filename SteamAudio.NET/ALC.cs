@@ -6,7 +6,7 @@ namespace OpenAL
 	//This class contains only the most necessary functions & values that were used in the test.
 	public static class ALC
 	{
-		public const string Library = AL.Library;
+		public const string Library = AL.LIBRARY;
 
 		static ALC() => SteamAudio.DllManager.PrepareResolver();
 

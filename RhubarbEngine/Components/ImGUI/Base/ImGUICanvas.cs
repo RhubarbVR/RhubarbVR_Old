@@ -307,7 +307,10 @@ namespace RhubarbEngine.Components.ImGUI
             {
                 return;
             }
-
+            if(_uIcommandList is null || Engine.RenderManager.Gd is null|| !Engine.Rendering)
+            {
+                return;
+            }
             try
 			{
 				var inputSnapshot = imputPlane.Target == null ? fakeInputSnapshot : (InputSnapshot)imputPlane.Target;

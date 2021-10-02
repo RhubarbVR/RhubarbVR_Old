@@ -128,7 +128,6 @@ namespace RhubarbEngine.Managers
 
         private (GraphicsDevice gd, Swapchain sc) CreateGraphicsNoWindow(VRContext vrc, GraphicsBackend backend)
         {
-
                 var windowCI = new WindowCreateInfo()
                 {
                     X = 100,
@@ -371,14 +370,17 @@ namespace RhubarbEngine.Managers
                 RenderNoneThreadedRenderObjectsInWorld(world);
 				Parallel.ForEach(world.updateLists.trenderObject, obj =>
 				{
-					try
-					{
-						obj.Render();
-					}
-					catch (Exception e)
-					{
-                        _engine.Logger.Log("Failed To Render " + obj.GetType().Name + " Error " + e.ToString(), true);
-					}
+                    if (obj is not null)
+                    {
+                        try
+                        {
+                            obj.Render();
+                        }
+                        catch (Exception e)
+                        {
+                            _engine.Logger.Log("Failed To Render " + obj.GetType().Name + " Error " + e.ToString(), true);
+                        }
+                    }
 				});
 			}
 			catch
@@ -398,7 +400,7 @@ namespace RhubarbEngine.Managers
 			}
 		}
 
-		public async Task Update()
+		public void Update()
 		{
             if (!_engine.Rendering)
             {
@@ -416,11 +418,7 @@ namespace RhubarbEngine.Managers
 				{
 					((ScreenContext)vrContext).UpdateInput();
 				}
-				if (!await Task.Run(RenderRenderObjects).TimeOut(1000))
-                {
-                    _engine.Logger.Log("Render Render Objects TimeOut", true);
-                }
-
+                RenderRenderObjects();
                 gd.WaitForIdle();
 				var poses = vrContext.WaitForPoses();
 				var leftView = poses.CreateView(VREye.Left, UserTrans, -Vector3.UnitZ, Vector3.UnitY);
@@ -460,7 +458,6 @@ namespace RhubarbEngine.Managers
 
 				_eyesCL.End();
 				gd.SubmitCommands(_eyesCL);
-				gd.WaitForIdle();
 
 				vrContext.SubmitFrame();
 			}
@@ -477,13 +474,8 @@ namespace RhubarbEngine.Managers
 				_windowCL.End();
 				gd.SubmitCommands(_windowCL);
 				gd.SwapBuffers(sc);
-				gd.WaitForIdle();
 			}
-		}
-
-        void IManager.Update()
-        {
-            Update().Wait();
+            gd.WaitForIdle();
         }
     }
 }

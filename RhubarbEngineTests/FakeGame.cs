@@ -60,8 +60,6 @@ namespace RhubarbEngine
     {
         public static bool InstanceCheck;
         public static Engine engine;
-        public static World.World testWorld;
-
     }
 
 
@@ -95,7 +93,7 @@ namespace RhubarbEngine
             {
                 RhubarbInstanceCheck.InstanceCheck = true;
                 engine.dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Tests", $"{DateTime.Now.ToString().Replace("/", "-").Replace(":", "_")}");
-                engine.Initialize<EngineInitializer<PlatformInfoManager, NullWindowManager, InputManager,RenderManager,AudioManager,NetApiManager,WorldManager>,UnitLogs>(Array.Empty<string>(), true, true,false);
+                engine.Initialize<EngineInitializer<PlatformInfoManager, NullWindowManager, InputManager,RenderManager,AudioManager,NetApiManager,WorldManager>,UnitLogs>(Array.Empty<string>(), true, false);
                 engine.OnEngineStarted += Engine_OnEngineStarted;
                 Task.Run(Start);
                 RhubarbInstanceCheck.engine = engine;
@@ -120,13 +118,12 @@ namespace RhubarbEngine
         public void NewTestWorld(string name = "The Test World")
         {
             WaitForEngineStart();
-            if(RhubarbInstanceCheck.testWorld is not null)
+            if(testWorld is not null)
             {
-                //Fix despose
-                RhubarbInstanceCheck.testWorld.Dispose();
-                RhubarbInstanceCheck.testWorld = testWorld = null;
+                testWorld.Dispose();
+                testWorld = null;
             }
-            RhubarbInstanceCheck.testWorld = testWorld = engine.worldManager.CreateNewWorld(name);
+            testWorld = engine.worldManager.CreateNewWorld(name);
         }
 
     }

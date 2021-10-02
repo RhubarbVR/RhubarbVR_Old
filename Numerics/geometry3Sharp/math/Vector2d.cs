@@ -22,47 +22,59 @@ namespace RNumerics
 		public Vector2d(float[] v2) { x = v2[0]; y = v2[1]; }
 		public Vector2d(Vector2d copy) { x = copy.x; y = copy.y; }
 		public Vector2d(Vector2f copy) { x = copy.x; y = copy.y; }
+        [IgnoreMember]
+		static public readonly Vector2d Zero = new(0.0f, 0.0f);
+        [IgnoreMember]
+        static public readonly Vector2d One = new(1.0f, 1.0f);
+        [IgnoreMember]
+        static public readonly Vector2d AxisX = new(1.0f, 0.0f);
+        [IgnoreMember]
+        static public readonly Vector2d AxisY = new(0.0f, 1.0f);
+        [IgnoreMember]
+        static public readonly Vector2d MaxValue = new(double.MaxValue, double.MaxValue);
+        [IgnoreMember]
+        static public readonly Vector2d MinValue = new(double.MinValue, double.MinValue);
 
-		static public readonly Vector2d Zero = new Vector2d(0.0f, 0.0f);
-		static public readonly Vector2d One = new Vector2d(1.0f, 1.0f);
-		static public readonly Vector2d AxisX = new Vector2d(1.0f, 0.0f);
-		static public readonly Vector2d AxisY = new Vector2d(0.0f, 1.0f);
-		static public readonly Vector2d MaxValue = new Vector2d(double.MaxValue, double.MaxValue);
-		static public readonly Vector2d MinValue = new Vector2d(double.MinValue, double.MinValue);
-
-		public static Vector2d FromAngleRad(double angle)
+        public static Vector2d FromAngleRad(double angle)
 		{
 			return new Vector2d(Math.Cos(angle), Math.Sin(angle));
 		}
-		public static Vector2d FromAngleDeg(double angle)
+        public static Vector2d FromAngleDeg(double angle)
 		{
 			angle *= MathUtil.Deg2Rad;
 			return new Vector2d(Math.Cos(angle), Math.Sin(angle));
 		}
 
 
-		public double this[int key]
+        [IgnoreMember]
+        public double this[int key]
 		{
 			get { return (key == 0) ? x : y; }
-			set { if (key == 0) x = value; else y = value; }
+            set { if (key == 0) { x = value; } else
+                {
+                    y = value;
+                }
+            }
 		}
 
 
-		public double LengthSquared
+        [IgnoreMember]
+        public double LengthSquared
 		{
-			get { return x * x + y * y; }
+            get { return (x * x) + (y * y); }
 		}
-		public double Length
+        [IgnoreMember]
+        public double Length
 		{
 			get { return (double)Math.Sqrt(LengthSquared); }
 		}
 
 		public double Normalize(double epsilon = MathUtil.Epsilon)
 		{
-			double length = Length;
+			var length = Length;
 			if (length > epsilon)
 			{
-				double invLength = 1.0 / length;
+				var invLength = 1.0 / length;
 				x *= invLength;
 				y *= invLength;
 			}
@@ -73,29 +85,34 @@ namespace RNumerics
 			}
 			return length;
 		}
-		public Vector2d Normalized
+        [IgnoreMember]
+        public Vector2d Normalized
 		{
 			get
 			{
-				double length = Length;
+				var length = Length;
 				if (length > MathUtil.Epsilon)
 				{
-					double invLength = 1 / length;
+					var invLength = 1 / length;
 					return new Vector2d(x * invLength, y * invLength);
 				}
 				else
-					return Vector2d.Zero;
-			}
+                {
+                    return Vector2d.Zero;
+                }
+            }
 		}
 
-		public bool IsNormalized
+        [IgnoreMember]
+        public bool IsNormalized
 		{
-			get { return Math.Abs((x * x + y * y) - 1) < MathUtil.ZeroTolerance; }
+			get { return Math.Abs((x * x) + (y * y) - 1) < MathUtil.ZeroTolerance; }
 		}
 
-		public bool IsFinite
+        [IgnoreMember]
+        public bool IsFinite
 		{
-			get { double f = x + y; return double.IsNaN(f) == false && double.IsInfinity(f) == false; }
+			get { var f = x + y; return double.IsNaN(f) == false && double.IsInfinity(f) == false; }
 		}
 
 		public void Round(int nDecimals)
@@ -107,7 +124,7 @@ namespace RNumerics
 
 		public double Dot(Vector2d v2)
 		{
-			return x * v2.x + y * v2.y;
+			return (x * v2.x) + (y * v2.y);
 		}
 
 
@@ -116,22 +133,24 @@ namespace RNumerics
 		/// </summary>
 		public double Cross(Vector2d v2)
 		{
-			return x * v2.y - y * v2.x;
+			return (x * v2.y) - (y * v2.x);
 		}
 
 
-		/// <summary>
-		/// returns right-perp vector, ie rotated 90 degrees to the right
-		/// </summary>
-		public Vector2d Perp
+        /// <summary>
+        /// returns right-perp vector, ie rotated 90 degrees to the right
+        /// </summary>
+        [IgnoreMember]
+        public Vector2d Perp
 		{
 			get { return new Vector2d(y, -x); }
 		}
 
-		/// <summary>
-		/// returns right-perp vector, ie rotated 90 degrees to the right
-		/// </summary>
-		public Vector2d UnitPerp
+        /// <summary>
+        /// returns right-perp vector, ie rotated 90 degrees to the right
+        /// </summary>
+        [IgnoreMember]
+        public Vector2d UnitPerp
 		{
 			get { return new Vector2d(y, -x).Normalized; }
 		}
@@ -141,13 +160,13 @@ namespace RNumerics
 		/// </summary>
 		public double DotPerp(Vector2d v2)
 		{
-			return x * v2.y - y * v2.x;
+			return (x * v2.y) - (y * v2.x);
 		}
 
 
 		public double AngleD(Vector2d v2)
 		{
-			double fDot = MathUtil.Clamp(Dot(v2), -1, 1);
+			var fDot = MathUtil.Clamp(Dot(v2), -1, 1);
 			return Math.Acos(fDot) * MathUtil.Rad2Deg;
 		}
 		public static double AngleD(Vector2d v1, Vector2d v2)
@@ -156,7 +175,7 @@ namespace RNumerics
 		}
 		public double AngleR(Vector2d v2)
 		{
-			double fDot = MathUtil.Clamp(Dot(v2), -1, 1);
+			var fDot = MathUtil.Clamp(Dot(v2), -1, 1);
 			return Math.Acos(fDot);
 		}
 		public static double AngleR(Vector2d v1, Vector2d v2)
@@ -169,12 +188,12 @@ namespace RNumerics
 		public double DistanceSquared(Vector2d v2)
 		{
 			double dx = v2.x - x, dy = v2.y - y;
-			return dx * dx + dy * dy;
+			return (dx * dx) + (dy * dy);
 		}
 		public double Distance(Vector2d v2)
 		{
 			double dx = v2.x - x, dy = v2.y - y;
-			return Math.Sqrt(dx * dx + dy * dy);
+			return Math.Sqrt((dx * dx) + (dy * dy));
 		}
 
 
@@ -254,38 +273,37 @@ namespace RNumerics
 
 		public static bool operator ==(Vector2d a, Vector2d b)
 		{
-			return (a.x == b.x && a.y == b.y);
+			return a.x == b.x && a.y == b.y;
 		}
 		public static bool operator !=(Vector2d a, Vector2d b)
 		{
-			return (a.x != b.x || a.y != b.y);
+			return a.x != b.x || a.y != b.y;
 		}
 		public override bool Equals(object obj)
 		{
 			return this == (Vector2d)obj;
 		}
 		public override int GetHashCode()
-		{
-			unchecked // Overflow is fine, just wrap
-			{
-				int hash = (int)2166136261;
-				// Suitable nullity checks etc, of course :)
-				hash = (hash * 16777619) ^ x.GetHashCode();
-				hash = (hash * 16777619) ^ y.GetHashCode();
-				return hash;
-			}
-		}
-		public int CompareTo(Vector2d other)
+        {
+            return HashCode.Combine(x, y);
+        }
+
+        public int CompareTo(Vector2d other)
 		{
 			if (x != other.x)
-				return x < other.x ? -1 : 1;
-			else if (y != other.y)
-				return y < other.y ? -1 : 1;
-			return 0;
+            {
+                return x < other.x ? -1 : 1;
+            }
+            else if (y != other.y)
+            {
+                return y < other.y ? -1 : 1;
+            }
+
+            return 0;
 		}
 		public bool Equals(Vector2d other)
 		{
-			return (x == other.x && y == other.y);
+			return x == other.x && y == other.y;
 		}
 
 
@@ -298,13 +316,13 @@ namespace RNumerics
 
 		public static Vector2d Lerp(Vector2d a, Vector2d b, double t)
 		{
-			double s = 1 - t;
-			return new Vector2d(s * a.x + t * b.x, s * a.y + t * b.y);
+			var s = 1 - t;
+			return new Vector2d((s * a.x) + (t * b.x), (s * a.y) + (t * b.y));
 		}
 		public static Vector2d Lerp(ref Vector2d a, ref Vector2d b, double t)
 		{
-			double s = 1 - t;
-			return new Vector2d(s * a.x + t * b.x, s * a.y + t * b.y);
+			var s = 1 - t;
+			return new Vector2d((s * a.x) + (t * b.x), (s * a.y) + (t * b.y));
 		}
 
 
@@ -387,7 +405,7 @@ namespace RNumerics
 		public static void GetInformation(IList<Vector2d> points, double epsilon, out Information info)
 		{
 			info = new Information();
-			int numPoints = points.Count;
+			var numPoints = points.Count;
 			if (numPoints == 0 || points == null || epsilon <= 0)
 			{
 				System.Diagnostics.Debug.Assert(false);
@@ -399,8 +417,8 @@ namespace RNumerics
 			// Compute the axis-aligned bounding box for the input points.  Keep track
 			// of the indices into 'points' for the current min and max.
 			int j;
-			Vector2i indexMin = Vector2i.Zero;
-			Vector2i indexMax = Vector2i.Zero;
+			var indexMin = Vector2i.Zero;
+			var indexMax = Vector2i.Zero;
 			for (j = 0; j < 2; ++j)
 			{
 				info.mMin[j] = points[0][j];
@@ -431,7 +449,7 @@ namespace RNumerics
 			info.mMaxRange = info.mMax[0] - info.mMin[0];
 			info.mExtreme[0] = indexMin[0];
 			info.mExtreme[1] = indexMax[0];
-			double range = info.mMax[1] - info.mMin[1];
+			var range = info.mMax[1] - info.mMin[1];
 			if (range > info.mMaxRange)
 			{
 				info.mMaxRange = range;
@@ -450,21 +468,24 @@ namespace RNumerics
 				info.mDirection0 = Vector2d.Zero;
 				info.mDirection1 = Vector2d.Zero;
 				for (j = 0; j < 2; ++j)
-					info.mExtreme[j + 1] = info.mExtreme[0];
-				return;
+                {
+                    info.mExtreme[j + 1] = info.mExtreme[0];
+                }
+
+                return;
 			}
 
 			// Test whether the point set is (nearly) a line segment.
 			info.mDirection0 = points[info.mExtreme[1]] - info.mOrigin;
 			info.mDirection0.Normalize();
 			info.mDirection1 = -info.mDirection0.Perp;
-			double maxDistance = (double)0;
-			double maxSign = (double)0;
+			var maxDistance = (double)0;
+			var maxSign = (double)0;
 			info.mExtreme[2] = info.mExtreme[0];
 			for (i = 0; i < numPoints; ++i)
 			{
-				Vector2d diff = points[i] - info.mOrigin;
-				double distance = info.mDirection1.Dot(diff);
+				var diff = points[i] - info.mOrigin;
+				var distance = info.mDirection1.Dot(diff);
 				double sign = Math.Sign(distance);
 				distance = Math.Abs(distance);
 				if (distance > maxDistance)
@@ -483,7 +504,7 @@ namespace RNumerics
 			}
 
 			info.mDimension = 2;
-			info.mExtremeCCW = (maxSign > (double)0);
+			info.mExtremeCCW = maxSign > (double)0;
 		}
 
 		public TypeCode GetTypeCode()

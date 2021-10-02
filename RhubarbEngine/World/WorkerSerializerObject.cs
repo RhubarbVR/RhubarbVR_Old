@@ -38,15 +38,15 @@ namespace RhubarbEngine.World
 
         public DataNodeGroup CommonWorkerSerialize(IWorldObject @object)
         {
-                var fields = @object.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-                DataNodeGroup obj = null;
+            var fields = @object.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            DataNodeGroup obj = null;
             if (@object.IsPersistent || _netsync)
+            {
+                obj = new DataNodeGroup();
+                foreach (var field in fields)
                 {
-                    obj = new DataNodeGroup();
-                    foreach (var field in fields)
+                    if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || (_netsync && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))))
                     {
-                        if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || (_netsync && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))))
-                        {
                         //This is for debug purposes 
                         //if (!netsync)
                         //{
@@ -60,12 +60,12 @@ namespace RhubarbEngine.World
                         {
                             throw new Exception($"Failed To Serialize {@object.GetType()} , Field {field.Name} , Field Type {field.FieldType.GetFormattedName()}");
                         }
-                        }
                     }
-                    var Refid = new DataNode<NetPointer>(@object.ReferenceID);
-                    obj.SetValue("referenceID", Refid);
                 }
-                return obj;
+                var Refid = new DataNode<NetPointer>(@object.ReferenceID);
+                obj.SetValue("referenceID", Refid);
+            }
+            return obj;
         }
 
         public DataNodeGroup CommonListAbstactSerialize<T>(IWorldObject @object, IEnumerable<T> worldObjects) where T : IWorker
@@ -108,7 +108,7 @@ namespace RhubarbEngine.World
             return obj;
         }
 
-        public static DataNodeGroup CommonValueSerialize<T>(IWorldObject @object,T value)where T:IConvertible
+        public static DataNodeGroup CommonValueSerialize<T>(IWorldObject @object, T value) where T : IConvertible
         {
             var obj = new DataNodeGroup();
             var Refid = new DataNode<NetPointer>(@object.ReferenceID);

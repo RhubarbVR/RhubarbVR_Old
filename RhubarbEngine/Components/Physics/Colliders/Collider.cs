@@ -218,10 +218,10 @@ namespace RhubarbEngine.Components.Physics.Colliders
 		public static Matrix CastMet(Matrix4x4 matrix4X4)
 		{
 			var t = new Matrix(
-				(double)matrix4X4.M11, (double)matrix4X4.M12, (double)matrix4X4.M13, (double)matrix4X4.M14,
-				(double)matrix4X4.M21, (double)matrix4X4.M22, (double)matrix4X4.M23, (double)matrix4X4.M24,
-				(double)matrix4X4.M31, (double)matrix4X4.M32, (double)matrix4X4.M33, (double)matrix4X4.M34,
-				(double)matrix4X4.M41, (double)matrix4X4.M42, (double)matrix4X4.M43, (double)matrix4X4.M44);
+				matrix4X4.M11, matrix4X4.M12, matrix4X4.M13, matrix4X4.M14,
+				matrix4X4.M21, matrix4X4.M22, matrix4X4.M23, matrix4X4.M24,
+				matrix4X4.M31, matrix4X4.M32, matrix4X4.M33, matrix4X4.M34,
+				matrix4X4.M41, matrix4X4.M42, matrix4X4.M43, matrix4X4.M44);
 			return t;
 		}
 		public static Matrix4x4 CastMet(Matrix matrix4X4)
