@@ -81,6 +81,7 @@ namespace RhubarbEngine.World.Tests
             {
                 return;
             }
+            Console.WriteLine(type.GetFormattedName());
             var val = CreateWorker(type);
             TestWorker(val);
             val.Dispose();
@@ -100,7 +101,6 @@ namespace RhubarbEngine.World.Tests
               select t;
             foreach (var item in types)
             {
-                Console.WriteLine(item.GetFormattedName());
                 TestWorker(item);
             }
             //Parallel.ForEach(types, TestWorker);

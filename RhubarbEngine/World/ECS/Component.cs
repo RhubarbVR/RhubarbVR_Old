@@ -19,13 +19,12 @@ namespace RhubarbEngine.World.ECS
 		[NoSave]
 		public Entity Entity { get { return _entity; } }
 
-		public override void InturnalSyncObjs(bool newRefIds)
-		{
+        public override void InturnalSyncObjs(bool newRefIds)
+        {
             enabled = new Sync<bool>(this, newRefIds)
             {
                 Value = true
             };
-            _entity = (Entity)parent.Parent;
 			LoadToWorld();
 		}
 
@@ -82,11 +81,11 @@ namespace RhubarbEngine.World.ECS
 
 		public override void Initialize(World _world, IWorldObject _parent, bool newRefID = true, bool childlisten = true)
 		{
-			base.Initialize(_world, _parent, newRefID, childlisten);
 			_entity = (Entity)(_parent.Parent);
-		}
+            base.Initialize(_world, _parent, newRefID, childlisten);
+        }
 
-		public Component()
+        public Component()
 		{
 		}
 	}

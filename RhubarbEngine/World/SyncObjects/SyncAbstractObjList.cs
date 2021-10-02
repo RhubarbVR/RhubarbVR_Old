@@ -205,14 +205,14 @@ namespace RhubarbEngine.World
 				var ty = Type.GetType(((DataNode<string>)val.GetValue("Type")).Value);
 				if (ty == typeof(MissingComponent))
 				{
-					ty = Type.GetType(((DataNode<string>)((DataNodeGroup)val.GetValue("Value")).GetValue("type")).Value, true);
+					ty = Type.GetType(((DataNode<string>)((DataNodeGroup)val.GetValue("Value")).GetValue("type")).Value, false);
 					if (ty == null)
 					{
 						World.worldManager.Engine.Logger.Log("Component still not found" + ((DataNode<string>)val.GetValue("Type")).Value);
 						var obj = (T)Activator.CreateInstance(typeof(MissingComponent));
 						Add(obj, NewRefIDs).DeSerialize((DataNodeGroup)val.GetValue("Value"), onload, NewRefIDs, newRefID, latterResign);
 					}
-					else
+					else if (ty != typeof(MissingComponent))
 					{
 						if (ty.IsAssignableFrom(typeof(T)))
 						{
@@ -223,7 +223,12 @@ namespace RhubarbEngine.World
 						{
 							World.worldManager.Engine.Logger.Log("Something is broken or someone is messing with things", true);
 						}
-					}
+                    }
+                    else
+                    {
+                        var obj = (T)Activator.CreateInstance(ty);
+                        Add(obj, NewRefIDs).DeSerialize((DataNodeGroup)val.GetValue("Value"), onload, NewRefIDs, newRefID, latterResign);
+                    }
 				}
 				else
 				{

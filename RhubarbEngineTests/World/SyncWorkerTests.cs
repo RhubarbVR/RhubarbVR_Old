@@ -39,7 +39,6 @@ namespace RhubarbEngine.World.Tests
             {
                 foreach (var item in GetSyncMemberTestTypes(notsimple))
                 {
-                    Console.WriteLine(item.GetFormattedName());
                     TestSyncMember(item);
                 }
             }
@@ -166,6 +165,7 @@ namespace RhubarbEngine.World.Tests
             var syncMemberType = syncMember.GetType();
             if (syncMemberType.IsAssignableTo(typeof(ISyncList)))
             {
+                Console.WriteLine(syncMemberType.GetFormattedName());
                 var canRemove = true;
                 var value = (ISyncList)syncMember;
                 try

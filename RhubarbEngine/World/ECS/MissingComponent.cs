@@ -36,25 +36,19 @@ namespace RhubarbEngine.World.ECS
 
 		public override DataNodeGroup Serialize(WorkerSerializerObject workerSerializerObject)
 		{
-			var fields = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 			var obj = new DataNodeGroup();
 			if (Persistent)
 			{
-				foreach (var field in fields)
-				{
-					if (typeof(IWorldObject).IsAssignableFrom(field.FieldType))
-					{
-						obj.SetValue(field.Name, ((IWorldObject)field.GetValue(this)).Serialize(workerSerializerObject));
-					}
-				}
 				var Refid = new DataNode<NetPointer>(ReferenceID);
 				obj.SetValue("referenceID", Refid);
 				obj.SetValue("Data", tempdata);
-			}
-			return obj;
+                var typevalue = new DataNode<string>(type.Value);
+                obj.SetValue("type", typevalue);
+            }
+            return obj;
 		}
 
-		public virtual void DeSerialize(DataNodeGroup data, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, RefIDResign> latterResign = default)
+		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
 		{
 			if (data == null)
 			{
@@ -63,9 +57,19 @@ namespace RhubarbEngine.World.ECS
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
-				latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()](ReferenceID.getID());
-			}
+                if (newRefID == null)
+                {
+                    Console.WriteLine("Problem With " + GetType().FullName);
+                }
+                newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
+                if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
+                {
+                    foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
+                    {
+                        func(ReferenceID.getID());
+                    }
+                }
+            }
 			else
 			{
 				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
