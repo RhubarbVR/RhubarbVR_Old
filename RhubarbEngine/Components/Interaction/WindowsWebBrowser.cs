@@ -373,7 +373,10 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			base.OnLoaded();
 			_frameInputBuffer = new RollBuffer(Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount);
-            
+            if (!Engine.Rendering)
+            {
+                return;
+            }
             try
             {
                 if (!Cef.IsInitialized) // Check before init
