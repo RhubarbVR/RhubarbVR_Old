@@ -38,11 +38,14 @@ namespace OpenAL
 			OutOfMemory = 0xA005
 		}
 
-		static AL() => SteamAudio.DllManager.PrepareResolver();
+        static AL()
+        {
+            SteamAudio.DllManager.PrepareResolver();
+        }
 
-		//General
+        //General
 
-		[DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alIsExtensionPresent")]
+        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alIsExtensionPresent")]
 		public static extern bool IsExtensionPresent([In][MarshalAs(UnmanagedType.LPStr)] string extName);
 
 		[DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, ExactSpelling = true, EntryPoint = "alGetError")]

@@ -58,7 +58,6 @@
   <ItemGroup>
     <PackageReference Include="BEPUik" Version="1.5.1" />
     <PackageReference Include="CefSharp.OffScreen.NETCore" Version="94.4.20" />
-    <PackageReference Include="Chromely.CefGlue" Version="5.0.83" />
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
     <PackageReference Include="Concentus" Version="1.1.7" />
     <PackageReference Include="DiscordRichPresence" Version="1.0.175" />

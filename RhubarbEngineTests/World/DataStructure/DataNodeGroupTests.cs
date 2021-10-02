@@ -14,13 +14,13 @@ namespace RhubarbEngine.World.DataStructure.Tests
 	public class DataNodeGroupTests
 	{
 		[TestMethod()]
-		public void setByteArrayTest()
+		public void SetByteArrayTest()
 		{
 			//Assert.Fail();
 		}
 
 		[TestMethod()]
-		public void getByteArrayTest()
+		public void GetByteArrayTest()
 		{
 			//  Assert.Fail();
 		}
