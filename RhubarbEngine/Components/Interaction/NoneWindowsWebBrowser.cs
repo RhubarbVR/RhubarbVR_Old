@@ -14,9 +14,7 @@ using RhubarbEngine.World;
 using RNumerics;
 using System.Numerics;
 using RhubarbEngine.World.Asset;
-using Chromely;
-using Chromely.CefGlue.Browser;
-using Chromely.CefGlue;
+
 using Veldrid;
 using RhubarbEngine.Components.Rendering;
 using RhubarbEngine.Components.Audio;
@@ -28,15 +26,12 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Drawing;
 using RhubarbEngine.Render;
-using Chromely.Core;
-using Chromely.Core.Network;
-using Chromely.Core.Configuration;
-using Chromely.Core.Infrastructure;
+
 namespace RhubarbEngine.Components.Interaction
 {
 
 	[Category(new string[] { "Interaction" })]
-	public class WebBrowser : AssetProvider<RTexture2D>, IRenderObject, IKeyboardStealer, IAudioSource, IChromelyContainer, IChromelyCommandTaskRunner, IChromelyConfiguration
+	public class WebBrowser : AssetProvider<RTexture2D>, IRenderObject, IKeyboardStealer, IAudioSource
     {
         public bool Threaded
         {
@@ -74,231 +69,6 @@ namespace RhubarbEngine.Components.Interaction
             }
         }
 
-        public string AppName
-        {
-            get
-            {
-                return "RhubarbVR";
-            }
-
-            set
-            {
-            }
-        }
-
-        public string StartUrl
-        {
-            get
-            {
-                return "https://google.com/";
-            }
-
-            set
-            {
-            }
-        }
-
-        public string AppExeLocation
-        {
-            get
-            {
-                return AppDomain.CurrentDomain.BaseDirectory;
-            }
-
-            set
-            {
-            }
-        }
-
-        public string ChromelyVersion
-        {
-            get
-            {
-                return "0.0.1";
-            }
-
-            set
-            {
-            }
-        }
-
-        public ChromelyPlatform Platform
-        {
-            get
-            {
-                return Engine.PlatformInfo.Platform switch
-                {
-                    PlatformInfo.Platform.UNKNOWN => ChromelyPlatform.NotSupported,
-                    PlatformInfo.Platform.Windows => ChromelyPlatform.Windows,
-                    PlatformInfo.Platform.OSX => ChromelyPlatform.MacOSX,
-                    PlatformInfo.Platform.iOS => ChromelyPlatform.NotSupported,
-                    PlatformInfo.Platform.Linux => ChromelyPlatform.Linux,
-                    PlatformInfo.Platform.Android => ChromelyPlatform.Linux,
-                    PlatformInfo.Platform.Other => ChromelyPlatform.NotSupported,
-                    _ => ChromelyPlatform.NotSupported,
-                };
-            }
-
-            set
-            {
-            }
-        }
-
-        public bool DebuggingMode
-        {
-            get
-            {
-                return true;
-            }
-
-            set
-            {
-            }
-        }
-
-        public string DevToolsUrl
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public IDictionary<string, string> CommandLineArgs
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public List<string> CommandLineOptions
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public List<ControllerAssemblyInfo> ControllerAssemblies
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public IDictionary<string, string> CustomSettings
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public List<ChromelyEventHandler<object>> EventHandlers
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public IDictionary<string, object> ExtensionData
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public IChromelyJavaScriptExecutor JavaScriptExecutor
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public List<UrlScheme> UrlSchemes
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public CefDownloadOptions CefDownloadOptions
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public IWindowOptions WindowOptions
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public Sync<RenderFrequency> renderFrequency;
 		public Sync<Vector2u> scale;
 		public SyncRef<IInputPlane> imputPlane;
@@ -308,13 +78,10 @@ namespace RhubarbEngine.Components.Interaction
 		public Sync<bool> noKeyboard;
 		public Sync<AudioType> audioType;
 
-		CefGlueBrowser _browser;
-
 		public override void Dispose()
 		{
 
             Load(null, true);
-            _browser?.Dispose();
             base.Dispose();
 		}
 
@@ -327,8 +94,6 @@ namespace RhubarbEngine.Components.Interaction
 		{
 			base.OnLoaded();
             _frameInputBuffer = new RollBuffer(Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount);
-            _browser = new CefGlueBrowser(this, this,this,this,new Xilium.CefGlue.Wrapper.CefMessageRouterBrowserSide(new Xilium.CefGlue.Wrapper.CefMessageRouterConfig()),new Xilium.CefGlue.CefBrowserSettings());
-            _browser.Create(Xilium.CefGlue.CefWindowInfo.Create());
 		}
 
 
@@ -389,7 +154,7 @@ namespace RhubarbEngine.Components.Interaction
 			try
 			{
 				_frameInputBuffer.Push(new byte[Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount]);
-				_browser.Dispose();
+				//_browser.Dispose();
 			}
 			catch { }
 			OnLoaded();
@@ -397,20 +162,20 @@ namespace RhubarbEngine.Components.Interaction
 
 		private void GlobalAudio_Changed(IChangeable obj)
 		{
-			if (_browser == null)
-            {
-                return;
-            }
+			//if (_browser == null)
+   //         {
+   //             return;
+   //         }
 
-            if (globalAudio.Value)
-			{
-				_frameInputBuffer.Push(new byte[Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount]);
-				//_browser.AudioHandler = null;
-			}
-			else
-			{
-				//_browser.AudioHandler = this;
-			}
+   //         if (globalAudio.Value)
+			//{
+			//	_frameInputBuffer.Push(new byte[Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount]);
+			//	//_browser.AudioHandler = null;
+			//}
+			//else
+			//{
+			//	//_browser.AudioHandler = this;
+			//}
 		}
 
 		private void OnScaleChange(IChangeable obj)
