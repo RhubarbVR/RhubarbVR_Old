@@ -8,6 +8,7 @@ using RhuSettings;
 using System.Collections.Generic;
 using DiscordRPC;
 using System.Threading;
+using System.Text;
 
 namespace RhubarbEngine
 {
@@ -95,8 +96,8 @@ namespace RhubarbEngine
         {
             try
 			{
-                BulletSharp.Loader.Start();
-				discordRpcClient = new DiscordRpcClient("678074691738402839");
+
+                discordRpcClient = new DiscordRpcClient("678074691738402839");
 				//Subscribe to events
 				discordRpcClient.RegisterUriScheme("740251");
 
@@ -136,6 +137,13 @@ namespace RhubarbEngine
 
             verbose = _verbose;
             logger = (IUnitLogs)Activator.CreateInstance(typeof(TUnitLogs), this);
+            BulletSharp.Loader.Start();
+            var ster = new StringBuilder(1024);
+            logger.Log("Initialize Steam Networking");
+            if (Valve.Sockets.Library.Initialize(ster))
+            {
+                logger.Log("Steam Networking Error " + ster.ToString(),true);
+            }
             engineInitializer = (IEngineInitializer)Activator.CreateInstance(typeof(TEngineInitializer), this);
             engineInitializer.CreateLocalWorld = createLocalWorld;
             logger.Log("Loading Arguments:", true);

@@ -25,7 +25,7 @@ namespace RhubarbEngine.World.Net
 		}
 	}
 
-	public abstract class NetModule
+	public abstract class NetModule: IDisposable
 	{
 		public virtual void Connect(string token)
 		{
@@ -105,5 +105,9 @@ namespace RhubarbEngine.World.Net
             var netdata = new NetData(_reliabilityLevel, _data, _id);
 			NetQueue.Add(netdata);
 		}
-	}
+
+        public virtual void Dispose()
+        {
+        }
+    }
 }
