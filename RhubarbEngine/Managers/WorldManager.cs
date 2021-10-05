@@ -198,19 +198,20 @@ namespace RhubarbEngine.Managers
             {
                 Task.Run(() =>
                 {
+                    var trains = false;
                     Engine.Logger.Log("Starting Local World");
                     if (File.Exists(Engine.DataPath + "/LocalWorld.RWorld"))
                     {
                         try
                         {
                             var node = new DataNodeGroup(File.ReadAllBytes(Engine.DataPath + "/LocalWorld.RWorld"));
-                            LocalWorld = new World.World(this, "LocalWorld", 16, false, true, node);
+                            LocalWorld = new World.World(this, "LocalWorld", 16, false, trains, node);
                         }
                         catch (Exception e)
                         {
                             DontSaveLocal = true;
                             _engine.Logger.Log("Failed To load LocalWorld" + e.ToString(), true);
-                            LocalWorld = new World.World(this, "TempLoaclWorld", 16, false, true);
+                            LocalWorld = new World.World(this, "TempLoaclWorld", 16, false, trains);
                             MeshHelper.BuildLocalWorld(LocalWorld);
                         }
                     }
@@ -218,7 +219,7 @@ namespace RhubarbEngine.Managers
                     {
                         try
                         {
-                            LocalWorld = new World.World(this, "LocalWorld", 16, false, true);
+                            LocalWorld = new World.World(this, "LocalWorld", 16, false, trains);
                             MeshHelper.BuildLocalWorld(LocalWorld);
                         }
                         catch (Exception e)
