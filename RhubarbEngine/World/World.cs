@@ -646,7 +646,7 @@ namespace RhubarbEngine.World
             Local = _local;
             if (!Userspace && !Local)
 			{
-				NetModule = new RhuNetModule(this);
+				NetModule = new LNLNetModule(this);
 			}
 			else
 			{
@@ -726,7 +726,7 @@ namespace RhubarbEngine.World
 				{
 					StartTime = ((DataNode<DateTime>)data.GetValue("StartTime")).Value;
 				}
-				catch { }
+				catch(Exception _) { }
 			}
 		}
 		public virtual void Dispose()

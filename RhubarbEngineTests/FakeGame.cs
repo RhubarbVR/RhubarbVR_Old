@@ -76,12 +76,15 @@ namespace RhubarbEngine
             _waiter.WaitOne();
         }
 
-        public FakeGame()
+        public FakeGame(bool autostart= true)
         {
-            StartRhubarbEngine();
+            if (autostart)
+            {
+                StartRhubarbEngine();
+            }
         }
 
-        private void StartRhubarbEngine()
+        public void StartRhubarbEngine(string dataPathAdd="")
         {
             if (RhubarbInstanceCheck.InstanceCheck)
             {
@@ -92,7 +95,7 @@ namespace RhubarbEngine
             try
             {
                 RhubarbInstanceCheck.InstanceCheck = true;
-                engine.dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Tests", $"{DateTime.Now.ToString().Replace("/", "-").Replace(":", "_")}");
+                engine.dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Tests", $"{DateTime.Now.ToString().Replace("/", "-").Replace(":", "_")}{dataPathAdd}");
                 engine.Initialize<EngineInitializer<PlatformInfoManager, NullWindowManager, InputManager,RenderManager,AudioManager,NetApiManager,WorldManager>,UnitLogs>(Array.Empty<string>(), true, false);
                 engine.OnEngineStarted += Engine_OnEngineStarted;
                 Task.Run(Start);

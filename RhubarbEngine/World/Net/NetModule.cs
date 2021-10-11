@@ -38,7 +38,7 @@ namespace RhubarbEngine.World.Net
 		private readonly bool _noq;
 
 		public virtual string Token { get; }
-		public virtual IReadOnlyList<Peer> Peers { get; }
+		public virtual IEnumerable<Peer> Peers { get; }
 
 
 		public NetModule(World world, bool noq = false)
