@@ -44,6 +44,7 @@ namespace RhubarbEngine
         public GraphicsBackend Backend { get; set; }
         bool Rendering { get; set; }
         bool Audio { get; set; }
+        string LoginToken { get; set; }
 
         event Action OnEngineStarted;
 
@@ -90,6 +91,8 @@ namespace RhubarbEngine
         public bool Audio { get; set; } = true;
 
         public event Action OnEngineStarted;
+
+        public string LoginToken { get; set; }
 
         public void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool createLocalWorld = true) where TEngineInitializer: IEngineInitializer where TUnitLogs : IUnitLogs
         {
@@ -139,7 +142,22 @@ namespace RhubarbEngine
             engineInitializer = (IEngineInitializer)Activator.CreateInstance(typeof(TEngineInitializer), this);
             engineInitializer.CreateLocalWorld = createLocalWorld;
             logger.Log("Loading Arguments:", true);
-			engineInitializer.LoadArguments(_args);
+            for (var i = 0; i < _args.Length; i++)
+            {
+                if(i == 0)
+                {
+                    Logger.Log(_args[i], true);
+                }
+                else if (_args[i - 1] != "-token")
+                {
+                    Logger.Log(_args[i], true);
+                }
+                else
+                {
+                    LoginToken = _args[i];
+                }
+            }
+            engineInitializer.LoadArguments(_args);
 			logger.Log("Datapath: " + dataPath);
 			//Build DataFolder
 			if (!Directory.Exists(dataPath))

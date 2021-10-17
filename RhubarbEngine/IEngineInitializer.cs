@@ -141,10 +141,6 @@ namespace RhubarbEngine
 
         public void LoadArguments(string[] _args)
 		{
-			foreach (var arg in _args)
-			{
-				_engine.Logger.Log(arg, true);
-			}
 			Parser.Default.ParseArguments<CommandLineOptions>(_args)
 				.WithParsed(o =>
 				{

@@ -57,11 +57,11 @@
 
   <ItemGroup>
     <PackageReference Include="BEPUik" Version="1.5.1" />
-    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="94.4.20" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="94.4.50" />
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
     <PackageReference Include="Concentus" Version="1.1.7" />
     <PackageReference Include="DiscordRichPresence" Version="1.0.175" />
-    <PackageReference Include="LiteNetLib" Version="0.9.5" />
+    <PackageReference Include="LiteNetLib" Version="0.9.5.2" />
     <PackageReference Include="MessagePack" Version="2.3.85" />
     <PackageReference Include="NAudio.Core" Version="2.0.0" />
     <PackageReference Include="RhubarbBulletSharpNET5" Version="1.0.3" />
@@ -149,15 +149,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="93.1.11" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="94.4.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="94.4.2" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="94.4.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="94.4.2" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="94.4.5" />
   </ItemGroup>
 
 </Project>

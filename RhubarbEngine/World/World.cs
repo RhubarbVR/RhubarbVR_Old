@@ -646,7 +646,7 @@ namespace RhubarbEngine.World
             Local = _local;
             if (!Userspace && !Local)
 			{
-				NetModule = new LNLNetModule(this);
+				NetModule = new LNLNetModule(this,"S");
 			}
 			else
 			{

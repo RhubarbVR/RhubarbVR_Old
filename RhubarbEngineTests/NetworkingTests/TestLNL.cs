@@ -24,7 +24,6 @@ namespace RhubarbEngine.World.Tests
 
     public class MultiGameInstaces : IEnumerable<GameInstances>
     {
-        public S
 
         public IEnumerator<GameInstances> GetEnumerator()
         {
