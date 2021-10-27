@@ -231,9 +231,10 @@ namespace RhubarbEngine.Components.PrivateSpace
 				var now = DateTime.Now;
 				dateTextDriver.Drivevalue = $"{((now.Hour > 12) ? $"pm {now.Hour - 12}" : ((now.Hour == 0) ? "pm 12" : $"am {now.Hour}"))}:{((now.Minute < 10) ? $"0{now.Minute}" : now.Minute)}\n";
 				dateTextDriver.Drivevalue += $"{now.Month}/{((now.Day < 10) ? $"0{now.Day}" : now.Day)}/{now.Year}\n";
-				dateTextDriver.Drivevalue += $"FPS {Engine.PlatformInfo.AvrageFrameRate}";
-			}
-			if (DateTime.UtcNow <= _opened + new TimeSpan(0, 0, 1))
+				dateTextDriver.Drivevalue += $"FPS {Engine.PlatformInfo.AvrageFrameRate}\n";
+                dateTextDriver.Drivevalue += $"DisplayName {Engine.NetApiManager.DisplayName}";
+            }
+            if (DateTime.UtcNow <= _opened + new TimeSpan(0, 0, 1))
             {
                 return;
             }
