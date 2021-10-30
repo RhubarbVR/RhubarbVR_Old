@@ -38,8 +38,8 @@ namespace RhubarbEngine.Managers
     {
         private const string RHUBARB_MATRIX_END_POINT = "https://matrix.rhubarbvr.net/";
 
-        //private const string RHUBARB_API_END_POINT = "https://api.rhubarbvr.net/";
-        private const string RHUBARB_API_END_POINT = "http://localhost:5000/";
+        private const string RHUBARB_API_END_POINT = "https://api.rhubarbvr.net/";
+        //private const string RHUBARB_API_END_POINT = "http://localhost:5000/";
 
         private IEngine _engine;
 

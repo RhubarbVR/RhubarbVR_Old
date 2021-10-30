@@ -73,7 +73,7 @@ namespace RhubarbEngine.World.Net
 
 		private void RhuClient_dataRecived(Data arg1, IPEndPoint arg2)
 		{
-			_world.NetworkReceiveEvent(arg1.data, GetPeerFromEndPoint(arg2));
+			_world.NetworkReceiveEvent(arg1.data, GetPeerFromEndPoint(arg2),ReliabilityLevel.Reliable);
 		}
 
 		private RhuPeer GetPeerFromEndPoint(IPEndPoint e)

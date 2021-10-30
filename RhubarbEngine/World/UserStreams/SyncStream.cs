@@ -74,7 +74,7 @@ namespace RhubarbEngine.World
 			var obj = new DataNodeGroup();
 			var Value = typeof(T).IsEnum ? new DataNode<int>((int)(object)_value) : (IDataNode)new DataNode<T>(_value);
             obj.SetValue("Value", Value);
-			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Unreliable, obj, ReferenceID.id);
+			World.NetModule?.AddToQueue(Net.ReliabilityLevel.LatestOnly, obj, ReferenceID.id);
 		}
 		public SyncStream()
 		{

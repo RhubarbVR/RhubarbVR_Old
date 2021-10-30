@@ -151,80 +151,68 @@ namespace RhubarbEngine.World
 
 		public void LoadSelf()
 		{
-			user = (byte)users.Count();
             users.Add();
-			userLoaded = true;
-		}
+            user = (byte)(users.Count() - 1);
+            userLoaded = true;
+            UserJoined(users[user]);
+        }
 
 		public bool userLoaded = false;
 
-		public void NetworkReceiveEvent(byte[] vale, Peer fromPeer)
+		public void NetworkReceiveEvent(byte[] vale, Peer fromPeer, ReliabilityLevel deliveryMethod)
 		{
-			try
-			{
-				var dataNodeGroup = new DataNodeGroup(vale);
-				if (_waitingForInitSync)
-				{
-					if (((DataNode<string>)dataNodeGroup.GetValue("responses")) != null)
-					{
-						if (((DataNode<string>)dataNodeGroup.GetValue("responses")).Value == "WorldSync")
-						{
-                            worldManager.Engine.Logger.Log("Loading Start State");
-							try
-							{
-								var node = (DataNodeGroup)dataNodeGroup.GetValue("data");
-								var loadded = new List<Action>();
-								DeSerialize(node, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
-								LoadSelf();
-								foreach (var item in loadded)
-								{
-									item?.Invoke();
-								}
-								_waitingForInitSync = false;
-							}
-							catch (Exception e)
-							{
-                                worldManager.Engine.Logger.Log("Failed To Load Start State Error" + e.ToString());
-							}
-
-						}
-					}
-				}
-				else
-				{
-					var val = (DataNode<ulong>)dataNodeGroup.GetValue("id");
-					var level = (DataNode<int>)dataNodeGroup.GetValue("level");
-					try
-					{
-						var member = (ISyncMember)GetWorldObj(new NetPointer(val.Value));
-						member.ReceiveData((DataNodeGroup)dataNodeGroup.GetValue("data"), fromPeer);
-					}
-					catch
-					{
-						if ((ReliabilityLevel)level.Value != ReliabilityLevel.Unreliable)
-						{
-							if (unassignedValues.ContainsKey(val.Value))
-							{
-								unassignedValues[val.Value].Add(((DataNodeGroup)dataNodeGroup.GetValue("data"), DateTime.UtcNow, fromPeer));
-							}
-							else
-							{
-                                var saveobjs = new List<(DataNodeGroup, DateTime, Peer)>
+            try
+            {
+                var dataNodeGroup = new DataNodeGroup(vale);
+                try
+                {
+                    if (_waitingForInitSync)
+                    {
+                        if (((DataNode<string>)dataNodeGroup.GetValue("responses")) != null)
+                        {
+                            if (((DataNode<string>)dataNodeGroup.GetValue("responses")).Value == "WorldSync")
+                            {
+                                worldManager.Engine.Logger.Log("Loading Start State");
+                                try
                                 {
-                                    ((DataNodeGroup)dataNodeGroup.GetValue("data"), DateTime.UtcNow, fromPeer)
-                                };
-                                unassignedValues.TryAdd(val.Value, saveobjs);
-							}
+                                    var node = (DataNodeGroup)dataNodeGroup.GetValue("data");
+                                    var loadded = new List<Action>();
+                                    DeSerialize(node, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
+                                    LoadSelf();
+                                    foreach (var item in loadded)
+                                    {
+                                        item?.Invoke();
+                                    }
+                                    _waitingForInitSync = false;
+                                }
+                                catch (Exception e)
+                                {
+                                    worldManager.Engine.Logger.Log("Failed To Load Start State Error" + e.ToString());
+                                }
 
-
-						}
-					}
-				}
-			}
-			catch (Exception e)
-			{
-                worldManager.Engine.Logger.Log("Error With Net Request Size: " + vale.Length + " Error: " + e.ToString(), true);
-			}
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var val = (DataNode<ulong>)dataNodeGroup.GetValue("id");
+                        try
+                        {
+                            var member = (ISyncMember)GetWorldObj(new NetPointer(val.Value));
+                            member.ReceiveData((DataNodeGroup)dataNodeGroup.GetValue("data"), fromPeer);
+                        }
+                        catch (Exception e)
+                        {
+                            worldManager.Engine.Logger.Log("Error With ID"+ val.ToString()+" Net Request Size: " + vale.Length + " Error: " + e.ToString(), true);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    worldManager.Engine.Logger.Log("Error With Net Request Size: " + vale.Length + " Error: " + e.ToString(), true);
+                }
+            }
+            catch { }
 		}
 
 		public void PeerConnectedEvent(Peer peer)
@@ -712,7 +700,7 @@ namespace RhubarbEngine.World
 			UserJoined(HostUser);
 		}
 
-		public NetPointer BuildRefID()
+        public NetPointer BuildRefID()
 		{
 			position += Posoffset;
             return !_worldObjects.ContainsKey(NetPointer.BuildID(position, user)) ? NetPointer.BuildID(position, user) : BuildRefID();

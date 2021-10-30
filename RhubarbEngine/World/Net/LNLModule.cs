@@ -61,12 +61,12 @@ namespace RhubarbEngine.World.Net
         {
             get
             {
-//                return new IPEndPoint(IPAddress.Parse("5.135.157.47"), 50010);
-                return new IPEndPoint(IPAddress.Loopback, 50010);
+                return new IPEndPoint(IPAddress.Parse("5.135.157.47"), 50010);
+                //return new IPEndPoint(IPAddress.Loopback, 50010);
             }
         }
 
-        public LNLNetModule(World world, string sessionID) : base(world)
+        public LNLNetModule(World world, string sessionID) : base(world,false)
 		{
 			Console.WriteLine("Starting net");
             netClient = new NetManager(this)
@@ -150,7 +150,16 @@ namespace RhubarbEngine.World.Net
 
         public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
         {
-            _world.NetworkReceiveEvent(reader.RawData, (LNLPeer)peer.Tag);
+            var reliabilityLevel = deliveryMethod switch
+            {
+                DeliveryMethod.Unreliable => ReliabilityLevel.Unreliable,
+                DeliveryMethod.ReliableUnordered => ReliabilityLevel.LatestOnly,
+                DeliveryMethod.Sequenced => ReliabilityLevel.Reliable,
+                DeliveryMethod.ReliableOrdered => ReliabilityLevel.Reliable,
+                DeliveryMethod.ReliableSequenced => ReliabilityLevel.Reliable,
+                _ => ReliabilityLevel.Unreliable,
+            };
+            _world.NetworkReceiveEvent(reader.RawData, (LNLPeer)peer.Tag, reliabilityLevel);
         }
 
         public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)

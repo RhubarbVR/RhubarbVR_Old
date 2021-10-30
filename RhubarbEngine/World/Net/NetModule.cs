@@ -59,7 +59,6 @@ namespace RhubarbEngine.World.Net
 			{
 				var node = new DataNodeGroup();
 				node.SetValue("data", item.data);
-				node.SetValue("level", new DataNode<int>((int)item.reliabilityLevel));
 				node.SetValue("id", new DataNode<ulong>(item.id));
 				if (item.reliabilityLevel is ReliabilityLevel.LatestOnly or ReliabilityLevel.Unreliable)
 				{
