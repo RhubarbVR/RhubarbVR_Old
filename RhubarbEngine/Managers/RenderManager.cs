@@ -391,7 +391,7 @@ namespace RhubarbEngine.Managers
 
 		private void RenderRenderObjects()
 		{
-			foreach (var world in _engine.WorldManager.Worlds)
+			foreach (var world in _engine.WorldManager.Worlds.ToArray())
 			{
 				if (world.Focus != World.World.FocusLevel.Background)
 				{

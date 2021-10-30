@@ -26,14 +26,22 @@ namespace RhubarbEngine.Managers
 
         public string DeviceID { get;  }
 
+        Task<bool> CheckForSession(string roomID);
+        Task<IReadOnlyList<JToken>> GetRooms();
+        Task<string> JoinSession(string roomID);
         Task LoadUserData(string Token);
+        Task<string> SendRhubarbAPIPost(string Location, JObject objects);
+        Task<string> UpdateSession(string sToken);
     }
 
     public class NetApiManager : INetApiManager
     {
-        private const string RHUBARB_END_POINT = "https://matrix.rhubarbvr.net/";
+        private const string RHUBARB_MATRIX_END_POINT = "https://matrix.rhubarbvr.net/";
 
-		private IEngine _engine;
+        //private const string RHUBARB_API_END_POINT = "https://api.rhubarbvr.net/";
+        private const string RHUBARB_API_END_POINT = "http://localhost:5000/";
+
+        private IEngine _engine;
 
 		public string Token { get; set; } = "";
 
@@ -59,9 +67,67 @@ namespace RhubarbEngine.Managers
 			return this;
 		}
 
+        public async Task<string> UpdateSession(string sToken)
+        {
+            var obj = new JObject
+            {
+                ["AToken"] = sToken,
+                ["MToken"] = Token
+            };
+            return await SendRhubarbAPIPost("Session/updateUser", obj);
+        }
+
+        public async Task<string> JoinSession(string roomID)
+        {
+            var obj = new JObject
+            {
+                ["RoomID"] = roomID,
+                ["Token"] = Token
+            };
+            return await SendRhubarbAPIPost("Session/joinSession", obj);
+        }
+
+
+        public async Task<bool> CheckForSession(string roomID)
+        {
+            var obj = new JObject
+            {
+                ["RoomID"] = roomID,
+                ["Token"] = Token
+            };
+            return await SendRhubarbAPIPost("Session/checkForSession", obj) == "True";
+        }
+
+        public async Task<IReadOnlyList<JToken>> GetRooms()
+        {
+            var data = await SendAuthenticatedGet("sync");
+            return data["rooms"]["join"].ToArray();
+        } 
+
+        public async Task<string> SendRhubarbAPIPost(string Location,JObject objects)
+        {
+            try
+            {
+                var request = (HttpWebRequest)WebRequest.Create(RHUBARB_API_END_POINT + Location);
+                request.Method = "POST";
+                request.ContentType = "application/json";
+                var dataStream = request.GetRequestStream();
+                var byteArray = Encoding.UTF8.GetBytes(objects.ToString());
+                dataStream.Write(byteArray, 0, byteArray.Length);
+                dataStream.Close();
+                var response = await request.GetResponseAsync();
+                var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                return responseString;
+            } catch (Exception e)
+            {
+                _engine.Logger.Log(e.ToString());
+                return "";
+            }
+        }
+
         public async Task<JObject> SendAuthenticatedGet(string Location,string Front = "_matrix/client/r0/")
         {
-                var request = (HttpWebRequest)WebRequest.Create(RHUBARB_END_POINT + Front + Location);
+                var request = (HttpWebRequest)WebRequest.Create(RHUBARB_MATRIX_END_POINT + Front + Location);
                 request.Headers.Add("Authorization", "Bearer " + Token);
                 request.Method = "GET";
                 request.ContentType = "application/json";
@@ -74,7 +140,7 @@ namespace RhubarbEngine.Managers
         {
             try
             {
-                var request = (HttpWebRequest)WebRequest.Create(RHUBARB_END_POINT + "_matrix/client/r0/account/whoami");
+                var request = (HttpWebRequest)WebRequest.Create(RHUBARB_MATRIX_END_POINT + "_matrix/client/r0/account/whoami");
                 request.Headers.Add("Authorization", "Bearer " + Token);
                 request.Method = "GET";
                 request.ContentType = "application/json";

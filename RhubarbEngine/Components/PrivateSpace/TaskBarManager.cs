@@ -102,7 +102,12 @@ namespace RhubarbEngine.Components.PrivateSpace
 			createSyer.label.Value = "Create Sphere";
 			createSyer.action.Target = CreateSphere;
 
-			imGUICanvas.element.Target = group;
+
+            var sessionButton = e.AttachComponent<ImGUIButton>();
+            sessionButton.label.Value = "Join main Session";
+            sessionButton.action.Target = JoinMainSession;
+
+            imGUICanvas.element.Target = group;
 			group.children.Add().Target = createCube;
 
 			createWindow.label.Value = "Create Window";
@@ -112,10 +117,16 @@ namespace RhubarbEngine.Components.PrivateSpace
 			group.children.Add().Target = createWindow;
 			group.children.Add().Target = createWindow2;
 			group.children.Add().Target = createSyer;
-			e.enabled.Value = false;
+            group.children.Add().Target = sessionButton;
+            e.enabled.Value = false;
 		}
 
-		private void CreateWindow()
+        private void JoinMainSession()
+        {
+            Engine.WorldManager.CreateNewWorld("Main Session", true, 16, "!NVkSFpkqKmJBtNDhkr:rhubarbvr.net");
+        }
+
+        private void CreateWindow()
 		{
 			Logger.Log("Create Window");
 			var createWorld = World.worldManager.FocusedWorld ?? World;

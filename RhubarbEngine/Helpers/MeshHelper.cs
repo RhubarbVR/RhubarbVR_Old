@@ -104,7 +104,7 @@ namespace RhubarbEngine.Helpers
             return e;
         }
 
-        public static (RMaterial, PlaneMesh,Entity) BlankWorld(World.World world)
+        public static (RMaterial, PlaneMesh,Entity,MeshRender) BlankWorld(World.World world)
         {
             world.RootEntity.AttachComponent<SimpleSpawn>();
             var floor = world.RootEntity.AddChild("Floor");
@@ -115,15 +115,15 @@ namespace RhubarbEngine.Helpers
             planemesh.Width.Value = 1000f;
             planemesh.Height.Value = 1000f;
             planecol.boxExtents.Value = new Vector3f(planemesh.Width.Value, 0.01f, planemesh.Height.Value);
-            return (mit, planemesh, floor);
+            var meshRender = floor.AttachComponent<MeshRender>();
+            meshRender.Materials.Add().Target = mit;
+            meshRender.Mesh.Target = planemesh;
+            return (mit, planemesh, floor, meshRender);
         }
 
         public static void BuildLocalWorld(World.World world)
         {
-            var (mit, planemesh, floor) = BlankWorld(world);
-            var meshRender = floor.AttachComponent<MeshRender>();
-            meshRender.Materials.Add().Target = mit;
-            meshRender.Mesh.Target = planemesh;
+            var (mit, planemesh, floor, meshRender) = BlankWorld(world);
             var tilefield = mit.GetField<Render.Material.Fields.Vec2Field>("Tile", Render.Shader.ShaderType.MainFrag);
             tilefield.field.Value = new Vector2f(500, 500);
 

@@ -223,14 +223,14 @@ namespace RhubarbEngine.World
 			}
 			catch (Exception e)
 			{
-                worldManager.Engine.Logger.Log("Error With Net Reqwest Size: " + vale.Length + " Error: " + e.ToString(), true);
+                worldManager.Engine.Logger.Log("Error With Net Request Size: " + vale.Length + " Error: " + e.ToString(), true);
 			}
 		}
 
 		public void PeerConnectedEvent(Peer peer)
 		{
             worldManager.Engine.Logger.Log("We got connection");
-			if (!_waitingForInitSync)
+			if (!_waitingForInitSync && !starting)
 			{
                 worldManager.Engine.Logger.Log("Sent start state");
 				var send = new DataNodeGroup();
@@ -247,8 +247,9 @@ namespace RhubarbEngine.World
 
 		public Sync<float> AngularDamping;
 
-		[NoSaveAttribute]
-		public Sync<string> SessionID;
+        [NoSync]
+		[NoSave]
+		public Sync<string> MatrixRoomID;
 
 		public DateTime StartTime { get; private set; } = DateTime.UtcNow;
 
@@ -576,7 +577,7 @@ namespace RhubarbEngine.World
 			{
 				Posoffset = 12;
 			}
-			SessionID = new Sync<string>(this, this, !networkload);
+			MatrixRoomID = new Sync<string>(this, this, !networkload);
 			Name = new Sync<string>(this, this, !networkload);
 			Gravity = new Sync<Vector3f>(this, this, !networkload);
 			Gravity.Changed += Gravity_Changed;
@@ -613,7 +614,10 @@ namespace RhubarbEngine.World
 		public Sync<bool> Eighteenandolder;
 		[NoSave]
 		public Sync<bool> Mobilefriendly;
-        public World(IWorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false, DataNodeGroup datanode = null, bool CreateBlank = false) : this(_worldManager)
+
+        public bool starting { get; private set; }
+
+        public World(IWorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false, string roomID = null, DataNodeGroup datanode = null, bool CreateBlank = false) : this(_worldManager)
 		{
 			var random = new Random();
 			Posoffset = (byte)random.Next();
@@ -621,8 +625,11 @@ namespace RhubarbEngine.World
 			{
 				Posoffset = 1;
 			}
-			SessionID = new Sync<string>(this, this);
-			Name = new Sync<string>(this, this);
+            MatrixRoomID = new Sync<string>(this, this)
+            {
+                Value = roomID
+            };
+            Name = new Sync<string>(this, this);
             Gravity = new Sync<Vector3f>(this, this)
             {
                 Value = new Vector3f(0, -10, 0)
@@ -646,13 +653,15 @@ namespace RhubarbEngine.World
             Local = _local;
             if (!Userspace && !Local)
 			{
-				NetModule = new LNLNetModule(this,"S");
+				NetModule = new LNLNetModule(this,roomID);
 			}
 			else
 			{
 				NetModule = new NUllNetModule(this);
 				LoadHostUser();
-			}
+                starting = false;
+            }
+            worldManager.Engine.Logger.Log("Starting next net module");
             if (!CreateBlank && datanode is not null)
             {
                 var loadded = new List<Action>();
@@ -661,20 +670,40 @@ namespace RhubarbEngine.World
                 {
                     item?.Invoke();
                 }
+                starting = false;
             }
             else
             {
-                if (!_userspace && !_local)
-                {
-                    worldManager.Engine.Logger.Log("Building Blank World");
-                    MeshHelper.BlankWorld(this);
-                }
-
+                LoadData().ConfigureAwait(false);
             } 
 		}
 
+        public async Task LoadData()
+        {
+            bool isNew;
+            if (MatrixRoomID.Value.Length <= 5)
+            {
+                isNew = false;
+            }
+            else
+            {
+                isNew = await worldManager.Engine.NetApiManager.CheckForSession(MatrixRoomID.Value);
+            }
+            if (isNew)
+            {
+                worldManager.Engine.Logger.Log("Join Session");
+                _waitingForInitSync = true;
+            }
+            else if (!Userspace && !Local)
+            {
+                worldManager.Engine.Logger.Log("Building Blank World");
+                MeshHelper.BlankWorld(this);
+                LoadHostUser();
+            }
+            starting = false;
+        }
 
-		public void LoadHostUser()
+        public void LoadHostUser()
 		{
 			user = 0;
 			_waitingForInitSync = false;

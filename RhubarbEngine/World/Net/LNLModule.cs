@@ -61,7 +61,8 @@ namespace RhubarbEngine.World.Net
         {
             get
             {
-                return new IPEndPoint(IPAddress.Parse("localhost"), 50010);
+//                return new IPEndPoint(IPAddress.Parse("5.135.157.47"), 50010);
+                return new IPEndPoint(IPAddress.Loopback, 50010);
             }
         }
 
@@ -75,9 +76,17 @@ namespace RhubarbEngine.World.Net
             };
             netClient.NatPunchModule.Init(this);
             netClient.Start();
-            netClient.NatPunchModule.SendNatIntroduceRequest(MainPunchServer, world.worldManager.Engine.NetApiManager.Token + sessionID);
+            Int(sessionID).ConfigureAwait(false);
         }
-
+        
+        private async Task Int(string id)
+        {
+            _world.worldManager.Engine.Logger.Log("tried to start");
+            var token = await _world.worldManager.Engine.NetApiManager.JoinSession(id);
+            _world.worldManager.Engine.Logger.Log("Token: " + token);
+            netClient.NatPunchModule.SendNatIntroduceRequest(MainPunchServer, token);
+            _world.worldManager.Engine.Logger.Log("into");
+        }
 
         public override void SendData(DataNodeGroup node, NetData item)
 		{
@@ -117,9 +126,11 @@ namespace RhubarbEngine.World.Net
 
         public void OnPeerConnected(NetPeer peer)
         {
+            _world.worldManager.Engine.Logger.Log("UserConnected");
             var cpeer = new LNLPeer(this, peer);
             peer.Tag = cpeer;
             rhuPeers.Add(cpeer);
+            _world.PeerConnectedEvent(cpeer);
         }
 
         public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
@@ -134,7 +145,7 @@ namespace RhubarbEngine.World.Net
 
         public void OnNetworkError(IPEndPoint endPoint, SocketError socketError)
         {
-            _world.worldManager.Engine.Logger.Log("Conection Error"+socketError.ToString(), true);
+            _world.worldManager.Engine.Logger.Log("Connection Error"+socketError.ToString(), true);
         }
 
         public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
@@ -155,7 +166,7 @@ namespace RhubarbEngine.World.Net
         public void OnConnectionRequest(ConnectionRequest request)
         {
             _world.worldManager.Engine.Logger.Log("Request: " + request.Data.GetString(), true);
-            request.AcceptIfKey("RhubarbVR");
+            request.Accept();
         }
 
         public void OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token)

@@ -46,7 +46,7 @@ namespace RhubarbEngine.Managers
         void AddToRenderQueue(RenderQueue gu, RemderLayers layer, BoundingFrustum frustum, Matrix4x4 view);
         void CleanUp();
         void CloseWorld(World.World world);
-        World.World CreateNewWorld(string Name = "New World", bool focus = true, int maxUsers = 16);
+        World.World CreateNewWorld(string Name = "New World", bool focus = true, int maxUsers = 16,string roomID="");
         byte[] FocusedWorldToBytes();
         World.World LoadWorldFromBytes(byte[] data);
         void Update(DateTime startTime, DateTime Frame);
@@ -204,7 +204,7 @@ namespace RhubarbEngine.Managers
                         try
                         {
                             var node = new DataNodeGroup(File.ReadAllBytes(Engine.DataPath + "/LocalWorld.RWorld"));
-                            LocalWorld = new World.World(this, "LocalWorld", 16, false, true, node);
+                            LocalWorld = new World.World(this, "LocalWorld", 16, false, true,null, node);
                         }
                         catch (Exception e)
                         {
@@ -234,20 +234,15 @@ namespace RhubarbEngine.Managers
 			return this;
 		}
 
-        //private void JoinSessionFromUUID(string session, bool v)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
         public void CloseWorld(World.World world)
         {
             world.Dispose();
         }
 
-        public World.World CreateNewWorld(string Name = "New World",bool focus = true,int maxUsers = 16)
+        public World.World CreateNewWorld(string Name = "New World",bool focus = true,int maxUsers = 16,string roomID="")
         {
             Engine.Logger.Log($"Creating New World Name:'{Name}' Focus{focus}  MaxUsers {maxUsers}");
-            var newworld = new World.World(this, Name, maxUsers,false,false,null,true);
+            var newworld = new World.World(this, Name, maxUsers,false,false,roomID, null, true);
             Worlds.Add(newworld);
             newworld.Focus = focus ? World.World.FocusLevel.Focused : World.World.FocusLevel.Background;
             return newworld;

@@ -158,7 +158,7 @@ namespace RhubarbEngine
                 }
             }
             engineInitializer.LoadArguments(_args);
-			logger.Log("Datapath: " + dataPath);
+			logger.Log("Data path: " + dataPath);
 			//Build DataFolder
 			if (!Directory.Exists(dataPath))
 			{
