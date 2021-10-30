@@ -61,12 +61,12 @@ namespace RhubarbEngine.World.ECS
                 {
                     Console.WriteLine("Problem With " + GetType().FullName);
                 }
-                newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
-                if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
+                newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID(), ReferenceID.GetID());
+                if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID()))
                 {
-                    foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
+                    foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID()])
                     {
-                        func(ReferenceID.getID());
+                        func(ReferenceID.GetID());
                     }
                 }
             }

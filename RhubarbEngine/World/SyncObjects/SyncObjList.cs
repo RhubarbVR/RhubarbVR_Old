@@ -132,15 +132,14 @@ namespace RhubarbEngine.World
 			}
 			else
 			{
-				var a = new T();
-				a.Initialize(World, this, false);
+                var a = Add(false);
 				var actions = new List<Action>();
 				a.DeSerialize((DataNodeGroup)data.GetValue("Data"), actions, false);
-				_synclist.SafeAdd(a);
 				foreach (var item in actions)
 				{
 					item?.Invoke();
 				}
+
 			}
 		}
 
@@ -164,12 +163,12 @@ namespace RhubarbEngine.World
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
-				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID(), ReferenceID.GetID());
+				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID()))
 				{
-					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
+					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID()])
 					{
-						func(ReferenceID.getID());
+						func(ReferenceID.GetID());
 					}
 				}
 			}

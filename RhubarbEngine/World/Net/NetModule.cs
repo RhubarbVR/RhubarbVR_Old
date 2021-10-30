@@ -47,7 +47,7 @@ namespace RhubarbEngine.World.Net
 			_noq = noq;
 		}
 
-		public List<NetData> NetQueue = new();
+		public SynchronizedCollection<NetData> NetQueue = new();
 
 		public virtual void DropQ()
 		{
@@ -102,7 +102,7 @@ namespace RhubarbEngine.World.Net
             }
 
             var netdata = new NetData(_reliabilityLevel, _data, _id);
-			NetQueue.Add(netdata);
+			NetQueue.SafeAdd(netdata);
 		}
 	}
 }

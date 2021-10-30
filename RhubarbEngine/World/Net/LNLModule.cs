@@ -93,7 +93,7 @@ namespace RhubarbEngine.World.Net
             switch (item.reliabilityLevel)
             {
                 case ReliabilityLevel.Unreliable:
-                    netClient.SendToAll(node.GetByteArray(),DeliveryMethod.Unreliable);
+                    netClient.SendToAll(node.GetByteArray(), DeliveryMethod.Unreliable);
                     break;
                 case ReliabilityLevel.LatestOnly:
                     netClient.SendToAll(node.GetByteArray(), DeliveryMethod.ReliableUnordered);
@@ -150,6 +150,14 @@ namespace RhubarbEngine.World.Net
 
         public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
         {
+            if((peer.ConnectionState is not ConnectionState.Connected) || peer.Tag is null)
+            {
+                return;
+            }
+            if(peer.Tag.GetType() != typeof(LNLPeer))
+            {
+                return;
+            }
             var reliabilityLevel = deliveryMethod switch
             {
                 DeliveryMethod.Unreliable => ReliabilityLevel.Unreliable,
@@ -159,7 +167,7 @@ namespace RhubarbEngine.World.Net
                 DeliveryMethod.ReliableSequenced => ReliabilityLevel.Reliable,
                 _ => ReliabilityLevel.Unreliable,
             };
-            _world.NetworkReceiveEvent(reader.RawData, (LNLPeer)peer.Tag, reliabilityLevel);
+            _world.NetworkReceiveEvent(reader.GetRemainingBytes(), (LNLPeer)peer.Tag, reliabilityLevel);
         }
 
         public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)

@@ -1,30 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RhubarbEngine.Managers;
-using RhubarbEngine.World.ECS;
-using RhubarbEngine.World.DataStructure;
-using System.Reflection;
-using RhubarbDataTypes;
-using RNumerics;
-using RhubarbEngine.Render;
-using System.Numerics;
-using RhubarbEngine.Components.Users;
-using RhubarbEngine.Components.Assets.Procedural_Meshes;
-using RhubarbEngine.World.Net;
-using BulletSharp;
-using BulletSharp.Math;
-using System.Net;
-using RhubarbEngine.Components.Interaction;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Reflection;
+using System.Threading.Tasks;
+
+using BulletSharp;
+
+using RhubarbDataTypes;
+
+using RhubarbEngine.Components.Interaction;
+using RhubarbEngine.Components.Users;
 using RhubarbEngine.Helpers;
+using RhubarbEngine.Managers;
+using RhubarbEngine.Render;
+using RhubarbEngine.World.DataStructure;
+using RhubarbEngine.World.ECS;
+using RhubarbEngine.World.Net;
+
+using RNumerics;
 
 namespace RhubarbEngine.World
 {
-	public class World : IWorldObject
+    public class World : IWorldObject
 	{
 		public UpdateLists updateLists = new();
 
@@ -175,6 +173,7 @@ namespace RhubarbEngine.World
                                 worldManager.Engine.Logger.Log("Loading Start State");
                                 try
                                 {
+                                    _worldObjects.Clear();
                                     var node = (DataNodeGroup)dataNodeGroup.GetValue("data");
                                     var loadded = new List<Action>();
                                     DeSerialize(node, loadded, false, new Dictionary<ulong, ulong>(), new Dictionary<ulong, List<RefIDResign>>());
@@ -203,7 +202,7 @@ namespace RhubarbEngine.World
                         }
                         catch (Exception e)
                         {
-                            worldManager.Engine.Logger.Log("Error With ID"+ val.ToString()+" Net Request Size: " + vale.Length + " Error: " + e.ToString(), true);
+                            worldManager.Engine.Logger.Log("Error With ID"+ val.Value.ToString()+" Net Request Size: " + vale.Length + " Error: " + e.ToString(), true);
                         }
                     }
                 }
@@ -212,13 +211,15 @@ namespace RhubarbEngine.World
                     worldManager.Engine.Logger.Log("Error With Net Request Size: " + vale.Length + " Error: " + e.ToString(), true);
                 }
             }
-            catch { }
-		}
+            catch {
+                worldManager.Engine.Logger.Log("Error With data Size: " + vale.Length ,true);
+            }
+        }
 
 		public void PeerConnectedEvent(Peer peer)
 		{
             worldManager.Engine.Logger.Log("We got connection");
-			if (!_waitingForInitSync && !starting)
+			if (!_waitingForInitSync && !Starting)
 			{
                 worldManager.Engine.Logger.Log("Sent start state");
 				var send = new DataNodeGroup();
@@ -325,8 +326,6 @@ namespace RhubarbEngine.World
 
 		private FocusLevel _focus = FocusLevel.Background;
 
-		public byte Posoffset { get; private set; }
-
 		public ulong position = 1;
 		public bool Userspace { get; private set; }
 		public bool Local { get; private set; }
@@ -388,34 +387,15 @@ namespace RhubarbEngine.World
 
 		private readonly ConcurrentDictionary<NetPointer, IWorldObject> _worldObjects = new();
 
-		public ConcurrentDictionary<ulong, List<(DataNodeGroup, DateTime, Peer)>> unassignedValues = new();
-
 		public void AddWorldObj(IWorldObject obj)
 		{
 			try
 			{
 				_worldObjects.TryAdd(obj.ReferenceID, obj);
-				if (unassignedValues.ContainsKey(obj.ReferenceID.id))
-				{
-					try
-					{
-						var member = (ISyncMember)obj;
-						foreach (var item in unassignedValues[obj.ReferenceID.id])
-						{
-							member.ReceiveData((DataNodeGroup)item.Item1.GetValue("data"), item.Item3);
-						}
-						unassignedValues.TryRemove(obj.ReferenceID.id, out var var);
-					}
-					catch
-					{
-
-					}
-				}
-
 			}
 			catch
 			{
-				worldManager.Engine.Logger.Log("RefId already existed: " + obj.ReferenceID.getID().ToString());
+				worldManager.Engine.Logger.Log("RefId already existed: " + obj.ReferenceID.GetID().ToString());
 			}
 		}
 
@@ -559,12 +539,6 @@ namespace RhubarbEngine.World
 
 		public World(IWorldManager _worldManager, DataNodeGroup node, bool networkload = false) : this(_worldManager)
 		{
-			var random = new Random();
-			Posoffset = (byte)random.Next();
-			if (Posoffset <= 0)
-			{
-				Posoffset = 12;
-			}
 			MatrixRoomID = new Sync<string>(this, this, !networkload);
 			Name = new Sync<string>(this, this, !networkload);
 			Gravity = new Sync<Vector3f>(this, this, !networkload);
@@ -603,16 +577,10 @@ namespace RhubarbEngine.World
 		[NoSave]
 		public Sync<bool> Mobilefriendly;
 
-        public bool starting { get; private set; }
+        public bool Starting { get; private set; }
 
         public World(IWorldManager _worldManager, string _Name, int MaxUsers, bool _userspace = false, bool _local = false, string roomID = null, DataNodeGroup datanode = null, bool CreateBlank = false) : this(_worldManager)
 		{
-			var random = new Random();
-			Posoffset = (byte)random.Next();
-			if (Posoffset == 0)
-			{
-				Posoffset = 1;
-			}
             MatrixRoomID = new Sync<string>(this, this)
             {
                 Value = roomID
@@ -647,7 +615,7 @@ namespace RhubarbEngine.World
 			{
 				NetModule = new NUllNetModule(this);
 				LoadHostUser();
-                starting = false;
+                Starting = false;
             }
             worldManager.Engine.Logger.Log("Starting next net module");
             if (!CreateBlank && datanode is not null)
@@ -658,7 +626,7 @@ namespace RhubarbEngine.World
                 {
                     item?.Invoke();
                 }
-                starting = false;
+                Starting = false;
             }
             else
             {
@@ -669,7 +637,11 @@ namespace RhubarbEngine.World
         public async Task LoadData()
         {
             bool isNew;
-            if (MatrixRoomID.Value.Length <= 5)
+            if(MatrixRoomID.Value is null)
+            {
+                isNew = false;
+            }
+            else if (MatrixRoomID.Value.Length <= 5)
             {
                 isNew = false;
             }
@@ -688,7 +660,7 @@ namespace RhubarbEngine.World
                 MeshHelper.BlankWorld(this);
                 LoadHostUser();
             }
-            starting = false;
+            Starting = false;
         }
 
         public void LoadHostUser()
@@ -702,7 +674,7 @@ namespace RhubarbEngine.World
 
         public NetPointer BuildRefID()
 		{
-			position += Posoffset;
+            position++;
             return !_worldObjects.ContainsKey(NetPointer.BuildID(position, user)) ? NetPointer.BuildID(position, user) : BuildRefID();
         }
 
@@ -732,7 +704,7 @@ namespace RhubarbEngine.World
                         }
                         catch (Exception e)
                         {
-                            throw new Exception($"Failed To DeSerialize Fieled {field.Name}", e);
+                            throw new Exception($"Failed To DeSerialize Failed {field.Name}", e);
                         }
                     }
 				}

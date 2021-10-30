@@ -65,7 +65,7 @@ namespace RhubarbEngine.Components.Users
 		public override void OnLoaded()
 		{
 			Entity.persistence.Value = false;
-			Logger.Log("Loaded Char");
+			Logger.Log("Loaded UserRoot");
 		}
 
 		public override void OnAttach()

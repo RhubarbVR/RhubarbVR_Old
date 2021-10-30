@@ -69,7 +69,7 @@ namespace RhubarbEngine.Components.Rendering
 			if (Mesh.Target.Value == null)
 			{
 				Logger.Log("no mesh to load");
-				Logger.Log($"{Mesh.Value.getID()}");
+				Logger.Log($"{Mesh.Value.GetID()}");
 			}
 			else
 			{

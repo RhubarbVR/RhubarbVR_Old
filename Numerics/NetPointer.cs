@@ -19,17 +19,17 @@ namespace RhubarbDataTypes
 			id = _id;
 		}
 
-		public ulong getID()
+		public ulong GetID()
 		{
 			return id;
 		}
-		public int getOwnerID()
+		public int GetOwnerID()
 		{
-			return (int)((id >> 8) & 0xFF);
-		}
+			return (byte)(id & 0xFF);
+        }
 		public static NetPointer BuildID(ulong position, byte user)
 		{
-			return new NetPointer(((position << 16) & 0xFFFF0000) | ((((ulong)user) & 0xFF) << 8) | (position & 0xFF));
+			return new NetPointer((position << 8) | (user & 0xFFuL));
 		}
 
 		public bool Equals(NetPointer other)

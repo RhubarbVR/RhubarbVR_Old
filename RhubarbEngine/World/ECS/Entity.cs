@@ -23,7 +23,7 @@ namespace RhubarbEngine.World.ECS
         {
             get
             {
-                return World.users[(int)ReferenceID.getOwnerID()];
+                return World.users[(int)ReferenceID.GetOwnerID()];
             }
         }
 

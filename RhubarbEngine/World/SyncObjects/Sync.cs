@@ -123,7 +123,7 @@ namespace RhubarbEngine.World
 			var obj = new DataNodeGroup();
 			var Value = typeof(T).IsEnum ? new DataNode<int>((int)(object)_value) : (IDataNode)new DataNode<T>(_value);
             obj.SetValue("Value", Value);
-			World.NetModule?.AddToQueue(Net.ReliabilityLevel.LatestOnly, obj, ReferenceID.id);
+			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, obj, ReferenceID.id);
 		}
 
         public Sync()
@@ -160,12 +160,12 @@ namespace RhubarbEngine.World
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
-				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID(), ReferenceID.GetID());
+				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID()))
 				{
-					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
+					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID()])
 					{
-						func(ReferenceID.getID());
+						func(ReferenceID.GetID());
 					}
 				}
 			}

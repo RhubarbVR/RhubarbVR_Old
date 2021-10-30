@@ -200,7 +200,7 @@ namespace RhubarbEngine
 
 		public void StartUpdateLoop()
 		{
-			engineInitializer = engineInitializer.Initialised ? null : throw new Exception("Engine not Initialised");
+			engineInitializer = engineInitializer.Initialised ? null : throw new Exception("Engine not Initialized");
             OnEngineStarted?.Invoke();
             while (windowManager.MainWindowOpen||!Rendering)
 			{

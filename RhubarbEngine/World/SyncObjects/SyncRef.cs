@@ -193,25 +193,25 @@ namespace RhubarbEngine.World
 			_temp = ((DataNode<NetPointer>)data.GetValue("targetRefID")).Value;
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
-				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID(), ReferenceID.GetID());
+				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID()))
 				{
-					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
+					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID()])
 					{
-						func(ReferenceID.getID());
+						func(ReferenceID.GetID());
 					}
 				}
-				if (newRefID.ContainsKey(_temp.getID()))
+				if (newRefID.ContainsKey(_temp.GetID()))
 				{
-					_temp = new NetPointer(newRefID[_temp.getID()]);
+					_temp = new NetPointer(newRefID[_temp.GetID()]);
 				}
 				else
 				{
-					if (!latterResign.ContainsKey(_temp.getID()))
+					if (!latterResign.ContainsKey(_temp.GetID()))
 					{
-						latterResign.Add(_temp.getID(), new List<RefIDResign>());
+						latterResign.Add(_temp.GetID(), new List<RefIDResign>());
 					}
-					latterResign[_temp.getID()].Add(RefIDResign);
+					latterResign[_temp.GetID()].Add(RefIDResign);
 				}
 
 			}

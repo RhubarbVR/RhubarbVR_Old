@@ -38,7 +38,10 @@ namespace RhubarbEngine.World
 		public T Add(T val, bool Refid = true)
         {
             val.Initialize(World, this, Refid);
-            val.OnLoaded();
+            if (!Refid)
+            {
+                val.OnLoaded();
+            }
             AddInternal(val);
 			if (Refid)
 			{
@@ -50,7 +53,10 @@ namespace RhubarbEngine.World
 		{
 			var val = (L)Activator.CreateInstance(typeof(L));
 			val.Initialize(World, this, Refid);
-            val.OnLoaded();
+            if (!Refid)
+            {
+                val.OnLoaded();
+            }
             AddInternal(val);
 			if (Refid)
 			{
@@ -144,16 +150,17 @@ namespace RhubarbEngine.World
 					}
 					else
 					{
+
 						var val = (T)Activator.CreateInstance(ty);
-						val.Initialize(World, this, false);
+                        Add(val, false);
 						var actions = new List<Action>();
 						val.DeSerialize((DataNodeGroup)((DataNodeGroup)data.GetValue("Data")).GetValue("Value"), actions, false);
-						_synclist.SafeAdd(val);
 						foreach (var item in actions)
 						{
 							item?.Invoke();
 						}
-					}
+                        val.OnLoaded();
+                    }
 				}
 			}
 			catch (Exception e)
@@ -186,12 +193,12 @@ namespace RhubarbEngine.World
 			}
 			if (NewRefIDs)
 			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID(), ReferenceID.getID());
-				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()))
+				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID(), ReferenceID.GetID());
+				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID()))
 				{
-					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.getID()])
+					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID()])
 					{
-						func(ReferenceID.getID());
+						func(ReferenceID.GetID());
 					}
 				}
 			}
