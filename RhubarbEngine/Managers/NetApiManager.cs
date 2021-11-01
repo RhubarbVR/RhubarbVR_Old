@@ -30,6 +30,7 @@ namespace RhubarbEngine.Managers
         Task<IReadOnlyList<JToken>> GetRooms();
         Task<string> JoinSession(string roomID);
         Task LoadUserData(string Token);
+        Task<string> RemoveSession(string sToken);
         Task<string> SendRhubarbAPIPost(string Location, JObject objects);
         Task<string> UpdateSession(string sToken);
     }
@@ -71,10 +72,20 @@ namespace RhubarbEngine.Managers
         {
             var obj = new JObject
             {
-                ["AToken"] = sToken,
+                ["SToken"] = sToken,
                 ["MToken"] = Token
             };
             return await SendRhubarbAPIPost("Session/updateUser", obj);
+        }
+
+        public async Task<string> RemoveSession(string sToken)
+        {
+            var obj = new JObject
+            {
+                ["SToken"] = sToken,
+                ["MToken"] = Token
+            };
+            return await SendRhubarbAPIPost("Session/removeUser", obj);
         }
 
         public async Task<string> JoinSession(string roomID)
@@ -85,6 +96,16 @@ namespace RhubarbEngine.Managers
                 ["Token"] = Token
             };
             return await SendRhubarbAPIPost("Session/joinSession", obj);
+        }
+
+        public async Task<bool> UpdateUser(string roomID)
+        {
+            var obj = new JObject
+            {
+                ["SToken"] = roomID,
+                ["MToken"] = Token
+            };
+            return await SendRhubarbAPIPost("Session/updateUser", obj) == "A+";
         }
 
 

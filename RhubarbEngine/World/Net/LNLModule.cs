@@ -9,6 +9,7 @@ using LiteNetLib;
 using LiteNetLib.Utils;
 using System.Net.Sockets;
 using System.Net.Http;
+using System.Diagnostics;
 
 namespace RhubarbEngine.World.Net
 {
@@ -76,15 +77,18 @@ namespace RhubarbEngine.World.Net
             };
             netClient.NatPunchModule.Init(this);
             netClient.Start();
+            hartBeeter.Start();
             Int(sessionID).ConfigureAwait(false);
         }
-        
+
+        private string _sessionToken;
+
         private async Task Int(string id)
         {
             _world.worldManager.Engine.Logger.Log("tried to start");
-            var token = await _world.worldManager.Engine.NetApiManager.JoinSession(id);
-            _world.worldManager.Engine.Logger.Log("Token: " + token);
-            netClient.NatPunchModule.SendNatIntroduceRequest(MainPunchServer, token);
+            _sessionToken = await _world.worldManager.Engine.NetApiManager.JoinSession(id);
+            _world.worldManager.Engine.Logger.Log("Token: " + _sessionToken);
+            netClient.NatPunchModule.SendNatIntroduceRequest(MainPunchServer, _sessionToken);
             _world.worldManager.Engine.Logger.Log("into");
         }
 
@@ -93,10 +97,10 @@ namespace RhubarbEngine.World.Net
             switch (item.reliabilityLevel)
             {
                 case ReliabilityLevel.Unreliable:
-                    netClient.SendToAll(node.GetByteArray(), DeliveryMethod.Unreliable);
+                    netClient.SendToAll(node.GetByteArray(), DeliveryMethod.Sequenced);
                     break;
                 case ReliabilityLevel.LatestOnly:
-                    netClient.SendToAll(node.GetByteArray(), DeliveryMethod.ReliableUnordered);
+                    netClient.SendToAll(node.GetByteArray(),DeliveryMethod.ReliableSequenced);
                     break;
                 case ReliabilityLevel.Reliable:
                     netClient.SendToAll(node.GetByteArray(), DeliveryMethod.ReliableOrdered);
@@ -194,7 +198,14 @@ namespace RhubarbEngine.World.Net
         public void OnNatIntroductionSuccess(IPEndPoint targetEndPoint, NatAddressType type, string token)
         {
             netClient.Connect(targetEndPoint, token);
-            _world.worldManager.Engine.Logger.Log("NatIntroductionSuccess", true);
+            _world.worldManager.Engine.Logger.Log("NatIntroductionSuccess");
+        }
+
+        public readonly Stopwatch hartBeeter = new();
+
+        private async Task SendHartBeet()
+        {
+            await _world.worldManager.Engine.NetApiManager.UpdateSession(_sessionToken);
         }
 
         public override void Netupdate()
@@ -202,6 +213,17 @@ namespace RhubarbEngine.World.Net
             base.Netupdate();
             netClient.PollEvents();
             netClient.NatPunchModule.PollEvents();
+            if (hartBeeter.ElapsedMilliseconds >= 45000)
+            {
+                hartBeeter.Restart();
+                SendHartBeet().ConfigureAwait(false);
+            }
+        }
+
+        public override void Dispose()
+        {
+            _world.worldManager.Engine.NetApiManager.RemoveSession(_sessionToken).ConfigureAwait(false);
+            base.Dispose();
         }
     }
 }

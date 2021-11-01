@@ -725,7 +725,22 @@ namespace RhubarbEngine.World
             {
                 if (field.FieldType.IsAssignableTo(typeof(IDisposable))&& field.GetValue(this) is not null)
                 {
-                    ((IDisposable)field.GetValue(this)).Dispose();
+                    try
+                    {
+                        ((IDisposable)field.GetValue(this)).Dispose();
+                    }
+                    catch { }
+                }
+            }
+            foreach (var field in fields)
+            {
+                if (field.FieldType.IsAssignableTo(typeof(IDisposable)) && field.GetValue(this) is not null)
+                {
+                    try
+                    {
+                       field.SetValue(this,null);
+                    }
+                    catch { }
                 }
             }
             worldManager.Worlds.Remove(this);

@@ -269,6 +269,10 @@ namespace RhubarbEngine.Managers
 			{
 				File.WriteAllBytes(Engine.DataPath + "/LocalWorld.RWorld", WorldToBytes(LocalWorld));
 			}
+            foreach (var item in Worlds.ToArray())
+            {
+                item.Dispose();
+            }
 		}
 
         public void Update()

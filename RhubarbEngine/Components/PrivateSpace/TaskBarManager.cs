@@ -22,6 +22,7 @@ using RhubarbEngine.Components.Physics.Colliders;
 using RhubarbEngine.Components.PrivateSpace;
 using RhubarbEngine.Components.Interaction;
 using RhubarbEngine.Components.Physics;
+using System.Diagnostics;
 
 namespace RhubarbEngine.Components.PrivateSpace
 {
@@ -40,6 +41,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 			taskbarcanvas = new SyncRef<ImGUICanvas>(this, newRefIds);
 			startcanvas = new SyncRef<ImGUICanvas>(this, newRefIds);
 			dateTextDriver = new Driver<string>(this, newRefIds);
+
 		}
 
 		public void StartMenuClick()
@@ -67,7 +69,8 @@ namespace RhubarbEngine.Components.PrivateSpace
 
 		private void BuildStartMenu(Entity e)
 		{
-			startMenu.Target = e;
+            _timeout.Start();
+            startMenu.Target = e;
 			var shader = World.staticAssets.BasicUnlitShader;
 			var bmesh = e.AttachComponent<PlaneMesh>();
 			bmesh.Height.Value = 0.30f;
@@ -121,9 +124,15 @@ namespace RhubarbEngine.Components.PrivateSpace
             e.enabled.Value = false;
 		}
 
+        private readonly Stopwatch _timeout = new();
         private void JoinMainSession()
         {
+            if(_timeout.ElapsedMilliseconds < 2000)
+            {
+                return;
+            }
             Engine.WorldManager.CreateNewWorld("Main Session", true, 16, "!NVkSFpkqKmJBtNDhkr:rhubarbvr.net");
+            _timeout.Restart();
         }
 
         private void CreateWindow()

@@ -23,17 +23,22 @@ namespace RhubarbEngine.World.Net
 		{
 
 		}
-	}
 
-	public abstract class NetModule
-	{
+    }
+
+	public abstract class NetModule: IDisposable
+    {
 		public virtual void Connect(string token)
 		{
 
 		}
 
 
-		public World _world;
+        public virtual void Dispose()
+        {
+        }
+
+        public World _world;
 
 		private readonly bool _noq;
 
