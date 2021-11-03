@@ -94,13 +94,14 @@ namespace RhubarbEngine.World.Net
 
         public override void SendData(DataNodeGroup node, NetData item)
 		{
+            var nan = item.id;
             switch (item.reliabilityLevel)
             {
                 case ReliabilityLevel.Unreliable:
-                    netClient.SendToAll(node.GetByteArray(), DeliveryMethod.Sequenced);
+                    netClient.SendToAll(node.GetByteArray(), DeliveryMethod.Unreliable);
                     break;
                 case ReliabilityLevel.LatestOnly:
-                    netClient.SendToAll(node.GetByteArray(),DeliveryMethod.ReliableSequenced);
+                    netClient.SendToAll(node.GetByteArray(),DeliveryMethod.Sequenced);
                     break;
                 case ReliabilityLevel.Reliable:
                     netClient.SendToAll(node.GetByteArray(), DeliveryMethod.ReliableOrdered);
