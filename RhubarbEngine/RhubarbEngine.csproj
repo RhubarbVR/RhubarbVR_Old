@@ -128,15 +128,11 @@
     <None Update="SteamVR\vive_controller.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="VirtualReality\native\win-x64\openvr_api.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <PackagePath>./</PackagePath>
-      <Pack>true</Pack>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="SteamVR\" />
+    <Folder Include="VirtualReality\native\win-x64\" />
   </ItemGroup>
 
   <ItemGroup>

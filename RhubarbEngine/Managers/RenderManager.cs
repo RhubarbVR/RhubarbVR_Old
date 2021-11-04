@@ -475,7 +475,6 @@ namespace RhubarbEngine.Managers
 				gd.SubmitCommands(_windowCL);
 				gd.SwapBuffers(sc);
 			}
-            gd.WaitForIdle();
         }
     }
 }
