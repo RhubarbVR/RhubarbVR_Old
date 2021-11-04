@@ -12,7 +12,7 @@ namespace RhubarbEngine
 
 		public static float DistanceFromPoint(this BoundingBox boundingBox, Vector3 fomLocalPos)
 		{
-			var dx = Math.Max(boundingBox.Min.X - fomLocalPos.X, fomLocalPos.X - boundingBox.Max.X);
+			var dx = Math.Max(boundingBox.Min.X - fomLocalPos.X, fomLocalPos.X - boundingBox.Max.X); 
 			var dy = Math.Max(boundingBox.Min.Y - fomLocalPos.Y, fomLocalPos.Y - boundingBox.Max.Y);
 			var dz = Math.Max(boundingBox.Min.Z - fomLocalPos.Z, fomLocalPos.Z - boundingBox.Max.Z);
 			return (float)Math.Sqrt((dx * dx) + (dy * dy) + (dz * dz));

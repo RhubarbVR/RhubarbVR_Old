@@ -13,7 +13,6 @@ namespace RhubarbEngine.PlatformInfo
 		OSX,
 		iOS,
 		Linux,
-		Android,
-		Other
+		Android
 	}
 }

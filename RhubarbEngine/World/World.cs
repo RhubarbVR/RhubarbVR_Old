@@ -311,7 +311,7 @@ namespace RhubarbEngine.World
 			{
 				if (ent.enabled.Value && ent.parentEnabled)
 				{
-					ent.AddToRenderQueue(gu, PlayerTrans.Translation, layer, frustum, view);
+					ent.AddToRenderQueue(gu, HeadTrans.Translation, layer, frustum, view);
 				}
 			});
 		}

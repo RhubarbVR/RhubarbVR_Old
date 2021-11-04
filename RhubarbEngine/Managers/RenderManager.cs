@@ -408,7 +408,7 @@ namespace RhubarbEngine.Managers
             }
 			if (vrContext.Disposed)
 			{
-				Console.WriteLine("Going to screen Cuz Disposed");
+				Console.WriteLine("Going to screen because VRContext Disposed");
 				SwitchVRContext(OutputType.Screen);
 			}
 
