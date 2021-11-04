@@ -18,7 +18,7 @@ namespace RhubarbEngine.World
 
 		public bool IsDriven { get; private set; }
 
-		private readonly List<IDriveable> _driven = new();
+		private readonly SynchronizedCollection<IDriveable> _driven = new();
 
 		public override void Removed()
 		{

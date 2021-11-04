@@ -92,16 +92,48 @@ namespace RhubarbEngine.World.Net
             _world.worldManager.Engine.Logger.Log("into");
         }
 
+        private readonly SynchronizedCollection<ulong> _lowdataSinc = new();
+
+        public void SendData(DataNodeGroup node, NetData item,byte Channel)
+        {
+            switch (item.reliabilityLevel)
+            {
+                case ReliabilityLevel.Unreliable:
+                    netClient.SendToAll(node.GetByteArray(), Channel, DeliveryMethod.Unreliable);
+                    break;
+                case ReliabilityLevel.LatestOnly:
+                    netClient.SendToAll(node.GetByteArray(), Channel, DeliveryMethod.Sequenced);
+                    break;
+                case ReliabilityLevel.Reliable:
+                    netClient.SendToAll(node.GetByteArray(), Channel, DeliveryMethod.ReliableOrdered);
+                    break;
+                default:
+                    netClient.SendToAll(node.GetByteArray(), Channel, DeliveryMethod.Sequenced);
+                    break;
+            }
+        }
+
         public override void SendData(DataNodeGroup node, NetData item)
 		{
-            var nan = item.id;
             switch (item.reliabilityLevel)
             {
                 case ReliabilityLevel.Unreliable:
                     netClient.SendToAll(node.GetByteArray(), DeliveryMethod.Unreliable);
                     break;
                 case ReliabilityLevel.LatestOnly:
-                    netClient.SendToAll(node.GetByteArray(),DeliveryMethod.Sequenced);
+                    if (_lowdataSinc.Contains(item.id))
+                    {
+                        netClient.SendToAll(node.GetByteArray(),(byte)(_lowdataSinc.IndexOf(item.id) + 1), DeliveryMethod.Sequenced);
+                    }
+                    else
+                    {
+                        if (_lowdataSinc.Count <= 253)
+                        {
+                            _lowdataSinc.RemoveAt(0);
+                        }
+                        _lowdataSinc.Add(item.id);
+                        netClient.SendToAll(node.GetByteArray(), (byte)(_lowdataSinc.IndexOf(item.id) + 1), DeliveryMethod.Sequenced);
+                    }
                     break;
                 case ReliabilityLevel.Reliable:
                     netClient.SendToAll(node.GetByteArray(), DeliveryMethod.ReliableOrdered);
