@@ -13,11 +13,14 @@ using System.Runtime.InteropServices;
 
 namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
 {
-	internal class SteamVRController : IController, ICosmosController, IKnucklesController, IOculusTouchController, IViveController
-	{
-		public readonly OpenVRContext openVRContext;
+    internal class SteamVRController : IController, ICosmosController, IKnucklesController, IOculusTouchController, IViveController
+    {
+        public readonly OpenVRContext openVRContext;
 
-		public readonly string ControllerName;
+        public readonly string ControllerName;
+
+        public Matrix4x4 MatrixOffset { get; private set; } 
+
         string IController.ControllerName
         {
             get
@@ -131,22 +134,13 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
         {
             get
             {
-                return PosHelp(_generalmPosistionData.pose.mDeviceToAbsoluteTracking);
+                return PosHelp(_generalmPosistionData.pose.mDeviceToAbsoluteTracking) * MatrixOffset;
             }
         }
 
         public uint deviceindex;
 
 		public ulong handle;
-		//private static Matrix4x4 ToSysMatrix(HmdMatrix34_t hmdMat)
-		//{
-		//	return new Matrix4x4(
-		//		hmdMat.m0, hmdMat.m4, hmdMat.m8, 0f,
-		//		hmdMat.m1, hmdMat.m5, hmdMat.m9, 0f,
-		//		hmdMat.m2, hmdMat.m6, hmdMat.m10, 0f,
-		//		hmdMat.m3, hmdMat.m7, hmdMat.m11, 1f);
-		//}
-
 
 		public static Quaternion QuaternionFromMatrix(HmdMatrix34_t m)
 		{
@@ -184,8 +178,14 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
 			this.deviceindex = deviceindex;
 			this.Creality = Creality;
 			this.handle = Handle;
+            MatrixOffset  = ControllerName switch
+            {
+                "indexController" => Matrix4x4.CreateScale(1f),
+                _ => Matrix4x4.CreateScale(1f),
+            };
 
-			OVR.Input.GetActionHandle("/actions/General/in/Trigger_Touching", ref _generalmTriggerTouchingHandle);
+
+            OVR.Input.GetActionHandle("/actions/General/in/Trigger_Touching", ref _generalmTriggerTouchingHandle);
 
 			OVR.Input.GetActionHandle("/actions/General/in/Axis_Touching", ref _generalmAxisTouchingHandle);
 			OVR.Input.GetActionHandle("/actions/General/in/Primary_Pressed", ref _generalmPrimaryPressHandle);
