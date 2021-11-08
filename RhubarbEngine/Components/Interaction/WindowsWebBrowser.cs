@@ -193,10 +193,10 @@ namespace RhubarbEngine.Components.Interaction
 			var bitmapBuffer = isPopup ? PopupBuffer : BitmapBuffer;
 
 			bitmapBuffer.UpdateBuffer(width, height, buffer, dirtyRect);
-			renderEvent.Set();
+			renderEvent = true;
 		}
 
-		public ManualResetEvent renderEvent = new(false);
+		public bool renderEvent = false;
 
 		/// <summary>
 		/// Called when the browser's cursor has changed.
@@ -574,21 +574,15 @@ namespace RhubarbEngine.Components.Interaction
 
 		TextureView _view;
 		UpdateDatingTexture2D _target;
-        Task _task;
         public void Render()
         {
             if (!IsActive)
             {
                 return;
             }
-            if (_task is null)
+            if (((RenderHandler)_browser.RenderHandler).renderEvent)
             {
-                _task = Task.Run(RenderTask);
-                return;
-            }
-            if (_task.IsCompleted || _task.IsCanceled || _task.IsFaulted || _task.Status != TaskStatus.Running)
-            {
-                _task = Task.Run(RenderTask);
+                RenderTask();
             }
 		}
 		public override void LoadListObject()
@@ -618,7 +612,6 @@ namespace RhubarbEngine.Components.Interaction
                     {
                         return;
                     }
-
                     _target = new UpdateDatingTexture2D();
 					_view = _target.InitializeView(((RenderHandler)_browser.RenderHandler).BitmapBuffer.CreateDeviceTexture(Engine.RenderManager.Gd, Engine.RenderManager.Gd.ResourceFactory), Engine.RenderManager.Gd);
 					var e = new RTexture2D(_view);
@@ -628,9 +621,7 @@ namespace RhubarbEngine.Components.Interaction
 				}
 				else
 				{
-					// This still has memmory problems I believe it is a problem with the staging texture not geting disposed properly somewhere
-					((RenderHandler)_browser.RenderHandler).renderEvent.WaitOne();
-					((RenderHandler)_browser.RenderHandler).renderEvent.Reset();
+                    ((RenderHandler)_browser.RenderHandler).renderEvent = false;
 					_target.UpdateBitmap(((RenderHandler)_browser.RenderHandler).BitmapBuffer);
 				}
         }
