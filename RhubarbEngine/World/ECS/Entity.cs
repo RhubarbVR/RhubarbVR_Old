@@ -111,8 +111,14 @@ namespace RhubarbEngine.World.ECS
 			return (Quaternionf)newrotation;
 		}
 
+        public Quaternionf LocalRotToGlobal(Quaternionf Rot)
+        {
+            var newtrans = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion((Quaternion)Rot) * Matrix4x4.CreateTranslation(0, 0, 0);
+            Matrix4x4.Decompose(newtrans * _cashedGlobalTrans, out _, out var newrotation, out _);
+            return (Quaternionf)newrotation;
+        }
 
-		public void RemovePhysicsDisableder(IPhysicsDisableder physicsDisableder)
+        public void RemovePhysicsDisableder(IPhysicsDisableder physicsDisableder)
 		{
 			try
 			{

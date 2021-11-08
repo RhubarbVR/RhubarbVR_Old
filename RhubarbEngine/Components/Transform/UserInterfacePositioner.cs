@@ -52,15 +52,15 @@ namespace RhubarbEngine.Components.Transform
             };
             activationDistance = new Sync<float>(this, newRefIds)
             {
-                Value = 0.5f
+                Value = 0.75f
             };
             activationAngle = new Sync<float>(this, newRefIds)
             {
-                Value = 80f
+                Value = 125f
             };
             deactivationDistance = new Sync<float>(this, newRefIds)
             {
-                Value = 0.1f
+                Value = 0.15f
             };
             deactivationAngle = new Sync<float>(this, newRefIds)
             {
@@ -89,39 +89,38 @@ namespace RhubarbEngine.Components.Transform
 		{
 			if (targetUser.Target == World.LocalUser && World.UserRoot != null)
 			{
-				var a = World.UserRoot.Head.Target?.GlobalPos() ?? Vector3f.Zero;
-				var temp = World.UserRoot.Head.Target.rotation.Value * Vector3f.AxisZ;
-				var HeadFacingDirection = new Vector3f(temp.x, 0, temp.z).Normalized;
-				var mat = World.UserRoot.Entity.GlobalTrans();
-				var e = new Vector3f((mat.M11 * HeadFacingDirection.x) + (mat.M12 * HeadFacingDirection.y) + (mat.M13 * HeadFacingDirection.z), (mat.M21 * HeadFacingDirection.x) + (mat.M22 * HeadFacingDirection.y) + (mat.M23 * HeadFacingDirection.z), (mat.M31 * HeadFacingDirection.x) + (mat.M32 * HeadFacingDirection.y) + (mat.M33 * HeadFacingDirection.z));
-				var headrot = Quaternionf.LookRotation(e, World.UserRoot.Entity.Up);
-				var a2 = rotateVerticalOnly.Value ? headrot : World.UserRoot.Head.Target?.GlobalRot() ?? Quaternionf.Zero;
-				var b = Entity.GlobalPos();
-				var num = a.Distance(b);
-				var b2 = Entity.GlobalRot();
-				var num2 = a2.Angle(b2);
-				if (num >= activationDistance.Value || num2 >= activationAngle.Value)
-				{
-					_activated = true;
-				}
-				if (num <= deactivationDistance.Value && num2 <= deactivationAngle.Value)
-				{
-					_activated = false;
-				}
-				if (_activated)
-				{
-					_targetPosition = a;
-					_targetRotation = a2;
-				}
-
-				var from = Entity.GlobalPos();
-				var pos = Vector3f.Lerp(from, _targetPosition, (float)(Engine.PlatformInfo.DeltaSeconds * positionSpeed.Value));
-				var ae = Entity.GlobalRot();
-				var rot = Quaternionf.CreateFromEuler(0f, 0f, 0f);
-				rot.SetToSlerp(ae, _targetRotation, (float)Engine.PlatformInfo.DeltaSeconds * rotationSpeed.Value);
-				Entity.SetGlobalTrans(Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(rot.ToSystemNumric()) * Matrix4x4.CreateTranslation(pos.ToSystemNumrics()));
-			}
-		}
+                var HeadPos = World.UserRoot.Head.Target.GlobalPos();
+                var HeadRot = World.UserRoot.Head.Target.GlobalRot();
+                if (rotateVerticalOnly.Value)
+                {
+                    var UserEntity = World.UserRoot.Entity;
+                    HeadRot = UserEntity.GlobalRotToLocal(HeadRot);
+                    var temp = HeadRot * Vector3f.AxisZ;
+                    var forward = new Vector3f(temp.x,0,temp.z).Normalized;
+                    HeadRot = Quaternionf.LookRotation(forward,Vector3f.AxisY);
+                    HeadRot = UserEntity.LocalRotToGlobal(HeadRot);
+                }
+                var dist = HeadPos.Distance(Entity.GlobalPos());
+                var disAngle = HeadRot.Angle(Entity.GlobalRot());
+                if (dist >= activationDistance.Value || disAngle >= activationAngle.Value)
+                {
+                    _activated = true;
+                }
+                if (dist <= deactivationDistance.Value && disAngle <= deactivationAngle.Value)
+                {
+                    _activated = false;
+                }
+                if (_activated)
+                {
+                    _targetPosition = HeadPos;
+                    _targetRotation = HeadRot;
+                }
+            }
+            var pos = Vector3f.Lerp(Entity.GlobalPos(), _targetPosition, (float)(Engine.PlatformInfo.DeltaSeconds * positionSpeed.Value));
+            var rot = Quaternionf.CreateFromEuler(0f, 0f, 0f);
+            rot.SetToSlerp(Entity.GlobalRot(), _targetRotation, (float)Engine.PlatformInfo.DeltaSeconds * rotationSpeed.Value);
+            Entity.SetGlobalTrans(Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromQuaternion(rot.ToSystemNumric()) * Matrix4x4.CreateTranslation(pos.ToSystemNumrics()));
+        }
 
 	}
 }
