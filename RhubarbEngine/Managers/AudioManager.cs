@@ -165,6 +165,7 @@ namespace RhubarbEngine.Managers
 
         public void CleanUp()
         {
+            _running = false;
         }
     }
 }
