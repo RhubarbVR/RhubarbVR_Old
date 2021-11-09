@@ -135,7 +135,7 @@
 
   <ItemGroup>
     <Reference Include="RVRAudioNative">
-      <HintPath>..\..\RVRAudio\x64\Release\RVRAudioNative.dll</HintPath>
+      <HintPath>..\DLLS\RVRAudioNative.dll</HintPath>
     </Reference>
   </ItemGroup>
 
