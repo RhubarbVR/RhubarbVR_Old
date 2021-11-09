@@ -13,6 +13,7 @@ using System.Numerics;
 using RhubarbEngine.Managers;
 using System.Threading;
 using System.Runtime.InteropServices;
+using RVRAudioNative;
 
 namespace RhubarbEngine.Components.Audio
 {

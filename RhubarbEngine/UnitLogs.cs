@@ -51,18 +51,18 @@ namespace RhubarbEngine
 				WriteLog(string.Format("{0}: {1}", DateTime.Now, _log));
 			}
 		}
+
 		public bool WriteLog(string strMessage)
 		{
-			try
-			{
-				objStreamWriter.WriteLine(strMessage);
-				objStreamWriter.FlushAsync();
-				return true;
-			}
-			catch
-			{
-				return false;
-			}
+                try
+                {
+                    objStreamWriter.WriteLine(strMessage);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
 		}
 
 		public void CleanUP()
@@ -76,5 +76,6 @@ namespace RhubarbEngine
 			{
 			}
 		}
+
 	}
 }
