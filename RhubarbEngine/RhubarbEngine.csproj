@@ -63,7 +63,6 @@
     <PackageReference Include="DiscordRichPresence" Version="1.0.175" />
     <PackageReference Include="LiteNetLib" Version="0.9.5.2" />
     <PackageReference Include="MessagePack" Version="2.3.85" />
-    <PackageReference Include="NAudio.Core" Version="2.0.0" />
     <PackageReference Include="RhubarbBulletSharpNET5" Version="1.0.3" />
     <PackageReference Include="RhuSettings" Version="1.0.0" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="4.8.1" />
@@ -74,7 +73,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ImguiVeldrid\VeldridImGui.csproj" />
     <ProjectReference Include="..\Numerics\Numerics.csproj" />
-    <ProjectReference Include="..\SteamAudio.NET\SteamAudio.NET.csproj" />
     <ProjectReference Include="..\veldrid\src\Veldrid.ImageSharp\Veldrid.ImageSharp.csproj" />
     <ProjectReference Include="..\veldrid\src\Veldrid.SDL2\Veldrid.SDL2.csproj" />
     <ProjectReference Include="..\veldrid\src\Veldrid.StartupUtilities\Veldrid.StartupUtilities.csproj" />
@@ -136,11 +134,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="RhuNet">
-      <HintPath>..\DLLS\RhuNet.dll</HintPath>
-    </Reference>
-    <Reference Include="RhuNetShared">
-      <HintPath>..\DLLS\RhuNetShared.dll</HintPath>
+    <Reference Include="RVRAudioNative">
+      <HintPath>..\..\RVRAudio\x64\Release\RVRAudioNative.dll</HintPath>
     </Reference>
   </ItemGroup>
 

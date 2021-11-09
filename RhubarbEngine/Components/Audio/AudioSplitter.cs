@@ -10,7 +10,6 @@ using RhubarbEngine.World.ECS;
 using RhubarbEngine.World;
 using RNumerics;
 using System.Numerics;
-using SteamAudio;
 using RhubarbEngine.Managers;
 using System.Threading;
 using System.Runtime.InteropServices;

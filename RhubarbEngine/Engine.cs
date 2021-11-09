@@ -384,7 +384,7 @@ namespace RhubarbEngine
 
 		public void CleanUP()
 		{
-			audioManager.UnloadAll();
+			audioManager.CleanUp();
 			worldManager.CleanUp();
 			logger.CleanUP();
 		}
