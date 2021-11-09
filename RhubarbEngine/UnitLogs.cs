@@ -57,6 +57,7 @@ namespace RhubarbEngine
                 try
                 {
                     objStreamWriter.WriteLine(strMessage);
+                    objStreamWriter.Flush();
                     return true;
                 }
                 catch
