@@ -4,7 +4,6 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 
-
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
@@ -31,7 +30,6 @@
     <a href="https://github.com/RhubarbVR/RhubarbVR/issues/new?assignees=&labels=&template=feature_request.md&title=Feature%20Request%20Title">Make Feature Request</a>
   </p>
 </p>
-
 
 
 <!-- TABLE OF CONTENTS -->
