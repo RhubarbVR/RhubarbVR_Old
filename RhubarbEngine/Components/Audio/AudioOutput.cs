@@ -18,13 +18,14 @@ using RVRAudioNative;
 namespace RhubarbEngine.Components.Audio
 {
 	[Category(new string[] { "Audio" })]
-	public class AudioOutput : Component
+	public unsafe class AudioOutput : Component
 	{
 		public SyncRef<IAudioSource> audioSource;
 
 		public Sync<float> spatialBlend;
 		public Sync<float> cullingDistance;
 
+        private rvrAudioSource* _audioSource;
 
 		public bool IsNotCulled
 		{
@@ -63,11 +64,55 @@ namespace RhubarbEngine.Components.Audio
             };
         }
 
-		public override void OnLoaded()
+        public void UpdateAudio()
+        {
+            if (!IsNotCulled)
+            {
+                if (!NativeAudio.rvrAudioSourceIsPlaying(_audioSource))
+                {
+                    NativeAudio.rvrAudioSourcePlay(_audioSource); 
+                }
+                var freebuff = NativeAudio.rvrAudioSourceGetFreeBuffer(_audioSource);
+                if ((IntPtr)freebuff != IntPtr.Zero)
+                {
+                    if (audioSource.Target != null)
+                    {
+                        var buffer = audioSource.Target.FrameInputBuffer;
+                        fixed (byte* e = buffer)
+                        {
+                            NativeAudio.rvrAudioSourceQueueBuffer(_audioSource, freebuff, (short*)e, buffer.Length,(BufferType)2);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Audio Comp Culled");
+                NativeAudio.rvrAudioSourcePause(_audioSource);
+            }
+        }
+
+		public unsafe override void OnLoaded()
 		{
 			base.OnLoaded();
+            if (Engine.Audio)
+            {
+                Console.WriteLine("Audio Comp Added");
+               _audioSource = NativeAudio.rvrAudioSourceCreate(Engine.AudioManager.DefaultListener, Engine.AudioManager.SamplingRate, 0, true, true, true, true, 1, 1);
+               var buf1 = NativeAudio.rvrAudioBufferCreate(Engine.AudioManager.AudioFrameSizeInBytes);
+               var buf2 = NativeAudio.rvrAudioBufferCreate(Engine.AudioManager.AudioFrameSizeInBytes);
+                NativeAudio.rvrAudioSourceSetBuffer(_audioSource, buf1);
+                NativeAudio.rvrAudioSourceSetBuffer(_audioSource, buf2);
+                var clear = new byte[Engine.AudioManager.AudioFrameSizeInBytes];
+                fixed (byte* e = clear)
+                {
+                    NativeAudio.rvrAudioSourceQueueBuffer(_audioSource, buf1, (short*)e, Engine.AudioManager.AudioFrameSizeInBytes, (BufferType)1);
+                    NativeAudio.rvrAudioSourceQueueBuffer(_audioSource, buf2, (short*)e, Engine.AudioManager.AudioFrameSizeInBytes, (BufferType)2);
 
-		}
+                }
+                Console.WriteLine("Audio Comp Loaded");
+            }
+        }
 
 		public override void LoadListObject()
 		{

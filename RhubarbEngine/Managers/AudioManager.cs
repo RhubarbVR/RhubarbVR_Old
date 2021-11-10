@@ -82,6 +82,7 @@ namespace RhubarbEngine.Managers
 
         public unsafe IManager Initialize(IEngine _engine)
 		{
+            _engine = _engine;
             if(!_engine.Audio)
             {
                 return this;
@@ -150,7 +151,23 @@ namespace RhubarbEngine.Managers
         {
             while (_running)
             {
-
+                try
+                {
+                    foreach (var item in _engine.WorldManager.Worlds)
+                    {
+                        if (item.Focus != World.World.FocusLevel.Background)
+                        {
+                            foreach (var audioOutput in item.updateLists.audioOutputs)
+                            {
+                                audioOutput.UpdateAudio();
+                            }
+                        }
+                    }
+                }
+                catch 
+                {
+                }
+                Thread.Sleep(5);
             }
         }
 
@@ -159,8 +176,9 @@ namespace RhubarbEngine.Managers
             var Position = _engine.WorldManager.LocalWorld.HeadTrans.Translation;
             var Forward = _forward;
             var Up = _up;
-            var Velocity = this.Velocity;
+            var Velocity = (Position - this.Velocity) * (float)_engine.PlatformInfo.DeltaSeconds;
             NativeAudio.rvrAudioListenerPush3D(DefaultListener, (float*)&Position, (float*)&Forward, (float*)&Up, (float*)&Velocity);
+            this.Velocity = Position;
         }
 
         public void CleanUp()
