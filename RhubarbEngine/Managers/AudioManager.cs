@@ -37,7 +37,7 @@ namespace RhubarbEngine.Managers
 
     public unsafe class AudioManager : IAudioManager
     {
-		private readonly IEngine _engine;
+		private IEngine _engine;
 
 		private bool _running;
         public Stopwatch Stopwatch { get; private set; }
@@ -82,7 +82,7 @@ namespace RhubarbEngine.Managers
 
         public unsafe IManager Initialize(IEngine _engine)
 		{
-            _engine = _engine;
+            this._engine = _engine;
             if(!_engine.Audio)
             {
                 return this;
