@@ -88,7 +88,7 @@ namespace RhubarbEngine
 
         public bool Rendering { get; set; } = true;
 
-        public bool Audio { get; set; } = true;
+        public bool Audio { get; set; } = false;
 
         public event Action OnEngineStarted;
 

@@ -66,7 +66,7 @@ namespace RhubarbEngine.Components.Audio
 
         public void UpdateAudio()
         {
-            if (!IsNotCulled)
+            if (IsNotCulled)
             {
                 if (!NativeAudio.rvrAudioSourceIsPlaying(_audioSource))
                 {
@@ -87,7 +87,6 @@ namespace RhubarbEngine.Components.Audio
             }
             else
             {
-                Console.WriteLine("Audio Comp Culled");
                 NativeAudio.rvrAudioSourcePause(_audioSource);
             }
         }

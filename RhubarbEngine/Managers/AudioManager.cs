@@ -37,6 +37,7 @@ namespace RhubarbEngine.Managers
 
     public unsafe class AudioManager : IAudioManager
     {
+       
 		private IEngine _engine;
 
 		private bool _running;
@@ -87,6 +88,7 @@ namespace RhubarbEngine.Managers
             {
                 return this;
             }
+            
             Forward = new Vector3(0, 0, 1);
             Up = new Vector3(0, 1, 0);
 
@@ -102,6 +104,7 @@ namespace RhubarbEngine.Managers
             catch
             {
                 _running = false;
+                _engine.Audio = false;
             }
             return this;
 		}
