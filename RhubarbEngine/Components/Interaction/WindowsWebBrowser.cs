@@ -519,7 +519,8 @@ namespace RhubarbEngine.Components.Interaction
 			}
 			catch { }
 			OnLoaded();
-		}
+            Reload?.Invoke();
+        }
 
 		private void GlobalAudio_Changed(IChangeable obj)
 		{
@@ -537,9 +538,10 @@ namespace RhubarbEngine.Components.Interaction
 			{
 				_browser.AudioHandler = this;
 			}
-		}
+            Reload?.Invoke();
+        }
 
-		private void OnScaleChange(IChangeable obj)
+        private void OnScaleChange(IChangeable obj)
 		{
 			if (!IsActive)
             {
@@ -576,6 +578,7 @@ namespace RhubarbEngine.Components.Interaction
 		UpdateDatingTexture2D _target;
 
         public event Action Update;
+        public event Action Reload;
 
         public void Render()
         {

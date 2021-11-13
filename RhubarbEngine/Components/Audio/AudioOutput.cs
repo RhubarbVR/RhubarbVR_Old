@@ -18,13 +18,15 @@ using OpenAL;
 namespace RhubarbEngine.Components.Audio
 {
 	[Category(new string[] { "Audio" })]
-	public unsafe class AudioOutput : Component
+	public unsafe class AudioOutput : Component , IVelocityReqwest
 	{
 		public SyncRef<IAudioSource> audioSource;
 
 		public Sync<float> cullingDistance;
 
         public Sync<float> velocityMultiplier;
+
+        public Sync<float> gain;
 
         public bool IsNotCulled
 		{
@@ -62,6 +64,20 @@ namespace RhubarbEngine.Components.Audio
             {
                 Value = 1f
             };
+            gain = new Sync<float>(this, newRefIds)
+            {
+                Value = 100f
+            };
+            gain.Changed += GainChange;
+        }
+
+        private void GainChange(IChangeable obj)
+        {
+            if(_stream is null)
+            {
+                return;
+            }
+            _stream.Gain = gain.Value;
         }
 
         private void AudioSource_Changed(IChangeable obj)
@@ -70,12 +86,23 @@ namespace RhubarbEngine.Components.Audio
             {
                 return;
             }
-
             audioSource.Target.Update += UpdateAudio;
+            audioSource.Target.Reload += Reload;
+            Reload();
+        }
+
+        private void Reload()
+        {
+            UnloadAudio();
+            LoadAudio();
         }
 
         public void UpdateAudio()
         {
+            if (_stream is null)
+            {
+                return;
+            }
             if (IsNotCulled)
             {
                 if (!audioSource.Target.IsActive)
@@ -86,22 +113,9 @@ namespace RhubarbEngine.Components.Audio
                 var data = audioSource.Target.FrameInputBuffer;
                 if (_stream.CanWrite && data != null)
                 {
-                    //  if you want to use BeginWrite here instead you need to copy the _readBuffer to avoid race conditions reader/writing the same buffer asynchronously
-                    //  alternatively you can use multiple buffers to avoid such race conditions
                     _stream.Write(data, 0, data.Length);
                 }
             }
-        }
-
-        public override void CommonUpdate(DateTime startTime, DateTime Frame)
-        {
-            if(_stream is null)
-            {
-                return;
-            }
-            var e = Entity.GlobalTrans();
-            _stream.Velocity = (_stream.ALPosition - e.Translation) * ((float)Engine.PlatformInfo.DeltaSeconds * velocityMultiplier.Value);
-            _stream.ALPosition = e.Translation;
         }
 
         private PlaybackStream _stream;
@@ -109,10 +123,54 @@ namespace RhubarbEngine.Components.Audio
         public unsafe override void OnLoaded()
 		{
 			base.OnLoaded();
-            if (Engine.Audio)
+            Entity.GlobalTransformChange += Entity_GlobalTransformChange;
+            Engine.AudioManager.PlayBackChanged += Reload;
+        }
+
+        public void LoadAudio()
+        {
+            if (Engine.Audio && audioSource.Target is null)
+            {
+                return;
+            }
+
+            var count = audioSource.Target.ChannelCount;
+            if (count == 1)
             {
                 _stream = Engine.AudioManager.Device.OpenStream((uint)Engine.AudioManager.SamplingRate, OpenALAudioFormat.Mono16Bit);
+                _stream.Velocity = Entity.Velocity * velocityMultiplier.Value;
+                _stream.ALPosition = Entity.GlobalTrans().Translation;
             }
+            else if(count == 2)
+            {
+                _stream = Engine.AudioManager.Device.OpenStream((uint)Engine.AudioManager.SamplingRate, OpenALAudioFormat.Stereo16Bit);
+                _stream.Velocity = Entity.Velocity * velocityMultiplier.Value;
+                _stream.ALPosition = Entity.GlobalTrans().Translation;
+            }
+            else
+            {
+                Engine.Logger.Log($"Unsported Channel Count{count}", true);
+            }
+        }
+
+        public void UnloadAudio()
+        {
+            if(_stream is null)
+            {
+                return;
+            }
+            _stream.Dispose();
+            _stream = null;
+        }
+
+        private void Entity_GlobalTransformChange(Matrix4x4 obj)
+        {
+            if (_stream is null)
+            {
+                return;
+            }
+            _stream.Velocity = Entity.Velocity * velocityMultiplier.Value;
+            _stream.ALPosition = obj.Translation;
         }
 
         public override void LoadListObject()
@@ -138,6 +196,7 @@ namespace RhubarbEngine.Components.Audio
         public override void Dispose()
 		{
             base.Dispose();
+            UnloadAudio();
         }
 
         public AudioOutput(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

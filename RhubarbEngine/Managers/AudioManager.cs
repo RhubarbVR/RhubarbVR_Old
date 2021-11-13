@@ -21,6 +21,10 @@ namespace RhubarbEngine.Managers
         int AudioFrameSize { get; }
         int AudioFrameSizeInBytes { get; }
         PlaybackDevice Device { get; set; }
+        int DeviceIndex { get; set; }
+
+        event Action PlayBackChanged;
+        event Action InputChanged;
 
         void CleanUp();
     }
@@ -31,6 +35,11 @@ namespace RhubarbEngine.Managers
         
 
         private IEngine _engine;
+
+        public event Action PlayBackChanged;
+
+        public event Action InputChanged;
+
 
         public Stopwatch Stopwatch { get; private set; }
 
@@ -76,9 +85,7 @@ namespace RhubarbEngine.Managers
                 {
                     throw new Exception("No playback devices found");
                 }
-                _engine.Logger.Log($"Starting with audio playback with {OpenALHelper.PlaybackDevices[0].DeviceName}",true);
-                Device = OpenALHelper.PlaybackDevices[0];
-                Device.InitListener();
+                DeviceIndex = 0;
             }
             catch
             {
@@ -86,6 +93,20 @@ namespace RhubarbEngine.Managers
             }
             return this;
 		}
+
+        private int _deviceIndex;
+
+        public int DeviceIndex { get { return _deviceIndex; } set { _deviceIndex = value; LoadPlayBack();  } }
+
+        public void LoadPlayBack()
+        {
+            var oldDevice = Device;
+            _engine.Logger.Log($"Starting with audio playback with {OpenALHelper.PlaybackDevices[_deviceIndex].DeviceName}", true);
+            Device = OpenALHelper.PlaybackDevices[_deviceIndex];
+            Device.InitListener();
+            PlayBackChanged?.Invoke();
+            oldDevice.Dispose();
+        }
 
         public void Update()
         {

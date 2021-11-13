@@ -404,7 +404,8 @@ namespace RhubarbEngine.World.ECS
             };
             _children = new SyncObjList<Entity>(this, newRefIds);
 			_components = new SyncAbstractObjList<Component>(this, newRefIds);
-			_manager = new SyncRef<User>(this, newRefIds);
+            _components.ElementListChange += Components_ElementListChange;
+            _manager = new SyncRef<User>(this, newRefIds);
 			enabled.Value = true;
 			parent = new SyncRef<Entity>(this, newRefIds);
 			parent.Changed += Parent_Changed;
@@ -419,7 +420,22 @@ namespace RhubarbEngine.World.ECS
 			persistence.Changed += OnPersistenceChange;
 		}
 
-		private void Parent_Changed(IChangeable obj)
+        private bool _calculateVelocity = false;
+
+        private void Components_ElementListChange()
+        {
+            var calc = false;
+            foreach (var item in _components)
+            {
+                if (typeof(IVelocityReqwest).IsAssignableFrom(item.GetType()))
+                {
+                    calc = true;
+                }
+            }
+            _calculateVelocity = calc;
+        }
+
+        private void Parent_Changed(IChangeable obj)
 		{
 			if (World.RootEntity == this)
             {
@@ -605,11 +621,21 @@ namespace RhubarbEngine.World.ECS
             base.Dispose();
         }
 
+        private Vector3 _lastPos;
+        
+        public Vector3f Velocity { get; private set; }
+
         public void Update(DateTime startTime, DateTime Frame)
 		{
 			if (base.IsRemoved)
             {
                 return;
+            }
+
+            if (_calculateVelocity)
+            {
+                Velocity = (_lastPos - _cashedGlobalTrans.Translation) * (float)Engine.PlatformInfo.DeltaSeconds;
+                _lastPos = _cashedGlobalTrans.Translation;
             }
 
             foreach (var comp in _components)

@@ -19,19 +19,24 @@ namespace OpenAL
             get
             {
                 if (_sourceId == 0)
+                {
                     throw new ObjectDisposedException("sourceId");
+                }
+
                 lock (typeof(PlaybackStream))
                 {
                     API.alcMakeContextCurrent(_context);
-                    float val1, val2, val3;
-                    API.alGetSource3f(_sourceId, FloatSourceProperty.AL_POSITION, out val1, out val2, out val3);
+                    API.alGetSource3f(_sourceId, FloatSourceProperty.AL_POSITION, out var val1, out var val2, out var val3);
                     return new Vector3() { X = val1, Y = val2, Z = val3 };
                 }
             }
             set
             {
                 if (_sourceId == 0)
+                {
                     throw new ObjectDisposedException("sourceId");
+                }
+
                 lock (typeof(PlaybackStream))
                 {
                     API.alcMakeContextCurrent(_context);
@@ -44,19 +49,24 @@ namespace OpenAL
             get
             {
                 if (_sourceId == 0)
+                {
                     throw new ObjectDisposedException("sourceId");
+                }
+
                 lock (typeof(PlaybackStream))
                 {
                     API.alcMakeContextCurrent(_context);
-                    float val1, val2, val3;
-                    API.alGetSource3f(_sourceId, FloatSourceProperty.AL_VELOCITY, out val1, out val2, out val3);
+                    API.alGetSource3f(_sourceId, FloatSourceProperty.AL_VELOCITY, out var val1, out var val2, out var val3);
                     return new Vector3() { X = val1, Y = val2, Z = val3 };
                 }
             }
             set
             {
                 if (_sourceId == 0)
+                {
                     throw new ObjectDisposedException("sourceId");
+                }
+
                 lock (typeof(PlaybackStream))
                 {
                     API.alcMakeContextCurrent(_context);
@@ -64,6 +74,38 @@ namespace OpenAL
                 }
             }
         }
+
+        public float Gain
+        {
+            get
+            {
+                if (_sourceId == 0)
+                {
+                    throw new ObjectDisposedException("sourceId");
+                }
+
+                lock (typeof(PlaybackStream))
+                {
+                    API.alcMakeContextCurrent(_context);
+                    API.alGetSourcef(_sourceId, FloatSourceProperty.AL_GAIN, out var val1);
+                    return val1;
+                }
+            }
+            set
+            {
+                if (_sourceId == 0)
+                {
+                    throw new ObjectDisposedException("sourceId");
+                }
+
+                lock (typeof(PlaybackStream))
+                {
+                    API.alcMakeContextCurrent(_context);
+                    API.alSourcef(_sourceId, FloatSourceProperty.AL_GAIN, value);
+                }
+            }
+        }
+
 
         internal PlaybackStream(uint sampleRate, OpenALAudioFormat format, PlaybackDevice device, IntPtr context)
         {
@@ -148,7 +190,9 @@ namespace OpenAL
                 CleanupPlayedBuffers();
                 var bufferId = CreateBuffer();
                 if (offset == 0)
+                {
                     API.alBufferData(bufferId, _format, buffer, count, _sampleRate);
+                }
                 else
                 {
                     var tmpBuffer = new byte[count];
@@ -157,7 +201,9 @@ namespace OpenAL
                 }
                 API.alSourceQueueBuffers(_sourceId, 1, new[] {bufferId});
                 if (!IsPlaying)
+                {
                     API.alSourcePlay(_sourceId);
+                }
             }
         }
 
@@ -167,16 +213,25 @@ namespace OpenAL
             API.alGenBuffers(1, buffers);
             var bufferId = buffers[0];
             lock (_bufferIds)
+            {
                 _bufferIds.Add(bufferId);
+            }
+
             return bufferId;
         }
 
         void CleanupPlayedBuffers()
         {
-            if (_sourceId == 0) return;
-            int buffers;
-            API.alGetSourcei(_sourceId, IntSourceProperty.AL_BUFFERS_PROCESSED, out buffers);
-            if (buffers < 1) return;
+            if (_sourceId == 0)
+            {
+                return;
+            }
+
+            API.alGetSourcei(_sourceId, IntSourceProperty.AL_BUFFERS_PROCESSED, out var buffers);
+            if (buffers < 1)
+            {
+                return;
+            }
 
             var removedBuffers = new uint[buffers];
             API.alSourceUnqueueBuffers(_sourceId, buffers, removedBuffers);
@@ -204,12 +259,18 @@ namespace OpenAL
 
         void Cleanup()
         {
-            if (_sourceId == 0) return;
+            if (_sourceId == 0)
+            {
+                return;
+            }
 
             lock (typeof (PlaybackStream))
             {
                 if (IsPlaying)
+                {
                     API.alSourceStop(_sourceId);
+                }
+
                 CleanupPlayedBuffers();
 
                 var buffers = _bufferIds.Count;
@@ -229,7 +290,10 @@ namespace OpenAL
 
         void DestroySource()
         {
-            if (_sourceId == 0) return;
+            if (_sourceId == 0)
+            {
+                return;
+            }
 
             var sources = new uint[1];
             API.alDeleteSources(1, sources);
@@ -241,10 +305,11 @@ namespace OpenAL
             get
             {
                 if (_sourceId == 0)
+                {
                     return SourceState.Uninitialized;
+                }
 
-                int state;
-                API.alGetSourcei(_sourceId, IntSourceProperty.AL_SOURCE_STATE, out state);
+                API.alGetSourcei(_sourceId, IntSourceProperty.AL_SOURCE_STATE, out var state);
 
                 return (SourceState)state;
             }
@@ -252,17 +317,17 @@ namespace OpenAL
 
         public bool IsPlaying
         {
-            get { return (this.State == SourceState.Playing); }
+            get { return State == SourceState.Playing; }
         }
 
         public bool IsPaused
         {
-            get { return (this.State == SourceState.Paused); }
+            get { return State == SourceState.Paused; }
         }
 
         public bool IsStopped
         {
-            get { return (this.State == SourceState.Stopped); }
+            get { return State == SourceState.Stopped; }
         }
     }
 }

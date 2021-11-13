@@ -16,6 +16,8 @@ namespace RhubarbEngine.Components.Audio
 
         public event Action Update;
 
+        public event Action Reload;
+
 		public byte[] FrameInputBuffer { get; }
 
 	}

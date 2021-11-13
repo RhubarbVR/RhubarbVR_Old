@@ -243,7 +243,10 @@ namespace RhubarbEngine.Components.Interaction
 
 		private Task _lastTask;
 
-		public void StartRenderTask()
+        public event Action Update;
+        public event Action Reload;
+
+        public void StartRenderTask()
 		{
 			if (_lastTask != null)
 			{
