@@ -102,10 +102,6 @@ namespace RhubarbEngine
 				_engine.worldManager = new TWorldManager();
 				_engine.WorldManager.Initialize(_engine);
 
-            if (_engine.Audio)
-            {
-                _engine.AudioManager.Task.Start();
-            }
             Initialised = true;
 		}
 

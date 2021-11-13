@@ -367,6 +367,7 @@ namespace RhubarbEngine
 			inputManager.Update();
 			worldManager.Update(startTime, Frame);
 			renderManager.Update();
+            audioManager.Update();
 		}
 
         public void WaitForNextUpdates(int update)

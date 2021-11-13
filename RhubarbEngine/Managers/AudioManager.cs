@@ -10,6 +10,8 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using OpenAL;
+using RNumerics;
+
 namespace RhubarbEngine.Managers
 {
     public unsafe interface IAudioManager : IManager
@@ -18,7 +20,6 @@ namespace RhubarbEngine.Managers
         Stopwatch Stopwatch { get; }
         int AudioFrameSize { get; }
         int AudioFrameSizeInBytes { get; }
-        Thread Task { get; }
         PlaybackDevice Device { get; set; }
 
         void CleanUp();
@@ -31,7 +32,6 @@ namespace RhubarbEngine.Managers
 
         private IEngine _engine;
 
-		private bool _running;
         public Stopwatch Stopwatch { get; private set; }
 
         public int SamplingRate
@@ -58,15 +58,6 @@ namespace RhubarbEngine.Managers
             }
         }
 
-        Thread IAudioManager.Task
-        {
-            get
-            {
-                return Task;
-            }
-        }
-
-        public Thread Task;
 
         public PlaybackDevice Device { get; set; }
 
@@ -78,8 +69,6 @@ namespace RhubarbEngine.Managers
                 return this;
             }
 
-            Task = new Thread(WorkerThread);
-
             try
             {
                 OpenALHelper.Start();
@@ -89,52 +78,37 @@ namespace RhubarbEngine.Managers
                 }
                 _engine.Logger.Log($"Starting with audio playback with {OpenALHelper.PlaybackDevices[0].DeviceName}",true);
                 Device = OpenALHelper.PlaybackDevices[0];
-                _running = true;
+                Device.InitListener();
             }
             catch
             {
-                _running = false;
                 _engine.Audio = false;
             }
             return this;
 		}
 
-
-
-
-        private void WorkerThread()
-        {
-            while (_running)
-            {
-                try
-                {
-                    foreach (var item in _engine.WorldManager.Worlds)
-                    {
-                        if (item.Focus != World.World.FocusLevel.Background)
-                        {
-                            foreach (var audioOutput in item.updateLists.audioOutputs)
-                            {
-                            //    audioOutput.UpdateAudio();
-                            }
-                        }
-                    }
-                }
-                catch 
-                {
-                }
-                Thread.Sleep(5);
-            }
-        }
-
         public void Update()
         {
-            var Position = _engine.WorldManager.LocalWorld.HeadTrans.Translation;
+            if(_engine.WorldManager.LocalWorld is null)
+            {
+                return;
+            }
+
+            Device.Listener.Velocity = (Device.Listener.Position - _engine.WorldManager.LocalWorld.HeadTrans.Translation) * (float)_engine.PlatformInfo.DeltaSeconds;
+
+            Device.Listener.Position = _engine.WorldManager.LocalWorld.HeadTrans.Translation;
+            Matrix4x4.Decompose(_engine.WorldManager.LocalWorld.HeadTrans, out _, out var rot, out _);
+
+            Device.Listener.Orientation = new Orientation
+            {
+                At = ((Quaternionf)rot).AxisZ.ToSystemNumrics() * -1,
+                Up = Vector3f.AxisY.ToSystemNumrics()
+            };
 
         }
 
         public void CleanUp()
         {
-            _running = false;
         }
     }
 }

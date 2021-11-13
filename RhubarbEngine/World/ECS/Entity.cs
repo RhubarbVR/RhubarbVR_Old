@@ -373,8 +373,8 @@ namespace RhubarbEngine.World.ECS
 			UpdateGlobalTrans(SendUpdate);
 		}
 
-		public Action<Matrix4x4> GlobalTransformChange;
-		public Action<Matrix4x4> GlobalTransformChangePhysics;
+		public event Action<Matrix4x4> GlobalTransformChange;
+		public event Action<Matrix4x4> GlobalTransformChangePhysics;
 
 		public void SetLocalTrans(Matrix4x4 newtrans)
 		{

@@ -11,7 +11,7 @@ namespace OpenAL
     public class PlaybackDevice : IDisposable
     {
         IntPtr _device = IntPtr.Zero;
-        IntPtr _context = IntPtr.Zero;
+        public IntPtr _context = IntPtr.Zero;
         readonly List<PlaybackStream> _streams = new List<PlaybackStream>(); 
 
         public PlaybackDevice(string deviceName)
@@ -21,6 +21,13 @@ namespace OpenAL
         ~PlaybackDevice()
         {
             Dispose();
+        }
+        public Listener Listener { get; private set; }
+
+        public void InitListener()
+        {
+            EnsureDeviceIsOpen();
+            Listener = new Listener(_context);
         }
 
         public PlaybackStream OpenStream(uint sampleRate, OpenALAudioFormat format)
@@ -44,7 +51,7 @@ namespace OpenAL
             }
         }
 
-        void EnsureDeviceIsOpen()
+        public void EnsureDeviceIsOpen()
         {
             if (_device != IntPtr.Zero) return;
             _device = API.alcOpenDevice(DeviceName);

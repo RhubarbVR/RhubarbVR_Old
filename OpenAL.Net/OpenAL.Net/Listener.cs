@@ -10,7 +10,7 @@ namespace OpenAL
     {
         private readonly IntPtr _context = IntPtr.Zero;
 
-        internal Listener(IntPtr context)
+        public Listener(IntPtr context)
         {
             _context = context;
         }

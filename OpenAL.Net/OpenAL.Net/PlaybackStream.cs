@@ -14,7 +14,6 @@ namespace OpenAL
         private uint _sourceId;
         private readonly List<uint> _bufferIds = new List<uint>();
 
-        public Listener Listener { get; private set; }
         public Vector3 ALPosition
         {
             get
@@ -73,7 +72,6 @@ namespace OpenAL
             _device = device;
             _context = context;
             CreateSource();
-            Listener = new Listener(_context);
         }
 
         void CreateSource()
@@ -210,8 +208,6 @@ namespace OpenAL
 
             lock (typeof (PlaybackStream))
             {
-                Listener = null;
-
                 if (IsPlaying)
                     API.alSourceStop(_sourceId);
                 CleanupPlayedBuffers();

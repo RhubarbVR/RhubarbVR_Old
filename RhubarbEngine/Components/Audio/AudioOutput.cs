@@ -22,8 +22,9 @@ namespace RhubarbEngine.Components.Audio
 	{
 		public SyncRef<IAudioSource> audioSource;
 
-		public Sync<float> spatialBlend;
 		public Sync<float> cullingDistance;
+
+        public Sync<float> velocityMultiplier;
 
         public bool IsNotCulled
 		{
@@ -53,13 +54,13 @@ namespace RhubarbEngine.Components.Audio
 		{
 			audioSource = new SyncRef<IAudioSource>(this, newRefIds);
             audioSource.Changed += AudioSource_Changed;
-            spatialBlend = new Sync<float>(this, newRefIds)
-            {
-                Value = 1f
-            };
             cullingDistance = new Sync<float>(this, newRefIds)
             {
                 Value = 100f
+            };
+            velocityMultiplier = new Sync<float>(this, newRefIds)
+            {
+                Value = 1f
             };
         }
 
@@ -92,6 +93,17 @@ namespace RhubarbEngine.Components.Audio
             }
         }
 
+        public override void CommonUpdate(DateTime startTime, DateTime Frame)
+        {
+            if(_stream is null)
+            {
+                return;
+            }
+            var e = Entity.GlobalTrans();
+            _stream.Velocity = (_stream.ALPosition - e.Translation) * ((float)Engine.PlatformInfo.DeltaSeconds * velocityMultiplier.Value);
+            _stream.ALPosition = e.Translation;
+        }
+
         private PlaybackStream _stream;
 
         public unsafe override void OnLoaded()
@@ -100,19 +112,10 @@ namespace RhubarbEngine.Components.Audio
             if (Engine.Audio)
             {
                 _stream = Engine.AudioManager.Device.OpenStream((uint)Engine.AudioManager.SamplingRate, OpenALAudioFormat.Mono16Bit);
-                _stream.Listener.Position = new Vector3() { X = 0.0f, Y = 0.0f, Z = 0.0f };
-                _stream.Listener.Velocity = new Vector3() { X = 0.0f, Y = 0.0f, Z = 0.0f };
-                _stream.Listener.Orientation = new Orientation()
-                {
-                    At = new Vector3() { X = 0.0f, Y = 0.0f, Z = 1.0f },
-                    Up = new Vector3() { X = 0.0f, Y = 1.0f, Z = 0.0f }
-                };
-                _stream.ALPosition = new Vector3() { X = 0.0f, Y = 0.0f, Z = 0.0f };
-                _stream.Velocity = new Vector3() { X = 0.0f, Y = 0.0f, Z = 0.0f };
             }
         }
 
-		public override void LoadListObject()
+        public override void LoadListObject()
 		{
 			base.LoadListObject();
 			try
