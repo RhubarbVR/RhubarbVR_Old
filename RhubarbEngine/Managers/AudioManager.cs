@@ -9,17 +9,7 @@ using System.IO;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
-using RVRAudioNative;
-
-namespace RVRAudioNative
-{
-    public enum DeviceFlags
-    {
-        None,
-        Hrtf,
-    }
-}
-
+using OpenAL;
 namespace RhubarbEngine.Managers
 {
     public unsafe interface IAudioManager : IManager
@@ -29,7 +19,7 @@ namespace RhubarbEngine.Managers
         int AudioFrameSize { get; }
         int AudioFrameSizeInBytes { get; }
         Thread Task { get; }
-        rvrAudioListener* DefaultListener { get; }
+        PlaybackDevice Device { get; set; }
 
         void CleanUp();
     }
@@ -37,13 +27,12 @@ namespace RhubarbEngine.Managers
 
     public unsafe class AudioManager : IAudioManager
     {
-       
-		private IEngine _engine;
+        
+
+        private IEngine _engine;
 
 		private bool _running;
         public Stopwatch Stopwatch { get; private set; }
-
-        private rvrAudioDevice* _audioDevice;
 
         public int SamplingRate
         {
@@ -65,7 +54,7 @@ namespace RhubarbEngine.Managers
         {
             get
             {
-                return AudioFrameSize * sizeof(float);
+                return AudioFrameSize * sizeof(short);
             }
         }
 
@@ -77,9 +66,9 @@ namespace RhubarbEngine.Managers
             }
         }
 
-        public rvrAudioListener* DefaultListener { get; set; }
-
         public Thread Task;
+
+        public PlaybackDevice Device { get; set; }
 
         public unsafe IManager Initialize(IEngine _engine)
 		{
@@ -88,17 +77,18 @@ namespace RhubarbEngine.Managers
             {
                 return this;
             }
-            
-            Forward = new Vector3(0, 0, 1);
-            Up = new Vector3(0, 1, 0);
 
             Task = new Thread(WorkerThread);
 
             try
             {
-                _audioDevice = NativeAudio.rvrAudioCreate(null, (int)DeviceFlags.Hrtf);
-                DefaultListener = NativeAudio.rvrAudioListenerCreate(_audioDevice);
-                NativeAudio.rvrAudioListenerEnable(DefaultListener);
+                OpenALHelper.Start();
+                if (OpenALHelper.PlaybackDevices.Length <= 0)
+                {
+                    throw new Exception("No playback devices found");
+                }
+                _engine.Logger.Log($"Starting with audio playback with {OpenALHelper.PlaybackDevices[0].DeviceName}",true);
+                Device = OpenALHelper.PlaybackDevices[0];
                 _running = true;
             }
             catch
@@ -109,44 +99,6 @@ namespace RhubarbEngine.Managers
             return this;
 		}
 
-        public Vector3 Velocity;
-
-        private Vector3 _forward;
-
-        public Vector3 Forward
-        {
-            get
-            {
-                return _forward;
-            }
-            set
-            {
-                if (value == Vector3.Zero)
-                {
-                    throw new InvalidOperationException("The value of the Forward vector can not be (0,0,0)");
-                }
-
-                _forward = Vector3.Normalize(value);
-            }
-        }
-        private Vector3 _up;
-
-        public Vector3 Up
-        {
-            get
-            {
-                return _up;
-            }
-            set
-            {
-                if (value == Vector3.Zero)
-                {
-                    throw new InvalidOperationException("The value of the Up vector can not be (0,0,0)");
-                }
-
-                _up = Vector3.Normalize(value);
-            }
-        }
 
 
 
@@ -162,7 +114,7 @@ namespace RhubarbEngine.Managers
                         {
                             foreach (var audioOutput in item.updateLists.audioOutputs)
                             {
-                                audioOutput.UpdateAudio();
+                            //    audioOutput.UpdateAudio();
                             }
                         }
                     }
@@ -177,11 +129,7 @@ namespace RhubarbEngine.Managers
         public void Update()
         {
             var Position = _engine.WorldManager.LocalWorld.HeadTrans.Translation;
-            var Forward = _forward;
-            var Up = _up;
-            var Velocity = (Position - this.Velocity) * (float)_engine.PlatformInfo.DeltaSeconds;
-            NativeAudio.rvrAudioListenerPush3D(DefaultListener, (float*)&Position, (float*)&Forward, (float*)&Up, (float*)&Velocity);
-            this.Velocity = Position;
+
         }
 
         public void CleanUp()

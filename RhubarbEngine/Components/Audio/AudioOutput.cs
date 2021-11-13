@@ -13,7 +13,7 @@ using System.Numerics;
 using RhubarbEngine.Managers;
 using System.Threading;
 using System.Runtime.InteropServices;
-using RVRAudioNative;
+using OpenAL;
 
 namespace RhubarbEngine.Components.Audio
 {
@@ -25,9 +25,7 @@ namespace RhubarbEngine.Components.Audio
 		public Sync<float> spatialBlend;
 		public Sync<float> cullingDistance;
 
-        private rvrAudioSource* _audioSource;
-
-		public bool IsNotCulled
+        public bool IsNotCulled
 		{
 			get
 			{
@@ -54,6 +52,7 @@ namespace RhubarbEngine.Components.Audio
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			audioSource = new SyncRef<IAudioSource>(this, newRefIds);
+            audioSource.Changed += AudioSource_Changed;
             spatialBlend = new Sync<float>(this, newRefIds)
             {
                 Value = 1f
@@ -64,52 +63,52 @@ namespace RhubarbEngine.Components.Audio
             };
         }
 
+        private void AudioSource_Changed(IChangeable obj)
+        {
+            if (audioSource.Target is null)
+            {
+                return;
+            }
+
+            audioSource.Target.Update += UpdateAudio;
+        }
+
         public void UpdateAudio()
         {
             if (IsNotCulled)
             {
-                if (!NativeAudio.rvrAudioSourceIsPlaying(_audioSource))
+                if (!audioSource.Target.IsActive)
                 {
-                    NativeAudio.rvrAudioSourcePlay(_audioSource); 
+                    return;
                 }
-                var freebuff = NativeAudio.rvrAudioSourceGetFreeBuffer(_audioSource);
-                if ((IntPtr)freebuff != IntPtr.Zero)
+
+                var data = audioSource.Target.FrameInputBuffer;
+                if (_stream.CanWrite && data != null)
                 {
-                    if (audioSource.Target != null)
-                    {
-                        var buffer = audioSource.Target.FrameInputBuffer;
-                        fixed (byte* e = buffer)
-                        {
-                            NativeAudio.rvrAudioSourceQueueBuffer(_audioSource, freebuff, (short*)e, buffer.Length,(BufferType)2);
-                        }
-                    }
+                    //  if you want to use BeginWrite here instead you need to copy the _readBuffer to avoid race conditions reader/writing the same buffer asynchronously
+                    //  alternatively you can use multiple buffers to avoid such race conditions
+                    _stream.Write(data, 0, data.Length);
                 }
-            }
-            else
-            {
-                NativeAudio.rvrAudioSourcePause(_audioSource);
             }
         }
 
-		public unsafe override void OnLoaded()
+        private PlaybackStream _stream;
+
+        public unsafe override void OnLoaded()
 		{
 			base.OnLoaded();
             if (Engine.Audio)
             {
-                Console.WriteLine("Audio Comp Added");
-               _audioSource = NativeAudio.rvrAudioSourceCreate(Engine.AudioManager.DefaultListener, Engine.AudioManager.SamplingRate, 0, true, true, true, true, 1, 1);
-               var buf1 = NativeAudio.rvrAudioBufferCreate(Engine.AudioManager.AudioFrameSizeInBytes);
-               var buf2 = NativeAudio.rvrAudioBufferCreate(Engine.AudioManager.AudioFrameSizeInBytes);
-                NativeAudio.rvrAudioSourceSetBuffer(_audioSource, buf1);
-                NativeAudio.rvrAudioSourceSetBuffer(_audioSource, buf2);
-                var clear = new byte[Engine.AudioManager.AudioFrameSizeInBytes];
-                fixed (byte* e = clear)
+                _stream = Engine.AudioManager.Device.OpenStream((uint)Engine.AudioManager.SamplingRate, OpenALAudioFormat.Mono16Bit);
+                _stream.Listener.Position = new Vector3() { X = 0.0f, Y = 0.0f, Z = 0.0f };
+                _stream.Listener.Velocity = new Vector3() { X = 0.0f, Y = 0.0f, Z = 0.0f };
+                _stream.Listener.Orientation = new Orientation()
                 {
-                    NativeAudio.rvrAudioSourceQueueBuffer(_audioSource, buf1, (short*)e, Engine.AudioManager.AudioFrameSizeInBytes, (BufferType)1);
-                    NativeAudio.rvrAudioSourceQueueBuffer(_audioSource, buf2, (short*)e, Engine.AudioManager.AudioFrameSizeInBytes, (BufferType)2);
-
-                }
-                Console.WriteLine("Audio Comp Loaded");
+                    At = new Vector3() { X = 0.0f, Y = 0.0f, Z = 1.0f },
+                    Up = new Vector3() { X = 0.0f, Y = 1.0f, Z = 0.0f }
+                };
+                _stream.ALPosition = new Vector3() { X = 0.0f, Y = 0.0f, Z = 0.0f };
+                _stream.Velocity = new Vector3() { X = 0.0f, Y = 0.0f, Z = 0.0f };
             }
         }
 
@@ -131,19 +130,6 @@ namespace RhubarbEngine.Components.Audio
 				World.updateLists.audioOutputs.Remove(this);
 			}
 			catch { }
-		}
-		public unsafe void AudioUpdate()
-		{
-            if (!audioSource.Target.IsActive)
-            {
-                return;
-            }
-
-            var data = audioSource.Target.FrameInputBuffer;
-			if (data == null)
-            {
-                return;
-            }
 		}
 
         public override void Dispose()

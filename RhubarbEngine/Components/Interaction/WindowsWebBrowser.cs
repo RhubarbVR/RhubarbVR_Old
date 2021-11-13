@@ -574,6 +574,9 @@ namespace RhubarbEngine.Components.Interaction
 
 		TextureView _view;
 		UpdateDatingTexture2D _target;
+
+        public event Action Update;
+
         public void Render()
         {
             if (!IsActive)
@@ -779,7 +782,8 @@ namespace RhubarbEngine.Components.Interaction
             };
             parameters.FramesPerBuffer = Engine.AudioManager.AudioFrameSize;
 			parameters.SampleRate = Engine.AudioManager.SamplingRate;
-			return true;
+
+            return true;
 		}
 
 		public void OnAudioStreamStarted(IWebBrowser chromiumWebBrowser, IBrowser browser, AudioParameters parameters, int channels)
@@ -794,8 +798,8 @@ namespace RhubarbEngine.Components.Interaction
 				var channelData = (float**)data.ToPointer();
 				var chan = ChannelCount;
 				var size = noOfFrames * sizeof(float) * chan;
-                var samples = new byte[size];
-				fixed (byte* pDestByte = samples)
+                var samples = new float[size];
+				fixed (float* pDestByte = samples)
 				{
 					var pDest = (float*)pDestByte;
 
@@ -807,8 +811,19 @@ namespace RhubarbEngine.Components.Interaction
 						}
 					}
 				}
-				_frameInputBuffer.Push(samples);
-			}
+                var sizes = noOfFrames * sizeof(short) * chan;
+                var truesamps = new byte[sizes];
+                short two;
+                for (int i = 0, j = 0; i < size; i = i + 4, j = j + 2)
+                {
+                    two = (short)Math.Floor(samples[i] * 32767);
+                    truesamps[j] = (byte)(two & 0xFF);
+                    truesamps[j + 1] = (byte)((two >> 8) & 0xFF);
+                }
+
+                _frameInputBuffer.Push(truesamps);
+                Update?.Invoke();
+            }
 		}
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)

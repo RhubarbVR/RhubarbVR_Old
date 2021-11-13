@@ -57,6 +57,8 @@ namespace RhubarbEngine.Components.Audio
             [NonSerialized]
             public AudioSplitter audioParent;
 
+            public event Action Update;
+
             public byte[] FrameInputBuffer
             {
                 get

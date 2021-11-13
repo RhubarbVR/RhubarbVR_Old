@@ -73,6 +73,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ImguiVeldrid\VeldridImGui.csproj" />
     <ProjectReference Include="..\Numerics\Numerics.csproj" />
+    <ProjectReference Include="..\OpenAL.Net\OpenAL.Net.csproj" />
     <ProjectReference Include="..\veldrid\src\Veldrid.ImageSharp\Veldrid.ImageSharp.csproj" />
     <ProjectReference Include="..\veldrid\src\Veldrid.SDL2\Veldrid.SDL2.csproj" />
     <ProjectReference Include="..\veldrid\src\Veldrid.StartupUtilities\Veldrid.StartupUtilities.csproj" />
@@ -131,12 +132,6 @@
   <ItemGroup>
     <Folder Include="SteamVR\" />
     <Folder Include="VirtualReality\native\win-x64\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="RVRAudioNative">
-      <HintPath>..\DLLS\RVRAudioNative.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
