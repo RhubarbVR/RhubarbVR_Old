@@ -24,7 +24,8 @@ using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.Components.Interaction
 {
-	public class Grabbable : Component, IPhysicsDisableder
+    [Category(new string[] { "Interaction" })]
+    public class Grabbable : Component, IPhysicsDisableder,IVelocityReqwest
 	{
 		public SyncRef<Entity> lastParent;
 
@@ -44,8 +45,6 @@ namespace RhubarbEngine.Components.Interaction
             }
         }
 
-        Vector3f _lastValue;
-		Vector3f _volas;
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
@@ -83,8 +82,6 @@ namespace RhubarbEngine.Components.Interaction
 				}
 				Entity.SetGlobalPos(new Vector3f(newpos.x, newpos.y, newpos.z));
 			}
-			_volas = (((_lastValue - Entity.GlobalPos()) * (1 / (float)Engine.PlatformInfo.DeltaSeconds)) + _volas) / 2;
-			_lastValue = Entity.GlobalPos();
 
 		}
 
@@ -122,8 +119,8 @@ namespace RhubarbEngine.Components.Interaction
 			{
 				if (item.NoneStaticBody.Value && (item.collisionObject != null))
 				{
-					item.collisionObject.LinearVelocity = new BulletSharp.Math.Vector3(-_volas.x, -_volas.y, -_volas.z);
-					item.collisionObject.AngularVelocity = new BulletSharp.Math.Vector3(_volas.x / 10, _volas.y / 10, _volas.z / 10);
+					item.collisionObject.LinearVelocity = new BulletSharp.Math.Vector3(-Entity.Velocity.x * 2, -Entity.Velocity.y * 2, -Entity.Velocity.z * 2);
+					item.collisionObject.AngularVelocity = new BulletSharp.Math.Vector3(Entity.Velocity.x * 2 / 10, Entity.Velocity.y * 2 / 10, Entity.Velocity.z * 2 / 10);
 				}
 			}
 

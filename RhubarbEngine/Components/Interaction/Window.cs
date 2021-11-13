@@ -26,7 +26,8 @@ using Veldrid;
 using ImGuiNET;
 namespace RhubarbEngine.Components.Interaction
 {
-	public class Window : UIWidget
+    [Category(new string[] { "Interaction" })]
+    public class Window : UIWidget
 	{
 		public enum DockPos
 		{

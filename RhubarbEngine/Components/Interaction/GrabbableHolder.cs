@@ -25,7 +25,8 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.Interaction
 {
-	public class GrabbableHolder : Component
+    [Category(new string[] { "Interaction" })]
+    public class GrabbableHolder : Component
 	{
 		public SyncRef<Entity> holder;
 
