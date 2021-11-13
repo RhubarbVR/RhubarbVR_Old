@@ -798,8 +798,8 @@ namespace RhubarbEngine.Components.Interaction
 				var channelData = (float**)data.ToPointer();
 				var chan = ChannelCount;
 				var size = noOfFrames * sizeof(float) * chan;
-                var samples = new float[size];
-				fixed (float* pDestByte = samples)
+                var samples = new byte[size];
+				fixed (byte* pDestByte = samples)
 				{
 					var pDest = (float*)pDestByte;
 
@@ -816,7 +816,8 @@ namespace RhubarbEngine.Components.Interaction
                 short two;
                 for (int i = 0, j = 0; i < size; i = i + 4, j = j + 2)
                 {
-                    two = (short)Math.Floor(samples[i] * 32767);
+                    var value = (BitConverter.ToSingle(samples, i));
+                    two = (short)(value * short.MaxValue);
                     truesamps[j] = (byte)(two & 0xFF);
                     truesamps[j + 1] = (byte)((two >> 8) & 0xFF);
                 }
