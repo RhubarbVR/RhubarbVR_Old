@@ -18,14 +18,14 @@ namespace RhubarbVR
             {
                 engine.Logger.Log(e.ToString(), true);
             }
-
+            engine.Logger.Log("Closing Game", true);
             try
             {
                 engine.CleanUP();
             }
             catch (Exception e)
             {
-                engine.Logger.Log(e.ToString(), true);
+                engine.Logger.Log("Failed To Close Game"+e.ToString(), true);
                 engine.Logger.CleanUP();
             }
         }

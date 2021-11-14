@@ -99,10 +99,16 @@ namespace RhubarbEngine.Components.PrivateSpace
 						Input.LeftLaser.SendRayCast(sourcse, destination);
 						break;
 					case InteractionSource.RightLaser:
-						Input.RightLaser.SendRayCast(sourcse, destination);
-						break;
+                        if (Engine.OutputType != VirtualReality.OutputType.Screen)
+                        {
+                            Input.RightLaser.SendRayCast(sourcse, destination);
+                        }
+                        break;
 					case InteractionSource.HeadLaser:
-						Input.RightLaser.SendRayCast(sourcse, destination);
+                        if (Engine.OutputType == VirtualReality.OutputType.Screen)
+                        {
+                            Input.RightLaser.SendRayCast(sourcse, destination);
+                        }
 						break;
 					default:
 						break;

@@ -24,7 +24,8 @@ using RhubarbEngine.Components.Interaction;
 
 namespace RhubarbEngine.Components.Interaction
 {
-	public class Grabbable : Component, IPhysicsDisableder
+    [Category(new string[] { "Interaction" })]
+    public class Grabbable : Component, IPhysicsDisableder,IVelocityReqwest
 	{
 		public SyncRef<Entity> lastParent;
 
@@ -44,8 +45,6 @@ namespace RhubarbEngine.Components.Interaction
             }
         }
 
-        Vector3f _lastValue;
-		Vector3f _volas;
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
@@ -70,21 +69,19 @@ namespace RhubarbEngine.Components.Interaction
 				switch (grabbableHolder.Target.source.Value)
 				{
 					case InteractionSource.LeftLaser:
-						newpos = _offset + Input.LeftLaser.Pos;
+						newpos = Input.LeftLaser.Pos - _offset;
 						break;
 					case InteractionSource.RightLaser:
-						newpos = _offset + Input.RightLaser.Pos;
+						newpos = Input.RightLaser.Pos - _offset;
 						break;
 					case InteractionSource.HeadLaser:
-						newpos = _offset + Input.RightLaser.Pos;
+						newpos = Input.RightLaser.Pos - _offset;
 						break;
 					default:
 						break;
 				}
 				Entity.SetGlobalPos(new Vector3f(newpos.x, newpos.y, newpos.z));
 			}
-			_volas = (((_lastValue - Entity.GlobalPos()) * (1 / (float)Engine.PlatformInfo.DeltaSeconds)) + _volas) / 2;
-			_lastValue = Entity.GlobalPos();
 
 		}
 
@@ -122,8 +119,8 @@ namespace RhubarbEngine.Components.Interaction
 			{
 				if (item.NoneStaticBody.Value && (item.collisionObject != null))
 				{
-					item.collisionObject.LinearVelocity = new BulletSharp.Math.Vector3(-_volas.x, -_volas.y, -_volas.z);
-					item.collisionObject.AngularVelocity = new BulletSharp.Math.Vector3(_volas.x / 10, _volas.y / 10, _volas.z / 10);
+					item.collisionObject.LinearVelocity = new BulletSharp.Math.Vector3(-Entity.Velocity.x * 100, -Entity.Velocity.y * 100, -Entity.Velocity.z * 100);
+					item.collisionObject.AngularVelocity = new BulletSharp.Math.Vector3(Entity.Velocity.x * 100, Entity.Velocity.y * 100, Entity.Velocity.z * 100);
 				}
 			}
 

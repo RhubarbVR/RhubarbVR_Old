@@ -85,7 +85,7 @@ namespace RhubarbEngine.World
 			}
 		}
 
-		public string PrimitiveString { get { return Value.ToString(); } set { SetValueAsString(value); } }
+		public string PrimitiveString { get { return Value?.ToString()??"null"; } set { SetValueAsString(value); } }
 
         public bool Driven
         {

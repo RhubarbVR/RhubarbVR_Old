@@ -519,7 +519,8 @@ namespace RhubarbEngine.Components.Interaction
 			}
 			catch { }
 			OnLoaded();
-		}
+            Reload?.Invoke();
+        }
 
 		private void GlobalAudio_Changed(IChangeable obj)
 		{
@@ -537,9 +538,10 @@ namespace RhubarbEngine.Components.Interaction
 			{
 				_browser.AudioHandler = this;
 			}
-		}
+            Reload?.Invoke();
+        }
 
-		private void OnScaleChange(IChangeable obj)
+        private void OnScaleChange(IChangeable obj)
 		{
 			if (!IsActive)
             {
@@ -574,6 +576,10 @@ namespace RhubarbEngine.Components.Interaction
 
 		TextureView _view;
 		UpdateDatingTexture2D _target;
+
+        public event Action Update;
+        public event Action Reload;
+
         public void Render()
         {
             if (!IsActive)
@@ -779,7 +785,8 @@ namespace RhubarbEngine.Components.Interaction
             };
             parameters.FramesPerBuffer = Engine.AudioManager.AudioFrameSize;
 			parameters.SampleRate = Engine.AudioManager.SamplingRate;
-			return true;
+
+            return true;
 		}
 
 		public void OnAudioStreamStarted(IWebBrowser chromiumWebBrowser, IBrowser browser, AudioParameters parameters, int channels)
@@ -807,8 +814,20 @@ namespace RhubarbEngine.Components.Interaction
 						}
 					}
 				}
-				_frameInputBuffer.Push(samples);
-			}
+                var sizes = noOfFrames * sizeof(short) * chan;
+                var truesamps = new byte[sizes];
+                short two;
+                for (int i = 0, j = 0; i < size; i = i + 4, j = j + 2)
+                {
+                    var value = (BitConverter.ToSingle(samples, i));
+                    two = (short)(value * short.MaxValue);
+                    truesamps[j] = (byte)(two & 0xFF);
+                    truesamps[j + 1] = (byte)((two >> 8) & 0xFF);
+                }
+
+                _frameInputBuffer.Push(truesamps);
+                Update?.Invoke();
+            }
 		}
 
         public override void CommonUpdate(DateTime startTime, DateTime Frame)

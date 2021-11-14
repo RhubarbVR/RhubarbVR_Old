@@ -24,6 +24,8 @@ namespace RhubarbEngine.World
 			}
 		}
 
+        public event Action ElementListChange;
+
 		public IEnumerator<T> GetEnumerator()
 		{
 			for (var i = 0; i < _synclist.Count; i++)
@@ -47,7 +49,7 @@ namespace RhubarbEngine.World
 			{
 				NetAdd(val);
 			}
-			return _synclist[_synclist.Count - 1];
+            return _synclist[_synclist.Count - 1];
 		}
 		public T Add<L>(bool Refid = true) where L : T
 		{
@@ -62,24 +64,26 @@ namespace RhubarbEngine.World
 			{
 				NetAdd(val);
 			}
-			return _synclist[_synclist.Count - 1];
+            return _synclist[_synclist.Count - 1];
 		}
 
 		public void AddInternal(T value)
 		{
-			_synclist.SafeAdd(value);
+            _synclist.SafeAdd(value);
 			value.OnDispose += Value_onDispose;
 			AddDisposable(value);
-		}
+            ElementListChange?.Invoke();
+        }
 
-		public void RemoveInternal(T value)
+        public void RemoveInternal(T value)
 		{
-			_synclist.Remove(value);
+            _synclist.Remove(value);
 			value.OnDispose -= Value_onDispose;
 			RemoveDisposable(value);
-		}
+            ElementListChange?.Invoke();
+        }
 
-		private void Value_onDispose(IWorker worker)
+        private void Value_onDispose(IWorker worker)
 		{
 			try
 			{

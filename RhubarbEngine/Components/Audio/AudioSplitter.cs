@@ -10,7 +10,6 @@ using RhubarbEngine.World.ECS;
 using RhubarbEngine.World;
 using RNumerics;
 using System.Numerics;
-using SteamAudio;
 using RhubarbEngine.Managers;
 using System.Threading;
 using System.Runtime.InteropServices;
@@ -57,6 +56,18 @@ namespace RhubarbEngine.Components.Audio
             [NoSync]
             [NonSerialized]
             public AudioSplitter audioParent;
+
+            public event Action Update;
+            public event Action Reload;
+
+            public void InvokeUpdate()
+            {
+                Update?.Invoke();
+            }
+            public void InvokeReload()
+            {
+                Reload?.Invoke();
+            }
 
             public byte[] FrameInputBuffer
             {
@@ -135,9 +146,30 @@ namespace RhubarbEngine.Components.Audio
 			base.BuildSyncObjs(newRefIds);
 			outputs = new SyncObjList<AudioSplits>(this, newRefIds);
 			audioSource = new SyncRef<IAudioSource>(this, newRefIds);
-		}
+            if (audioSource.Target is not null)
+            {
+                audioSource.Target.Reload += Target_Reload;
+                audioSource.Target.Update += Target_Update;
+            }
+        }
 
-		public AudioSplitter(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        private void Target_Update()
+        {
+            foreach (var item in outputs)
+            {
+                item.InvokeUpdate();
+            }
+        }
+
+        private void Target_Reload()
+        {
+            foreach (var item in outputs)
+            {
+                item.InvokeReload();
+            }
+        }
+
+        public AudioSplitter(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}

@@ -9,7 +9,6 @@ using RhubarbEngine.Managers;
 using RhubarbEngine.WindowManager;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
-using SteamAudio;
 
 namespace RhubarbEngine
 {
