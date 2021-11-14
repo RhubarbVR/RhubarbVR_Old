@@ -108,7 +108,8 @@ namespace RhubarbEngine.World
 				var stream = (UserStream)Activator.CreateInstance(typeof(T));
 				userStreams.Add(stream);
 				stream.name.Value = name;
-				return (T)stream;
+                stream.OnLoaded();
+                return (T)stream;
 			}
 			else
 			{

@@ -39,7 +39,10 @@ namespace RhubarbEngine.Components.Users
 				World.LocalUser.userroot.Target = userRoot;
 				var head = rootent.AddChild("Head");
 				head.AttachComponent<Head>().userroot.Target = userRoot;
-				var grabHolder = head.AddChild("GrabHolder").AttachComponent<GrabbableHolder>();
+                var audioOut = head.AttachComponent<Audio.AudioOutput>();
+                var opusstream = World.LocalUser.FindOrCreateUserStream<OpusStream>("Voice");
+                audioOut.audioSource.Target = opusstream;
+                var grabHolder = head.AddChild("GrabHolder").AttachComponent<GrabbableHolder>();
 				grabHolder.InitializeGrabHolder(InteractionSource.HeadLaser);
 				userRoot.Head.Target = head;
 				var left = rootent.AddChild("Left hand");

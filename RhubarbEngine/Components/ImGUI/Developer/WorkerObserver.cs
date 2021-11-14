@@ -355,7 +355,11 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				BuildSyncObjListMember(false);
 			}
-			else
+			else if (typeof(UserStream).IsAssignableFrom(typeg))
+            {
+                BuildWorker();
+            }
+            else
 			{
 				Console.WriteLine("Unknown Sync Type" + typeg.FullName);
 			}

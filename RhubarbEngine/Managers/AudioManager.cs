@@ -22,6 +22,8 @@ namespace RhubarbEngine.Managers
         int AudioFrameSizeInBytes { get; }
         PlaybackDevice Device { get; set; }
         int DeviceIndex { get; set; }
+        CaptureDevice CapDevice { get; set; }
+        int ListenDeviceIndex { get; set; }
 
         event Action PlayBackChanged;
         event Action InputChanged;
@@ -69,6 +71,7 @@ namespace RhubarbEngine.Managers
 
 
         public PlaybackDevice Device { get; set; }
+        public CaptureDevice CapDevice { get; set; }
 
         public unsafe IManager Initialize(IEngine _engine)
 		{
@@ -85,7 +88,9 @@ namespace RhubarbEngine.Managers
                 {
                     throw new Exception("No playback devices found");
                 }
+                ListenDeviceIndex = 0;
                 DeviceIndex = 0;
+                Console.WriteLine("Loaded Audio");
             }
             catch
             {
@@ -94,9 +99,27 @@ namespace RhubarbEngine.Managers
             return this;
 		}
 
+        private int _listenDeviceIndex;
+
         private int _deviceIndex;
 
+        public int ListenDeviceIndex { get { return _listenDeviceIndex; } set { _listenDeviceIndex = value; LoadListenDevice(); } }
+
         public int DeviceIndex { get { return _deviceIndex; } set { _deviceIndex = value; LoadPlayBack();  } }
+
+        public void LoadListenDevice()
+        {
+            try
+            {
+                _engine.Logger.Log($"Starting Default Listen to {OpenALHelper.CaptureDevices[_listenDeviceIndex].DeviceName}", true);
+                CapDevice = OpenALHelper.CaptureDevices[_listenDeviceIndex];
+                InputChanged?.Invoke();
+            }
+            catch
+            {
+                _engine.Logger.Log($"Failed to set Default Listen to {_listenDeviceIndex}", true);
+            }
+        }
 
         public void LoadPlayBack()
         {
@@ -105,7 +128,7 @@ namespace RhubarbEngine.Managers
             Device = OpenALHelper.PlaybackDevices[_deviceIndex];
             Device.InitListener();
             PlayBackChanged?.Invoke();
-            oldDevice.Dispose();
+            oldDevice?.Dispose();
         }
 
         public void Update()
