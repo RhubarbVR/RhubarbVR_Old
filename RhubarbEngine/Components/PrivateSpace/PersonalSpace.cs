@@ -162,7 +162,7 @@ namespace RhubarbEngine.Components.PrivateSpace
                 return;
             }
 
-            if (DateTime.UtcNow <= _changedWorld + new TimeSpan(0, 0, 1))
+            if (DateTime.UtcNow <= _changedWorld + new TimeSpan(0, 0, 0,0,250))
             {
                 return;
             }

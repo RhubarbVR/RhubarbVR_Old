@@ -254,7 +254,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 				dateTextDriver.Drivevalue += $"FPS {Engine.PlatformInfo.AvrageFrameRate}\n";
                 dateTextDriver.Drivevalue += $"DisplayName {Engine.NetApiManager.DisplayName}";
             }
-            if (DateTime.UtcNow <= _opened + new TimeSpan(0, 0, 1))
+            if (DateTime.UtcNow <= _opened + new TimeSpan(0, 0, 0, 0, 250))
             {
                 return;
             }
