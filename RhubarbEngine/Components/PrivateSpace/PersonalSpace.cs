@@ -153,15 +153,23 @@ namespace RhubarbEngine.Components.PrivateSpace
 			Logger.Log("Spawned User PersonalSpace");
 		}
 
-		public override void CommonUpdate(DateTime startTime, DateTime Frame)
+        private DateTime _changedWorld = DateTime.UtcNow;
+
+        public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
 			if (Input.IsKeyboardinuse)
             {
                 return;
             }
 
-            if ((Input.MainWindows.GetKeyDown(Veldrid.Key.Tab) && (Input.MainWindows.GetKey(Veldrid.Key.AltLeft) || Input.MainWindows.GetKey(Veldrid.Key.AltRight))) || Input.SecondaryPress(RhubarbEngine.Input.Creality.None))
+            if (DateTime.UtcNow <= _changedWorld + new TimeSpan(0, 0, 1))
+            {
+                return;
+            }
+
+            if ((Input.MainWindows.GetKeyDown(Veldrid.Key.Tab) && (Input.MainWindows.GetKey(Veldrid.Key.ControlLeft) || Input.MainWindows.GetKey(Veldrid.Key.ControlRight))) || Input.SecondaryPress(RhubarbEngine.Input.Creality.None))
 			{
+                _changedWorld = DateTime.UtcNow;
                 SwitchWorld();
 			}
 		}
