@@ -32,6 +32,10 @@ namespace RhubarbEngine.Components.Audio
 		{
 			get
 			{
+                if(World.Focus == RhubarbEngine.World.World.FocusLevel.Background)
+                {
+                    return false;
+                }
 				if (audioSource.Target == null)
                 {
                     return false;
