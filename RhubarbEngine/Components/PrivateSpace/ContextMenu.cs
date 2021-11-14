@@ -141,7 +141,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 		private bool ProssesOpenKey()
 		{
             return Engine.OutputType == VirtualReality.OutputType.Screen
-                ? side.Value != Creality.Left && Input.MainWindows.GetKeyDown(Key.F)
+                ? (side.Value != Creality.Left && Input.MainWindows.GetKeyDown(Key.F) && !Input.IsKeyboardinuse)
                 : Input.MenuPress(side.Value);
         }
 

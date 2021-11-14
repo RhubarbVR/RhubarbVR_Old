@@ -69,13 +69,13 @@ namespace RhubarbEngine.Components.Interaction
 				switch (grabbableHolder.Target.source.Value)
 				{
 					case InteractionSource.LeftLaser:
-						newpos = _offset + Input.LeftLaser.Pos;
+						newpos = Input.LeftLaser.Pos - _offset;
 						break;
 					case InteractionSource.RightLaser:
-						newpos = _offset + Input.RightLaser.Pos;
+						newpos = Input.RightLaser.Pos - _offset;
 						break;
 					case InteractionSource.HeadLaser:
-						newpos = _offset + Input.RightLaser.Pos;
+						newpos = Input.RightLaser.Pos - _offset;
 						break;
 					default:
 						break;
@@ -119,8 +119,8 @@ namespace RhubarbEngine.Components.Interaction
 			{
 				if (item.NoneStaticBody.Value && (item.collisionObject != null))
 				{
-					item.collisionObject.LinearVelocity = new BulletSharp.Math.Vector3(-Entity.Velocity.x * 2, -Entity.Velocity.y * 2, -Entity.Velocity.z * 2);
-					item.collisionObject.AngularVelocity = new BulletSharp.Math.Vector3(Entity.Velocity.x * 2 / 10, Entity.Velocity.y * 2 / 10, Entity.Velocity.z * 2 / 10);
+					item.collisionObject.LinearVelocity = new BulletSharp.Math.Vector3(-Entity.Velocity.x * 100, -Entity.Velocity.y * 100, -Entity.Velocity.z * 100);
+					item.collisionObject.AngularVelocity = new BulletSharp.Math.Vector3(Entity.Velocity.x * 100, Entity.Velocity.y * 100, Entity.Velocity.z * 100);
 				}
 			}
 

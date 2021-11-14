@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Threading;
 using Veldrid;
 using RNumerics;
+using System.Numerics;
+using ImGuiNET;
 
 namespace RhubarbEngine.Components.ImGUI
 {
@@ -390,8 +392,46 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			else
 			{
-
-			}
+                var open = true;
+                Vector2 max;
+                Vector2 min;
+                if (ImGui.CollapsingHeader($"{target.Target?.GetType().GetFormattedName() ?? "null"} ID:({target.Target?.ReferenceID.id.ToHexString() ?? "null"}) ##{ReferenceID.id}", ref open))
+                {
+                    max = ImGui.GetItemRectMax();
+                    min = ImGui.GetItemRectMin();
+                    foreach (var item in children)
+                    {
+                        item.Target?.ImguiRender(imGuiRenderer, canvas);
+                    }
+                }
+                else
+                {
+                    max = ImGui.GetItemRectMax();
+                    min = ImGui.GetItemRectMin();
+                }
+                if (ImGui.IsMouseHoveringRect(min, max) && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                {
+                    Interaction.GrabbableHolder source = null;
+                    switch (canvas.imputPlane.Target?.Source ?? Interaction.InteractionSource.None)
+                    {
+                        case Interaction.InteractionSource.LeftLaser:
+                            source = World.LeftLaserGrabbableHolder;
+                            break;
+                        case Interaction.InteractionSource.RightLaser:
+                            source = World.RightLaserGrabbableHolder;
+                            break;
+                        case Interaction.InteractionSource.HeadLaser:
+                            source = World.HeadLaserGrabbableHolder;
+                            break;
+                        default:
+                            break;
+                    }
+                    if (source != null)
+                    {
+                        source.Referencer.Target = target.Target;
+                    }
+                }
+            }
 		}
 	}
 }

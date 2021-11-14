@@ -114,7 +114,7 @@ namespace RhubarbEngine.Helpers
             var planecol = floor.AttachComponent<BoxCollider>();
             planemesh.Width.Value = 1000f;
             planemesh.Height.Value = 1000f;
-            planecol.boxExtents.Value = new Vector3f(planemesh.Width.Value, 0.01f, planemesh.Height.Value);
+            planecol.boxExtents.Value = new Vector3f(planemesh.Width.Value, 0.1f, planemesh.Height.Value);
             var meshRender = floor.AttachComponent<MeshRender>();
             meshRender.Materials.Add().Target = mit;
             meshRender.Mesh.Target = planemesh;

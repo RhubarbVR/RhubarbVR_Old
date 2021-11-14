@@ -254,42 +254,42 @@ namespace RhubarbEngine.Input
 					default:
 						break;
 				}
-				if (_engine.OutputType == VirtualReality.OutputType.Screen)
-				{
-					ent.SendSecondary(Input.MainWindows.GetMouseButton(MouseButton.Middle));
-					ent.SendPrimary(Input.MainWindows.GetMouseButton(MouseButton.Left));
-					ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, Input.MainWindows.GetMouseButton(MouseButton.Right));
-				}
-				switch (source)
-				{
-					case InteractionSource.None:
-						break;
-					case InteractionSource.LeftLaser:
-						ent.SendTriggerTouching(Input.TriggerTouching(RhubarbEngine.Input.Creality.Left));
-						ent.SendSecondary(Input.SecondaryPress(RhubarbEngine.Input.Creality.Left));
-						ent.SendPrimary(Input.PrimaryPress(RhubarbEngine.Input.Creality.Left));
-						ent.SendGrip(true, col.World.LeftLaserGrabbableHolder, Input.GrabPress(RhubarbEngine.Input.Creality.Left));
-						break;
-					case InteractionSource.LeftFinger:
-						break;
-					case InteractionSource.RightLaser:
-						ent.SendTriggerTouching(Input.TriggerTouching(RhubarbEngine.Input.Creality.Right));
-						ent.SendSecondary(Input.SecondaryPress(RhubarbEngine.Input.Creality.Right));
-						ent.SendPrimary(Input.PrimaryPress(RhubarbEngine.Input.Creality.Right));
-						ent.SendGrip(true, col.World.RightLaserGrabbableHolder, Input.GrabPress(RhubarbEngine.Input.Creality.Right));
-						break;
-					case InteractionSource.RightFinger:
-						break;
-					case InteractionSource.HeadLaser:
-						ent.SendSecondary(Input.MainWindows.GetMouseButton(MouseButton.Middle));
-						ent.SendPrimary(Input.MainWindows.GetMouseButton(MouseButton.Left));
-						ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, Input.MainWindows.GetMouseButton(MouseButton.Right));
-						break;
-					case InteractionSource.HeadFinger:
-						break;
-					default:
-						break;
-				}
+                if (_engine.OutputType == VirtualReality.OutputType.Screen)
+                {
+                    ent.SendSecondary(Input.MainWindows.GetMouseButton(MouseButton.Middle));
+                    ent.SendPrimary(Input.MainWindows.GetMouseButton(MouseButton.Left));
+                    ent.SendGrip(true, col.World.HeadLaserGrabbableHolder, Input.MainWindows.GetMouseButton(MouseButton.Right));
+                }
+                else
+                {
+                    switch (source)
+                    {
+                        case InteractionSource.None:
+                            break;
+                        case InteractionSource.LeftLaser:
+                            ent.SendTriggerTouching(Input.TriggerTouching(RhubarbEngine.Input.Creality.Left));
+                            ent.SendSecondary(Input.SecondaryPress(RhubarbEngine.Input.Creality.Left));
+                            ent.SendPrimary(Input.PrimaryPress(RhubarbEngine.Input.Creality.Left));
+                            ent.SendGrip(true, col.World.LeftLaserGrabbableHolder, Input.GrabPress(RhubarbEngine.Input.Creality.Left));
+                            break;
+                        case InteractionSource.LeftFinger:
+                            break;
+                        case InteractionSource.RightLaser:
+                            ent.SendTriggerTouching(Input.TriggerTouching(RhubarbEngine.Input.Creality.Right));
+                            ent.SendSecondary(Input.SecondaryPress(RhubarbEngine.Input.Creality.Right));
+                            ent.SendPrimary(Input.PrimaryPress(RhubarbEngine.Input.Creality.Right));
+                            ent.SendGrip(true, col.World.RightLaserGrabbableHolder, Input.GrabPress(RhubarbEngine.Input.Creality.Right));
+                            break;
+                        case InteractionSource.RightFinger:
+                            break;
+                        case InteractionSource.HeadLaser:
+                            break;
+                        case InteractionSource.HeadFinger:
+                            break;
+                        default:
+                            break;
+                    }
+                }
 			}
 			return true;
 		}

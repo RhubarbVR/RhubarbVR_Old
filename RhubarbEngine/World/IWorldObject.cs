@@ -31,7 +31,8 @@ namespace RhubarbEngine.World
 
 		public static IWorker GetClosedWorker(this IWorldObject worldObject, bool allowSyncVals = false)
 		{
-			try
+            allowSyncVals = allowSyncVals || worldObject.GetType().IsAssignableTo(typeof(UserStream));
+            try
 			{
                 return allowSyncVals
                     ? (IWorker)worldObject

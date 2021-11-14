@@ -164,33 +164,11 @@ namespace RhubarbEngine.World
             Console.WriteLine("Start listener");
             try
             {
-                Task.Run(Loop);
+                Reload?.Invoke();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("Failed to start lister erroe:" + e.ToString());
-            }
-        }
-
-        private void Loop()
-        {
-            while(_captureStream is not null)
-            {
-                try
-                {
-                    if (!_captureStream.CanRead)
-                    {
-                        return;
-                    }
-
-                    _captureStream.Read(_readBuffer);
-                    Update?.Invoke();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("error " + e.ToString());
-                }
-                Thread.Sleep(10);
             }
         }
 
