@@ -629,7 +629,7 @@ namespace RhubarbEngine.World
 				LoadHostUser();
                 Starting = false;
             }
-            worldManager.Engine.Logger.Log("Starting next net module");
+            worldManager.Engine.Logger.Log("Loading World");
             if (!CreateBlank && datanode is not null)
             {
                 var loadded = new List<Action>();

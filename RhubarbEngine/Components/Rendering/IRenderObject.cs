@@ -8,10 +8,11 @@ namespace RhubarbEngine.Components.Rendering
 {
 	public enum RenderFrequency
 	{
-		OneToOne,
-		Half,
-		Eighth,
-        Sixteenth,
+		OneToOne = 0,
+		Half = 1,
+        Forth = 2,
+        Eighth = 3,
+        Sixteenth = 4,
 	}
 
 	public interface IRenderObject

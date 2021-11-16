@@ -372,8 +372,8 @@ namespace RhubarbEngine.Managers
 				{
                     if (obj is not null)
                     {
-                        //if(((int)index % ((int)obj.RenderFrac + (int)_framefrencindex)) == 0)
-                        //{
+                        if ((((int)index + (int)_framefrencindex) % 16 % MathF.Pow(2, (int)obj.RenderFrac)) == 0)
+                        {
                             try
                             {
                                 obj.Render();
@@ -382,7 +382,7 @@ namespace RhubarbEngine.Managers
                             {
                                 _engine.Logger.Log("Failed To Render " + obj.GetType().Name + " Error " + e.ToString(), true);
                             }
-                        //}
+                        }
                     }
 				});
 			}
@@ -397,10 +397,6 @@ namespace RhubarbEngine.Managers
 		private void RenderRenderObjects()
 		{
             _framefrencindex++;
-            if(_framefrencindex == 16)
-            {
-                _framefrencindex = 1;
-            }
             foreach (var world in _engine.WorldManager.Worlds.ToArray())
 			{
 				if (world.Focus != World.World.FocusLevel.Background)
