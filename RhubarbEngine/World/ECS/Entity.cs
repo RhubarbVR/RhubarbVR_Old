@@ -16,6 +16,14 @@ namespace RhubarbEngine.World.ECS
 	public class Entity : Worker, IWorldObject
 	{
 
+        public override void Destroy()
+        {
+            if (!IsRoot)
+            {
+                base.Destroy();
+            }
+        }
+
         [NoShow]
         [NoSave]
         [NoSync]

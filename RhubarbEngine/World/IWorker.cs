@@ -170,7 +170,7 @@ namespace RhubarbEngine.World
             }
         }
 
-        public void Destroy()
+        public virtual void Destroy()
         {
             Dispose();
         }
