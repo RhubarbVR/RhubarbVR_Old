@@ -107,8 +107,8 @@ namespace RhubarbEngine.Components.Users
 
 				var lookRotation = Quaternion.CreateFromYawPitchRoll(leftvraix.x * -5f * deltaSeconds, 0.0f, 0.0f);
 				lookRotation *= Quaternion.CreateFromYawPitchRoll(Rightvraix.x * -5f * deltaSeconds, 0.0f, 0.0f);
-				float e = World.worldManager.Engine.InputManager.MainWindows.GetKey(Key.X) ? 0 : 1;
-				e += World.worldManager.Engine.InputManager.MainWindows.GetKey(Key.Z) ? 0 : -1;
+				float e = World.worldManager.Engine.InputManager.MainWindows.GetKey(Key.X) ? 0 : -1;
+				e += World.worldManager.Engine.InputManager.MainWindows.GetKey(Key.Z) ? 0 : 1;
 				lookRotation *= Quaternion.CreateFromYawPitchRoll(e * -5f * deltaSeconds, 0.0f, 0.0f);
 
 				var temp = World.UserRoot.Head.Target.rotation.Value * Vector3f.AxisZ;

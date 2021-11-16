@@ -30,6 +30,7 @@ using DiscordRPC;
 using System.Collections.Generic;
 using RhubarbEngine.Utilities;
 using RhubarbEngine.Helpers;
+using System.Threading;
 
 namespace RhubarbEngine.Managers
 {
@@ -244,7 +245,14 @@ namespace RhubarbEngine.Managers
             Engine.Logger.Log($"Creating New World Name:'{Name}' Focus{focus}  MaxUsers {maxUsers}");
             var newworld = new World.World(this, Name, maxUsers,false,false,roomID, null, true);
             Worlds.Add(newworld);
-            newworld.Focus = focus ? World.World.FocusLevel.Focused : World.World.FocusLevel.Background;
+            Task.Run(() =>
+            {
+                while (newworld.IsStarting)
+                {
+                    Thread.Sleep(30);
+                }
+                newworld.Focus = focus ? World.World.FocusLevel.Focused : World.World.FocusLevel.Background;
+            });
             return newworld;
         }
 

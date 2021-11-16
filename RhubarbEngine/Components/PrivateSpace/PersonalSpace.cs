@@ -196,7 +196,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 				return;
 			}
 			var mang = Engine.WorldManager;
-			if (mang.Worlds[i].Focus == RhubarbEngine.World.World.FocusLevel.Background)
+			if ((mang.Worlds[i].Focus == RhubarbEngine.World.World.FocusLevel.Background) && !mang.Worlds[i].IsStarting)
 			{
 				mang.Worlds[i].Focus = RhubarbEngine.World.World.FocusLevel.Focused;
 			}

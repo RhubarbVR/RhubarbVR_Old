@@ -133,18 +133,7 @@ namespace RhubarbEngine.World
 			}
 			return null;
 		}
-		//public void joinsession(PrivateSession ps, string val)
-		//{
-		//	waitingForInitSync = true;
-		//	worldObjects.Clear();
-		//	foreach (var item in ps.Sessionconnections)
-		//	{
-		//		if (item != val)
-		//		{
-		//			netModule.Connect(item);
-		//		}
-		//	}
-		//}
+
 		private bool _waitingForInitSync = false;
 
 		public void LoadSelf()
@@ -379,9 +368,32 @@ namespace RhubarbEngine.World
 						worldManager.FocusedWorld = this;
 					}
 					LastFocusChange = DateTime.UtcNow;
+                    UpdateFocus();
 				}
 			}
 		}
+
+        private void UpdateFocus()
+        {
+            try
+            {
+                Parallel.ForEach(_worldObjects, (item) =>
+                 {
+                     try
+                     {
+                         if (item.Value.GetType().IsAssignableTo(typeof(IWorker)))
+                         {
+                             ((IWorker)item.Value)?.OnFocusChange(_focus);
+                         }
+                     }
+                     catch (Exception e)
+                     {
+                         worldManager.Engine.Logger.Log($"Failed To update focus On {item.Value.GetType()} NetPointer {item.Value.ReferenceID.id} Error: {e}", true);
+                     }
+                 });
+            }
+            catch { }
+        }
 
 		private readonly SynchronizedCollection<Entity> _entitys = new();
 
@@ -633,6 +645,15 @@ namespace RhubarbEngine.World
                 LoadData().ConfigureAwait(false);
             } 
 		}
+        
+        public bool IsStarting
+        {
+            get
+            {
+                return _waitingForInitSync||NetModule.IsStarting|| Starting;
+            }
+        }
+
 
         public async Task LoadData()
         {
@@ -641,13 +662,10 @@ namespace RhubarbEngine.World
             {
                 isNew = false;
             }
-            else if (MatrixRoomID.Value.Length <= 5)
-            {
-                isNew = false;
-            }
             else
             {
-                isNew = await worldManager.Engine.NetApiManager.CheckForSession(MatrixRoomID.Value);
+                isNew = MatrixRoomID.Value.Length > 5
+                    && await worldManager.Engine.NetApiManager.CheckForSession(MatrixRoomID.Value);
             }
             if (isNew)
             {

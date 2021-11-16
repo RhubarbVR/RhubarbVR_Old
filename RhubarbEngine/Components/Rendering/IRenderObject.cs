@@ -11,7 +11,7 @@ namespace RhubarbEngine.Components.Rendering
 		OneToOne,
 		Half,
 		Eighth,
-		Sixth
+        Sixteenth,
 	}
 
 	public interface IRenderObject

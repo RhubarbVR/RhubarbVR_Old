@@ -47,6 +47,10 @@ namespace RhubarbEngine.World.Net
 
 	public class LNLNetModule : NetModule , INetEventListener,INatPunchListener
 	{
+        public override string ConnectionText { get { return _startString; } }
+
+        private string _startString;
+
         public NetManager netClient;
 
         public override void Connect(string token)
@@ -67,9 +71,29 @@ namespace RhubarbEngine.World.Net
             }
         }
 
+        public static IPEndPoint MainRelay
+        {
+            get
+            {
+                return new IPEndPoint(IPAddress.Parse("5.135.157.47"), 50020);
+                //return new IPEndPoint(IPAddress.Loopback, 50020);
+            }
+        }
+
+        public override bool IsStarting
+        {
+            get
+            {
+                return !_startTask.IsCompleted;
+            }
+        }
+
+        private readonly Task _startTask;
+
         public LNLNetModule(World world, string sessionID) : base(world,false)
 		{
-			Console.WriteLine("Starting net");
+            _startString = "Starting Connection";
+            Console.WriteLine("Starting net");
             netClient = new NetManager(this)
             {
                 IPv6Enabled = IPv6Mode.DualMode,
@@ -78,18 +102,48 @@ namespace RhubarbEngine.World.Net
             netClient.NatPunchModule.Init(this);
             netClient.Start();
             hartBeeter.Start();
-            Int(sessionID).ConfigureAwait(false);
+            _startTask = Int(sessionID);
+            _startTask.ConfigureAwait(false);
         }
 
         private string _sessionToken;
 
         private async Task Int(string id)
         {
+            // going to change needs a response from server to do reqwests
+            _startString = "Sending Connection Start";
             _world.worldManager.Engine.Logger.Log("tried to start");
+            var roomisnew = !await _world.worldManager.Engine.NetApiManager.CheckForSession(id);
+            if (roomisnew)
+            {
+                _startString = "Creating Session";
+            }
+            else
+            {
+                _startString = "Join Existing Session";
+            }
             _sessionToken = await _world.worldManager.Engine.NetApiManager.JoinSession(id);
             _world.worldManager.Engine.Logger.Log("Token: " + _sessionToken);
             netClient.NatPunchModule.SendNatIntroduceRequest(MainPunchServer, _sessionToken);
+            _startString = "Sending Introduce Request";
             _world.worldManager.Engine.Logger.Log("into");
+            if (!roomisnew)
+            {
+                for (var i = 0; i < 5; i++)
+                {
+                    _startString = $"Hole Punch Attempt {i}";
+                    await Task.Delay(TimeSpan.FromSeconds(1.0));
+                    if (netClient.ConnectedPeersCount <= 0 || !netClient.IsRunning)
+                    {
+                        return;
+                    }
+                }
+                _startString = $"Failed to HolePunch Moveing to Relay";
+            }
+            else
+            {
+                _startString = "Initialed first session";
+            }
         }
 
         private readonly SynchronizedCollection<ulong> _lowdataSinc = new();

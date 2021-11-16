@@ -368,18 +368,21 @@ namespace RhubarbEngine.Managers
 			try
 			{
                 RenderNoneThreadedRenderObjectsInWorld(world);
-				Parallel.ForEach(world.updateLists.trenderObject, obj =>
+				Parallel.ForEach(world.updateLists.trenderObject, (obj,info,index) =>
 				{
                     if (obj is not null)
                     {
-                        try
-                        {
-                            obj.Render();
-                        }
-                        catch (Exception e)
-                        {
-                            _engine.Logger.Log("Failed To Render " + obj.GetType().Name + " Error " + e.ToString(), true);
-                        }
+                        //if(((int)index % ((int)obj.RenderFrac + (int)_framefrencindex)) == 0)
+                        //{
+                            try
+                            {
+                                obj.Render();
+                            }
+                            catch (Exception e)
+                            {
+                                _engine.Logger.Log("Failed To Render " + obj.GetType().Name + " Error " + e.ToString(), true);
+                            }
+                        //}
                     }
 				});
 			}
@@ -389,9 +392,16 @@ namespace RhubarbEngine.Managers
 			}
 		}
 
+        private uint _framefrencindex = 1;
+
 		private void RenderRenderObjects()
 		{
-			foreach (var world in _engine.WorldManager.Worlds.ToArray())
+            _framefrencindex++;
+            if(_framefrencindex == 16)
+            {
+                _framefrencindex = 1;
+            }
+            foreach (var world in _engine.WorldManager.Worlds.ToArray())
 			{
 				if (world.Focus != World.World.FocusLevel.Background)
 				{

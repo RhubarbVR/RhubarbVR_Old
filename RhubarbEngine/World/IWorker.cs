@@ -43,7 +43,7 @@ namespace RhubarbEngine.World
         public void Removed();
 
         public void OnUserJoined(User user);
-
+        void OnFocusChange(World.FocusLevel level);
     }
 
     public class Worker : IWorker
@@ -247,6 +247,10 @@ namespace RhubarbEngine.World
 
         }
 
+        public virtual void OnFocusChange(World.FocusLevel level)
+        {
+
+        }
 
         public virtual void Dispose()
         {

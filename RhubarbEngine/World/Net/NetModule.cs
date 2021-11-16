@@ -19,6 +19,22 @@ namespace RhubarbEngine.World.Net
             }
         }
 
+        public override string ConnectionText
+        {
+            get
+            {
+                return "Null Net Module nothing to Connect To";
+            }
+        }
+
+        public override bool IsStarting
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public NUllNetModule(World world) : base(world, true)
 		{
 
@@ -42,7 +58,11 @@ namespace RhubarbEngine.World.Net
 
 		private readonly bool _noq;
 
-		public virtual string Token { get; }
+        public abstract string ConnectionText { get; }
+
+        public abstract bool IsStarting { get; }
+
+        public virtual string Token { get; }
 		public virtual IEnumerable<Peer> Peers { get; }
 
 
