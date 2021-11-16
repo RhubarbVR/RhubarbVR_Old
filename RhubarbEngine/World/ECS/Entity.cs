@@ -618,6 +618,15 @@ namespace RhubarbEngine.World.ECS
 		public override void Dispose()
 		{
 			World.RemoveWorldEntity(this);
+
+            Parallel.ForEach(_components, (comp) => {
+                try
+                {
+                    comp.Dispose();
+                }
+                catch { }
+            });
+
             base.Dispose();
         }
 

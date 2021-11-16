@@ -137,7 +137,14 @@ namespace RhubarbEngine.Components.Physics.Colliders
 		{
 
 		}
-		public override void OnLoaded()
+
+        public override void Dispose()
+        {
+            BuildCollissionObject(null);
+            base.Dispose();
+        }
+
+        public override void OnLoaded()
 		{
 			base.OnLoaded();
 			Entity.GlobalTransformChangePhysics += UpdateTrans;
@@ -179,7 +186,12 @@ namespace RhubarbEngine.Components.Physics.Colliders
 					World.PhysicsWorld.RemoveCollisionObject(collisionObject);
 					World.PhysicsWorld.RemoveCollisionObject(collisionObject);
 				}
-				collisionObject = null;
+                try
+                {
+                    collisionObject?.Dispose();
+                }
+                catch { }
+                collisionObject = null;
 			}
 			if (newCol != null)
 			{

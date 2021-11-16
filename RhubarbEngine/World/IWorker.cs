@@ -40,7 +40,7 @@ namespace RhubarbEngine.World
 
         public void OnChangeInternal(IChangeable newValue);
         public void OnChanged();
-        public void Removed();
+        public void OnRemoved();
 
         public void OnUserJoined(User user);
         void OnFocusChange(World.FocusLevel level);
@@ -232,7 +232,7 @@ namespace RhubarbEngine.World
         {
 
         }
-        public virtual void Removed()
+        public virtual void OnRemoved()
         {
 
         }
@@ -254,12 +254,16 @@ namespace RhubarbEngine.World
 
         public virtual void Dispose()
         {
-            Removed();
+            OnRemoved();
             World.RemoveWorldObj(this);
             OnDispose?.Invoke(this);
             foreach (var dep in _disposables)
             {
-                dep.Dispose();
+                try
+                {
+                    dep.Dispose();
+                }
+                catch { }
             }
             IsRemoved = true;
         }

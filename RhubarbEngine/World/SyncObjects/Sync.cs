@@ -20,7 +20,7 @@ namespace RhubarbEngine.World
 
 		private readonly SynchronizedCollection<IDriveable> _driven = new();
 
-		public override void Removed()
+		public override void OnRemoved()
 		{
 			foreach (var dev in _driven)
 			{

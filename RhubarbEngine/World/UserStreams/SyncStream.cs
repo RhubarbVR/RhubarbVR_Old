@@ -18,7 +18,7 @@ namespace RhubarbEngine.World
 
 		private readonly List<IDriveable> _driven = new();
 
-		public override void Removed()
+		public override void OnRemoved()
 		{
 			foreach (var dev in _driven)
 			{
