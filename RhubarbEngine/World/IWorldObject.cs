@@ -78,6 +78,8 @@ namespace RhubarbEngine.World
 
 	public interface IWorldObject : IDisposable
 	{
+        public bool IsParentDisposed { get; }
+
 		NetPointer ReferenceID { get; }
 
 		World World { get; }

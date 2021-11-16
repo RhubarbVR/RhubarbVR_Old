@@ -654,6 +654,13 @@ namespace RhubarbEngine.World
             }
         }
 
+        public bool IsParentDisposed
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public async Task LoadData()
         {

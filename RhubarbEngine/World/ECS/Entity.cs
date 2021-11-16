@@ -146,6 +146,14 @@ namespace RhubarbEngine.World.ECS
             }
         }
 
+        public bool IsRoot
+        {
+            get
+            {
+                return World?.RootEntity?.ReferenceID.id == ReferenceID.id;
+            }
+        }
+
         [NoShow]
         [NoSave]
         [NoSync]
@@ -498,24 +506,32 @@ namespace RhubarbEngine.World.ECS
 		}
 		private void UpdateGlobalTrans(bool Sendupdate = true)
 		{
-			var parentMatrix = Matrix4x4.CreateScale(Vector3.One);
-			if (_internalParent != null)
-			{
-				parentMatrix = _internalParent.GlobalTrans();
-			}
-			var localMatrix = Matrix4x4.CreateScale((Vector3)scale.Value) * Matrix4x4.CreateFromQuaternion(rotation.Value.ToSystemNumric()) * Matrix4x4.CreateTranslation((Vector3)position.Value);
-			_cashedGlobalTrans = localMatrix * parentMatrix;
-			_cashedLocalMatrix = localMatrix;
-			if (Sendupdate)
+            if (!IsRoot)
             {
-                GlobalTransformChangePhysics?.Invoke(_cashedGlobalTrans);
-            }
+                var parentMatrix = Matrix4x4.CreateScale(Vector3.One);
+                if (_internalParent != null)
+                {
+                    parentMatrix = _internalParent.GlobalTrans();
+                }
+                var localMatrix = Matrix4x4.CreateScale((Vector3)scale.Value) * Matrix4x4.CreateFromQuaternion(rotation.Value.ToSystemNumric()) * Matrix4x4.CreateTranslation((Vector3)position.Value);
+                _cashedGlobalTrans = localMatrix * parentMatrix;
+                _cashedLocalMatrix = localMatrix;
+                if (Sendupdate)
+                {
+                    GlobalTransformChangePhysics?.Invoke(_cashedGlobalTrans);
+                }
 
-            GlobalTransformChange?.Invoke(_cashedGlobalTrans);
-			foreach (var entity in _children)
-			{
-				entity.UpdateGlobalTrans();
-			}
+                GlobalTransformChange?.Invoke(_cashedGlobalTrans);
+                foreach (var entity in _children)
+                {
+                    entity.UpdateGlobalTrans();
+                }
+            }
+            else
+            {
+                _cashedGlobalTrans = Matrix4x4.CreateScale(Vector3.One);
+                _cashedLocalMatrix = Matrix4x4.CreateScale(Vector3.One);
+            }
 		}
 		[NoShow]
 		[NoSync]
@@ -564,6 +580,7 @@ namespace RhubarbEngine.World.ECS
 			newcomp.OnLoaded();
 			return newcomp;
 		}
+
 
 		public override void OnLoaded()
 		{

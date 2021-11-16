@@ -81,13 +81,16 @@ namespace RhubarbEngine.World
 			value.OnDispose -= Value_onDispose;
 			RemoveDisposable(value);
             ElementListChange?.Invoke();
+            value.Dispose();
         }
 
         private void Value_onDispose(IWorker worker)
 		{
 			try
 			{
+                var intdex = _synclist.IndexOf((T)worker);
 				_synclist.Remove((T)worker);
+                NetRemove(intdex);
 			}
 			catch
 			{
@@ -124,10 +127,19 @@ namespace RhubarbEngine.World
 			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, ReferenceID.id);
 		}
 
-		private void NetClear()
+
+        private void NetRemove(int index)
+        {
+            var send = new DataNodeGroup();
+            send.SetValue("Type", new DataNode<byte>(1));
+            send.SetValue("Index", new DataNode<int>(index));
+            World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, ReferenceID.id);
+        }
+
+        private void NetClear()
 		{
 			var send = new DataNodeGroup();
-			send.SetValue("Type", new DataNode<byte>(1));
+			send.SetValue("Type", new DataNode<byte>(2));
 			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, ReferenceID.id);
 		}
 
@@ -141,32 +153,36 @@ namespace RhubarbEngine.World
 		{
 			try
 			{
-				if (((DataNode<byte>)data.GetValue("Type")).Value == 1)
+				if (((DataNode<byte>)data.GetValue("Type")).Value == 0)
 				{
-					_synclist.Clear();
-				}
-				else
-				{
-					var ty = Type.GetType(((DataNode<string>)((DataNodeGroup)data.GetValue("Data")).GetValue("Type")).Value);
-					if (ty == null)
-					{
-						Logger.Log("Type not found" + ((DataNode<string>)((DataNodeGroup)data.GetValue("Data")).GetValue("Type")).Value, true);
-					}
-					else
-					{
 
-						var val = (T)Activator.CreateInstance(ty);
+                    var ty = Type.GetType(((DataNode<string>)((DataNodeGroup)data.GetValue("Data")).GetValue("Type")).Value);
+                    if (ty == null)
+                    {
+                        Logger.Log("Type not found" + ((DataNode<string>)((DataNodeGroup)data.GetValue("Data")).GetValue("Type")).Value, true);
+                    }
+                    else
+                    {
+
+                        var val = (T)Activator.CreateInstance(ty);
                         Add(val, false);
-						var actions = new List<Action>();
-						val.DeSerialize((DataNodeGroup)((DataNodeGroup)data.GetValue("Data")).GetValue("Value"), actions, false);
-						foreach (var item in actions)
-						{
-							item?.Invoke();
-						}
+                        var actions = new List<Action>();
+                        val.DeSerialize((DataNodeGroup)((DataNodeGroup)data.GetValue("Data")).GetValue("Value"), actions, false);
+                        foreach (var item in actions)
+                        {
+                            item?.Invoke();
+                        }
                         val.OnLoaded();
                     }
-				}
-			}
+				}else if (((DataNode<byte>)data.GetValue("Type")).Value == 1)
+                {
+                    RemoveInternal(this[((DataNode<int>)data.GetValue("Index")).Value]);
+                }
+				else if (((DataNode<byte>)data.GetValue("Type")).Value == 2)
+				{
+                    _synclist.Clear();
+                }
+            }
 			catch (Exception e)
 			{
 				Logger.Log("Error With net sync ab e:" + e.ToString());

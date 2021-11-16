@@ -162,6 +162,14 @@ namespace RhubarbEngine.World
 
         public bool IsRemoved { get; private set; } = false;
 
+        public bool IsParentDisposed
+        {
+            get
+            {
+                return IsRemoved || (parent?.IsParentDisposed ?? true);
+            }
+        }
+
         public void Destroy()
         {
             Dispose();
@@ -256,7 +264,6 @@ namespace RhubarbEngine.World
         {
             OnRemoved();
             World.RemoveWorldObj(this);
-            OnDispose?.Invoke(this);
             foreach (var dep in _disposables)
             {
                 try
@@ -266,6 +273,7 @@ namespace RhubarbEngine.World
                 catch { }
             }
             IsRemoved = true;
+            OnDispose?.Invoke(this);
         }
 
 
