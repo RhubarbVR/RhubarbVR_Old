@@ -273,7 +273,28 @@ namespace RhubarbEngine.Components.ImGUI
 				obs.target.Target = (Sync<Vector4d>)target.Target;
 				root.Target = obs;
 			}
-			else
+            else if (gType == typeof(Vector2u))
+            {
+                var obs = Entity.AttachComponent<Vector2uSyncObserver>();
+                obs.fieldName.Value = fieldName.Value;
+                obs.target.Target = (Sync<Vector2u>)target.Target;
+                root.Target = obs;
+            }
+            else if (gType == typeof(Vector3u))
+            {
+                var obs = Entity.AttachComponent<Vector3uSyncObserver>();
+                obs.fieldName.Value = fieldName.Value;
+                obs.target.Target = (Sync<Vector3u>)target.Target;
+                root.Target = obs;
+            }
+            else if (gType == typeof(Vector4u))
+            {
+                var obs = Entity.AttachComponent<Vector4uSyncObserver>();
+                obs.fieldName.Value = fieldName.Value;
+                obs.target.Target = (Sync<Vector4u>)target.Target;
+                root.Target = obs;
+            }
+            else
 			{
 				var obs = Entity.AttachComponent<PrimitiveSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;

@@ -77,5 +77,14 @@ namespace RhubarbEngine.Render
 		{
 			Renderables = from parer in _indices.AsParallel() orderby parer.Key.Value descending select _renderables[parer.ItemIndex];
 		}
-	}
+
+
+        public void OrderExsclude(Func<Renderable,bool> func)
+        {
+            Renderables = from parer in _indices.AsParallel()
+                          orderby parer.Key.Value descending
+                          where !func.Invoke(_renderables[parer.ItemIndex])
+                          select _renderables[parer.ItemIndex];
+        }
+    }
 }

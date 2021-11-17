@@ -24,7 +24,7 @@ namespace RhubarbEngine.World.Asset
 
 		public TextureView view;
 
-		public void Dispose()
+        public void Dispose()
 		{
 			foreach (var dep in disposables)
 			{

@@ -186,11 +186,6 @@ namespace RhubarbEngine.Components.Physics.Colliders
 					World.PhysicsWorld.RemoveCollisionObject(collisionObject);
 					World.PhysicsWorld.RemoveCollisionObject(collisionObject);
 				}
-                try
-                {
-                    collisionObject?.Dispose();
-                }
-                catch { }
                 collisionObject = null;
 			}
 			if (newCol != null)

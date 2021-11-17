@@ -84,7 +84,19 @@ namespace RhubarbEngine.Helpers
             return (e, bmesh, mit);
         }
 
+        public static (Entity, T, RMaterial,MeshRender) AddMeshWithMeshRender<T>(Entity ea, AssetProvider<RShader> shader, string name = "Entity", uint renderOffset = int.MaxValue) where T : ProceduralMesh
+        {
+            var e = ea.AddChild(name);
+            var bmesh = e.AttachComponent<T>();
+            var mit = e.AttachComponent<RMaterial>();
+            var meshRender = e.AttachComponent<MeshRender>();
+            meshRender.RenderOrderOffset.Value = renderOffset;
+            mit.Shader.Target = shader;
+            meshRender.Materials.Add().Target = mit;
+            meshRender.Mesh.Target = bmesh;
 
+            return (e, bmesh, mit, meshRender);
+        }
         public static Entity AddMesh<T>(Entity ea) where T : ProceduralMesh
         {
             var e = ea.AddChild();

@@ -54,20 +54,36 @@ namespace RhubarbEngine.Components.PrivateSpace
             startMenu.Target.enabled.Value = !startMenu.Target.enabled.Value;
 		}
 
-		//private void StartMenuFocusLost()
-		//{
-		//	if (startMenu.Target == null)
-  //          {
-  //              return;
-  //          }
+        private void SpawnMirror()
+        {
+            Logger.Log("Create Mirror");
+            var createWorld = World.worldManager.FocusedWorld ?? World;
+            var User = createWorld.UserRoot.Entity;
+            var par = User.parent.Target;
+            var cube = par.AddChild("Mirror");
+            var headPos = createWorld.UserRoot.Headpos;
+            var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, -1, -5));
+            cube.SetGlobalTrans(move * headPos);
+            var entity = cube;
+            var mesh = entity.AttachComponent<PlaneMesh>();
+            var UIRender = entity.AddChild("UIRender");
+            entity.AttachComponent<Grabbable>();
+            entity.AttachComponent<BoxCollider>();
+            var (_, _, _, mesh2) = Helpers.MeshHelper.AddMeshWithMeshRender<BoxMesh>(entity, World.staticAssets.BasicUnlitShader, "UIBackGround", 2147483646);
+            var cam = entity.AttachComponent<Camera2D>();
+            var mit = entity.AttachComponent<RMaterial>();
+            var meshRender = UIRender.AttachComponent<MeshRender>();
+            mit.Shader.Target = World.staticAssets.BasicUnlitShader;
+            var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+            meshRender.Materials.Add().Target = mit;
+            meshRender.Mesh.Target = mesh;
+            cam.excludedsRenderObjects.Add().Target = meshRender;
+            cam.excludedsRenderObjects.Add().Target = mesh2;
+            field.field.Target = cam;
+        }
 
-  //          if (startMenu.Target.enabled.Value)
-		//	{
-		//		startMenu.Target.enabled.Value = false;
-		//	}
-		//}
 
-		private void BuildStartMenu(Entity e)
+        private void BuildStartMenu(Entity e)
 		{
             _timeout.Start();
             startMenu.Target = e;
@@ -110,6 +126,10 @@ namespace RhubarbEngine.Components.PrivateSpace
             sessionButton.label.Value = "Join main Session";
             sessionButton.action.Target = JoinMainSession;
 
+            //var MirrorButton = e.AttachComponent<ImGUIButton>();
+            //MirrorButton.label.Value = "Mirror";
+            //MirrorButton.action.Target = SpawnMirror;
+
             imGUICanvas.element.Target = group;
 			group.children.Add().Target = createCube;
 
@@ -121,6 +141,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 			group.children.Add().Target = createWindow2;
 			group.children.Add().Target = createSyer;
             group.children.Add().Target = sessionButton;
+            //group.children.Add().Target = MirrorButton;
             e.enabled.Value = false;
 		}
 
