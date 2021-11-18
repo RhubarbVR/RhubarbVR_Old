@@ -217,6 +217,10 @@ namespace RhubarbEngine.Managers
                         (gd, sc) = this._engine.WindowManager.MainWindow?.CreateScAndGD(vrContext, backend) ?? CreateGraphicsNoWindow(vrContext, backend);
                         this._engine.Backend = backend;
                     }
+                    else
+                    {
+                        throw new Exception("Not on Windows");
+                    }
                 }
                 catch
                 {
