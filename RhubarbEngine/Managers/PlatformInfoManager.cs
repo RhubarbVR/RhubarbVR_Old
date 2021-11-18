@@ -13,8 +13,8 @@ namespace RhubarbEngine.Managers
     {
         string CPU { get; }
         string GPU { get; }
-        long MemoryBytes { get; }
-        long VRAM_Bytes { get; }
+        double MemoryBytes { get; }
+        double VRAM_Bytes { get; }
         Platform Platform { get; }
         int ThreadCount { get; }
         float AvrageFrameRate { get; }
@@ -24,6 +24,8 @@ namespace RhubarbEngine.Managers
         DateTime Frame { get; set; }
         DateTime StartTime { get; set; }
         TimeSpan Elapsed { get; }
+
+        void LoadGpuInfo(string name, double vrma);
         void NextFrame();
     }
 
@@ -39,9 +41,9 @@ namespace RhubarbEngine.Managers
 
         public string CPU { get; private set; } = "UNKNOWN";
 		public string GPU { get; private set; } = "UNKNOWN";
-		public long MemoryBytes { get; private set; } = -1L;
+		public double MemoryBytes { get; private set; } = -1L;
 
-		public long VRAM_Bytes { get; private set; } = -1L;
+		public double VRAM_Bytes { get; private set; } = -1L;
 
 		public DateTime StartTime { get; set; } = DateTime.UtcNow;
 
@@ -100,18 +102,30 @@ namespace RhubarbEngine.Managers
 			}
 			try
 			{
-				CPU = System.Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER");
+				CPU = Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER");
 			}
 			catch (Exception e)
 			{
 				this._engine.Logger.Log("Failed to get CPU: " + e);
 			}
+            var memoryMetrics = MemoryMetricsClient.GetMetrics();
+            MemoryBytes = memoryMetrics.Total;
 
-			this._engine.Logger.Log("Platform: " + platform.ToString() + "/" + _os.Platform + " CPU: " + CPU + " RamBytes: " + MemoryBytes + " GPU: " + GPU + " VRAMBytes: " + VRAM_Bytes, true);
+
+
+            this._engine.Logger.Log("Platform: " + platform.ToString() + "/" + _os.Platform + " CPU: " + CPU + " Ram: " + MemoryBytes, true);
 			return this;
 		}
 		long _currentFrameTicks;
         readonly float _vsync = 0;
+
+        public void LoadGpuInfo(string name,double vrma)
+        {
+            GPU = name;
+            VRAM_Bytes = vrma;
+            this._engine.Logger.Log("GPU: " + GPU + " VRAM: " + VRAM_Bytes, true);
+        }
+
         public void Update()
 		{
 			previousFrameTicks = _currentFrameTicks;

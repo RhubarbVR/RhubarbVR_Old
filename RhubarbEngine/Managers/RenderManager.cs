@@ -206,28 +206,44 @@ namespace RhubarbEngine.Managers
             }
             catch
             {
+
                 try
                 {
-                    _engine.Logger.Log("Falling back to openGL", true);
-                    //FallBack to openGL
-                    backend = GraphicsBackend.OpenGL;
-                    (gd, sc) = this._engine.WindowManager.MainWindow?.CreateScAndGD(vrContext, backend) ?? CreateGraphicsNoWindow(vrContext, backend);
-                    this._engine.Backend = backend;
+                    if (_engine.PlatformInfo.Platform == PlatformInfo.Platform.Windows)
+                    {
+                        _engine.Logger.Log("Falling back to Direct3D11", true);
+                        //FallBack to openGL
+                        backend = GraphicsBackend.Direct3D11;
+                        (gd, sc) = this._engine.WindowManager.MainWindow?.CreateScAndGD(vrContext, backend) ?? CreateGraphicsNoWindow(vrContext, backend);
+                        this._engine.Backend = backend;
+                    }
                 }
                 catch
                 {
-                    _engine.Logger.Log("Well okay it seams like u don't have a gpu So no rendering",true);
-                    _engine.Rendering = false;
                     try
                     {
-                        vrContext.Dispose();
+                        _engine.Logger.Log("Falling back to openGL", true);
+                        //FallBack to openGL
+                        backend = GraphicsBackend.OpenGLES;
+                        (gd, sc) = this._engine.WindowManager.MainWindow?.CreateScAndGD(vrContext, backend) ?? CreateGraphicsNoWindow(vrContext, backend);
+                        this._engine.Backend = backend;
                     }
-                    catch { }
-                    vrContext = null;
-                    return this;
+                    catch
+                    {
+                        _engine.Logger.Log("Well okay it seams like u don't have a gpu So no rendering", true);
+                        _engine.Rendering = false;
+                        try
+                        {
+                            vrContext.Dispose();
+                        }
+                        catch { }
+                        vrContext = null;
+                        return this;
+                    }
                 }
             }
-			vrContext.Initialize(gd);
+            _engine.PlatformInfo.LoadGpuInfo(gd.DeviceName, -1);
+            vrContext.Initialize(gd);
 			_windowCL = gd.ResourceFactory.CreateCommandList();
 			_eyesCL = gd.ResourceFactory.CreateCommandList();
 			_mainQueue = new RenderQueue();
