@@ -81,7 +81,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (target.Target != null)
                 {
-                    if ((target.Target?.Value ?? 0) != target.Target.Value)
+                    if (target.Target.Value != val)
                     {
                         target.Target.Value = val;
                     }

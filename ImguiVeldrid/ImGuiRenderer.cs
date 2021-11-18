@@ -6,7 +6,7 @@ using System.Reflection;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
-
+using System.Threading.Tasks;
 namespace Veldrid
 {
 	/// <summary>
@@ -546,23 +546,25 @@ namespace Veldrid
 				_indexBuffer = gd.ResourceFactory.CreateBuffer(new BufferDescription((uint)(totalIBSize * 1.5f), BufferUsage.IndexBuffer | BufferUsage.Dynamic));
 			}
 
+
+
 			for (var i = 0; i < draw_data.CmdListsCount; i++)
 			{
 				var cmd_list = draw_data.CmdListsRange[i];
 
-				cl.UpdateBuffer(
-					_vertexBuffer,
-					vertexOffsetInVertices * (uint)sizeof(ImDrawVert),
-					cmd_list.VtxBuffer.Data,
-					(uint)(cmd_list.VtxBuffer.Size * sizeof(ImDrawVert)));
+                cl.UpdateBuffer(
+                    _vertexBuffer,
+                    vertexOffsetInVertices * (uint)sizeof(ImDrawVert),
+                    cmd_list.VtxBuffer.Data,
+                    (uint)(cmd_list.VtxBuffer.Size * sizeof(ImDrawVert)));
 
-				cl.UpdateBuffer(
-					_indexBuffer,
-					indexOffsetInElements * sizeof(ushort),
-					cmd_list.IdxBuffer.Data,
-					(uint)(cmd_list.IdxBuffer.Size * sizeof(ushort)));
+                cl.UpdateBuffer(
+                    _indexBuffer,
+                    indexOffsetInElements * sizeof(ushort),
+                    cmd_list.IdxBuffer.Data,
+                    (uint)(cmd_list.IdxBuffer.Size * sizeof(ushort)));
 
-				vertexOffsetInVertices += (uint)cmd_list.VtxBuffer.Size;
+                vertexOffsetInVertices += (uint)cmd_list.VtxBuffer.Size;
 				indexOffsetInElements += (uint)cmd_list.IdxBuffer.Size;
 			}
 

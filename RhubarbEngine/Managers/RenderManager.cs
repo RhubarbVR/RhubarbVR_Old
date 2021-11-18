@@ -368,17 +368,22 @@ namespace RhubarbEngine.Managers
 		{
 			try
 			{
-				foreach (var noneThreaded in world.updateLists.renderObject)
+                var index = 0;
+                foreach (var noneThreaded in world.updateLists.renderObject)
 				{
 					try
 					{
-						noneThreaded.Render();
+                        if(((index + (int)_framefrencindex) % 16 % MathF.Pow(2, (int)noneThreaded.RenderFrac)) == 0)
+                        {
+                            noneThreaded.Render();
+                        }
 					}
 					catch (Exception e)
 					{
                         _engine.Logger.Log("Failed To Render " + noneThreaded.GetType().Name + " Error " + e.ToString(), true);
 					}
-				}
+                    index++;
+                }
 			}
 			catch { }
 		}
@@ -387,7 +392,7 @@ namespace RhubarbEngine.Managers
 		{
 			try
 			{
-                RenderNoneThreadedRenderObjectsInWorld(world);
+                var nonethreaded = Task.Run(() => RenderNoneThreadedRenderObjectsInWorld(world));
 				Parallel.ForEach(world.updateLists.trenderObject, (obj,info,index) =>
 				{
                     if (obj is not null)
@@ -405,6 +410,10 @@ namespace RhubarbEngine.Managers
                         }
                     }
 				});
+                if (!nonethreaded.IsCompleted)
+                {
+                    nonethreaded.Wait();
+                }
 			}
 			catch
 			{

@@ -203,7 +203,14 @@ namespace RhubarbEngine.Components.ImGUI
 				obs.target.Target = (Sync<int>)target.Target;
 				root.Target = obs;
 			}
-			else if (gType == typeof(float))
+            else if (gType == typeof(uint))
+            {
+                var obs = Entity.AttachComponent<UIntSyncObserver>();
+                obs.fieldName.Value = fieldName.Value;
+                obs.target.Target = (Sync<uint>)target.Target;
+                root.Target = obs;
+            }
+            else if (gType == typeof(float))
 			{
 				var obs = Entity.AttachComponent<FloatSyncObserver>();
 				obs.fieldName.Value = fieldName.Value;

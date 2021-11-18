@@ -17,25 +17,25 @@ namespace RhubarbEngine.Components.ImGUI
 {
 
 	[Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
-	public class Vector3dSyncObserver : UIWidget, IObserver
+	public class UIntSyncObserver : UIWidget, IObserver
 	{
 		public Sync<string> fieldName;
 
-		public SyncRef<Sync<Vector3d>> target;
+		public SyncRef<Sync<uint>> target;
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			base.BuildSyncObjs(newRefIds);
-			target = new SyncRef<Sync<Vector3d>>(this, newRefIds);
+			target = new SyncRef<Sync<uint>>(this, newRefIds);
 			fieldName = new Sync<string>(this, newRefIds);
 		}
 
 
-		public Vector3dSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		public UIntSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}
-		public Vector3dSyncObserver()
+		public UIntSyncObserver()
 		{
 		}
 
@@ -66,7 +66,7 @@ namespace RhubarbEngine.Components.ImGUI
 			if (source != null)
 			{
 				var type = source.Referencer.Target?.GetType();
-				if (typeof(Sync<Vector3d>).IsAssignableFrom(type))
+				if (typeof(IPrimitiveEditable).IsAssignableFrom(type))
 				{
 					Changeboarder = true;
 				}
@@ -76,8 +76,8 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 3);
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
-			var val = target.Target?.Value ?? Vector3d.Zero;
-			if (ImGui.DragScalarN((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ImGuiDataType.Double, (IntPtr)(&val), 3, 0.1f))
+			var val = target.Target?.Value ?? 0;
+			if (ImGui.DragScalarN((fieldName.Value ?? "null") + $"##{ReferenceID.id}",ImGuiDataType.U32, (IntPtr)(&val), 1, 1))
 			{
 				if (target.Target != null)
                 {
@@ -102,10 +102,10 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-					var e = (Sync<Vector3d>)source.Referencer.Target;
+                    var e = (IPrimitiveEditable)source.Referencer.Target;
 					if (target.Target != null)
                     {
-                        target.Target.Value = e.Value;
+                        target.Target.PrimitiveString = e.PrimitiveString;
                     }
 
                     source.Referencer.Target = null;

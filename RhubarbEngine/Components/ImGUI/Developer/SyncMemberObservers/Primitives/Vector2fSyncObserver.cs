@@ -81,7 +81,11 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (target.Target != null)
                 {
-                    target.Target.Value = (Vector2f)val;
+                    var casted = (Vector2f)val;
+                    if (casted != target.Target.Value)
+                    {
+                        target.Target.Value = casted;
+                    }
                 }
             }
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))

@@ -77,11 +77,14 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
 			var val = target.Target?.Value ?? Vector4u.Zero;
-			if (ImGui.DragScalarN((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ImGuiDataType.U32, (IntPtr)(&val), 0, 1))
+			if (ImGui.DragScalarN((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ImGuiDataType.U32, (IntPtr)(&val), 4, 1))
 			{
 				if (target.Target != null)
                 {
-                    target.Target.Value = val;
+                    if (target.Target.Value != val)
+                    {
+                        target.Target.Value = val;
+                    }
                 }
             }
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))

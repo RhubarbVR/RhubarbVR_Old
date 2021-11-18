@@ -81,7 +81,11 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (target.Target != null)
                 {
-                    target.Target.Value = (Colorf)(Vector4f)val;
+                    var casted = (Colorf)(Vector4f)val;
+                    if (target.Target.Value != casted)
+                    {
+                        target.Target.Value = casted;
+                    }
                 }
             }
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
@@ -102,7 +106,10 @@ namespace RhubarbEngine.Components.ImGUI
                     var e = (Sync<Colorf>)source.Referencer.Target;
 					if (target.Target != null)
                     {
-                        target.Target.Value = e.Value;
+                        if (target.Target.Value == e.Value)
+                        {
+                            target.Target.Value = e.Value;
+                        }
                     }
 
                     source.Referencer.Target = null;
