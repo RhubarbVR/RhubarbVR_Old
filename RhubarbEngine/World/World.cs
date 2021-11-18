@@ -497,20 +497,26 @@ namespace RhubarbEngine.World
 			PhysicsWorld.ComputeOverlappingPairs();
 			try
 			{
-				Parallel.ForEach(_entitys, obj => obj.Update(startTime, Frame));
+                if (Focus != World.FocusLevel.Background)
+                {
+                    Parallel.ForEach(_entitys, obj => obj.Update(startTime, Frame));
+                }
 			}
 			catch
 			{
 			}
 			try
 			{
-				Parallel.ForEach(_worldObjects.Values, val =>
-				{
-					if (((IWorker)val) != null)
-					{
-						((IWorker)val).OnUpdate();
-					}
-				});
+                if (Focus != World.FocusLevel.Background)
+                {
+                    Parallel.ForEach(_worldObjects.Values, val =>
+                    {
+                    if (((IWorker)val) != null)
+                    {
+                        ((IWorker)val).OnUpdate();
+                    }
+                    });
+                }
 			}
 			catch
 			{

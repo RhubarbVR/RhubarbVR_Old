@@ -75,7 +75,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (typeof(IWorker).IsAssignableFrom(item.GetType()))
 				{
-					var obs = childrenHolder.Target.AttachComponent<WorkerObserver>();
+					var obs = Entity.AddChild(fieldName.Value + $":{index}").AttachComponent<WorkerObserver>();
 					obs.fieldName.Value = index.ToString();
 					obs.target.Target = (IWorker)item;
 					children.Add().Target = obs;
