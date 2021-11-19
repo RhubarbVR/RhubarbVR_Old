@@ -150,7 +150,7 @@ namespace RhubarbEngine.Helpers
 
         public static void BuildLocalWorld(World.World world)
         {
-            var (mit, planemesh, floor, meshRender) = BlankWorld(world);
+            var (mit, _, floor, _) = BlankWorld(world);
             var tilefield = mit.GetField<Render.Material.Fields.Vec2Field>("Tile", Render.Shader.ShaderType.MainFrag);
             tilefield.field.Value = new Vector2f(500, 500);
 

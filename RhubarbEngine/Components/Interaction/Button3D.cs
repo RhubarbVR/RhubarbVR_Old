@@ -43,12 +43,18 @@ namespace RhubarbEngine.Components.Interaction
             base.BuildSyncObjs(newRefIds);
             ClickVisual = new SyncRef<Entity>(this, newRefIds);
             PositionDriver = new Driver<Vector3f>(this, newRefIds);
-            ClickAxis = new Sync<Vector3f>(this, newRefIds);
-            ClickAxis.Value = new Vector3f(0.0f, -0.10f, 0.0f);
-            IsLaserClickable = new Sync<bool>(this, newRefIds);
-            IsLaserClickable.Value = true;
-            IsToggle = new Sync<bool>(this, newRefIds);
-            IsToggle.Value = true;
+            ClickAxis = new Sync<Vector3f>(this, newRefIds)
+            {
+                Value = new Vector3f(0.0f, -0.10f, 0.0f)
+            };
+            IsLaserClickable = new Sync<bool>(this, newRefIds)
+            {
+                Value = true
+            };
+            IsToggle = new Sync<bool>(this, newRefIds)
+            {
+                Value = true
+            };
 
             IsClicked = new Sync<bool>(this, newRefIds);
             PressDepth = new Sync<float>(this, newRefIds);
@@ -66,7 +72,7 @@ namespace RhubarbEngine.Components.Interaction
         {
             base.CommonUpdate(startTime, Frame);
 
-            if(_clickingLastFrame && _clicking)
+            if(!_clickingLastFrame && _clicking)
             {
                 IsClicked.Value = IsToggle.Value && !IsClicked.Value;
                 OnClicked.Target?.Invoke();
