@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RhubarbEngine.World.ECS
+namespace RhubarbEngine.Components.Interaction
 {
-    public interface IVelocityReqwest
-    {
-    }
+	public interface IPhysicsDisabler
+	{
+	}
 }

@@ -18,7 +18,7 @@ using OpenAL;
 namespace RhubarbEngine.Components.Audio
 {
 	[Category(new string[] { "Audio" })]
-	public unsafe class AudioOutput : Component , IVelocityReqwest
+	public unsafe class AudioOutput : Component , IVelocityRequest
 	{
 		public SyncRef<IAudioSource> audioSource;
 

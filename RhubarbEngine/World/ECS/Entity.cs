@@ -79,7 +79,7 @@ namespace RhubarbEngine.World.ECS
 
 		public Sync<RemderLayers> remderlayer;
 
-		public void AddPhysicsDisableder(IPhysicsDisableder physicsDisableder)
+		public void AddPhysicsDisableder(IPhysicsDisabler physicsDisableder)
 		{
 			try
 			{
@@ -126,7 +126,7 @@ namespace RhubarbEngine.World.ECS
             return (Quaternionf)newrotation;
         }
 
-        public void RemovePhysicsDisableder(IPhysicsDisableder physicsDisableder)
+        public void RemovePhysicsDisableder(IPhysicsDisabler physicsDisableder)
 		{
 			try
 			{
@@ -142,7 +142,7 @@ namespace RhubarbEngine.World.ECS
 		[NoShow]
 		[NoSave]
 		[NoSync]
-		public List<IPhysicsDisableder> physicsDisableders = new();
+		public List<IPhysicsDisabler> physicsDisableders = new();
         [NoShow]
         [NoSave]
         [NoSync]
@@ -443,7 +443,7 @@ namespace RhubarbEngine.World.ECS
             var calc = false;
             foreach (var item in _components)
             {
-                if (typeof(IVelocityReqwest).IsAssignableFrom(item.GetType()))
+                if (typeof(IVelocityRequest).IsAssignableFrom(item.GetType()))
                 {
                     calc = true;
                 }

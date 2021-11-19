@@ -25,7 +25,7 @@ using RhubarbEngine.Components.Interaction;
 namespace RhubarbEngine.Components.Interaction
 {
     [Category(new string[] { "Interaction" })]
-    public class Grabbable : Component, IPhysicsDisableder,IVelocityReqwest
+    public class Grabbable : Component, IPhysicsDisabler, IVelocityRequest
 	{
 		public SyncRef<Entity> lastParent;
 
