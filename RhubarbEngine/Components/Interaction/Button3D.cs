@@ -10,7 +10,7 @@ using RNumerics;
 using RhubarbEngine.Components.Interaction;
 using RhubarbEngine.Components.Physics.Colliders;
 
-//TODO: Button interacting with laser or finger press, mostly functional.
+//TODO: Button interacting with laser or finger press, mostly functional. only toggle works
 
 namespace RhubarbEngine.Components.Interaction
 {
@@ -21,13 +21,20 @@ namespace RhubarbEngine.Components.Interaction
         public Driver<Vector3f> PositionDriver;
         public Sync<Vector3f> ClickAxis;
         public Sync<bool> IsLaserClickable;
+        public Sync<bool> IsToggle;
+
+        public Sync<bool> IsClicked;
+        public Sync<float> PressDepth;
+        public Sync<Vector3f> StartPosition;
 
         public SyncDelegate OnClicked;
+
+
 
         [NoSave] [NoShow] [NoSync]
         private Entity _lastVisual;
 
-        
+      
 
         public override void BuildSyncObjs(bool newRefIds)
         {
@@ -36,6 +43,14 @@ namespace RhubarbEngine.Components.Interaction
             PositionDriver = new Driver<Vector3f>(this, newRefIds);
             ClickAxis = new Sync<Vector3f>(this, newRefIds);
             IsLaserClickable = new Sync<bool>(this, newRefIds);
+            IsLaserClickable.Value = true;
+            IsToggle = new Sync<bool>(this, newRefIds);
+            IsToggle.Value = true;
+
+            IsClicked = new Sync<bool>(this, newRefIds);
+            PressDepth = new Sync<float>(this, newRefIds);
+            StartPosition = new Sync<Vector3f>(this, newRefIds);
+
 
             OnClicked = new SyncDelegate(this, newRefIds)
             {
@@ -47,8 +62,13 @@ namespace RhubarbEngine.Components.Interaction
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
         {
             base.CommonUpdate(startTime, Frame);
-            
-            //TODO: lerp ClickVisial position on axis when pressed
+            PressDepth.Value = IsClicked.Value
+                ? PressDepth.Value < 1.0f ? PressDepth.Value+(float)Engine.PlatformInfo.DeltaSeconds : 1.0f
+                : PressDepth.Value > 0.0f ? PressDepth.Value-(float)Engine.PlatformInfo.DeltaSeconds : 0.0f;
+            if (PositionDriver.Linked)
+            {
+                PositionDriver.Drivevalue = Vector3f.Lerp(StartPosition.Value, StartPosition.Value + ClickAxis.Value, PressDepth.Value);
+            }
         }
         public override void OnLoaded()
         {
@@ -64,7 +84,7 @@ namespace RhubarbEngine.Components.Interaction
             {
                 ClickVisual.Target.OnClick += Target_OnClick;
                 PositionDriver.SetDriveTarget(ClickVisual.Target.position);
-                
+                StartPosition.Value = ClickVisual.Target.position.Value;
             }
 
             _lastVisual = ClickVisual.Target;
@@ -75,11 +95,15 @@ namespace RhubarbEngine.Components.Interaction
             {
                 OnClicked.Target?.Invoke();    
             }
+            if (IsToggle.Value)
+            {
+                IsClicked.Value = !IsClicked.Value;
+            }
         }
 
         public void TestFunction()
         {
-            //TODO: testing purposes only, please delete.
+            //TODO: testing purposes only, please delete this.
             Logger.Log("Button3D Clicked", true);
         }
         public Button3D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
