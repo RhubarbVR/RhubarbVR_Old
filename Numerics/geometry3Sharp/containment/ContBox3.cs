@@ -17,20 +17,26 @@ namespace RNumerics
 		public ContOrientedBox3(IEnumerable<Vector3d> points)
 		{
 			// Fit the points with a Gaussian distribution.
-			GaussPointsFit3 fitter = new GaussPointsFit3(points);
+			var fitter = new GaussPointsFit3(points);
 			if (fitter.ResultValid == false)
-				return;
-			this.Box = fitter.Box;
+            {
+                return;
+            }
+
+            this.Box = fitter.Box;
 			this.Box.Contain(points);
 		}
 
 		public ContOrientedBox3(IEnumerable<Vector3d> points, IEnumerable<double> pointWeights)
 		{
 			// Fit the points with a Gaussian distribution.
-			GaussPointsFit3 fitter = new GaussPointsFit3(points, pointWeights);
+			var fitter = new GaussPointsFit3(points, pointWeights);
 			if (fitter.ResultValid == false)
-				return;
-			this.Box = fitter.Box;
+            {
+                return;
+            }
+
+            this.Box = fitter.Box;
 			this.Box.Contain(points);
 		}
 	}

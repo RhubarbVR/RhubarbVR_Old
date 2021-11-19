@@ -29,21 +29,26 @@ namespace RNumerics
 
 		public byte this[int key]
 		{
-			get { if (key == 0) return r; else if (key == 1) return g; else if (key == 2) return b; else return a; }
-			set { if (key == 0) r = value; else if (key == 1) g = value; else if (key == 2) b = value; else a = value; }
+            get { return key == 0 ? r : key == 1 ? g : key == 2 ? b : a; }
+            set
+            {
+                switch (key)
+                {
+                    case 0:
+                        r = value;
+                        break;
+                    case 1:
+                        g = value;
+                        break;
+                    case 2:
+                        b = value;
+                        break;
+                    default:
+                        a = value;
+                        break;
+                }
+            }
 		}
-
-
-#if G3_USING_UNITY
-        public static implicit operator Colorb(UnityEngine.Color32 c)
-        {
-            return new Colorb(c.r, c.g, c.b, c.a);
-        }
-        public static implicit operator Color32(Colorb c)
-        {
-            return new Color32(c.r, c.g, c.b, c.a);
-        }
-#endif
 
 	}
 }

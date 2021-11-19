@@ -40,15 +40,15 @@ namespace RNumerics
 			// we then put all in a hash set, we will iterate until we use up all the available wedges.
 			// Edges are sorted by positive angle, so they are in clockwise order
 			// Hence, going from edge n to n+1 is a left-turn, and so "inside" cells are oriented clockwise
-			int NV = Graph.MaxVertexID;
-			Index2i[][] wedges = new Index2i[NV][];
-			HashSet<Index2i> remaining = new HashSet<Index2i>();
-			foreach (int vid in Graph.VertexIndices())
+			var NV = Graph.MaxVertexID;
+			var wedges = new Index2i[NV][];
+			var remaining = new HashSet<Index2i>();
+			foreach (var vid in Graph.VertexIndices())
 			{
-				int[] sorted = Graph.SortedVtxEdges(vid);
+				var sorted = Graph.SortedVtxEdges(vid);
 				wedges[vid] = new Index2i[sorted.Length];
 
-				for (int k = 0; k < sorted.Length; ++k)
+				for (var k = 0; k < sorted.Length; ++k)
 				{
 					wedges[vid][k] = new Index2i(sorted[k], sorted[(k + 1) % sorted.Length]);
 					remaining.Add(new Index2i(vid, k));
@@ -57,31 +57,31 @@ namespace RNumerics
 
 			CellLoops = new List<int[]>();
 
-			List<int> loopv = new List<int>();
+			var loopv = new List<int>();
 			while (remaining.Count > 0)
 			{
-				Index2i idx = remaining.First();
+				var idx = remaining.First();
 				remaining.Remove(idx);
 
-				int start_vid = idx.a;
-				int wid = idx.b;
-				int e0 = wedges[start_vid][wid].a;
-				e0 = e0 + 1 - 1;   // get rid of unused variable warning, want to keep this for debugging
-				int e1 = wedges[start_vid][wid].b;
+				var start_vid = idx.a;
+				var wid = idx.b;
+				//var e0 = wedges[start_vid][wid].a;
+				//e0 = e0 + 1 - 1;   // get rid of unused variable warning, want to keep this for debugging
+				var e1 = wedges[start_vid][wid].b;
 
 				loopv.Clear();
 				loopv.Add(start_vid);
 
-				int cur_v = start_vid;
-				int outgoing_e = e1;
+				var cur_v = start_vid;
+				var outgoing_e = e1;
 
 				// walk around loop taking immediate left-turns
-				bool done = false;
+				var done = false;
 				while (!done)
 				{
 					// find outgoing edge and vtx at far end
-					Index2i ev = Graph.GetEdgeV(outgoing_e);
-					int next_v = (ev.a == cur_v) ? ev.b : ev.a;
+					var ev = Graph.GetEdgeV(outgoing_e);
+					var next_v = (ev.a == cur_v) ? ev.b : ev.a;
 
 					if (next_v == start_vid)
 					{
@@ -90,9 +90,9 @@ namespace RNumerics
 					}
 
 					// now find wedge at that vtx where this is incoming edge
-					Index2i[] next_wedges = wedges[next_v];
-					int use_wedge_idx = -1;
-					for (int k = 0; k < next_wedges.Length; ++k)
+					var next_wedges = wedges[next_v];
+					var use_wedge_idx = -1;
+					for (var k = 0; k < next_wedges.Length; ++k)
 					{
 						if (next_wedges[k].a == outgoing_e)
 						{
@@ -101,9 +101,11 @@ namespace RNumerics
 						}
 					}
 					if (use_wedge_idx == -1)
-						throw new Exception("could not find next wedge?");
+                    {
+                        throw new Exception("could not find next wedge?");
+                    }
 
-					remaining.Remove(new Index2i(next_v, use_wedge_idx));
+                    remaining.Remove(new Index2i(next_v, use_wedge_idx));
 					loopv.Add(next_v);
 					cur_v = next_v;
 					outgoing_e = next_wedges[use_wedge_idx].b;
@@ -121,19 +123,23 @@ namespace RNumerics
 		/// </summary>
 		public List<Polygon2d> CellsToPolygons(Func<Polygon2d, bool> FilterF = null)
 		{
-			List<Polygon2d> result = new List<Polygon2d>();
+			var result = new List<Polygon2d>();
 
-			for (int i = 0; i < CellLoops.Count; ++i)
+			for (var i = 0; i < CellLoops.Count; ++i)
 			{
-				int[] loop = CellLoops[i];
-				Polygon2d poly = new Polygon2d();
-				for (int k = 0; k < loop.Length; ++k)
-					poly.AppendVertex(Graph.GetVertex(loop[k]));
+				var loop = CellLoops[i];
+				var poly = new Polygon2d();
+				for (var k = 0; k < loop.Length; ++k)
+                {
+                    poly.AppendVertex(Graph.GetVertex(loop[k]));
+                }
 
-				if (FilterF != null && FilterF(poly) == false)
-					continue;
+                if (FilterF != null && FilterF(poly) == false)
+                {
+                    continue;
+                }
 
-				result.Add(poly);
+                result.Add(poly);
 			}
 			return result;
 		}
@@ -147,20 +153,22 @@ namespace RNumerics
 		/// </summary>
 		public List<Polygon2d> ContainedCells(GeneralPolygon2d container)
 		{
-			Func<Polygon2d, bool> filterF = (poly) =>
-			{
-				bool bIsCW = poly.IsClockwise;
-				for (int k = 0; k < poly.VertexCount; k++)
-				{
-					Segment2d s = poly.Segment(k);
-					Vector2d pt = s.Center + MathUtil.Epsilonf * s.Direction.Perp;
-					if (poly.Contains(pt) == bIsCW)
-						return container.Contains(pt);
-				}
-				// give up
-				return false;
-			};
-			return CellsToPolygons(filterF);
+            bool filterF(Polygon2d poly)
+            {
+                var bIsCW = poly.IsClockwise;
+                for (var k = 0; k < poly.VertexCount; k++)
+                {
+                    var s = poly.Segment(k);
+                    var pt = s.Center + (MathUtil.Epsilonf * s.Direction.Perp);
+                    if (poly.Contains(pt) == bIsCW)
+                    {
+                        return container.Contains(pt);
+                    }
+                }
+                // give up
+                return false;
+            }
+            return CellsToPolygons(filterF);
 		}
 
 

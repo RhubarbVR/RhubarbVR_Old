@@ -16,57 +16,55 @@ namespace RNumerics
 	/// </summary>
 	public class ContMinCircle2
 	{
-		double mEpsilon;
-		Func<int, int[], Support, Circle>[] mUpdate = new Func<int, int[], Support, Circle>[4];
-
-		IList<Vector2d> Points;
-
-		Circle[] circle_buf = new Circle[6];
+        readonly double _mEpsilon;
+        readonly Func<int, int[], Support, Circle>[] _mUpdate = new Func<int, int[], Support, Circle>[4];
+        readonly IList<Vector2d> _points;
+        readonly Circle[] _circle_buf = new Circle[6];
 
 		public Circle2d Result;
 
 		public ContMinCircle2(IList<Vector2d> pointsIn, double epsilon = 1e-05)
 		{
-			mEpsilon = epsilon;
+			_mEpsilon = epsilon;
 
-			mUpdate[0] = null;
-			mUpdate[1] = UpdateSupport1;
-			mUpdate[2] = UpdateSupport2;
-			mUpdate[3] = UpdateSupport3;
+			_mUpdate[0] = null;
+			_mUpdate[1] = UpdateSupport1;
+			_mUpdate[2] = UpdateSupport2;
+			_mUpdate[3] = UpdateSupport3;
 
 			Circle minimal;
 
-			Support support = new Support();
+			var support = new Support();
 			double distDiff = 0;
 
-			Points = pointsIn;
-			int numPoints = pointsIn.Count;
+			_points = pointsIn;
+			var numPoints = pointsIn.Count;
 
 			int[] permutation = null;
-			Random r = new Random();
+			var r = new Random();
 
 			if (numPoints >= 1)
 			{
 				// Create identity permutation (0,1,..,numPoints-1).
 				permutation = new int[numPoints];
-				for (int i = 0; i < numPoints; ++i)
+				for (var i = 0; i < numPoints; ++i)
 				{
 					permutation[i] = i;
 				}
 
 				// Generate random permutation.
-				for (int i = numPoints - 1; i > 0; --i)
+				for (var i = numPoints - 1; i > 0; --i)
 				{
-					int j = r.Next() % (i + 1);
+					var j = r.Next() % (i + 1);
 					if (j != i)
 					{
-						int save = permutation[i];
+						var save = permutation[i];
 						permutation[i] = permutation[j];
 						permutation[j] = save;
 					}
 				}
 
-				minimal = new Circle(Points[permutation[0]], 0);
+				minimal = new Circle(_points[permutation[0]], 0);
 				support.Quantity = 1;
 				support.Index[0] = 0;
 
@@ -102,12 +100,12 @@ namespace RNumerics
 				// growth of the bounding circle.
 				for (int i = 1 % numPoints, n = 0; i != n; i = (i + 1) % numPoints)
 				{
-					if (!support.Contains(i, Points, permutation, mEpsilon))
+					if (!support.Contains(i, _points, permutation, _mEpsilon))
 					{
-						if (!Contains(Points[permutation[i]], ref minimal, ref distDiff))
+						if (!Contains(_points[permutation[i]], ref minimal, ref distDiff))
 						{
-							var updateF = mUpdate[support.Quantity];
-							Circle circle = updateF(i, permutation, support);
+							var updateF = _mUpdate[support.Quantity];
+							var circle = updateF(i, permutation, support);
 							if (circle.Radius > minimal.Radius)
 							{
 								minimal = circle;
@@ -127,10 +125,10 @@ namespace RNumerics
 			Result = new Circle2d(minimal.Center, Math.Sqrt(minimal.Radius));
 		}
 
-		bool Contains(Vector2d point, ref Circle circle, ref double distDiff)
+        static bool Contains(Vector2d point, ref Circle circle, ref double distDiff)
 		{
-			Vector2d diff = point - circle.Center;
-			double test = diff.LengthSquared;
+			var diff = point - circle.Center;
+			var test = diff.LengthSquared;
 
 			// NOTE:  In this algorithm, Circle2 is storing the *squared radius*,
 			// so the next line of code is not in error.
@@ -139,14 +137,13 @@ namespace RNumerics
 			return distDiff <= 0;
 		}
 
-
-
-		Circle ExactCircle2(ref Vector2d P0, ref Vector2d P1)
+        static Circle ExactCircle2(ref Vector2d P0, ref Vector2d P1)
 		{
 			return new Circle(
 				0.5 * (P0 + P1), 0.25 * P1.DistanceSquared(P0));
 		}
-		Circle ExactCircle2(Vector2d P0, ref Vector2d P1)
+
+        static Circle ExactCircle2(Vector2d P0, ref Vector2d P1)
 		{
 			return new Circle(
 				0.5 * (P0 + P1), 0.25 * P1.DistanceSquared(P0));
@@ -155,23 +152,23 @@ namespace RNumerics
 
 		Circle ExactCircle3(ref Vector2d P0, ref Vector2d P1, ref Vector2d P2)
 		{
-			Vector2d E10 = P1 - P0;
-			Vector2d E20 = P2 - P0;
+            var E10 = P1 - P0;
+            var E20 = P2 - P0;
 
-			Matrix2d A = new Matrix2d(E10.x, E10.y, E20.x, E20.y);
+            var A = new Matrix2d(E10.x, E10.y, E20.x, E20.y);
 
-			Vector2d B = new Vector2d(
+            var B = new Vector2d(
 				((double)0.5) * E10.LengthSquared,
 				((double)0.5) * E20.LengthSquared);
 
-			double det = A.m00 * A.m11 - A.m01 * A.m10;
+            var det = (A.m00 * A.m11) - (A.m01 * A.m10);
 
-			if (Math.Abs(det) > mEpsilon)
+			if (Math.Abs(det) > _mEpsilon)
 			{
-				double invDet = ((double)1) / det;
+                var invDet = ((double)1) / det;
 				Vector2d Q;
-				Q.x = (A.m11 * B.x - A.m01 * B.y) * invDet;
-				Q.y = (A.m00 * B.y - A.m10 * B.x) * invDet;
+				Q.x = ((A.m11 * B.x) - (A.m01 * B.y)) * invDet;
+				Q.y = ((A.m00 * B.y) - (A.m10 * B.x)) * invDet;
 
 				return new Circle(P0 + Q, Q.LengthSquared);
 			}
@@ -192,10 +189,10 @@ namespace RNumerics
 
 		Circle UpdateSupport1(int i, int[] permutation, Support support)
 		{
-			Vector2d P0 = Points[permutation[support.Index[0]]];
-			Vector2d P1 = Points[permutation[i]];
+            var P0 = _points[permutation[support.Index[0]]];
+            var P1 = _points[permutation[i]];
 
-			Circle minimal = ExactCircle2(ref P0, ref P1);
+            var minimal = ExactCircle2(ref P0, ref P1);
 			support.Quantity = 2;
 			support.Index[1] = i;
 
@@ -203,38 +200,38 @@ namespace RNumerics
 		}
 
 
-		static readonly int[,] type2_2 = new int[2, 2]
+		static readonly int[,] _type2_2 = new int[2, 2]
 			{ {0, /*2*/ 1}, {1, /*2*/ 0} };
 
 		Circle UpdateSupport2(int i, int[] permutation, Support support)
 		{
-			Vector2dTuple2 point = new Vector2dTuple2(
-				Points[permutation[support.Index[0]]],  // P0
-				Points[permutation[support.Index[1]]]   // P1
+            var point = new Vector2dTuple2(
+				_points[permutation[support.Index[0]]],  // P0
+				_points[permutation[support.Index[1]]]   // P1
 			);
-			Vector2d P2 = Points[permutation[i]];
+            var P2 = _points[permutation[i]];
 
-			// Permutations of type 2, used for calling ExactCircle2(..).
-			int numType2 = 2;
+            // Permutations of type 2, used for calling ExactCircle2(..).
+            var numType2 = 2;
 
-			// Permutations of type 3, used for calling ExactCircle3(..).
-			//int numType3 = 1;  // {0, 1, 2}
+            // Permutations of type 3, used for calling ExactCircle3(..).
+            //int numType3 = 1;  // {0, 1, 2}
 
-			Circle[] circle = circle_buf;
-			int indexCircle = 0;
-			double minRSqr = double.MaxValue;
-			int indexMinRSqr = -1;
+            var circle = _circle_buf;
+            var indexCircle = 0;
+            var minRSqr = double.MaxValue;
+            var indexMinRSqr = -1;
 			double distDiff = 0, minDistDiff = double.MaxValue;
-			int indexMinDistDiff = -1;
+            var indexMinDistDiff = -1;
 
 			// Permutations of type 2.
 			int j;
 			for (j = 0; j < numType2; ++j, ++indexCircle)
 			{
-				circle[indexCircle] = ExactCircle2(point[type2_2[j, 0]], ref P2);
+				circle[indexCircle] = ExactCircle2(point[_type2_2[j, 0]], ref P2);
 				if (circle[indexCircle].Radius < minRSqr)
 				{
-					if (Contains(point[type2_2[j, 1]], ref circle[indexCircle], ref distDiff))
+					if (Contains(point[_type2_2[j, 1]], ref circle[indexCircle], ref distDiff))
 					{
 						minRSqr = circle[indexCircle].Radius;
 						indexMinRSqr = indexCircle;
@@ -251,7 +248,7 @@ namespace RNumerics
 			circle[indexCircle] = ExactCircle3(point[0], point[1], ref P2);
 			if (circle[indexCircle].Radius < minRSqr)
 			{
-				minRSqr = circle[indexCircle].Radius;
+				//minRSqr = circle[indexCircle].Radius;
 				indexMinRSqr = indexCircle;
 			}
 
@@ -264,7 +261,7 @@ namespace RNumerics
 				indexMinRSqr = indexMinDistDiff;
 			}
 
-			Circle minimal = circle[indexMinRSqr];
+            var minimal = circle[indexMinRSqr];
 			switch (indexMinRSqr)
 			{
 				case 0:
@@ -283,43 +280,43 @@ namespace RNumerics
 		}
 
 
-		static readonly int[,] type2_3 = new int[3, 3] {
+		static readonly int[,] _type2_3 = new int[3, 3] {
 				{ 0, /*3*/ 1, 2}, { 1, /*3*/ 0, 2}, { 2, /*3*/ 0, 1} };
-		static readonly int[,] type3_3 = new int[3, 3] {
+		static readonly int[,] _type3_3 = new int[3, 3] {
 				{0, 1, /*3*/ 2}, {0, 2, /*3*/ 1}, {1, 2, /*3*/ 0} };
 
 		Circle UpdateSupport3(int i, int[] permutation, Support support)
 		{
-			Vector2dTuple3 point = new Vector2dTuple3(
-				Points[permutation[support.Index[0]]],  // P0
-				Points[permutation[support.Index[1]]],  // P1
-				Points[permutation[support.Index[2]]]   // P2
+            var point = new Vector2dTuple3(
+				_points[permutation[support.Index[0]]],  // P0
+				_points[permutation[support.Index[1]]],  // P1
+				_points[permutation[support.Index[2]]]   // P2
 			);
-			Vector2d P3 = Points[permutation[i]];
+            var P3 = _points[permutation[i]];
 
-			// Permutations of type 2, used for calling ExactCircle2(..).
-			int numType2 = 3;
+            // Permutations of type 2, used for calling ExactCircle2(..).
+            var numType2 = 3;
 
 
-			// Permutations of type 2, used for calling ExactCircle3(..).
-			int numType3 = 3;
+            // Permutations of type 2, used for calling ExactCircle3(..).
+            var numType3 = 3;
 
-			Circle[] circle = circle_buf;
-			int indexCircle = 0;
-			double minRSqr = double.MaxValue;
-			int indexMinRSqr = -1;
+            var circle = _circle_buf;
+            var indexCircle = 0;
+            var minRSqr = double.MaxValue;
+            var indexMinRSqr = -1;
 			double distDiff = 0, minDistDiff = double.MaxValue;
-			int indexMinDistDiff = -1;
+            var indexMinDistDiff = -1;
 
 			// Permutations of type 2.
 			int j;
 			for (j = 0; j < numType2; ++j, ++indexCircle)
 			{
-				circle[indexCircle] = ExactCircle2(point[type2_3[j, 0]], ref P3);
+				circle[indexCircle] = ExactCircle2(point[_type2_3[j, 0]], ref P3);
 				if (circle[indexCircle].Radius < minRSqr)
 				{
-					if (Contains(point[type2_3[j, 1]], ref circle[indexCircle], ref distDiff)
-						 && Contains(point[type2_3[j, 2]], ref circle[indexCircle], ref distDiff))
+					if (Contains(point[_type2_3[j, 1]], ref circle[indexCircle], ref distDiff)
+						 && Contains(point[_type2_3[j, 2]], ref circle[indexCircle], ref distDiff))
 					{
 						minRSqr = circle[indexCircle].Radius;
 						indexMinRSqr = indexCircle;
@@ -335,10 +332,10 @@ namespace RNumerics
 			// Permutations of type 3.
 			for (j = 0; j < numType3; ++j, ++indexCircle)
 			{
-				circle[indexCircle] = ExactCircle3(point[type3_3[j, 0]], point[type3_3[j, 1]], ref P3);
+				circle[indexCircle] = ExactCircle3(point[_type3_3[j, 0]], point[_type3_3[j, 1]], ref P3);
 				if (circle[indexCircle].Radius < minRSqr)
 				{
-					if (Contains(point[type3_3[j, 2]], ref circle[indexCircle], ref distDiff))
+					if (Contains(point[_type3_3[j, 2]], ref circle[indexCircle], ref distDiff))
 					{
 						minRSqr = circle[indexCircle].Radius;
 						indexMinRSqr = indexCircle;
@@ -360,7 +357,7 @@ namespace RNumerics
 				indexMinRSqr = indexMinDistDiff;
 			}
 
-			Circle minimal = circle[indexMinRSqr];
+            var minimal = circle[indexMinRSqr];
 			switch (indexMinRSqr)
 			{
 				case 0:
@@ -410,9 +407,9 @@ namespace RNumerics
 		{
 			public bool Contains(int index, IList<Vector2d> Points, int[] permutation, double epsilon)
 			{
-				for (int i = 0; i < Quantity; ++i)
+				for (var i = 0; i < Quantity; ++i)
 				{
-					Vector2d diff = Points[permutation[index]] - Points[permutation[Index[i]]];
+                    var diff = Points[permutation[index]] - Points[permutation[Index[i]]];
 					if (diff.LengthSquared < epsilon)
 					{
 						return true;

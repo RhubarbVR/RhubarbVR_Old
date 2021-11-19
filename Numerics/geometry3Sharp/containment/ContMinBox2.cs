@@ -17,7 +17,7 @@ namespace RNumerics
 	/// </summary>
 	public class ContMinBox2
 	{
-		Box2d mMinBox;
+		Box2d _mMinBox;
 
 		// Flags for the rotating calipers algorithm.
 		protected enum RCFlags { F_NONE, F_LEFT, F_RIGHT, F_BOTTOM, F_TOP };
@@ -25,7 +25,7 @@ namespace RNumerics
 
 		public Box2d MinBox
 		{
-			get { return mMinBox; }
+			get { return _mMinBox; }
 		}
 
 		public ContMinBox2(IList<Vector2d> points, double epsilon, QueryNumberType queryType, bool isConvexPolygon)
@@ -40,18 +40,18 @@ namespace RNumerics
 			}
 			else
 			{
-				ConvexHull2 hull = new ConvexHull2(points, epsilon, queryType);
-				int hullDim = hull.Dimension;
-				int hullNumSimplices = hull.NumSimplices;
-				int[] hullIndices = hull.HullIndices;
+				var hull = new ConvexHull2(points, epsilon, queryType);
+                var hullDim = hull.Dimension;
+                var hullNumSimplices = hull.NumSimplices;
+                var hullIndices = hull.HullIndices;
 
 				if (hullDim == 0)
 				{
-					mMinBox.Center = points[0];
-					mMinBox.AxisX = Vector2d.AxisX;
-					mMinBox.AxisY = Vector2d.AxisY;
-					mMinBox.Extent[0] = (double)0;
-					mMinBox.Extent[1] = (double)0;
+					_mMinBox.Center = points[0];
+					_mMinBox.AxisX = Vector2d.AxisX;
+					_mMinBox.AxisY = Vector2d.AxisY;
+					_mMinBox.Extent[0] = (double)0;
+					_mMinBox.Extent[1] = (double)0;
 					return;
 				}
 
@@ -73,24 +73,24 @@ namespace RNumerics
 				}
 
 				numPoints = hullNumSimplices;
-				Vector2d[] pointsArray = new Vector2d[numPoints];
-				for (int i = 0; i < numPoints; ++i)
+                var pointsArray = new Vector2d[numPoints];
+				for (var i = 0; i < numPoints; ++i)
 				{
 					pointsArray[i] = points[hullIndices[i]];
 				}
 				hullPoints = pointsArray;
 			}
 
-			// The input points are V[0] through V[N-1] and are assumed to be the
-			// vertices of a convex polygon that are counterclockwise ordered.  The
-			// input points must not contain three consecutive collinear points.
+            // The input points are V[0] through V[N-1] and are assumed to be the
+            // vertices of a convex polygon that are counterclockwise ordered.  The
+            // input points must not contain three consecutive collinear points.
 
-			// Unit-length edge directions of convex polygon.  These could be
-			// precomputed and passed to this routine if the application requires it.
-			int numPointsM1 = numPoints - 1;
-			Vector2d[] edges = new Vector2d[numPoints];
-			bool[] visited = new bool[numPoints];
-			for (int i = 0; i < numPointsM1; ++i)
+            // Unit-length edge directions of convex polygon.  These could be
+            // precomputed and passed to this routine if the application requires it.
+            var numPointsM1 = numPoints - 1;
+            var edges = new Vector2d[numPoints];
+            var visited = new bool[numPoints];
+			for (var i = 0; i < numPointsM1; ++i)
 			{
 				edges[i] = hullPoints[i + 1] - hullPoints[i];
 				edges[i].Normalize();
@@ -110,7 +110,7 @@ namespace RNumerics
 			double xmin = hullPoints[0].x, xmax = xmin;
 			double ymin = hullPoints[0].y, ymax = ymin;
 			int LIndex = 0, RIndex = 0, BIndex = 0, TIndex = 0;
-			for (int i = 1; i < numPoints; ++i)
+			for (var i = 1; i < numPoints; ++i)
 			{
 				if (hullPoints[i].x <= xmin)
 				{
@@ -175,27 +175,27 @@ namespace RNumerics
 
 			// The dimensions of the axis-aligned box.  The extents store width and
 			// height for now.
-			mMinBox.Center.x = ((double)0.5) * (xmin + xmax);
-			mMinBox.Center.y = ((double)0.5) * (ymin + ymax);
-			mMinBox.AxisX = Vector2d.AxisX;
-			mMinBox.AxisY = Vector2d.AxisY;
-			mMinBox.Extent[0] = ((double)0.5) * (xmax - xmin);
-			mMinBox.Extent[1] = ((double)0.5) * (ymax - ymin);
-			double minAreaDiv4 = mMinBox.Extent[0] * mMinBox.Extent[1];
+			_mMinBox.Center.x = ((double)0.5) * (xmin + xmax);
+			_mMinBox.Center.y = ((double)0.5) * (ymin + ymax);
+			_mMinBox.AxisX = Vector2d.AxisX;
+			_mMinBox.AxisY = Vector2d.AxisY;
+			_mMinBox.Extent[0] = ((double)0.5) * (xmax - xmin);
+			_mMinBox.Extent[1] = ((double)0.5) * (ymax - ymin);
+            var minAreaDiv4 = _mMinBox.Extent[0] * _mMinBox.Extent[1];
 
-			// The rotating calipers algorithm.
-			Vector2d U = Vector2d.AxisX;
-			Vector2d V = Vector2d.AxisY;
+            // The rotating calipers algorithm.
+            var U = Vector2d.AxisX;
+            var V = Vector2d.AxisY;
 
-			bool done = false;
+            var done = false;
 			while (!done)
 			{
-				// Determine the edge that forms the smallest angle with the current
-				// box edges.
-				RCFlags flag = RCFlags.F_NONE;
-				double maxDot = (double)0;
+                // Determine the edge that forms the smallest angle with the current
+                // box edges.
+                var flag = RCFlags.F_NONE;
+                var maxDot = (double)0;
 
-				double dot = U.Dot(edges[BIndex]);
+                var dot = U.Dot(edges[BIndex]);
 				if (dot > maxDot)
 				{
 					maxDot = dot;
@@ -219,8 +219,7 @@ namespace RNumerics
 				dot = -V.Dot(edges[LIndex]);
 				if (dot > maxDot)
 				{
-					maxDot = dot;
-					flag = RCFlags.F_LEFT;
+                    flag = RCFlags.F_LEFT;
 				}
 
 				switch (flag)
@@ -329,20 +328,20 @@ namespace RNumerics
 								 Vector2d BPoint, Vector2d TPoint,
 								 ref Vector2d U, ref Vector2d V, ref double minAreaDiv4)
 		{
-			Vector2d RLDiff = RPoint - LPoint;
-			Vector2d TBDiff = TPoint - BPoint;
-			double extent0 = ((double)0.5) * (U.Dot(RLDiff));
-			double extent1 = ((double)0.5) * (V.Dot(TBDiff));
-			double areaDiv4 = extent0 * extent1;
+            var RLDiff = RPoint - LPoint;
+            var TBDiff = TPoint - BPoint;
+            var extent0 = ((double)0.5) * U.Dot(RLDiff);
+            var extent1 = ((double)0.5) * V.Dot(TBDiff);
+            var areaDiv4 = extent0 * extent1;
 			if (areaDiv4 < minAreaDiv4)
 			{
 				minAreaDiv4 = areaDiv4;
-				mMinBox.AxisX = U;
-				mMinBox.AxisY = V;
-				mMinBox.Extent[0] = extent0;
-				mMinBox.Extent[1] = extent1;
-				Vector2d LBDiff = LPoint - BPoint;
-				mMinBox.Center = LPoint + U * extent0 + V * (extent1 - V.Dot(LBDiff));
+				_mMinBox.AxisX = U;
+				_mMinBox.AxisY = V;
+				_mMinBox.Extent[0] = extent0;
+				_mMinBox.Extent[1] = extent1;
+                var LBDiff = LPoint - BPoint;
+				_mMinBox.Center = LPoint + (U * extent0) + (V * (extent1 - V.Dot(LBDiff)));
 			}
 		}
 

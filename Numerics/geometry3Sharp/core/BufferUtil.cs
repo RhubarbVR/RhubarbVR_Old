@@ -19,59 +19,66 @@ namespace RNumerics
 		static public void SetVertex3(double[] v, int i, double x, double y, double z)
 		{
 			v[3 * i] = x;
-			v[3 * i + 1] = y;
-			v[3 * i + 2] = z;
+			v[(3 * i) + 1] = y;
+			v[(3 * i) + 2] = z;
 		}
 		static public void SetVertex3(float[] v, int i, float x, float y, float z)
 		{
 			v[3 * i] = x;
-			v[3 * i + 1] = y;
-			v[3 * i + 2] = z;
+			v[(3 * i) + 1] = y;
+			v[(3 * i) + 2] = z;
 		}
 
 		static public void SetVertex2(double[] v, int i, double x, double y)
 		{
 			v[2 * i] = x;
-			v[2 * i + 1] = y;
+			v[(2 * i) + 1] = y;
 		}
 		static public void SetVertex2(float[] v, int i, float x, float y)
 		{
 			v[2 * i] = x;
-			v[2 * i + 1] = y;
+			v[(2 * i) + 1] = y;
 		}
 
 		static public void SetTriangle(int[] v, int i, int a, int b, int c)
 		{
 			v[3 * i] = a;
-			v[3 * i + 1] = b;
-			v[3 * i + 2] = c;
+			v[(3 * i) + 1] = b;
+			v[(3 * i) + 2] = c;
 		}
 
 
 		static public double Dot(double[] a, double[] b)
 		{
 			double dot = 0;
-			for (int i = 0; i < a.Length; ++i)
-				dot += a[i] * b[i];
-			return dot;
+			for (var i = 0; i < a.Length; ++i)
+            {
+                dot += a[i] * b[i];
+            }
+
+            return dot;
 		}
 
 		static public void MultiplyAdd(double[] dest, double multiply, double[] add)
 		{
-			for (int i = 0; i < dest.Length; ++i)
-				dest[i] += multiply * add[i];
-		}
+			for (var i = 0; i < dest.Length; ++i)
+            {
+                dest[i] += multiply * add[i];
+            }
+        }
 
 		static public void MultiplyAdd(double[] dest, double[] multiply, double[] add)
 		{
-			for (int i = 0; i < dest.Length; ++i)
-				dest[i] += multiply[i] * add[i];
-		}
+			for (var i = 0; i < dest.Length; ++i)
+            {
+                dest[i] += multiply[i] * add[i];
+            }
+        }
 
 		static public double MultiplyAdd_GetSqrSum(double[] dest, double multiply, double[] add)
 		{
 			double sum = 0;
-			for (int i = 0; i < dest.Length; ++i)
+			for (var i = 0; i < dest.Length; ++i)
 			{
 				dest[i] += multiply * add[i];
 				sum += dest[i] * dest[i];
@@ -82,9 +89,12 @@ namespace RNumerics
 		static public double DistanceSquared(double[] a, double[] b)
 		{
 			double sum = 0;
-			for (int i = 0; i < a.Length; ++i)
-				sum += (a[i] - b[i]) * (a[i] - b[i]);
-			return sum;
+			for (var i = 0; i < a.Length; ++i)
+            {
+                sum += (a[i] - b[i]) * (a[i] - b[i]);
+            }
+
+            return sum;
 		}
 
 
@@ -94,29 +104,37 @@ namespace RNumerics
 			int N = a.Length, count = b.Length;
 			gParallel.BlockStartEnd(0, N - 1, (i0, i1) =>
 			{
-				for (int i = i0; i <= i1; i++)
+				for (var i = i0; i <= i1; i++)
 				{
-					for (int j = 0; j < count; ++j)
-						result[j][i] = a[i] * b[j][i];
-				}
+                    for (var j = 0; j < count; ++j)
+                    {
+                        result[j][i] = a[i] * b[j][i];
+                    }
+                }
 			}, 1000);
 		}
 
 
 		static public double[][] AllocNxM(int N, int M)
 		{
-			double[][] d = new double[N][];
-			for (int k = 0; k < N; ++k)
-				d[k] = new double[M];
-			return d;
+			var d = new double[N][];
+			for (var k = 0; k < N; ++k)
+            {
+                d[k] = new double[M];
+            }
+
+            return d;
 		}
 
 		static public double[][] InitNxM(int N, int M, double[][] init)
 		{
-			double[][] d = AllocNxM(N, M);
-			for (int k = 0; k < N; ++k)
-				Array.Copy(init[k], d[k], M);
-			return d;
+			var d = AllocNxM(N, M);
+			for (var k = 0; k < N; ++k)
+            {
+                Array.Copy(init[k], d[k], M);
+            }
+
+            return d;
 		}
 
 
@@ -125,13 +143,15 @@ namespace RNumerics
 		/// </summary>
 		static public int CountValid<T>(T[] data, Func<T, bool> FilterF, int max_i = -1)
 		{
-			int n = (max_i == -1) ? data.Length : max_i;
-			int valid = 0;
-			for (int i = 0; i < n; ++i)
+			var n = (max_i == -1) ? data.Length : max_i;
+			var valid = 0;
+			for (var i = 0; i < n; ++i)
 			{
 				if (FilterF(data[i]))
-					valid++;
-			}
+                {
+                    valid++;
+                }
+            }
 			return valid;
 		}
 
@@ -141,13 +161,15 @@ namespace RNumerics
 		/// </summary>
 		static public int FilterInPlace<T>(T[] data, Func<T, bool> FilterF, int max_i = -1)
 		{
-			int N = (max_i == -1) ? data.Length : max_i;
-			int k = 0;
-			for (int i = 0; i < N; ++i)
+			var N = (max_i == -1) ? data.Length : max_i;
+			var k = 0;
+			for (var i = 0; i < N; ++i)
 			{
 				if (FilterF(data[i]))
-					data[k++] = data[i];
-			}
+                {
+                    data[k++] = data[i];
+                }
+            }
 			return k;
 		}
 
@@ -156,17 +178,22 @@ namespace RNumerics
 		/// </summary>
 		static public T[] Filter<T>(T[] data, Func<T, bool> FilterF, int max_i = -1)
 		{
-			int n = (max_i == -1) ? data.Length : max_i;
-			int valid = CountValid(data, FilterF);
+			var n = (max_i == -1) ? data.Length : max_i;
+			var valid = CountValid(data, FilterF);
 			if (valid == 0)
-				return null;
-			T[] result = new T[valid];
-			int k = 0;
-			for (int i = 0; i < n; ++i)
+            {
+                return null;
+            }
+
+            var result = new T[valid];
+			var k = 0;
+			for (var i = 0; i < n; ++i)
 			{
 				if (FilterF(data[i]))
-					result[k++] = data[i];
-			}
+                {
+                    result[k++] = data[i];
+                }
+            }
 			return result;
 		}
 
@@ -179,63 +206,66 @@ namespace RNumerics
 		/// </summary>
 		static public Vector3d[] ToVector3d<T>(IEnumerable<T> values)
 		{
-			Vector3d[] result = null;
+            var N = values.Count();
+            var k = 0;
+			var j = 0;
 
-			int N = values.Count();
-			int k = 0;
-			int j = 0;
+			var t = typeof(T);
+            Vector3d[] result;
+            if (t == typeof(float))
+            {
+                N /= 3;
+                result = new Vector3d[N];
+                var valuesf = values as IEnumerable<float>;
+                foreach (var f in valuesf)
+                {
+                    result[k][j++] = f;
+                    if (j == 3)
+                    {
+                        j = 0;
+                        k++;
+                    }
+                }
+            }
+            else if (t == typeof(double))
+            {
+                N /= 3;
+                result = new Vector3d[N];
+                var valuesd = values as IEnumerable<double>;
+                foreach (var f in valuesd)
+                {
+                    result[k][j++] = f;
+                    if (j == 3)
+                    {
+                        j = 0;
+                        k++;
+                    }
+                }
+            }
+            else if (t == typeof(Vector3f))
+            {
+                result = new Vector3d[N];
+                var valuesvf = values as IEnumerable<Vector3f>;
+                foreach (var v in valuesvf)
+                {
+                    result[k++] = v;
+                }
+            }
+            else if (t == typeof(Vector3d))
+            {
+                result = new Vector3d[N];
+                var valuesvd = values as IEnumerable<Vector3d>;
+                foreach (var v in valuesvd)
+                {
+                    result[k++] = v;
+                }
+            }
+            else
+            {
+                throw new NotSupportedException("ToVector3d: unknown type " + t.ToString());
+            }
 
-			Type t = typeof(T);
-			if (t == typeof(float))
-			{
-				N /= 3;
-				result = new Vector3d[N];
-				IEnumerable<float> valuesf = values as IEnumerable<float>;
-				foreach (float f in valuesf)
-				{
-					result[k][j++] = f;
-					if (j == 3)
-					{
-						j = 0;
-						k++;
-					}
-				}
-			}
-			else if (t == typeof(double))
-			{
-				N /= 3;
-				result = new Vector3d[N];
-				IEnumerable<double> valuesd = values as IEnumerable<double>;
-				foreach (double f in valuesd)
-				{
-					result[k][j++] = f;
-					if (j == 3)
-					{
-						j = 0;
-						k++;
-					}
-				}
-			}
-			else if (t == typeof(Vector3f))
-			{
-				result = new Vector3d[N];
-				IEnumerable<Vector3f> valuesvf = values as IEnumerable<Vector3f>;
-				foreach (Vector3f v in valuesvf)
-					result[k++] = v;
-
-			}
-			else if (t == typeof(Vector3d))
-			{
-				result = new Vector3d[N];
-				IEnumerable<Vector3d> valuesvd = values as IEnumerable<Vector3d>;
-				foreach (Vector3d v in valuesvd)
-					result[k++] = v;
-
-			}
-			else
-				throw new NotSupportedException("ToVector3d: unknown type " + t.ToString());
-
-			return result;
+            return result;
 		}
 
 
@@ -246,63 +276,66 @@ namespace RNumerics
 		/// </summary>
 		static public Vector3f[] ToVector3f<T>(IEnumerable<T> values)
 		{
-			Vector3f[] result = null;
+            var N = values.Count();
+            var k = 0;
+            var j = 0;
 
-			int N = values.Count();
-			int k = 0;
-			int j = 0;
+            var t = typeof(T);
+            Vector3f[] result;
+            if (t == typeof(float))
+            {
+                N /= 3;
+                result = new Vector3f[N];
+                var valuesf = values as IEnumerable<float>;
+                foreach (var f in valuesf)
+                {
+                    result[k][j++] = f;
+                    if (j == 3)
+                    {
+                        j = 0;
+                        k++;
+                    }
+                }
+            }
+            else if (t == typeof(double))
+            {
+                N /= 3;
+                result = new Vector3f[N];
+                var valuesd = values as IEnumerable<double>;
+                foreach (var f in valuesd)
+                {
+                    result[k][j++] = (float)f;
+                    if (j == 3)
+                    {
+                        j = 0;
+                        k++;
+                    }
+                }
+            }
+            else if (t == typeof(Vector3f))
+            {
+                result = new Vector3f[N];
+                var valuesvf = values as IEnumerable<Vector3f>;
+                foreach (var v in valuesvf)
+                {
+                    result[k++] = v;
+                }
+            }
+            else if (t == typeof(Vector3d))
+            {
+                result = new Vector3f[N];
+                var valuesvd = values as IEnumerable<Vector3d>;
+                foreach (var v in valuesvd)
+                {
+                    result[k++] = (Vector3f)v;
+                }
+            }
+            else
+            {
+                throw new NotSupportedException("ToVector3d: unknown type " + t.ToString());
+            }
 
-			Type t = typeof(T);
-			if (t == typeof(float))
-			{
-				N /= 3;
-				result = new Vector3f[N];
-				IEnumerable<float> valuesf = values as IEnumerable<float>;
-				foreach (float f in valuesf)
-				{
-					result[k][j++] = f;
-					if (j == 3)
-					{
-						j = 0;
-						k++;
-					}
-				}
-			}
-			else if (t == typeof(double))
-			{
-				N /= 3;
-				result = new Vector3f[N];
-				IEnumerable<double> valuesd = values as IEnumerable<double>;
-				foreach (double f in valuesd)
-				{
-					result[k][j++] = (float)f;
-					if (j == 3)
-					{
-						j = 0;
-						k++;
-					}
-				}
-			}
-			else if (t == typeof(Vector3f))
-			{
-				result = new Vector3f[N];
-				IEnumerable<Vector3f> valuesvf = values as IEnumerable<Vector3f>;
-				foreach (Vector3f v in valuesvf)
-					result[k++] = v;
-
-			}
-			else if (t == typeof(Vector3d))
-			{
-				result = new Vector3f[N];
-				IEnumerable<Vector3d> valuesvd = values as IEnumerable<Vector3d>;
-				foreach (Vector3d v in valuesvd)
-					result[k++] = (Vector3f)v;
-
-			}
-			else
-				throw new NotSupportedException("ToVector3d: unknown type " + t.ToString());
-
-			return result;
+            return result;
 		}
 
 
@@ -314,48 +347,51 @@ namespace RNumerics
 		/// </summary>
 		static public Index3i[] ToIndex3i<T>(IEnumerable<T> values)
 		{
-			Index3i[] result = null;
+            var N = values.Count();
+            var k = 0;
+            var j = 0;
 
-			int N = values.Count();
-			int k = 0;
-			int j = 0;
+            var t = typeof(T);
+            Index3i[] result;
+            if (t == typeof(int))
+            {
+                N /= 3;
+                result = new Index3i[N];
+                var valuesi = values as IEnumerable<int>;
+                foreach (var i in valuesi)
+                {
+                    result[k][j++] = i;
+                    if (j == 3)
+                    {
+                        j = 0;
+                        k++;
+                    }
+                }
+            }
+            else if (t == typeof(Index3i))
+            {
+                result = new Index3i[N];
+                var valuesvi = values as IEnumerable<Index3i>;
+                foreach (var v in valuesvi)
+                {
+                    result[k++] = v;
+                }
+            }
+            else if (t == typeof(Vector3i))
+            {
+                result = new Index3i[N];
+                var valuesvi = values as IEnumerable<Vector3i>;
+                foreach (var v in valuesvi)
+                {
+                    result[k++] = v;
+                }
+            }
+            else
+            {
+                throw new NotSupportedException("ToVector3d: unknown type " + t.ToString());
+            }
 
-			Type t = typeof(T);
-			if (t == typeof(int))
-			{
-				N /= 3;
-				result = new Index3i[N];
-				IEnumerable<int> valuesi = values as IEnumerable<int>;
-				foreach (int i in valuesi)
-				{
-					result[k][j++] = i;
-					if (j == 3)
-					{
-						j = 0;
-						k++;
-					}
-				}
-			}
-			else if (t == typeof(Index3i))
-			{
-				result = new Index3i[N];
-				IEnumerable<Index3i> valuesvi = values as IEnumerable<Index3i>;
-				foreach (Index3i v in valuesvi)
-					result[k++] = v;
-
-			}
-			else if (t == typeof(Vector3i))
-			{
-				result = new Index3i[N];
-				IEnumerable<Vector3i> valuesvi = values as IEnumerable<Vector3i>;
-				foreach (Vector3i v in valuesvi)
-					result[k++] = v;
-
-			}
-			else
-				throw new NotSupportedException("ToVector3d: unknown type " + t.ToString());
-
-			return result;
+            return result;
 		}
 
 
@@ -365,10 +401,10 @@ namespace RNumerics
 		/// </summary>
 		static public int[] ToInt(byte[] buffer)
 		{
-			int sz = sizeof(int);
-			int Nvals = buffer.Length / sz;
-			int[] v = new int[Nvals];
-			for (int i = 0; i < Nvals; i++)
+            var sz = sizeof(int);
+            var Nvals = buffer.Length / sz;
+            var v = new int[Nvals];
+			for (var i = 0; i < Nvals; i++)
 			{
 				v[i] = BitConverter.ToInt32(buffer, i * sz);
 			}
@@ -381,10 +417,10 @@ namespace RNumerics
 		/// </summary>
 		static public short[] ToShort(byte[] buffer)
 		{
-			int sz = sizeof(short);
-			int Nvals = buffer.Length / sz;
-			short[] v = new short[Nvals];
-			for (int i = 0; i < Nvals; i++)
+            var sz = sizeof(short);
+            var Nvals = buffer.Length / sz;
+            var v = new short[Nvals];
+			for (var i = 0; i < Nvals; i++)
 			{
 				v[i] = BitConverter.ToInt16(buffer, i * sz);
 			}
@@ -397,10 +433,10 @@ namespace RNumerics
 		/// </summary>
 		static public double[] ToDouble(byte[] buffer)
 		{
-			int sz = sizeof(double);
-			int Nvals = buffer.Length / sz;
-			double[] v = new double[Nvals];
-			for (int i = 0; i < Nvals; i++)
+            var sz = sizeof(double);
+            var Nvals = buffer.Length / sz;
+            var v = new double[Nvals];
+			for (var i = 0; i < Nvals; i++)
 			{
 				v[i] = BitConverter.ToDouble(buffer, i * sz);
 			}
@@ -413,10 +449,10 @@ namespace RNumerics
 		/// </summary>
 		static public float[] ToFloat(byte[] buffer)
 		{
-			int sz = sizeof(float);
-			int Nvals = buffer.Length / sz;
-			float[] v = new float[Nvals];
-			for (int i = 0; i < Nvals; i++)
+            var sz = sizeof(float);
+            var Nvals = buffer.Length / sz;
+            var v = new float[Nvals];
+			for (var i = 0; i < Nvals; i++)
 			{
 				v[i] = BitConverter.ToSingle(buffer, i * sz);
 			}
@@ -429,15 +465,15 @@ namespace RNumerics
 		/// </summary>
 		static public VectorArray3d ToVectorArray3d(byte[] buffer)
 		{
-			int sz = sizeof(double);
-			int Nvals = buffer.Length / sz;
-			int Nvecs = Nvals / 3;
-			VectorArray3d v = new VectorArray3d(Nvecs);
-			for (int i = 0; i < Nvecs; i++)
+			var sz = sizeof(double);
+			var Nvals = buffer.Length / sz;
+			var Nvecs = Nvals / 3;
+			var v = new VectorArray3d(Nvecs);
+			for (var i = 0; i < Nvecs; i++)
 			{
-				double x = BitConverter.ToDouble(buffer, (3 * i) * sz);
-				double y = BitConverter.ToDouble(buffer, (3 * i + 1) * sz);
-				double z = BitConverter.ToDouble(buffer, (3 * i + 2) * sz);
+                var x = BitConverter.ToDouble(buffer, 3 * i * sz);
+                var y = BitConverter.ToDouble(buffer, ((3 * i) + 1) * sz);
+                var z = BitConverter.ToDouble(buffer, ((3 * i) + 2) * sz);
 				v.Set(i, x, y, z);
 			}
 			return v;
@@ -450,14 +486,14 @@ namespace RNumerics
 		/// </summary>
 		static public VectorArray2f ToVectorArray2f(byte[] buffer)
 		{
-			int sz = sizeof(float);
-			int Nvals = buffer.Length / sz;
-			int Nvecs = Nvals / 2;
-			VectorArray2f v = new VectorArray2f(Nvecs);
-			for (int i = 0; i < Nvecs; i++)
+            var sz = sizeof(float);
+            var Nvals = buffer.Length / sz;
+            var Nvecs = Nvals / 2;
+            var v = new VectorArray2f(Nvecs);
+			for (var i = 0; i < Nvecs; i++)
 			{
-				float x = BitConverter.ToSingle(buffer, (2 * i) * sz);
-				float y = BitConverter.ToSingle(buffer, (2 * i + 1) * sz);
+                var x = BitConverter.ToSingle(buffer, 2 * i * sz);
+                var y = BitConverter.ToSingle(buffer, ((2 * i) + 1) * sz);
 				v.Set(i, x, y);
 			}
 			return v;
@@ -468,15 +504,15 @@ namespace RNumerics
 		/// </summary>
 		static public VectorArray3f ToVectorArray3f(byte[] buffer)
 		{
-			int sz = sizeof(float);
-			int Nvals = buffer.Length / sz;
-			int Nvecs = Nvals / 3;
-			VectorArray3f v = new VectorArray3f(Nvecs);
-			for (int i = 0; i < Nvecs; i++)
+            var sz = sizeof(float);
+            var Nvals = buffer.Length / sz;
+            var Nvecs = Nvals / 3;
+            var v = new VectorArray3f(Nvecs);
+			for (var i = 0; i < Nvecs; i++)
 			{
-				float x = BitConverter.ToSingle(buffer, (3 * i) * sz);
-				float y = BitConverter.ToSingle(buffer, (3 * i + 1) * sz);
-				float z = BitConverter.ToSingle(buffer, (3 * i + 2) * sz);
+                var x = BitConverter.ToSingle(buffer, 3 * i * sz);
+                var y = BitConverter.ToSingle(buffer, ((3 * i) + 1) * sz);
+                var z = BitConverter.ToSingle(buffer, ((3 * i) + 2) * sz);
 				v.Set(i, x, y, z);
 			}
 			return v;
@@ -490,15 +526,15 @@ namespace RNumerics
 		/// </summary>
 		static public VectorArray3i ToVectorArray3i(byte[] buffer)
 		{
-			int sz = sizeof(int);
-			int Nvals = buffer.Length / sz;
-			int Nvecs = Nvals / 3;
-			VectorArray3i v = new VectorArray3i(Nvecs);
-			for (int i = 0; i < Nvecs; i++)
+            var sz = sizeof(int);
+            var Nvals = buffer.Length / sz;
+            var Nvecs = Nvals / 3;
+            var v = new VectorArray3i(Nvecs);
+			for (var i = 0; i < Nvecs; i++)
 			{
-				int x = BitConverter.ToInt32(buffer, (3 * i) * sz);
-				int y = BitConverter.ToInt32(buffer, (3 * i + 1) * sz);
-				int z = BitConverter.ToInt32(buffer, (3 * i + 2) * sz);
+                var x = BitConverter.ToInt32(buffer, 3 * i * sz);
+                var y = BitConverter.ToInt32(buffer, ((3 * i) + 1) * sz);
+                var z = BitConverter.ToInt32(buffer, ((3 * i) + 2) * sz);
 				v.Set(i, x, y, z);
 			}
 			return v;
@@ -510,16 +546,16 @@ namespace RNumerics
 		/// </summary>
 		static public IndexArray4i ToIndexArray4i(byte[] buffer)
 		{
-			int sz = sizeof(int);
-			int Nvals = buffer.Length / sz;
-			int Nvecs = Nvals / 4;
-			IndexArray4i v = new IndexArray4i(Nvecs);
-			for (int i = 0; i < Nvecs; i++)
+            var sz = sizeof(int);
+            var Nvals = buffer.Length / sz;
+            var Nvecs = Nvals / 4;
+            var v = new IndexArray4i(Nvecs);
+			for (var i = 0; i < Nvecs; i++)
 			{
-				int a = BitConverter.ToInt32(buffer, (4 * i) * sz);
-				int b = BitConverter.ToInt32(buffer, (4 * i + 1) * sz);
-				int c = BitConverter.ToInt32(buffer, (4 * i + 2) * sz);
-				int d = BitConverter.ToInt32(buffer, (4 * i + 3) * sz);
+                var a = BitConverter.ToInt32(buffer, 4 * i * sz);
+                var b = BitConverter.ToInt32(buffer, ((4 * i) + 1) * sz);
+                var c = BitConverter.ToInt32(buffer, ((4 * i) + 2) * sz);
+                var d = BitConverter.ToInt32(buffer, ((4 * i) + 3) * sz);
 				v.Set(i, a, b, c, d);
 			}
 			return v;
@@ -531,7 +567,7 @@ namespace RNumerics
 		/// </summary>
 		static public byte[] ToBytes(int[] array)
 		{
-			byte[] result = new byte[array.Length * sizeof(int)];
+			var result = new byte[array.Length * sizeof(int)];
 			Buffer.BlockCopy(array, 0, result, 0, result.Length);
 			return result;
 		}
@@ -541,7 +577,7 @@ namespace RNumerics
 		/// </summary>
 		static public byte[] ToBytes(short[] array)
 		{
-			byte[] result = new byte[array.Length * sizeof(short)];
+			var result = new byte[array.Length * sizeof(short)];
 			Buffer.BlockCopy(array, 0, result, 0, result.Length);
 			return result;
 		}
@@ -551,7 +587,7 @@ namespace RNumerics
 		/// </summary>
 		static public byte[] ToBytes(float[] array)
 		{
-			byte[] result = new byte[array.Length * sizeof(float)];
+			var result = new byte[array.Length * sizeof(float)];
 			Buffer.BlockCopy(array, 0, result, 0, result.Length);
 			return result;
 		}
@@ -561,7 +597,7 @@ namespace RNumerics
 		/// </summary>
 		static public byte[] ToBytes(double[] array)
 		{
-			byte[] result = new byte[array.Length * sizeof(double)];
+			var result = new byte[array.Length * sizeof(double)];
 			Buffer.BlockCopy(array, 0, result, 0, result.Length);
 			return result;
 		}
@@ -574,20 +610,16 @@ namespace RNumerics
 		/// </summary>
 		static public byte[] CompressZLib(byte[] buffer, bool bFast)
 		{
-			MemoryStream ms = new MemoryStream();
-#if G3_USING_UNITY && (NET_2_0 || NET_2_0_SUBSET)
-            DeflateStream zip = new DeflateStream(ms, CompressionMode.Compress);
-#else
-			DeflateStream zip = new DeflateStream(ms, (bFast) ? CompressionLevel.Fastest : CompressionLevel.Optimal, true);
-#endif
+            var ms = new MemoryStream();
+            var zip = new DeflateStream(ms, (bFast) ? CompressionLevel.Fastest : CompressionLevel.Optimal, true);
 			zip.Write(buffer, 0, buffer.Length);
 			zip.Close();
 			ms.Position = 0;
 
-			byte[] compressed = new byte[ms.Length];
+            var compressed = new byte[ms.Length];
 			ms.Read(compressed, 0, compressed.Length);
 
-			byte[] zBuffer = new byte[compressed.Length + 4];
+            var zBuffer = new byte[compressed.Length + 4];
 			Buffer.BlockCopy(compressed, 0, zBuffer, 4, compressed.Length);
 			Buffer.BlockCopy(BitConverter.GetBytes(buffer.Length), 0, zBuffer, 0, 4);
 			return zBuffer;
@@ -599,14 +631,14 @@ namespace RNumerics
 		/// </summary>
 		static public byte[] DecompressZLib(byte[] zBuffer)
 		{
-			MemoryStream ms = new MemoryStream();
-			int msgLength = BitConverter.ToInt32(zBuffer, 0);
+            var ms = new MemoryStream();
+            var msgLength = BitConverter.ToInt32(zBuffer, 0);
 			ms.Write(zBuffer, 4, zBuffer.Length - 4);
 
-			byte[] buffer = new byte[msgLength];
+            var buffer = new byte[msgLength];
 
 			ms.Position = 0;
-			DeflateStream zip = new DeflateStream(ms, CompressionMode.Decompress);
+            var zip = new DeflateStream(ms, CompressionMode.Decompress);
 			zip.Read(buffer, 0, buffer.Length);
 
 			return buffer;
