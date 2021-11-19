@@ -68,10 +68,10 @@ namespace RhubarbEngine.Input
 			var f1 = p1 - point;
 			var f2 = p2 - point;
 			var f3 = p3 - point;
-			var a = Vector3d.Cross(p1 - p2, p1 - p3).magnitude;
-			var a1 = Vector3d.Cross(f2, f3).magnitude / a;
-			var a2 = Vector3d.Cross(f3, f1).magnitude / a;
-			var a3 = Vector3d.Cross(f1, f2).magnitude / a;
+			var a = Vector3d.Cross(p1 - p2, p1 - p3).Magnitude;
+			var a1 = Vector3d.Cross(f2, f3).Magnitude / a;
+			var a2 = Vector3d.Cross(f3, f1).Magnitude / a;
+			var a3 = Vector3d.Cross(f1, f2).Magnitude / a;
             var uv = (p1uv * (float)a1) + (p2uv * (float)a2) + (p3uv * (float)a3);
 			return uv;
 		}
