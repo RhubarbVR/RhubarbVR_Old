@@ -69,7 +69,22 @@ namespace RhubarbEngine.Helpers
 
             return (e, bmesh);
         }
+        public static T AddMeshToEntity<T>(Entity e) where T : ProceduralMesh
+        {
+            var shader = e.World.staticAssets.BasicUnlitShader;
+            var bmesh = e.AttachComponent<T>();
+            var mit = e.AttachComponent<RMaterial>();
+            var meshRender = e.AttachComponent<MeshRender>();
+            var textue2DFromUrl = e.AttachComponent<Textue2DFromUrl>();
 
+            mit.Shader.Target = shader;
+            meshRender.Materials.Add().Target = mit;
+            meshRender.Mesh.Target = bmesh;
+            var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+            field.field.Target = textue2DFromUrl;
+
+            return bmesh;
+        }
         public static (Entity, T, RMaterial) AddMesh<T>(Entity ea, AssetProvider<RShader> shader, string name = "Entity", uint renderOffset = int.MaxValue) where T : ProceduralMesh
         {
             var e = ea.AddChild(name);
