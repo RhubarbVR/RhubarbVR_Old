@@ -146,7 +146,7 @@ namespace RhubarbEngine.Managers
             Device.Listener.Orientation = new Orientation
             {
                 At = ((Quaternionf)rot).AxisZ.ToSystemNumrics() * -1,
-                Up = Vector3f.AxisY.ToSystemNumrics()
+                Up = ((Quaternionf)rot).AxisY.ToSystemNumrics()
             };
 
         }
