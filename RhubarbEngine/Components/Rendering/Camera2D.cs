@@ -268,7 +268,7 @@ namespace RhubarbEngine.Components.Rendering
                             renderObj.RenderShadow(Engine.RenderManager.Gd, _renderCL, new UBO(
                             _proj,
                             view,
-                            renderObj.Entity.GlobalTrans()));
+                            renderObj.Entity.GlobalTrans()), _framebuffer);
                         }
                     }
                     else
@@ -278,7 +278,7 @@ namespace RhubarbEngine.Components.Rendering
                             renderObj.Render(Engine.RenderManager.Gd, _renderCL, new UBO(
                             _proj,
                             view,
-                            renderObj.Entity.GlobalTrans()));
+                            renderObj.Entity.GlobalTrans()), _framebuffer);
                         }
                     }
 

@@ -51,8 +51,8 @@ namespace RhubarbEngine.Render
 
 	public abstract class Renderable : Component, IDisposable
 	{
-		public abstract void Render(GraphicsDevice gd, CommandList cl, UBO ubo);
-		public abstract void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo);
+		public abstract void Render(GraphicsDevice gd, CommandList cl, UBO ubo,Framebuffer framebuffer);
+		public abstract void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo, Framebuffer framebuffer);
 
 		public abstract RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition);
 
