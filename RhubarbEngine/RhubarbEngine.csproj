@@ -75,6 +75,7 @@
     <ProjectReference Include="..\ImguiVeldrid\VeldridImGui.csproj" />
     <ProjectReference Include="..\Numerics\Numerics.csproj" />
     <ProjectReference Include="..\OpenAL.Net\OpenAL.Net.csproj" />
+    <ProjectReference Include="..\SharpText.Veldrid\SharpText.Veldrid.csproj" />
     <ProjectReference Include="..\veldrid\src\Veldrid.ImageSharp\Veldrid.ImageSharp.csproj" />
     <ProjectReference Include="..\veldrid\src\Veldrid.SDL2\Veldrid.SDL2.csproj" />
     <ProjectReference Include="..\veldrid\src\Veldrid.StartupUtilities\Veldrid.StartupUtilities.csproj" />
