@@ -129,7 +129,7 @@ namespace RhubarbEngine.Components.Rendering
             {
                 return;
             }
-            _textRenderer.UpdateVeldridStuff(ubo.World * ubo.View, cl, framebuffer);
+            _textRenderer.UpdateVeldridStuff(ubo.Projection * ubo.View * ubo.World, cl, framebuffer);
             _textRenderer.Update();
             _textRenderer.DrawText(Text.Value, (Vector2)Pos.Value, new SharpText.Core.Color(Color.Value.r, Color.Value.g, Color.Value.b, Color.Value.a), LetterSpacing.Value);
             _textRenderer.Draw();
