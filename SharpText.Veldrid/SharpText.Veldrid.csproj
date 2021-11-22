@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IncludeSymbols>true</IncludeSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SharpText.Core" Version="0.2.0" />
+    <PackageReference Include="Veldrid.SPIRV" Version="1.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\veldrid\src\Veldrid\Veldrid.csproj" />
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <Description>This is the Veldrid rendering backend for SharpText; a GPU accelerated text renderer implemented in C#</Description>
+    <PackageTags>SharpText Text Font Veldrid Rendering GPU Accelerated DirectX OpenGL Vulkan Metal Game</PackageTags>
+  </PropertyGroup>
+
+</Project>
