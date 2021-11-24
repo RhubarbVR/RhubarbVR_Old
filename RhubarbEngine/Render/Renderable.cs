@@ -56,7 +56,7 @@ namespace RhubarbEngine.Render
 
 		public abstract RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition);
 
-		public bool Cull(ref RhubarbEngine.Utilities.BoundingFrustum visibleFrustum, Matrix4x4 view)
+		public virtual bool Cull(ref RhubarbEngine.Utilities.BoundingFrustum visibleFrustum, Matrix4x4 view)
 		{
 			return visibleFrustum.Contains(Veldrid.Utilities.BoundingBox.Transform(BoundingBox, Entity.GlobalTrans() * view)) == ContainmentType.Disjoint;
 		}

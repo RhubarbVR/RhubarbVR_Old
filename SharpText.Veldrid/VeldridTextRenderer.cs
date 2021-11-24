@@ -4,7 +4,9 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+
 using SharpText.Core;
+
 using Veldrid;
 using Veldrid.SPIRV;
 
@@ -47,6 +49,8 @@ namespace SharpText.Veldrid
     {
         public Font Font { get; private set; }
 
+        public const uint sizeer = 1920;
+
         private readonly GraphicsDevice graphicsDevice;
         private CommandList commandList;
         private DeviceBuffer glyphVertexBuffer;
@@ -82,33 +86,23 @@ namespace SharpText.Veldrid
         private Dictionary<char, DrawableGlyph> cachedGlyphs;
         private float aspectWidth;
         private float aspectHeight;
+        private Framebuffer mainFrameBuffer;
 
-        public VeldridTextRenderer(GraphicsDevice graphicsDevice, Font font,OutputDescription outputDescription)
+        public VeldridTextRenderer(GraphicsDevice graphicsDevic, Font font,OutputDescription outputDescription)
         {
-            this.graphicsDevice = graphicsDevice;
+            this.graphicsDevice = graphicsDevic;
             Font = font;
 
             textToDraw = new List<DrawableText>();
             cachedGlyphs = new Dictionary<char, DrawableGlyph>();
 
-            Initialize(1920,1920,outputDescription);
+            Initialize(outputDescription);
         }
 
         public void UpdateFont(Font font)
         {
             Font = font;
             cachedGlyphs.Clear();
-        }
-
-        private Framebuffer mainBuffer;
-
-        private Matrix4x4 _pos;
-
-        public void UpdateVeldridStuff(Matrix4x4 globalpos, CommandList commandList, Framebuffer buffer)
-        {
-            _pos = globalpos;
-            mainBuffer = buffer;
-            this.commandList = commandList;
         }
 
         public void DrawText(string text, Vector2 coordsInPixels, Color color, float letterSpacing)
@@ -158,6 +152,12 @@ namespace SharpText.Veldrid
             textToDraw.Add(drawable);
         }
 
+        public void UpdateVeldridStuff(Matrix4x4 world, CommandList cl, Framebuffer framebuffer)
+        {
+            this.commandList = cl;
+            this.mainFrameBuffer = framebuffer;
+        }
+
         public void Draw()
         {
             var textGroupedByColor = textToDraw.GroupBy(t => t.Color);
@@ -165,9 +165,9 @@ namespace SharpText.Veldrid
             // Render text sets by color
             foreach (var colorGroup in textGroupedByColor)
             {
+                commandList.SetFramebuffer(glyphTextureFramebuffer);
                 commandList.SetPipeline(glyphPipeline);
                 commandList.SetGraphicsResourceSet(0, textPropertiesSet);
-                commandList.SetFramebuffer(glyphTextureFramebuffer);
 
                 commandList.ClearColorTarget(0, new RgbaFloat(0, 0, 0, 0));
 
@@ -245,8 +245,8 @@ namespace SharpText.Veldrid
 
         public void ResizeToSwapchain()
         {
-            aspectWidth = 2f / graphicsDevice.SwapchainFramebuffer.Width;
-            aspectHeight = 2f / graphicsDevice.SwapchainFramebuffer.Height;
+            aspectWidth = 2f / sizeer;
+            aspectHeight = 2f / sizeer;
 
             var factory = graphicsDevice.ResourceFactory;
             var colorFormat = PixelFormat.B8_G8_R8_A8_UNorm;
@@ -256,7 +256,7 @@ namespace SharpText.Veldrid
             glyphTextureFramebuffer?.Dispose();
             textTextureSet.Dispose();
 
-            glyphTexture = factory.CreateTexture(TextureDescription.Texture2D(graphicsDevice.SwapchainFramebuffer.Width, graphicsDevice.SwapchainFramebuffer.Height, 1, 1, colorFormat, TextureUsage.RenderTarget | TextureUsage.Sampled));
+            glyphTexture = factory.CreateTexture(TextureDescription.Texture2D(sizeer, sizeer, 1, 1, colorFormat, TextureUsage.RenderTarget | TextureUsage.Sampled));
             glyphTextureView = factory.CreateTextureView(glyphTexture);
             glyphTextureFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(null, glyphTexture));
 
@@ -280,11 +280,16 @@ namespace SharpText.Veldrid
             commandList.UpdateBuffer(glyphVertexBuffer, 0, glyphVertices);
             commandList.SetVertexBuffer(0, glyphVertexBuffer);
 
+            var coordsInScreenSpace = coordsInPixels * new Vector2(aspectWidth, aspectHeight);
+            var textTransformMatrix = Matrix4x4.CreateScale(aspectWidth, aspectHeight, 1)
+                * Matrix4x4.CreateTranslation(-1, 0, 0)
+                * Matrix4x4.CreateTranslation(coordsInScreenSpace.X, 1f - coordsInScreenSpace.Y, 0);
+
             for (var i = 0; i < jitterPattern.Length; i++)
             {
                 var jitter = jitterPattern[i];
 
-                var glyphTransformMatrix = (Matrix4x4.CreateScale(1) * Matrix4x4.CreateTranslation(new Vector3(jitter, 0))) * _pos;
+                var glyphTransformMatrix = Matrix4x4.CreateTranslation(new Vector3(jitter, 0)) * textTransformMatrix;
                 textVertexProperties.Transform = glyphTransformMatrix;
                 commandList.UpdateBuffer(textVertexPropertiesBuffer, 0, textVertexProperties);
 
@@ -300,6 +305,7 @@ namespace SharpText.Veldrid
 
         private void DrawOutput(CommandList commandList, Color color, bool secondPass, Vector4 rect)
         {
+            commandList.SetFramebuffer(mainFrameBuffer);
             textVertexProperties.Rectangle = rect;
             commandList.UpdateBuffer(textVertexPropertiesBuffer, 0, textVertexProperties);
 
@@ -307,7 +313,6 @@ namespace SharpText.Veldrid
             commandList.UpdateBuffer(textFragmentPropertiesBuffer, 0, textFragmentProperties);
 
             commandList.SetPipeline(secondPass ? outputColorPipeline : outputPipeline);
-            commandList.SetFramebuffer(mainBuffer);
             commandList.SetGraphicsResourceSet(0, textPropertiesSet);
             // HACK workaround issue with texture view caching for shader resources
             commandList.SetGraphicsResourceSet(1, dummyTextureSet);
@@ -316,11 +321,11 @@ namespace SharpText.Veldrid
             commandList.Draw((uint)quadVertices.Length);
         }
 
-        private void Initialize(uint x,uint y,OutputDescription des)
+        private void Initialize(OutputDescription outdis)
         {
             var factory = graphicsDevice.ResourceFactory;
-            aspectWidth = 2f / x;
-            aspectHeight = 2f / y;
+            aspectWidth = 2f / sizeer;
+            aspectHeight = 2f / sizeer;
 
             glyphVertexBuffer = factory.CreateBuffer(new BufferDescription(VertexPosition3Coord2.SizeInBytes, BufferUsage.VertexBuffer));
             quadVertexBuffer = factory.CreateBuffer(new BufferDescription(VertexPosition2.SizeInBytes * 4, BufferUsage.VertexBuffer));
@@ -349,7 +354,7 @@ namespace SharpText.Veldrid
             graphicsDevice.UpdateBuffer(textFragmentPropertiesBuffer, 0, textFragmentProperties);
 
             var colorFormat = PixelFormat.B8_G8_R8_A8_UNorm;
-            glyphTexture = factory.CreateTexture(TextureDescription.Texture2D(x, y, 1, 1, colorFormat, TextureUsage.RenderTarget | TextureUsage.Sampled));
+            glyphTexture = factory.CreateTexture(TextureDescription.Texture2D(sizeer, sizeer, 1, 1, colorFormat, TextureUsage.RenderTarget | TextureUsage.Sampled));
             glyphTextureView = factory.CreateTextureView(glyphTexture);
             glyphTextureFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(null, glyphTexture));
             // HACK workaround issue with texture view caching for shader resources
@@ -423,7 +428,8 @@ namespace SharpText.Veldrid
                     },
                     shaders: textShaders,
                     specializations: shaderOptions.Specializations),
-                resourceLayouts: new ResourceLayout[] { textPropertiesLayout, textTextureLayout },des
+                resourceLayouts: new ResourceLayout[] { textPropertiesLayout, textTextureLayout },
+                outputs: outdis
             );
             outputPipeline = factory.CreateGraphicsPipeline(pipelineDescription);
 

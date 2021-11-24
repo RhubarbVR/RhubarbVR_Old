@@ -85,7 +85,10 @@ namespace RhubarbEngine.Components.Rendering
                 }
                 else if (Engine.Rendering)
                 {
-                    _textRenderer = new VeldridTextRenderer(Engine.RenderManager.Gd, obj.font, Engine.RenderManager.VrContext.LeftEyeFramebuffer.OutputDescription);
+                    if (obj.font is not null)
+                    {
+                        _textRenderer = new VeldridTextRenderer(Engine.RenderManager.Gd, obj.font, Engine.RenderManager.VrContext.LeftEyeFramebuffer.OutputDescription);
+                    }
                 }
             }catch(Exception e)
             {
@@ -104,8 +107,14 @@ namespace RhubarbEngine.Components.Rendering
 
         private BoundingBox _changingBoundingBox = new()
         {
-            Max = new Vector3(100)
+            Max = new Vector3(100),
+            Min = new Vector3(0.1f)
         };
+
+        public override bool Cull(ref Utilities.BoundingFrustum visibleFrustum, Matrix4x4 view)
+        {
+            return false;
+        }
 
         public override BoundingBox BoundingBox
         {
@@ -129,7 +138,7 @@ namespace RhubarbEngine.Components.Rendering
             {
                 return;
             }
-            _textRenderer.UpdateVeldridStuff(ubo.Projection * ubo.View * ubo.World, cl, framebuffer);
+            _textRenderer.UpdateVeldridStuff(ubo.World, cl, framebuffer);
             _textRenderer.Update();
             _textRenderer.DrawText(Text.Value, (Vector2)Pos.Value, new SharpText.Core.Color(Color.Value.r, Color.Value.g, Color.Value.b, Color.Value.a), LetterSpacing.Value);
             _textRenderer.Draw();
