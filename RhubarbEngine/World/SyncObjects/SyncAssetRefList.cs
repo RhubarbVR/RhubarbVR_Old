@@ -56,17 +56,21 @@ namespace RhubarbEngine.World
 
 		public Action<T> loadChange;
 
+        public event Action<IWorker, int> ElementRemoved;
+        public event Action<IWorker> ElementAdded;
+        public event Action ClearElements;
 
-		public AssetRef<T> Add(bool RefID = true)
+        public AssetRef<T> Add(bool RefID = true)
 		{
 			var a = new AssetRef<T>(this, RefID);
 			a.LoadChange += OnLoad;
 			_syncreflist.SafeAdd(a);
-			if (RefID)
+            if (RefID)
 			{
 				NetAdd(a);
 			}
-			return a;
+            ElementAdded?.Invoke(a);
+            return a;
 		}
 
 		private void NetAdd(AssetRef<T> val)
@@ -90,8 +94,9 @@ namespace RhubarbEngine.World
 			if (((DataNode<byte>)data.GetValue("Type")).Value == 1)
 			{
 				_syncreflist.Clear();
-			}
-			else
+                ClearElements?.Invoke();
+            }
+            else
 			{
 				var a = new AssetRef<T>(this, false);
 				a.LoadChange += OnLoad;
@@ -109,7 +114,9 @@ namespace RhubarbEngine.World
 		{
 			_syncreflist.Clear();
 			NetClear();
-		}
+            ClearElements?.Invoke();
+
+        }
 
 		public SyncAssetRefList(IWorldObject _parent, bool newref = true) : base(_parent.World, _parent, newref)
 		{

@@ -322,10 +322,10 @@ namespace RhubarbEngine.Components.ImGUI
 				_igr.Render(Engine.RenderManager.Gd, _uIcommandList);
 				_uIcommandList.End();
 				Engine.RenderManager.Gd.SubmitCommands(_uIcommandList);
-			}
+            }
 			catch (Exception e)
 			{
-				Logger.Log("Error Rendering" + e.ToString(), true);
+				Logger.Log("Error Rendering " + e.ToString(), true);
 			}
 		}
 

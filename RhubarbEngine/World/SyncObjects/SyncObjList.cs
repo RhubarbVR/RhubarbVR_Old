@@ -15,7 +15,11 @@ namespace RhubarbEngine.World
         public SyncObjList() { }
         private readonly SynchronizedCollection<T> _synclist = new(25);
 
-		public T this[int i]
+        public event Action<IWorker,int> ElementRemoved;
+        public event Action<IWorker> ElementAdded;
+        public event Action ClearElements;
+
+        public T this[int i]
 		{
 			get
 			{
@@ -42,7 +46,8 @@ namespace RhubarbEngine.World
 			_synclist.SafeAdd(value);
 			value.OnDispose += Value_onDispose;
 			AddDisposable(value);
-		}
+            ElementAdded?.Invoke(value);
+        }
 
 		public int GetIndexOf(T val)
 		{
@@ -52,10 +57,12 @@ namespace RhubarbEngine.World
 		private void Value_onDispose(IWorker worker)
 		{
 			try
-			{
-				_synclist.Remove((T)worker);
-			}
-			catch
+            {
+                var index = _synclist.IndexOf((T)worker);
+                _synclist.Remove((T)worker);
+                ElementRemoved?.Invoke((T)worker, index);
+            }
+            catch
 			{
 
 			}
@@ -63,10 +70,12 @@ namespace RhubarbEngine.World
 
 		public void RemoveInternal(T value)
 		{
-			_synclist.Remove(value);
+            var index = _synclist.IndexOf(value);
+            _synclist.Remove(value);
 			value.OnDispose -= Value_onDispose;
 			RemoveDisposable(value);
-		}
+            ElementRemoved?.Invoke(value, index);
+        }
 
 		public T Add(bool Refid = true)
 		{
@@ -95,9 +104,10 @@ namespace RhubarbEngine.World
 			}
 			catch { }
 			NetClear();
-		}
+            ClearElements?.Invoke();
+        }
 
-		private void NetAdd(T val)
+        private void NetAdd(T val)
 		{
 			var send = new DataNodeGroup();
 			send.SetValue("Type", new DataNode<byte>(0));
@@ -129,8 +139,9 @@ namespace RhubarbEngine.World
 					}
 				}
 				catch { }
-			}
-			else
+                ClearElements?.Invoke();
+            }
+            else
 			{
                 var a = Add(false);
 				var actions = new List<Action>();

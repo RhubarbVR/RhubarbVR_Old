@@ -486,7 +486,7 @@ namespace RhubarbEngine.Input
 		{
 			Sourcse = _sourcse;
 			Destination = _destination;
-		}
+        }
 		private void ProsscesRayTestHit(Vector3 _sourcse, Vector3 _destination, Vector3 deriction)
 		{
 			if (!RayTestHitTest(_sourcse, _destination, _engine.WorldManager.PrivateOverlay))

@@ -56,6 +56,8 @@ namespace RhubarbEngine.Components.ImGUI
                 return;
             }
 
+            Bind();
+
             foreach (var item in children)
 			{
 				item.Target?.Dispose();
@@ -82,9 +84,70 @@ namespace RhubarbEngine.Components.ImGUI
 				}
 				index++;
 			}
-		}
+        }
+        [NoSave]
+        [NoShow]
+        [NoSync]
+        private ISyncList _lastTarget;
 
-		public SyncListBaseObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        private bool _bound;
+
+        private void Bind()
+        {
+            if (_bound)
+            {
+                UnBind();
+            }
+            _lastTarget = target.Target;
+            if(target.Target is not null)
+            {
+                target.Target.ElementAdded += Target_ElementAdded;
+                target.Target.ElementRemoved += Target_ElementRemoved;
+                target.Target.ClearElements += Target_ClearElements;
+            }
+            _bound = true;
+        }
+
+        private void Target_ClearElements()
+        {
+            foreach (var item in children)
+            {
+                item.Target?.Dispose();
+            }
+            children.Clear();
+        }
+
+        private void Target_ElementRemoved(IWorker arg1, int arg2)
+        {
+            children[arg2].Target?.Dispose();
+            children.Remove(arg2);
+        }
+
+        private void Target_ElementAdded(IWorker obj)
+        {
+            if (typeof(IWorker).IsAssignableFrom(obj.GetType()))
+            {
+                var obs = Entity.AddChild(fieldName.Value + $":{target.Target.Count() - 1}").AttachComponent<WorkerProperties>();
+                obs.fieldName.Value = (target.Target.Count() - 1).ToString();
+                obs.target.Target = obj;
+                children.Add().Target = obs;
+            }
+        }
+
+        private void UnBind()
+        {
+            if (_bound)
+            {
+                if(_lastTarget is not null)
+                {
+                    _lastTarget.ElementAdded -= Target_ElementAdded;
+                    _lastTarget.ElementRemoved -= Target_ElementRemoved;
+                    _lastTarget.ClearElements -= Target_ClearElements;
+                }
+                _bound = false;
+            }
+        }
+        public SyncListBaseObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}
