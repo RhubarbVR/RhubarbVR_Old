@@ -21,7 +21,7 @@ namespace RhubarbEngine.World
 				var createWorld = worldObject.World.worldManager.FocusedWorld ?? worldObject.World;
 				var User = createWorld.UserRoot.Entity;
 				var par = User.parent.Target;
-				var (cube, _, comp) = Helpers.MeshHelper.AttachWindow<Components.ImGUI.WorkerObserver>(par);
+				var (cube, _, comp) = Helpers.MeshHelper.AttachWindow<Components.ImGUI.WorkerProperties>(par);
 				var headPos = createWorld.UserRoot.Headpos;
 				var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 2, 0.5f)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric());
 				cube.SetGlobalTrans(move * headPos);

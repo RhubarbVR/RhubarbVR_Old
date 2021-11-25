@@ -120,6 +120,8 @@ void main() {
         (alphaL.y + alphaR.x + alphaR.y) / 6.0,
         (alphaL.x + alphaL.y + alphaR.x) / 6.0,
         0.0);
+    
+    
 
     // Optionally scale by a color
     outputColor = glyphColor.a == 0.0 ? 1.0 - rgba : glyphColor * rgba;

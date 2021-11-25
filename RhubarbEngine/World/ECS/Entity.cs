@@ -244,6 +244,7 @@ namespace RhubarbEngine.World.ECS
             }
 
             OnGrip?.Invoke(holder, laser);
+            parent.Target?.SendGrip(laser, holder, click);
 		}
 
 		public void SendDrop(bool laser, GrabbableHolder holder, bool click = true)
@@ -254,9 +255,10 @@ namespace RhubarbEngine.World.ECS
             }
 
             OnDrop?.Invoke(holder, laser);
-		}
+            parent.Target?.SendDrop(laser, holder, click);
+        }
 
-		public void SendPrimary(bool laser, bool click = true)
+        public void SendPrimary(bool laser, bool click = true)
 		{
 			if (!click)
             {
@@ -264,8 +266,9 @@ namespace RhubarbEngine.World.ECS
             }
 
             OnPrimary?.Invoke(laser);
-		}
-		public void SendSecondary(bool laser, bool click = true)
+            parent.Target?.SendPrimary(laser, click);
+        }
+        public void SendSecondary(bool laser, bool click = true)
 		{
 			if (!click)
             {
@@ -273,7 +276,8 @@ namespace RhubarbEngine.World.ECS
             }
 
             OnSecondary?.Invoke(laser);
-		}
+            parent.Target?.SendSecondary(laser, click);
+        }
         public bool IsEnabled
         {
             get

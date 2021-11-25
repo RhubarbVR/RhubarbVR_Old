@@ -176,53 +176,112 @@ namespace RhubarbEngine.Input
 			try
 			{
 				var inputPlane = (InputPlane)cb.CollisionObject.UserObject;
-				System.Numerics.Matrix4x4.Decompose(inputPlane.Entity.GlobalTrans(), out var scale, out var rotation, out var translation);
+                var ent = inputPlane.Entity;
+                System.Numerics.Matrix4x4.Decompose(inputPlane.Entity.GlobalTrans(), out var scale, out var rotation, out var translation);
 				var size = inputPlane.size.Value;
 				var pixsize = inputPlane.pixelSize.Value;
 
 				var hit = cb.HitPointWorld;
 				var hitnormal = cb.HitNormalWorld;
+                var normal = ((Quaternionf)rotation).Inverse() * new Vector3f(hitnormal.X, hitnormal.Y, hitnormal.Z);
+                if (normal.y < 0)
+                {
+                    var stepone = (hit - new Vector3(translation.X, translation.Y, translation.Z)) / new Vector3(scale.X, scale.Y, scale.Z);
+                    var steptwo = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateTranslation(new System.Numerics.Vector3((float)stepone.X, (float)stepone.Y, (float)stepone.Z));
+                    var stepthree = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateFromQuaternion(System.Numerics.Quaternion.Inverse(rotation));
+                    var stepfour = steptwo * stepthree;
+                    System.Numerics.Matrix4x4.Decompose(stepfour, out var scsdale, out var rotatdsion, out var trans);
+                    var nonescaleedpos = new Vector2f(trans.X, -trans.Z);
+                    var posnopixs = (nonescaleedpos * (1 / size) / 2) + 0.5f;
 
-				var stepone = (hit - new Vector3(translation.X, translation.Y, translation.Z)) / new Vector3(scale.X, scale.Y, scale.Z);
-				var steptwo = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateTranslation(new System.Numerics.Vector3((float)stepone.X, (float)stepone.Y, (float)stepone.Z));
-				var stepthree = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateFromQuaternion(System.Numerics.Quaternion.Inverse(rotation));
-				var stepfour = steptwo * stepthree;
-				System.Numerics.Matrix4x4.Decompose(stepfour, out var scsdale, out var rotatdsion, out var trans);
-				var nonescaleedpos = new Vector2f(trans.X, -trans.Z);
-				var posnopixs = (nonescaleedpos * (1 / size) / 2) + 0.5f;
+                    var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
 
-				var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
+                    var pos = (System.Numerics.Vector2)pospix;
 
-				var pos = (System.Numerics.Vector2)pospix;
-
-				var source = InteractionSource.None;
-				switch (side)
-				{
-					case Creality.Left:
-						source = InteractionSource.LeftLaser;
-						break;
-					case Creality.Right:
-						source = InteractionSource.RightLaser;
-						break;
-					default:
-						break;
-				}
-				inputPlane.UpdatePos(pos, source);
-				if (HasClicked())
-				{
-					switch (source)
-					{
-						case InteractionSource.LeftLaser:
-							LeftLaser();
-							break;
-						case InteractionSource.RightLaser:
-							RightLaser();
-							break;
-						default:
-							break;
-					}
-					inputPlane.Click(pos, source);
-				}
+                    var source = InteractionSource.None;
+                    switch (side)
+                    {
+                        case Creality.Left:
+                            source = InteractionSource.LeftLaser;
+                            break;
+                        case Creality.Right:
+                            source = InteractionSource.RightLaser;
+                            break;
+                        default:
+                            break;
+                    }
+                    inputPlane.UpdatePos(pos, source);
+                    if (HasClicked())
+                    {
+                        switch (source)
+                        {
+                            case InteractionSource.LeftLaser:
+                                LeftLaser();
+                                break;
+                            case InteractionSource.RightLaser:
+                                RightLaser();
+                                break;
+                            default:
+                                break;
+                        }
+                        inputPlane.Click(pos, source);
+                    }
+                }
+                else
+                {
+                    if (HasClicked())
+                    {
+                        ent.SendClick(true);
+                        var source = InteractionSource.None;
+                        switch (side)
+                        {
+                            case Creality.Left:
+                                source = InteractionSource.LeftLaser;
+                                break;
+                            case Creality.Right:
+                                source = InteractionSource.RightLaser;
+                                break;
+                            default:
+                                break;
+                        }
+                        if (_engine.OutputType == VirtualReality.OutputType.Screen)
+                        {
+                            ent.SendSecondary(Input.MainWindows.GetMouseButton(MouseButton.Middle));
+                            ent.SendPrimary(Input.MainWindows.GetMouseButton(MouseButton.Left));
+                            ent.SendGrip(true, inputPlane.World.HeadLaserGrabbableHolder, Input.MainWindows.GetMouseButton(MouseButton.Right));
+                        }
+                        else
+                        {
+                            switch (source)
+                            {
+                                case InteractionSource.None:
+                                    break;
+                                case InteractionSource.LeftLaser:
+                                    ent.SendTriggerTouching(Input.TriggerTouching(RhubarbEngine.Input.Creality.Left));
+                                    ent.SendSecondary(Input.SecondaryPress(RhubarbEngine.Input.Creality.Left));
+                                    ent.SendPrimary(Input.PrimaryPress(RhubarbEngine.Input.Creality.Left));
+                                    ent.SendGrip(true, inputPlane.World.LeftLaserGrabbableHolder, Input.GrabPress(RhubarbEngine.Input.Creality.Left));
+                                    break;
+                                case InteractionSource.LeftFinger:
+                                    break;
+                                case InteractionSource.RightLaser:
+                                    ent.SendTriggerTouching(Input.TriggerTouching(RhubarbEngine.Input.Creality.Right));
+                                    ent.SendSecondary(Input.SecondaryPress(RhubarbEngine.Input.Creality.Right));
+                                    ent.SendPrimary(Input.PrimaryPress(RhubarbEngine.Input.Creality.Right));
+                                    ent.SendGrip(true, inputPlane.World.RightLaserGrabbableHolder, Input.GrabPress(RhubarbEngine.Input.Creality.Right));
+                                    break;
+                                case InteractionSource.RightFinger:
+                                    break;
+                                case InteractionSource.HeadLaser:
+                                    break;
+                                case InteractionSource.HeadFinger:
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
 				return true;
 			}
 			catch

@@ -14,7 +14,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 
 	[Category("ImGUI/Developer")]
-	public class WorkerObserver : UIWidget, IObserver
+	public class WorkerProperties : UIWidget, IPropertiesElement
 	{
 		public Sync<string> fieldName;
 
@@ -25,9 +25,9 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<IWorker> target;
 
-		public SyncRef<IObserver> root;
+		public SyncRef<IPropertiesElement> root;
 
-		public SyncRefList<IObserver> children;
+		public SyncRefList<IPropertiesElement> children;
 
 		public Sync<bool> removeChildrenOnDispose;
 
@@ -44,8 +44,8 @@ namespace RhubarbEngine.Components.ImGUI
 			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<IWorker>(this, newRefIds);
 			target.Changed += Target_Changed;
-			root = new SyncRef<IObserver>(this, newRefIds);
-			children = new SyncRefList<IObserver>(this, newRefIds);
+			root = new SyncRef<IPropertiesElement>(this, newRefIds);
+			children = new SyncRefList<IPropertiesElement>(this, newRefIds);
 			fieldName = new Sync<string>(this, newRefIds);
             removeChildrenOnDispose = new Sync<bool>(this, newRefIds, true);
         }
@@ -93,19 +93,19 @@ namespace RhubarbEngine.Components.ImGUI
 				var type = target.Target.GetType();
 				if (typeof(Entity).IsAssignableFrom(type))
 				{
-					var comp = Entity.AttachComponent<EntityObserver>();
+					var comp = Entity.AttachComponent<EntityProperties>();
 					comp.target.Target = (Entity)target.Target;
 					root.Target = comp;
 				}
 				else if (typeof(Component).IsAssignableFrom(type))
 				{
-					var comp = Entity.AttachComponent<ComponentObserver>();
+					var comp = Entity.AttachComponent<ComponentProperties>();
 					comp.target.Target = (Component)target.Target;
 					root.Target = comp;
 				}
 				else if (typeof(Render.Material.Fields.MaterialField).IsAssignableFrom(type))
 				{
-					var comp = Entity.AttachComponent<MaterialFieldObserver>();
+					var comp = Entity.AttachComponent<MaterialFieldProperties>();
 					comp.target.Target = (Render.Material.Fields.MaterialField)target.Target;
 					root.Target = comp;
 				}
@@ -159,7 +159,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
                 if (!(!typeof(IWorker).IsAssignableFrom(field.FieldType) || field.GetCustomAttributes(typeof(NoShowAttribute), false).Length > 0))
 				{
-					var obs = _e.AttachComponent<WorkerObserver>();
+					var obs = _e.AttachComponent<WorkerProperties>();
 					obs.fieldName.Value = field.Name;
 					obs.target.Target = (IWorker)field.GetValue(target.Target);
 					children.Add().Target = obs;
@@ -404,11 +404,11 @@ namespace RhubarbEngine.Components.ImGUI
 			root.Target = obs;
 		}
 
-		public WorkerObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		public WorkerProperties(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}
-		public WorkerObserver()
+		public WorkerProperties()
 		{
 		}
 

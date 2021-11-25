@@ -50,7 +50,6 @@ namespace RhubarbEngine.Components.Interaction
 		public Driver<float> meshHeight;
 		public Driver<Vector2f> colDriver;
 		public Driver<Vector3d> BackGround;
-		public Driver<Vector3f> colBackGround;
 
 		public Driver<Vector2u> colPixelsizeDriver;
 		public Driver<Vector2u> canvasPixelsizeDriver;
@@ -240,13 +239,9 @@ namespace RhubarbEngine.Components.Interaction
 			{
 				renderEnableDriver.Drivevalue = ParentDock.Target == null;
 			}
-			if (colBackGround.Linked)
-			{
-				colBackGround.Drivevalue = new Vector3f(size.Value.x / 2, 0.01f, size.Value.y / 2);
-			}
 			if (BackGround.Linked)
 			{
-				BackGround.Drivevalue = new Vector3f(size.Value.x / 2, 0.01f, size.Value.y / 2);
+				BackGround.Drivevalue = new Vector3f(size.Value.x / 2, 0.001f, size.Value.y / 2);
 			}
 			if (labelDriver.Linked)
 			{
@@ -283,10 +278,8 @@ namespace RhubarbEngine.Components.Interaction
 		private void AttachBackGround()
 		{
 			Entity.AttachComponent<Grabbable>();
-			var col = Entity.AttachComponent<BoxCollider>();
             var (_, mesh, _) = Helpers.MeshHelper.AddMesh<BoxMesh>(Entity, World.staticAssets.BasicUnlitShader, "UIBackGround", 2147483646);
 			BackGround.SetDriveTarget(mesh.Extent);
-			colBackGround.SetDriveTarget(col.boxExtents);
 		}
 
 		public override void OnLoaded()
@@ -327,7 +320,7 @@ namespace RhubarbEngine.Components.Interaction
 			colPixelsizeDriver.SetDriveTarget(col.pixelSize);
 			var mit = Entity.AttachComponent<RMaterial>();
 			var meshRender = UIRender.AttachComponent<MeshRender>();
-			UIRender.position.Value = new Vector3f(0f, -0.012f, 0f);
+			UIRender.position.Value = new Vector3f(0f, -0.01f, 0f);
 			var imGUICanvas = UIRender.AttachComponent<ImGUICanvas>();
 			imGUICanvas.onClose.Target = Close;
 			imGUICanvas.imputPlane.Target = col;
@@ -371,7 +364,6 @@ namespace RhubarbEngine.Components.Interaction
 			canvasPixelsizeDriver = new Driver<Vector2u>(this, newRefIds);
 			labelDriver = new Driver<string>(this, newRefIds);
 			BackGround = new Driver<Vector3d>(this, newRefIds);
-			colBackGround = new Driver<Vector3f>(this, newRefIds);
 			renderEnableDriver = new Driver<bool>(this, newRefIds);
 			ChildDocPos = new Sync<DockPos>(this, newRefIds);
 			ChildDock = new SyncRef<Window>(this, newRefIds);

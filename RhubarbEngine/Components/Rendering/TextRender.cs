@@ -23,22 +23,27 @@ using System.Runtime.CompilerServices;
 using System.IO;
 using RhubarbEngine.Components.Assets;
 using SharpText.Veldrid;
+
 namespace RhubarbEngine.Components.Rendering
 {
     [Category(new string[] { "Rendering" })]
-    public class TextRender : Renderable
+    public class TextRender : AssetProvider<RTexture2D>
     {
-        public Sync<uint> RenderOrderOffset;
-
         public Sync<float> LetterSpacing;
 
         public Sync<string> Text;
 
         public Sync<Vector2f> Pos;
 
+        public Sync<Vector2u> Scale;
+
         public Sync<Colorf> Color;
 
         public AssetRef<RFont> Font;
+
+        private Framebuffer _framebuffer;
+
+        private CommandList _commandList;
 
         private VeldridTextRenderer _textRenderer;
 
@@ -52,26 +57,68 @@ namespace RhubarbEngine.Components.Rendering
         public override void BuildSyncObjs(bool newRefIds)
         {
             base.BuildSyncObjs(newRefIds);
-            RenderOrderOffset = new Sync<uint>(this, newRefIds);
             Font = new AssetRef<RFont>(this, newRefIds);
             Font.LoadChange += Font_LoadChange;
             Text = new Sync<string>(this, newRefIds) 
             {
                 Value = "Hello World"
             };
+            Text.Changed += Val_Changed;
             Pos = new Sync<Vector2f>(this, newRefIds);
+            Pos.Changed += Val_Changed;
+            Scale = new Sync<Vector2u>(this, newRefIds)
+            {
+                Value = new Vector2u(256, 64)
+            };
+            Scale.Changed += Scale_Changed;
             LetterSpacing = new Sync<float>(this, newRefIds)
             {
-                Value = 0.01f
+                Value = 1f
             };
+            LetterSpacing.Changed += Val_Changed;
             Color = new Sync<Colorf>(this, newRefIds)
             {
                 Value = Colorf.White
             };
+            Color.Changed += Val_Changed;
+        }
+
+        private void Val_Changed(IChangeable obj)
+        {
+            if(_commandList is not null && _textRenderer is not null)
+            {
+                Render();
+            }
+        }
+
+        private void Scale_Changed(IChangeable obj)
+        {
+            ReloadFrameBuffer();
+        }
+
+        private Framebuffer CreateFramebuffer(uint width, uint height)
+        {
+            var factory = Engine.RenderManager.Gd.ResourceFactory;
+            var colorTarget = factory.CreateTexture(TextureDescription.Texture2D(
+                width, height,
+                1, 1,
+                PixelFormat.R8_G8_B8_A8_UNorm_SRgb,
+                TextureUsage.RenderTarget | TextureUsage.Sampled
+                ));
+            var depthTarget = factory.CreateTexture(TextureDescription.Texture2D(
+                width, height,
+                1, 1,
+                PixelFormat.R32_Float,
+                TextureUsage.DepthStencil | TextureUsage.Sampled));
+            return factory.CreateFramebuffer(new FramebufferDescription(depthTarget, colorTarget));
         }
 
         private void Font_LoadChange(RFont obj)
         {
+            if(_commandList is null)
+            {
+                return;
+            }
             try
             {
                 if (obj is null)
@@ -82,12 +129,15 @@ namespace RhubarbEngine.Components.Rendering
                 if (_textRenderer is not null)
                 {
                     _textRenderer.UpdateFont(obj.font);
+                    Render();
                 }
                 else if (Engine.Rendering)
                 {
                     if (obj.font is not null)
                     {
                         _textRenderer = new VeldridTextRenderer(Engine.RenderManager.Gd, obj.font, Engine.RenderManager.VrContext.LeftEyeFramebuffer.OutputDescription);
+                        _textRenderer.UpdateVeldridStuff(_commandList, _framebuffer, _framebuffer.Height, _framebuffer.Width);
+                        Render();
                     }
                 }
             }catch(Exception e)
@@ -96,32 +146,55 @@ namespace RhubarbEngine.Components.Rendering
             }
         }
 
+        private void ReloadFrameBuffer()
+        {
+            if (!Engine.Rendering)
+            {
+                return;
+            }
+            Load(null);
+            _commandList?.Dispose();
+            _framebuffer?.Dispose();
+            _commandList = Engine.RenderManager.Gd.ResourceFactory.CreateCommandList();
+            _framebuffer = CreateFramebuffer(Scale.Value.x, Scale.Value.y);
+            if(_textRenderer is null)
+            {
+                Font_LoadChange(null);
+            }
+            else
+            {
+                _textRenderer.UpdateVeldridStuff(_commandList, _framebuffer, _framebuffer.Height, _framebuffer.Width);
+            }
+            var view = Engine.RenderManager.Gd.ResourceFactory.CreateTextureView(_framebuffer.ColorTargets[0].Target);
+            Load(new RTexture2D(view));
+            Render();
+        }
+
         public override void OnLoaded()
         {
             base.OnLoaded();
-            if (Engine.Rendering && Font.Asset is not null)
-            {
-                _textRenderer = new VeldridTextRenderer(Engine.RenderManager.Gd, Font.Asset.font, Engine.RenderManager.VrContext.LeftEyeFramebuffer.OutputDescription);
-            }
+            ReloadFrameBuffer();
         }
 
-        private BoundingBox _changingBoundingBox = new()
+        public void Render()
         {
-            Max = new Vector3(100),
-            Min = new Vector3(0.1f)
-        };
-
-        public override bool Cull(ref Utilities.BoundingFrustum visibleFrustum, Matrix4x4 view)
-        {
-            return false;
-        }
-
-        public override BoundingBox BoundingBox
-        {
-            get
+            if(_textRenderer is null)
             {
-                return _changingBoundingBox;
+                return;
             }
+            if (_commandList is null)
+            {
+                return; 
+            }
+            _commandList.Begin();
+            _commandList.SetFramebuffer(_framebuffer);
+            _commandList.ClearColorTarget(0, RgbaFloat.Clear);
+            _commandList.ClearDepthStencil(1f);
+            _textRenderer.Update();
+            _textRenderer.DrawText(Text.Value, (Vector2)Pos.Value, new SharpText.Core.Color(Color.Value.r, Color.Value.g, Color.Value.b, Color.Value.a), LetterSpacing.Value);
+            _textRenderer.Draw();
+            _commandList.End();
+            Engine.RenderManager.Gd.SubmitCommands(_commandList);
         }
 
         public TextRender(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -130,28 +203,6 @@ namespace RhubarbEngine.Components.Rendering
         }
         public TextRender()
         {
-        }
-
-        public override void Render(GraphicsDevice gd, CommandList cl, UBO ubo, Framebuffer framebuffer)
-        {
-            if(_textRenderer is null)
-            {
-                return;
-            }
-            _textRenderer.UpdateVeldridStuff(ubo.World, cl, framebuffer);
-            _textRenderer.Update();
-            _textRenderer.DrawText(Text.Value, (Vector2)Pos.Value, new SharpText.Core.Color(Color.Value.r, Color.Value.g, Color.Value.b, Color.Value.a), LetterSpacing.Value);
-            _textRenderer.Draw();
-            cl.SetFramebuffer(framebuffer);
-        }
-
-        public override void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo, Framebuffer framebuffer)
-        {
-        }
-        public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
-        {
-            return RenderOrderKey.Create(RenderOrderOffset.Value, BoundingBox.DistanceFromPoint((Vector3)Entity.GlobalPointToLocal((Vector3f)cameraPosition, false)));
-
         }
     }
 }

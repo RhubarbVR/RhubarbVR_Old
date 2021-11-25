@@ -15,7 +15,7 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-	public class SyncListBaseObserver : UIWidget, IObserver
+	public class SyncListBaseObserver : UIWidget, IPropertiesElement
 	{
         public virtual bool Removeable
         {
@@ -29,7 +29,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public SyncRef<ISyncList> target;
 
-		public SyncRefList<WorkerObserver> children;
+		public SyncRefList<WorkerProperties> children;
 
 		public SyncRef<Entity> childrenHolder;
 
@@ -39,7 +39,7 @@ namespace RhubarbEngine.Components.ImGUI
 			target = new SyncRef<ISyncList>(this, newRefIds);
 			target.Changed += Target_Changed;
 			fieldName = new Sync<string>(this, newRefIds);
-			children = new SyncRefList<WorkerObserver>(this, newRefIds);
+			children = new SyncRefList<WorkerProperties>(this, newRefIds);
 			childrenHolder = new SyncRef<Entity>(this, newRefIds);
 		}
 
@@ -75,7 +75,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (typeof(IWorker).IsAssignableFrom(item.GetType()))
 				{
-					var obs = Entity.AddChild(fieldName.Value + $":{index}").AttachComponent<WorkerObserver>();
+					var obs = Entity.AddChild(fieldName.Value + $":{index}").AttachComponent<WorkerProperties>();
 					obs.fieldName.Value = index.ToString();
 					obs.target.Target = (IWorker)item;
 					children.Add().Target = obs;

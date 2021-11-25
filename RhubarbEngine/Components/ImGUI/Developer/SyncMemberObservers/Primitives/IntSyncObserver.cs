@@ -17,7 +17,7 @@ namespace RhubarbEngine.Components.ImGUI
 {
 
 	[Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
-	public class IntSyncObserver : UIWidget, IObserver
+	public class IntSyncObserver : UIWidget, IPropertiesElement
 	{
 		public Sync<string> fieldName;
 

@@ -45,11 +45,9 @@ namespace SharpText.Veldrid
         public float AdvanceX;
     }
 
-    public class VeldridTextRenderer : ITextRenderer
+    public class VeldridTextRenderer
     {
         public Font Font { get; private set; }
-
-        public const uint sizeer = 1920;
 
         private readonly GraphicsDevice graphicsDevice;
         private CommandList commandList;
@@ -151,9 +149,12 @@ namespace SharpText.Veldrid
 
             textToDraw.Add(drawable);
         }
-
-        public void UpdateVeldridStuff(Matrix4x4 world, CommandList cl, Framebuffer framebuffer)
+        public void UpdateVeldridStuff(CommandList cl, Framebuffer framebuffer, uint _hight, uint _width)
         {
+            if((_hight != hight)|| (_width != width))
+            {
+                ResizeToSwapchain(_hight, _width);
+            }
             this.commandList = cl;
             this.mainFrameBuffer = framebuffer;
         }
@@ -243,10 +244,15 @@ namespace SharpText.Veldrid
             textFragmentPropertiesBuffer.Dispose();
         }
 
-        public void ResizeToSwapchain()
+        uint hight = 1024;
+        uint width = 1024;
+
+        public void ResizeToSwapchain(uint _hight,uint _width)
         {
-            aspectWidth = 2f / sizeer;
-            aspectHeight = 2f / sizeer;
+            hight = _hight;
+            width = _width;
+            aspectWidth = 2f / width;
+            aspectHeight = 2f / hight;
 
             var factory = graphicsDevice.ResourceFactory;
             var colorFormat = PixelFormat.B8_G8_R8_A8_UNorm;
@@ -256,7 +262,7 @@ namespace SharpText.Veldrid
             glyphTextureFramebuffer?.Dispose();
             textTextureSet.Dispose();
 
-            glyphTexture = factory.CreateTexture(TextureDescription.Texture2D(sizeer, sizeer, 1, 1, colorFormat, TextureUsage.RenderTarget | TextureUsage.Sampled));
+            glyphTexture = factory.CreateTexture(TextureDescription.Texture2D(width, hight, 1, 1, colorFormat, TextureUsage.RenderTarget | TextureUsage.Sampled));
             glyphTextureView = factory.CreateTextureView(glyphTexture);
             glyphTextureFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(null, glyphTexture));
 
@@ -324,8 +330,8 @@ namespace SharpText.Veldrid
         private void Initialize(OutputDescription outdis)
         {
             var factory = graphicsDevice.ResourceFactory;
-            aspectWidth = 2f / sizeer;
-            aspectHeight = 2f / sizeer;
+            aspectWidth = 2f / width;
+            aspectHeight = 2f / hight;
 
             glyphVertexBuffer = factory.CreateBuffer(new BufferDescription(VertexPosition3Coord2.SizeInBytes, BufferUsage.VertexBuffer));
             quadVertexBuffer = factory.CreateBuffer(new BufferDescription(VertexPosition2.SizeInBytes * 4, BufferUsage.VertexBuffer));
@@ -354,7 +360,7 @@ namespace SharpText.Veldrid
             graphicsDevice.UpdateBuffer(textFragmentPropertiesBuffer, 0, textFragmentProperties);
 
             var colorFormat = PixelFormat.B8_G8_R8_A8_UNorm;
-            glyphTexture = factory.CreateTexture(TextureDescription.Texture2D(sizeer, sizeer, 1, 1, colorFormat, TextureUsage.RenderTarget | TextureUsage.Sampled));
+            glyphTexture = factory.CreateTexture(TextureDescription.Texture2D(width, hight, 1, 1, colorFormat, TextureUsage.RenderTarget | TextureUsage.Sampled));
             glyphTextureView = factory.CreateTextureView(glyphTexture);
             glyphTextureFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(null, glyphTexture));
             // HACK workaround issue with texture view caching for shader resources
@@ -406,9 +412,10 @@ namespace SharpText.Veldrid
                         sourceColorFactor: BlendFactor.Zero,
                         destinationColorFactor: BlendFactor.SourceColor,
                         colorFunction: BlendFunction.Add,
-                        sourceAlphaFactor: BlendFactor.Zero,
-                        destinationAlphaFactor: BlendFactor.SourceAlpha,
-                        alphaFunction: BlendFunction.Add)),
+                        sourceAlphaFactor: BlendFactor.One,
+                        destinationAlphaFactor: BlendFactor.One,
+                        alphaFunction: BlendFunction.Add
+                        )),
                 depthStencilStateDescription: new DepthStencilStateDescription(
                     depthTestEnabled: true,
                     depthWriteEnabled: true,

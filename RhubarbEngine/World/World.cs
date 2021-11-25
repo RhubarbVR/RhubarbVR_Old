@@ -269,7 +269,7 @@ namespace RhubarbEngine.World
         [NoShow]
 		[NoSync]
 		[NoSave]
-		public RhubarbEngine.Components.ImGUI.EntityObserver lastEntityObserver;
+		public RhubarbEngine.Components.ImGUI.EntityProperties lastEntityObserver;
 
 		public void AddToRenderQueue(RenderQueue gu, RemderLayers layer, RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
 		{
@@ -702,11 +702,14 @@ namespace RhubarbEngine.World
 			userLoaded = true;
 			UserJoined(HostUser);
 		}
-
+        private readonly object _positionLock = new();
         public NetPointer BuildRefID()
 		{
-            position++;
-            return !_worldObjects.ContainsKey(NetPointer.BuildID(position, user)) ? NetPointer.BuildID(position, user) : BuildRefID();
+            lock (_positionLock)
+            {
+                position++;
+                return !_worldObjects.ContainsKey(NetPointer.BuildID(position, user)) ? NetPointer.BuildID(position, user) : BuildRefID();
+            }
         }
 
 		public void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = true, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)

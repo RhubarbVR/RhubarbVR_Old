@@ -130,11 +130,11 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 		}
 
-		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+		public override unsafe void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			var val = dropedDown.Value;
-			ImGui.SetNextItemOpen(val);
-			if (ImGui.TreeNodeEx($"{target.Target?.name.Value ?? "null"}##{ReferenceID.id}", ImGuiTreeNodeFlags.OpenOnArrow))
+			var val = dropedDown.Value && ((target.Target?._children.Count() ?? 0) > 0);
+            ImGui.SetNextItemOpen(val);
+			if (ImGui.TreeNodeEx($"{target.Target?.name.Value ?? "null"}##{ReferenceID.id}", ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.Framed | (((target.Target?._children.Count()??0) > 0)? ImGuiTreeNodeFlags.None: ImGuiTreeNodeFlags.Bullet)))
 			{
 				foreach (var item in children)
 				{
@@ -144,16 +144,24 @@ namespace RhubarbEngine.Components.ImGUI
 				{
 					dropedDown.Value = true;
 				}
-				ImGui.TreePop();
-			}
-			else
+                var e = ImGui.GetStyleColorVec4(ImGuiCol.FrameBg);
+                var vec = (Vector4f)(*e);
+                ImGui.PushStyleColor(ImGuiCol.FrameBg, (new Vector4f(0, 0, 0, 0)).ToSystem());
+                if (ImGui.ArrowButton($"UpButton{ReferenceID.id}",ImGuiDir.Up))
+                {
+                    dropedDown.Value = false;
+                }
+                ImGui.PopStyleColor();
+                ImGui.TreePop();
+            }
+            else
 			{
 				if (val)
 				{
 					dropedDown.Value = false;
 				}
 			}
-			Interaction.GrabbableHolder source = null;
+            Interaction.GrabbableHolder source = null;
 			switch (canvas.imputPlane.Target?.Source ?? Interaction.InteractionSource.None)
 			{
 				case Interaction.InteractionSource.LeftLaser:
@@ -187,6 +195,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		private void Clicked()
 		{
+
 			if (World.lastEntityObserver != null)
             {
                 World.lastEntityObserver.target.Target = target.Target;

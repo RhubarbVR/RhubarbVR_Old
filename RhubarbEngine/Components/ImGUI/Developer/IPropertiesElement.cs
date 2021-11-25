@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-	public interface IObserver : IUIElement
+	public interface IPropertiesElement : IUIElement
 	{
 	}
 }

@@ -16,7 +16,7 @@ using Veldrid;
 namespace RhubarbEngine.Components.ImGUI
 {
 	[Category("ImGUI/Developer/SyncMemberObservers")]
-	public class SyncRefObserver<T> : SyncRefObserver, IObserver where T : class, IWorldObject
+	public class SyncRefObserver<T> : SyncRefObserver, IPropertiesElement where T : class, IWorldObject
 	{
 
 		public SyncRefObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -132,7 +132,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 
 
-	public class SyncRefObserver : UIWidget, IObserver
+	public class SyncRefObserver : UIWidget, IPropertiesElement
 	{
 		public Sync<string> fieldName;
 

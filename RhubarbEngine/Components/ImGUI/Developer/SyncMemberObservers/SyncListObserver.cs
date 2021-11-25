@@ -16,7 +16,7 @@ using Veldrid;
 namespace RhubarbEngine.Components.ImGUI
 {
 	[Category("ImGUI/Developer/SyncMemberObservers")]
-	public class SyncListObserver : SyncListBaseObserver, IObserver
+	public class SyncListObserver : SyncListBaseObserver, IPropertiesElement
 	{
 
 

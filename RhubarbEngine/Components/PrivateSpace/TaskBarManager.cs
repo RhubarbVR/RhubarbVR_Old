@@ -133,10 +133,10 @@ namespace RhubarbEngine.Components.PrivateSpace
             imGUICanvas.element.Target = group;
 			group.children.Add().Target = createCube;
 
-			createWindow.label.Value = "Create Window";
-			createWindow.action.Target = CreateWindow;
-			createWindow2.label.Value = "Create Window2";
-			createWindow2.action.Target = CreateWindow2;
+			createWindow.label.Value = "Hierarchy Window";
+			createWindow.action.Target = HierarchyWindow;
+			createWindow2.label.Value = "Properties Window";
+			createWindow2.action.Target = PropertiesWindow;
 			group.children.Add().Target = createWindow;
 			group.children.Add().Target = createWindow2;
 			group.children.Add().Target = createSyer;
@@ -156,9 +156,9 @@ namespace RhubarbEngine.Components.PrivateSpace
             _timeout.Restart();
         }
 
-        private void CreateWindow()
+        private void HierarchyWindow()
 		{
-			Logger.Log("Create Window");
+			Logger.Log("Create Hierarchy Window");
 			var createWorld = World.worldManager.FocusedWorld ?? World;
 			var User = createWorld.UserRoot.Entity;
 			var par = User.parent.Target;
@@ -170,13 +170,13 @@ namespace RhubarbEngine.Components.PrivateSpace
 
 		}
 
-		private void CreateWindow2()
+		private void PropertiesWindow()
 		{
-			Logger.Log("Create Window2");
+			Logger.Log("Create Properties Window");
 			var createWorld = World.worldManager.FocusedWorld ?? World;
 			var User = createWorld.UserRoot.Entity;
 			var par = User.parent.Target;
-			var (cube, _, comp) = Helpers.MeshHelper.AttachWindow<EntityObserver>(par);
+			var (cube, _, comp) = Helpers.MeshHelper.AttachWindow<EntityProperties>(par);
 			var headPos = createWorld.UserRoot.Headpos;
 			var move = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(new Vector3(0, 2, 0.5f)) * Matrix4x4.CreateFromQuaternion(Quaternionf.CreateFromEuler(0f, -90f, 0f).ToSystemNumric());
 			cube.SetGlobalTrans(move * headPos);
