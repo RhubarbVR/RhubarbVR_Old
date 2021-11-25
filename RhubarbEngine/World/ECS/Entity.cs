@@ -58,7 +58,15 @@ namespace RhubarbEngine.World.ECS
 		{
 			get
 			{
-				var retur = _manager.Target ?? (parent.Target?.Manager);
+                User retur;
+                if (_manager.Target is null)
+                {
+                    retur = (parent.Target?.NullableManager);
+                }
+                else
+                {
+                    retur = _manager.Target;
+                }
                 return retur;
 			}
 		}

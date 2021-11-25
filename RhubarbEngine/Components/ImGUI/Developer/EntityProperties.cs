@@ -34,7 +34,11 @@ namespace RhubarbEngine.Components.ImGUI
 			children = new SyncRefList<IPropertiesElement>(this, newRefIds);
 		}
 
-
+        public override void OnAttach()
+        {
+            base.OnAttach();
+            World.lastEntityObserver = this;
+        }
         private void Target_Changed(IChangeable obj)
 		{
 			if (Entity.Manager != World.LocalUser)
