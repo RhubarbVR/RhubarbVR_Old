@@ -452,7 +452,17 @@ namespace RhubarbEngine.Input
 
         public Vector3 Distination { get; private set; }
 
-        public void SendRayCast(Vector3 _sourcse, Vector3 deriction)
+		public static float MakeGoodFloat(float val)
+		{
+			return (float.IsNaN(val) || float.IsInfinity(val)) ? 0f : val;
+		}
+
+		public static Vector3 MakeGoodVec(Vector3 val)
+		{
+			return new Vector3(MakeGoodFloat(val.X), MakeGoodFloat(val.Y), MakeGoodFloat(val.Z));
+		}
+
+		public void SendRayCast(Vector3 _sourcse, Vector3 deriction)
 		{
 			var dist = _maxDistinatains;
 
@@ -473,8 +483,8 @@ namespace RhubarbEngine.Input
 				smoothedSourcse = _sourcse;
 			}
 
-			_lastRayCastDeriction = smoothedDeriction;
-			_lastRayCastsourcse = smoothedSourcse;
+			_lastRayCastDeriction = MakeGoodVec(smoothedDeriction);
+			_lastRayCastsourcse = MakeGoodVec(smoothedSourcse);
 			var result = Math.Sqrt(Math.Pow(smoothedDeriction.X - _lastDeriction.X, 2) + Math.Pow(smoothedDeriction.Y - _lastDeriction.Y, 2) + Math.Pow(smoothedDeriction.Z - _lastDeriction.Z, 2));
 			if (Aprogamtly(smoothedDeriction, _lastDeriction, 0.003))
 			{
@@ -487,8 +497,8 @@ namespace RhubarbEngine.Input
 			}
 			else
 			{ _activelySnapping = false; }
-            Distination = (smoothedDeriction * dist) + smoothedSourcse;
-            ProsscesRayTestHit(smoothedSourcse, Distination, smoothedDeriction);
+            Distination = MakeGoodVec((smoothedDeriction * dist) + smoothedSourcse);
+			ProsscesRayTestHit(smoothedSourcse, Distination, smoothedDeriction);
             if (IsLocked)
             {
                 if(_grabSlider < 0.1f)

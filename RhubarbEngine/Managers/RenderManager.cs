@@ -34,6 +34,8 @@ namespace RhubarbEngine.Managers
         TextureView RhubarbSolidview { get; }
         TextureView[] Cursors { get; }
 
+        event Action VrContextUpdated;
+
         void SwitchVRContext(OutputType type);
     }
 
@@ -125,6 +127,8 @@ namespace RhubarbEngine.Managers
                 return _engine.SettingsObject.VRSettings.renderEye;
             }
         }
+
+        public event Action VrContextUpdated;
 
         private (GraphicsDevice gd, Swapchain sc) CreateGraphicsNoWindow(VRContext vrc, GraphicsBackend backend)
         {
@@ -351,7 +355,8 @@ namespace RhubarbEngine.Managers
 		{
 			if ((type != _engine.OutputType) || vrContext.Disposed)
 			{
-				_engine.Logger.Log("Output Device Change:" + type.ToString());
+                VrContextUpdated?.Invoke();
+                _engine.Logger.Log("Output Device Change:" + type.ToString());
 				_engine.OutputType = type;
 				var oldvrContext = vrContext;
 				vrContext = BuildVRContext();

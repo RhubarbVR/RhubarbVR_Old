@@ -130,11 +130,20 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
 
         InputPoseActionData_t _generalmPosistionData = new();
 		private readonly ulong _generalmPosistionHandle = 0;
+        Matrix4x4 IController.PosistionWithOffset
+        {
+            get
+            {
+                return MatrixOffset * PosHelp(_generalmPosistionData.pose.mDeviceToAbsoluteTracking);
+            }
+        }
+
+
         Matrix4x4 IController.Posistion
         {
             get
             {
-                return PosHelp(_generalmPosistionData.pose.mDeviceToAbsoluteTracking) * MatrixOffset;
+                return PosHelp(_generalmPosistionData.pose.mDeviceToAbsoluteTracking);
             }
         }
 
@@ -178,12 +187,11 @@ namespace RhubarbEngine.VirtualReality.OpenVR.Controllers
 			this.deviceindex = deviceindex;
 			this.Creality = Creality;
 			this.handle = Handle;
-            MatrixOffset  = ControllerName switch
+            MatrixOffset = Matrix4x4.CreateScale(1f);//ControllerName switch
+            if (ControllerName.Contains("indexcontroller"))
             {
-                "indexController" => Matrix4x4.CreateScale(1f),
-                _ => Matrix4x4.CreateScale(1f),
-            };
-
+                MatrixOffset = Matrix4x4.CreateScale(1f) * Matrix4x4.CreateFromYawPitchRoll(0f, -1.5708f/2, 0f);
+            }
 
             OVR.Input.GetActionHandle("/actions/General/in/Trigger_Touching", ref _generalmTriggerTouchingHandle);
 

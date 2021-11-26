@@ -11,6 +11,14 @@ namespace RhubarbEngine.Input.Controllers
 {
 	public class NullController : IController
 	{
+        public Matrix4x4 PosistionWithOffset
+        {
+            get
+            {
+               return Matrix4x4.CreateScale(1);
+            }
+        }
+
         string IController.ControllerName
         {
             get

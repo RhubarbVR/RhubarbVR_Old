@@ -123,8 +123,10 @@ namespace RhubarbEngine.Components.PrivateSpace
 			userRoot.Head.Target = head;
 			var left = rootent.AddChild("Left hand");
 			var right = rootent.AddChild("Right hand");
-
-
+			var leftcc = rootent.AddChild("SteamVRLeft");
+			var rightcc = rootent.AddChild("SteamVRRight");
+			leftcc.AttachComponent<SteamVRController>().creality.Value = RhubarbEngine.Input.Creality.Left;
+			rightcc.AttachComponent<SteamVRController>().creality.Value = RhubarbEngine.Input.Creality.Right;
 			userRoot.LeftHand.Target = left;
 			userRoot.RightHand.Target = right;
 			var leftcomp = left.AttachComponent<Hand>();

@@ -20,6 +20,7 @@ namespace RhubarbEngine.Input.Controllers
 		bool SecondaryPress { get; }
 		Vector2f Axis { get; }
 		float TriggerAix { get; }
+		Matrix4x4 PosistionWithOffset { get; }
 		Matrix4x4 Posistion { get; }
 	}
 }

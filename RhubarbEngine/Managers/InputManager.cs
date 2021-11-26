@@ -21,6 +21,8 @@ namespace RhubarbEngine.Managers
         public InteractionLaserSource LeftLaser { get; }
 
         public InteractionLaserSource RightLaser { get; }
+        IController RightController { get; }
+        IController LeftController { get; }
 
         event Action RemoveFocus;
 
@@ -128,7 +130,7 @@ namespace RhubarbEngine.Managers
             {
                 Creality.Left => (LeftController != null) && LeftController.PrimaryPress,
                 Creality.Right => (RightController != null) && RightController.PrimaryPress,
-                _ => (RightController != null) ? RightController.PrimaryPress : (false || (LeftController != null)) && LeftController.PrimaryPress,
+                _ => ((RightController != null) && RightController.PrimaryPress) || ((RightController != null) && RightController.PrimaryPress)
             };
         }
 
@@ -138,7 +140,7 @@ namespace RhubarbEngine.Managers
             {
                 Creality.Left => (LeftController != null) && LeftController.TriggerTouching,
                 Creality.Right => (RightController != null) && RightController.TriggerTouching,
-                _ => (RightController != null) ? RightController.TriggerTouching : (false || (LeftController != null)) && LeftController.TriggerTouching,
+                _ => ((RightController != null) && RightController.TriggerTouching) || ((RightController != null) && RightController.TriggerTouching),
             };
         }
 
@@ -148,7 +150,7 @@ namespace RhubarbEngine.Managers
             {
                 Creality.Left => (LeftController != null) && LeftController.AxisTouching,
                 Creality.Right => (RightController != null) && RightController.AxisTouching,
-                _ => (RightController != null) ? RightController.AxisTouching : (false || (LeftController != null)) && LeftController.AxisTouching,
+                _ => ((RightController != null) && RightController.AxisTouching) || ((RightController != null) && RightController.AxisTouching),
             };
         }
 
@@ -158,7 +160,7 @@ namespace RhubarbEngine.Managers
             {
                 Creality.Left => (LeftController != null) && LeftController.SystemPress,
                 Creality.Right => (RightController != null) && RightController.SystemPress,
-                _ => (RightController != null) ? RightController.SystemPress : (false || (LeftController != null)) && LeftController.SystemPress,
+                _ => ((RightController != null) && RightController.SystemPress) || ((RightController != null) && RightController.SystemPress),
             };
         }
 
@@ -168,7 +170,7 @@ namespace RhubarbEngine.Managers
             {
                 Creality.Left => (LeftController != null) && LeftController.MenuPress,
                 Creality.Right => (RightController != null) && RightController.MenuPress,
-                _ => (RightController != null) ? RightController.MenuPress : (false || (LeftController != null)) && LeftController.MenuPress,
+                _ => ((RightController != null) && RightController.MenuPress) || ((RightController != null) && RightController.MenuPress),
             };
         }
 
@@ -178,7 +180,7 @@ namespace RhubarbEngine.Managers
             {
                 Creality.Left => (LeftController != null) && LeftController.GrabPress,
                 Creality.Right => (RightController != null) && RightController.GrabPress,
-                _ => (RightController != null) ? RightController.GrabPress : (false || (LeftController != null)) && LeftController.GrabPress,
+                _ => ((RightController != null) && RightController.GrabPress) || ((RightController != null) && RightController.GrabPress),
             };
         }
 
@@ -188,7 +190,7 @@ namespace RhubarbEngine.Managers
             {
                 Creality.Left => (LeftController != null) && LeftController.SecondaryPress,
                 Creality.Right => (RightController != null) && RightController.SecondaryPress,
-                _ => (RightController != null) ? RightController.SecondaryPress : (false || (LeftController != null)) && LeftController.SecondaryPress,
+                _ => ((RightController != null) && RightController.SecondaryPress) || ((RightController != null) && RightController.SecondaryPress),
             };
         }
 

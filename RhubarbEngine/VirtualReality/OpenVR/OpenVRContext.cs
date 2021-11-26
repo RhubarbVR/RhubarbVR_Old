@@ -17,8 +17,8 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 {
 	internal class OpenVRContext : VRContext
 	{
-		private readonly CVRSystem _vrSystem;
-		private readonly CVRCompositor _compositor;
+		public readonly CVRSystem VRSystem;
+		public readonly CVRCompositor Compositor;
 		private readonly OpenVRMirrorTexture _mirrorTexture;
 		private readonly VRContextOptions _options;
         private string _deviceName;
@@ -115,13 +115,13 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			_options = options;
 			var initError = EVRInitError.None;
 
-			_vrSystem = OVR.Init(ref initError, e, OVR.k_pch_SteamVR_NeverKillProcesses_Bool + "true");
+			VRSystem = OVR.Init(ref initError, e, OVR.k_pch_SteamVR_NeverKillProcesses_Bool + "true");
 			if (initError != EVRInitError.None)
 			{
 				throw new VeldridException($"Failed to initialize OpenVR: {OVR.GetStringForHmdError(initError)}");
 			}
-			_compositor = OVR.Compositor;
-			if (_compositor == null)
+			Compositor = OVR.Compositor;
+			if (Compositor == null)
 			{
 				throw new VeldridException("Failed to access the OpenVR Compositor.");
 			}
@@ -158,8 +158,8 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 		public SteamVRController controllerOne;
 
 		public SteamVRController controllerTwo;
-		ulong _leftHandle = 0;
-		ulong _rightHandle = 0;
+		public ulong leftHandle = 0;
+		public ulong rightHandle = 0;
 
 		private SteamVRController SetupSteamVRController(string divisenamen, uint devicetackindex)
 		{
@@ -169,9 +169,9 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 				case ETrackedControllerRole.Invalid:
 					break;
 				case ETrackedControllerRole.LeftHand:
-					return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Left, _leftHandle);
+					return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Left, leftHandle);
 				case ETrackedControllerRole.RightHand:
-					return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Right, _rightHandle);
+					return new SteamVRController(this, divisenamen, devicetackindex, Input.Creality.Right, rightHandle);
 				case ETrackedControllerRole.OptOut:
 					break;
 				case ETrackedControllerRole.Max:
@@ -186,10 +186,10 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 		{
 			controllerOne = null;
 			controllerTwo = null;
-			OVR.Input.GetInputSourceHandle("/user/hand/left", ref _leftHandle);
-			OVR.Input.GetInputSourceHandle("/user/hand/right", ref _rightHandle);
+			OVR.Input.GetInputSourceHandle("/user/hand/left", ref leftHandle);
+			OVR.Input.GetInputSourceHandle("/user/hand/right", ref rightHandle);
 
-            Console.WriteLine($"Left: {_leftHandle} Right: {_rightHandle}");
+            Console.WriteLine($"Left: {leftHandle} Right: {rightHandle}");
 			for (uint i = 0; i < OVR.k_unMaxTrackedDeviceCount; i++)
 			{
 				var device = OVR.System.GetTrackedDeviceClass(i);
@@ -264,7 +264,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 			var sb = new StringBuilder(512);
 			var error = ETrackedPropertyError.TrackedProp_Success;
-			_vrSystem.GetStringTrackedDeviceProperty(
+			VRSystem.GetStringTrackedDeviceProperty(
 				OVR.k_unTrackedDeviceIndex_Hmd,
 				ETrackedDeviceProperty.Prop_TrackingSystemName_String,
 				sb,
@@ -275,19 +275,19 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 
 			uint eyeWidth = 0;
 			uint eyeHeight = 0;
-			_vrSystem.GetRecommendedRenderTargetSize(ref eyeWidth, ref eyeHeight);
+			VRSystem.GetRecommendedRenderTargetSize(ref eyeWidth, ref eyeHeight);
 
 			_leftEyeFB = CreateFramebuffer(eyeWidth, eyeHeight);
 			_rightEyeFB = CreateFramebuffer(eyeWidth, eyeHeight);
 
-			var eyeToHeadLeft = ToSysMatrix(_vrSystem.GetEyeToHeadTransform(EVREye.Eye_Left));
+			var eyeToHeadLeft = ToSysMatrix(VRSystem.GetEyeToHeadTransform(EVREye.Eye_Left));
 			Matrix4x4.Invert(eyeToHeadLeft, out _headToEyeLeft);
 
-			var eyeToHeadRight = ToSysMatrix(_vrSystem.GetEyeToHeadTransform(EVREye.Eye_Right));
+			var eyeToHeadRight = ToSysMatrix(VRSystem.GetEyeToHeadTransform(EVREye.Eye_Right));
 			Matrix4x4.Invert(eyeToHeadRight, out _headToEyeRight);
 
-			_projLeft = ToSysMatrix(_vrSystem.GetProjectionMatrix(EVREye.Eye_Left, 0.1f, 1000f));
-			_projRight = ToSysMatrix(_vrSystem.GetProjectionMatrix(EVREye.Eye_Right, 0.1f, 1000f));
+			_projLeft = ToSysMatrix(VRSystem.GetProjectionMatrix(EVREye.Eye_Left, 0.1f, 1000f));
+			_projRight = ToSysMatrix(VRSystem.GetProjectionMatrix(EVREye.Eye_Right, 0.1f, 1000f));
 
 
 			try
@@ -340,7 +340,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			{
 				return default;
 			}
-			var compositorError = _compositor.WaitGetPoses(_devicePoses, Array.Empty<TrackedDevicePose_t>());
+			var compositorError = Compositor.WaitGetPoses(_devicePoses, Array.Empty<TrackedDevicePose_t>());
 			if (compositorError != EVRCompositorError.None)
 			{
 				throw new Exception($"Failed to WaitGetPoses from OpenVR: {compositorError}");
@@ -369,7 +369,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 		public bool PollNextEvent(ref VREvent_t pEvent)
 		{
 			var size = (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VREvent_t));
-			return _vrSystem.PollNextEvent(ref pEvent, size);
+			return VRSystem.PollNextEvent(ref pEvent, size);
 		}
 
 		public override void SubmitFrame()
@@ -383,7 +383,7 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 			{
 				if (_vrevent.eventType == 700)
 				{
-					_vrSystem.AcknowledgeQuit_Exiting();
+					VRSystem.AcknowledgeQuit_Exiting();
 					Dispose();
 					return;
 				}
@@ -401,8 +401,8 @@ namespace RhubarbEngine.VirtualReality.OpenVR
 				glInfo.FlushAndFinish();
 			}
 			UpdateInput();
-			SubmitTexture(_compositor, LeftEyeFramebuffer.ColorTargets[0].Target, EVREye.Eye_Left);
-			SubmitTexture(_compositor, RightEyeFramebuffer.ColorTargets[0].Target, EVREye.Eye_Right);
+			SubmitTexture(Compositor, LeftEyeFramebuffer.ColorTargets[0].Target, EVREye.Eye_Left);
+			SubmitTexture(Compositor, RightEyeFramebuffer.ColorTargets[0].Target, EVREye.Eye_Right);
 		}
 
 		public override void RenderMirrorTexture(CommandList cl, Framebuffer fb, MirrorTextureEyeSource source)
