@@ -353,19 +353,19 @@ namespace RhubarbEngine.Input
 			return true;
 		}
 
-		private void ProssecesHitPoint(Vector3d pos, Vector3d normal,bool ovride = false)
+		private void ProssecesHitPoint(Vector3 pos, Vector3 normal,bool ovride = false)
 		{
             if (ovride)
             {
                 Pos = pos;
                 Normal = normal;
-                OnHit?.Invoke(pos, normal, (pos == Vector3d.Zero) && (normal == Vector3d.Zero));
+                OnHit?.Invoke(pos, normal, (pos == Vector3.Zero) && (normal == Vector3.Zero));
             }
             else if (!IsLocked)
             {
                 Pos = pos;
                 Normal = normal;
-                OnHit?.Invoke(pos, normal, (pos == Vector3d.Zero) && (normal == Vector3d.Zero));
+                OnHit?.Invoke(pos, normal, (pos == Vector3.Zero) && (normal == Vector3.Zero));
             }
         }
 
@@ -382,12 +382,12 @@ namespace RhubarbEngine.Input
             _grabSlider = _lastDistance;
         }
 
-		public delegate void ProssecesHitPointAction(Vector3d pos, Vector3d normal, bool Hide);
+		public delegate void ProssecesHitPointAction(Vector3 pos, Vector3 normal, bool Hide);
 
 		public event ProssecesHitPointAction OnHit;
 
-		public Vector3d Pos { get; private set; }
-		public Vector3d Normal { get; private set; }
+		public Vector3 Pos { get; private set; }
+		public Vector3 Normal { get; private set; }
 
 		public bool IsLocked { get; private set; }
 
@@ -450,7 +450,9 @@ namespace RhubarbEngine.Input
 
         private float _grabSlider = 10;
 
-		public void SendRayCast(Vector3 _sourcse, Vector3 deriction)
+        public Vector3 Distination { get; private set; }
+
+        public void SendRayCast(Vector3 _sourcse, Vector3 deriction)
 		{
 			var dist = _maxDistinatains;
 
@@ -485,7 +487,8 @@ namespace RhubarbEngine.Input
 			}
 			else
 			{ _activelySnapping = false; }
-			ProsscesRayTestHit(smoothedSourcse, (smoothedDeriction * dist) + smoothedSourcse, smoothedDeriction);
+            Distination = (smoothedDeriction * dist) + smoothedSourcse;
+            ProsscesRayTestHit(smoothedSourcse, Distination, smoothedDeriction);
             if (IsLocked)
             {
                 if(_grabSlider < 0.1f)
@@ -497,7 +500,7 @@ namespace RhubarbEngine.Input
                     _grabSlider += Input.MainWindows.FrameSnapshot.WheelDelta / 3;
                 }
                 var point = smoothedSourcse + (smoothedDeriction * _grabSlider);
-                ProssecesHitPoint(new Vector3d(point.X, point.Y, point.Z), -new Vector3d(smoothedDeriction.X, smoothedDeriction.Y, smoothedDeriction.Z),true);
+                ProssecesHitPoint(new Vector3(point.X, point.Y, point.Z), -new Vector3(smoothedDeriction.X, smoothedDeriction.Y, smoothedDeriction.Z),true);
             }
         }
 
@@ -598,7 +601,7 @@ namespace RhubarbEngine.Input
             eworld.PhysicsWorld.RayTest(sourcse, destination, cb);
             if (cb.HasHit)
             {
-                ProssecesHitPoint(new Vector3d(cb.HitPointWorld.X, cb.HitPointWorld.Y, cb.HitPointWorld.Z), new Vector3d(cb.HitNormalWorld.X, cb.HitNormalWorld.Y, cb.HitNormalWorld.Z));
+                ProssecesHitPoint(new Vector3(cb.HitPointWorld.X, cb.HitPointWorld.Y, cb.HitPointWorld.Z), new Vector3(cb.HitNormalWorld.X, cb.HitNormalWorld.Y, cb.HitNormalWorld.Z));
                 var type = cb.CollisionObject.UserObject.GetType();
                 if (type == typeof(InputPlane))
                 {

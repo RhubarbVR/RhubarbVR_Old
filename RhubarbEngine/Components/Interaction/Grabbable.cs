@@ -33,7 +33,7 @@ namespace RhubarbEngine.Components.Interaction
 
 		public SyncRef<GrabbableHolder> grabbableHolder;
 
-		Vector3d _offset;
+		Vector3 _offset;
 
 		public bool LaserGrabbed;
 
@@ -98,22 +98,22 @@ namespace RhubarbEngine.Components.Interaction
 
             if (LaserGrabbed && (grabbableHolder.Target != null))
 			{
-				var newpos = Vector3d.Zero;
+				var newpos = Vector3.Zero;
 				switch (grabbableHolder.Target.source.Value)
 				{
 					case InteractionSource.LeftLaser:
-						newpos = Input.LeftLaser.Pos - _offset;
+						newpos = new Vector3(Input.LeftLaser.Pos.X, Input.LeftLaser.Pos.Y, Input.LeftLaser.Pos.Z) - _offset;
 						break;
 					case InteractionSource.RightLaser:
-						newpos = Input.RightLaser.Pos - _offset;
+						newpos = new Vector3(Input.RightLaser.Pos.X, Input.RightLaser.Pos.Y, Input.RightLaser.Pos.Z) - _offset;
 						break;
 					case InteractionSource.HeadLaser:
-						newpos = Input.RightLaser.Pos - _offset;
+						newpos = new Vector3(Input.RightLaser.Pos.X, Input.RightLaser.Pos.Y, Input.RightLaser.Pos.Z) - _offset;
 						break;
 					default:
 						break;
 				}
-				Entity.SetGlobalPos(new Vector3f(newpos.x, newpos.y, newpos.z));
+				Entity.SetGlobalPos(new Vector3f(newpos.X, newpos.Y, newpos.Z));
 			}
 
 		}
@@ -212,25 +212,25 @@ namespace RhubarbEngine.Components.Interaction
 			LaserGrabbed = Laser;
 			if (LaserGrabbed)
 			{
-				var laserpos = Vector3d.Zero;
+				var laserpos = Vector3.Zero;
 				switch (obj.source.Value)
 				{
 					case InteractionSource.LeftLaser:
-						laserpos = Input.LeftLaser.Pos;
+						laserpos = new Vector3(Input.LeftLaser.Pos.X, Input.LeftLaser.Pos.Y, Input.LeftLaser.Pos.Z);
 						Input.LeftLaser.Lock();
 						break;
 					case InteractionSource.RightLaser:
-						laserpos = Input.RightLaser.Pos;
+						laserpos = new Vector3(Input.RightLaser.Pos.X, Input.RightLaser.Pos.Y, Input.RightLaser.Pos.Z);
 						Input.RightLaser.Lock();
 						break;
 					case InteractionSource.HeadLaser:
-						laserpos = Input.RightLaser.Pos;
+						laserpos = new Vector3(Input.RightLaser.Pos.X, Input.RightLaser.Pos.Y, Input.RightLaser.Pos.Z);
 						Input.RightLaser.Lock();
 						break;
 					default:
 						break;
 				}
-				_offset = laserpos - Entity.GlobalPos();
+				_offset = laserpos - Entity.GlobalPos().ToSystemNumrics();
 			}
 			Entity.Manager = World.LocalUser;
 			grabbableHolder.Target = obj;
