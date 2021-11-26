@@ -15,7 +15,7 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-	public class EnumSyncObserver : UIWidget, IObserver
+	public class EnumSyncObserver : UIWidget, IPropertiesElement
 	{
 		public Sync<string> fieldName;
 
@@ -40,7 +40,7 @@ namespace RhubarbEngine.Components.ImGUI
 	}
 
 	[Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
-	public class EnumSyncObserver<T> : EnumSyncObserver, IObserver where T : struct, System.Enum
+	public class EnumSyncObserver<T> : EnumSyncObserver, IPropertiesElement where T : struct, System.Enum
 	{
 
 		public EnumSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

@@ -34,7 +34,7 @@ namespace RNumerics
 		{
 			Graph = new DGraph2();
 
-			double cellSize = boundsHint.MaxDim / 64;
+            var cellSize = boundsHint.MaxDim / 64;
 			PointHash = new PointHashGrid2d<int>(cellSize, -1);
 		}
 
@@ -45,7 +45,7 @@ namespace RNumerics
 		/// </summary>
 		public void Insert(Vector2d a, Vector2d b, int gid = -1)
 		{
-			insert_segment(a, b, gid);
+			Insert_segment(a, b, gid);
 		}
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace RNumerics
 		/// </summary>
 		public void Insert(Segment2d segment, int gid = -1)
 		{
-			insert_segment(segment.P0, segment.P1, gid);
+			Insert_segment(segment.P0, segment.P1, gid);
 		}
 
 		/// <summary>
@@ -61,12 +61,12 @@ namespace RNumerics
 		/// </summary>
 		public void Insert(PolyLine2d pline, int gid = -1)
 		{
-			int N = pline.VertexCount - 1;
-			for (int i = 0; i < N; ++i)
+            var N = pline.VertexCount - 1;
+			for (var i = 0; i < N; ++i)
 			{
-				Vector2d a = pline[i];
-				Vector2d b = pline[i + 1];
-				insert_segment(a, b, gid);
+                var a = pline[i];
+                var b = pline[i + 1];
+				Insert_segment(a, b, gid);
 			}
 		}
 
@@ -75,12 +75,12 @@ namespace RNumerics
 		/// </summary>
 		public void Insert(Polygon2d poly, int gid = -1)
 		{
-			int N = poly.VertexCount;
-			for (int i = 0; i < N; ++i)
+            var N = poly.VertexCount;
+			for (var i = 0; i < N; ++i)
 			{
-				Vector2d a = poly[i];
-				Vector2d b = poly[(i + 1) % N];
-				insert_segment(a, b, gid);
+                var a = poly[i];
+                var b = poly[(i + 1) % N];
+				Insert_segment(a, b, gid);
 			}
 		}
 
@@ -97,17 +97,19 @@ namespace RNumerics
 		/// </summary>
 		public void ConnectOpenBoundaries(double distThresh)
 		{
-			int max_vid = Graph.MaxVertexID;
-			for (int vid = 0; vid < max_vid; ++vid)
+            var max_vid = Graph.MaxVertexID;
+			for (var vid = 0; vid < max_vid; ++vid)
 			{
 				if (Graph.IsBoundaryVertex(vid) == false)
-					continue;
+                {
+                    continue;
+                }
 
-				Vector2d v = Graph.GetVertex(vid);
-				int snap_with = find_nearest_boundary_vertex(v, distThresh, vid);
+                var v = Graph.GetVertex(vid);
+                var snap_with = Find_nearest_boundary_vertex(v, distThresh, vid);
 				if (snap_with != -1)
 				{
-					Vector2d v2 = Graph.GetVertex(snap_with);
+                    var v2 = Graph.GetVertex(snap_with);
 					Insert(v, v2);
 				}
 			}
@@ -128,37 +130,39 @@ namespace RNumerics
 		/// <summary>
 		/// insert edge [a,b] into the arrangement, splitting existing edges as necessary
 		/// </summary>
-		protected bool insert_segment(ref Vector2d a, ref Vector2d b, int gid = -1, double tol = 0)
+		protected bool Insert_segment(ref Vector2d a, ref Vector2d b, int gid = -1, double tol = 0)
 		{
-			// handle degenerate edges
-			int a_idx = find_existing_vertex(a);
-			int b_idx = find_existing_vertex(b);
+            // handle degenerate edges
+            var a_idx = Find_existing_vertex(a);
+            var b_idx = Find_existing_vertex(b);
 			if (a_idx == b_idx && a_idx >= 0)
-				return false;
+            {
+                return false;
+            }
 
-			// ok find all intersections
-			List<Intersection> hits = new List<Intersection>();
-			find_intersecting_edges(ref a, ref b, hits, tol);
-			int N = hits.Count;
+            // ok find all intersections
+            var hits = new List<Intersection>();
+			Find_intersecting_edges(ref a, ref b, hits, tol);
+            var N = hits.Count;
 
-			// we are going to construct a list of <t,vertex_id> values along segment AB
-			List<SegmentPoint> points = new List<SegmentPoint>();
-			Segment2d segAB = new Segment2d(a, b);
+            // we are going to construct a list of <t,vertex_id> values along segment AB
+            var points = new List<SegmentPoint>();
+            var segAB = new Segment2d(a, b);
 
 			// insert intersections into existing segments
-			for (int i = 0; i < N; ++i)
+			for (var i = 0; i < N; ++i)
 			{
-				Intersection intr = hits[i];
-				int eid = intr.eid;
+                var intr = hits[i];
+                var eid = intr.eid;
 				double t0 = intr.intr.Parameter0, t1 = intr.intr.Parameter1;
 
-				// insert first point at t0
-				int new_eid = -1;
-				if (intr.intr.Type == IntersectionType.Point || intr.intr.Type == IntersectionType.Segment)
+                // insert first point at t0
+                var new_eid = -1;
+                if (intr.intr.Type is IntersectionType.Point or IntersectionType.Segment)
 				{
-					Index2i new_info = split_segment_at_t(eid, t0, VertexSnapTol);
+                    var new_info = Split_segment_at_t(eid, t0, VertexSnapTol);
 					new_eid = new_info.b;
-					Vector2d v = Graph.GetVertex(new_info.a);
+                    var v = Graph.GetVertex(new_info.a);
 					points.Add(new SegmentPoint() { t = segAB.Project(v), vid = new_info.a });
 				}
 
@@ -167,22 +171,22 @@ namespace RNumerics
 				{
 					if (new_eid == -1)
 					{
-						// did not actually split edge for t0, so we can still use eid
-						Index2i new_info = split_segment_at_t(eid, t1, VertexSnapTol);
-						Vector2d v = Graph.GetVertex(new_info.a);
+                        // did not actually split edge for t0, so we can still use eid
+                        var new_info = Split_segment_at_t(eid, t1, VertexSnapTol);
+                        var v = Graph.GetVertex(new_info.a);
 						points.Add(new SegmentPoint() { t = segAB.Project(v), vid = new_info.a });
 
 					}
 					else
 					{
-						// find t1 was in eid, rebuild in new_eid
-						Segment2d new_seg = Graph.GetEdgeSegment(new_eid);
-						Vector2d p1 = intr.intr.Segment1.PointAt(t1);
-						double new_t1 = new_seg.Project(p1);
+                        // find t1 was in eid, rebuild in new_eid
+                        var new_seg = Graph.GetEdgeSegment(new_eid);
+                        var p1 = intr.intr.Segment1.PointAt(t1);
+                        var new_t1 = new_seg.Project(p1);
 						Util.gDevAssert(new_t1 <= Math.Abs(new_seg.Extent));
 
-						Index2i new_info = split_segment_at_t(new_eid, new_t1, VertexSnapTol);
-						Vector2d v = Graph.GetVertex(new_info.a);
+                        var new_info = Split_segment_at_t(new_eid, new_t1, VertexSnapTol);
+                        var v = Graph.GetVertex(new_info.a);
 						points.Add(new SegmentPoint() { t = segAB.Project(v), vid = new_info.a });
 					}
 
@@ -192,15 +196,21 @@ namespace RNumerics
 
 			// find or create start and end points
 			if (a_idx == -1)
-				a_idx = find_existing_vertex(a);
-			if (a_idx == -1)
+            {
+                a_idx = Find_existing_vertex(a);
+            }
+
+            if (a_idx == -1)
 			{
 				a_idx = Graph.AppendVertex(a);
 				PointHash.InsertPointUnsafe(a_idx, a);
 			}
 			if (b_idx == -1)
-				b_idx = find_existing_vertex(b);
-			if (b_idx == -1)
+            {
+                b_idx = Find_existing_vertex(b);
+            }
+
+            if (b_idx == -1)
 			{
 				b_idx = Graph.AppendVertex(b);
 				PointHash.InsertPointUnsafe(b_idx, b);
@@ -210,28 +220,35 @@ namespace RNumerics
 			points.Add(new SegmentPoint() { t = segAB.Project(a), vid = a_idx });
 			points.Add(new SegmentPoint() { t = segAB.Project(b), vid = b_idx });
 			// sort by t
-			points.Sort((pa, pb) => { return (pa.t < pb.t) ? -1 : ((pa.t > pb.t) ? 1 : 0); });
+			points.Sort((pa, pb) => (pa.t < pb.t) ? -1 : ((pa.t > pb.t) ? 1 : 0));
 
 			// connect sequential points, as long as they aren't the same point,
 			// and the segment doesn't already exist
-			for (int k = 0; k < points.Count - 1; ++k)
+			for (var k = 0; k < points.Count - 1; ++k)
 			{
-				int v0 = points[k].vid;
-				int v1 = points[k + 1].vid;
+                var v0 = points[k].vid;
+                var v1 = points[k + 1].vid;
 				if (v0 == v1)
-					continue;
-				if (Math.Abs(points[k].t - points[k + 1].t) < MathUtil.Epsilonf)
-					System.Console.WriteLine("insert_segment: different points with same t??");
+                {
+                    continue;
+                }
 
-				if (Graph.FindEdge(v0, v1) == DGraph2.InvalidID)
-					Graph.AppendEdge(v0, v1, gid);
-			}
+                if (Math.Abs(points[k].t - points[k + 1].t) < MathUtil.Epsilonf)
+                {
+                    System.Console.WriteLine("insert_segment: different points with same t??");
+                }
+
+                if (Graph.FindEdge(v0, v1) == DGraph2.InvalidID)
+                {
+                    Graph.AppendEdge(v0, v1, gid);
+                }
+            }
 
 			return true;
 		}
-		protected bool insert_segment(Vector2d a, Vector2d b, int gid = -1, double tol = 0)
+		protected bool Insert_segment(Vector2d a, Vector2d b, int gid = -1, double tol = 0)
 		{
-			return insert_segment(ref a, ref b, gid, tol);
+			return Insert_segment(ref a, ref b, gid, tol);
 		}
 
 
@@ -240,79 +257,77 @@ namespace RNumerics
 		/// insert new point into segment eid at parameter value t
 		/// If t is within tol of endpoint of segment, we use that instead.
 		/// </summary>
-		protected Index2i split_segment_at_t(int eid, double t, double tol)
+		protected Index2i Split_segment_at_t(int eid, double t, double tol)
 		{
-			Index2i ev = Graph.GetEdgeV(eid);
-			Segment2d seg = new Segment2d(Graph.GetVertex(ev.a), Graph.GetVertex(ev.b));
+            var ev = Graph.GetEdgeV(eid);
+            var seg = new Segment2d(Graph.GetVertex(ev.a), Graph.GetVertex(ev.b));
+            
+            int use_vid;
+            var new_eid = -1;
+            if (t < -(seg.Extent - tol))
+            {
+                use_vid = ev.a;
+            }
+            else if (t > (seg.Extent - tol))
+            {
+                use_vid = ev.b;
+            }
+            else
+            {
+                var result = Graph.SplitEdge(eid, out var splitInfo);
+                if (result != MeshResult.Ok)
+                {
+                    throw new Exception("insert_into_segment: edge split failed?");
+                }
 
-			int use_vid = -1;
-			int new_eid = -1;
-			if (t < -(seg.Extent - tol))
-			{
-				use_vid = ev.a;
-			}
-			else if (t > (seg.Extent - tol))
-			{
-				use_vid = ev.b;
-			}
-			else
-			{
-				DGraph2.EdgeSplitInfo splitInfo;
-				MeshResult result = Graph.SplitEdge(eid, out splitInfo);
-				if (result != MeshResult.Ok)
-					throw new Exception("insert_into_segment: edge split failed?");
-				use_vid = splitInfo.vNew;
-				new_eid = splitInfo.eNewBN;
-				Vector2d pt = seg.PointAt(t);
-				Graph.SetVertex(use_vid, pt);
-				PointHash.InsertPointUnsafe(splitInfo.vNew, pt);
-			}
-			return new Index2i(use_vid, new_eid);
+                use_vid = splitInfo.vNew;
+                new_eid = splitInfo.eNewBN;
+                var pt = seg.PointAt(t);
+                Graph.SetVertex(use_vid, pt);
+                PointHash.InsertPointUnsafe(splitInfo.vNew, pt);
+            }
+            return new Index2i(use_vid, new_eid);
 		}
 
 
 		/// <summary>
 		/// find existing vertex at point, if it exists
 		/// </summary>
-		protected int find_existing_vertex(Vector2d pt)
+		protected int Find_existing_vertex(Vector2d pt)
 		{
-			return find_nearest_vertex(pt, VertexSnapTol);
+			return Find_nearest_vertex(pt, VertexSnapTol);
 		}
 		/// <summary>
 		/// find closest vertex, within searchRadius
 		/// </summary>
-		protected int find_nearest_vertex(Vector2d pt, double searchRadius, int ignore_vid = -1)
+		protected int Find_nearest_vertex(Vector2d pt, double searchRadius, int ignore_vid = -1)
 		{
-			KeyValuePair<int, double> found = (ignore_vid == -1) ?
+			var found = (ignore_vid == -1) ?
 				PointHash.FindNearestInRadius(pt, searchRadius,
-							(b) => { return pt.DistanceSquared(Graph.GetVertex(b)); })
+                            (b) => pt.DistanceSquared(Graph.GetVertex(b)))
 							:
 				PointHash.FindNearestInRadius(pt, searchRadius,
-							(b) => { return pt.DistanceSquared(Graph.GetVertex(b)); },
-							(vid) => { return vid == ignore_vid; });
-			if (found.Key == PointHash.InvalidValue)
-				return -1;
-			return found.Key;
-		}
+                            (b) => pt.DistanceSquared(Graph.GetVertex(b)),
+                            (vid) => vid == ignore_vid);
+            return found.Key == PointHash.InvalidValue ? -1 : found.Key;
+        }
 
 
-		/// <summary>
-		/// find nearest boundary vertex, within searchRadius
-		/// </summary>
-		protected int find_nearest_boundary_vertex(Vector2d pt, double searchRadius, int ignore_vid = -1)
+        /// <summary>
+        /// find nearest boundary vertex, within searchRadius
+        /// </summary>
+        protected int Find_nearest_boundary_vertex(Vector2d pt, double searchRadius, int ignore_vid = -1)
 		{
-			KeyValuePair<int, double> found =
+			var found =
 				PointHash.FindNearestInRadius(pt, searchRadius,
-							(b) => { return pt.Distance(Graph.GetVertex(b)); },
-							(vid) => { return Graph.IsBoundaryVertex(vid) == false || vid == ignore_vid; });
-			if (found.Key == PointHash.InvalidValue)
-				return -1;
-			return found.Key;
-		}
+                            (b) => pt.Distance(Graph.GetVertex(b)),
+                            (vid) => Graph.IsBoundaryVertex(vid) == false || vid == ignore_vid);
+            return found.Key == PointHash.InvalidValue ? -1 : found.Key;
+        }
 
 
 
-		protected struct Intersection
+        protected struct Intersection
 		{
 			public int eid;
 			public int sidex;
@@ -323,19 +338,21 @@ namespace RNumerics
 		/// <summary>
 		/// find set of edges in graph that intersect with edge [a,b]
 		/// </summary>
-		protected bool find_intersecting_edges(ref Vector2d a, ref Vector2d b, List<Intersection> hits, double tol = 0)
+		protected bool Find_intersecting_edges(ref Vector2d a, ref Vector2d b, List<Intersection> hits, double tol = 0)
 		{
-			int num_hits = 0;
+			var num_hits = 0;
 			Vector2d x = Vector2d.Zero, y = Vector2d.Zero;
-			foreach (int eid in Graph.EdgeIndices())
+			foreach (var eid in Graph.EdgeIndices())
 			{
 				Graph.GetEdgeV(eid, ref x, ref y);
-				int sidex = Segment2d.WhichSide(ref a, ref b, ref x, tol);
-				int sidey = Segment2d.WhichSide(ref a, ref b, ref y, tol);
+                var sidex = Segment2d.WhichSide(ref a, ref b, ref x, tol);
+                var sidey = Segment2d.WhichSide(ref a, ref b, ref y, tol);
 				if (sidex == sidey && sidex != 0)
-					continue; // both pts on same side
+                {
+                    continue; // both pts on same side
+                }
 
-				IntrSegment2Segment2 intr = new IntrSegment2Segment2(new Segment2d(x, y), new Segment2d(a, b));
+                var intr = new IntrSegment2Segment2(new Segment2d(x, y), new Segment2d(a, b));
 				if (intr.Find())
 				{
 					hits.Add(new Intersection()
@@ -348,7 +365,7 @@ namespace RNumerics
 					num_hits++;
 				}
 			}
-			return (num_hits > 0);
+			return num_hits > 0;
 		}
 
 

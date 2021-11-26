@@ -17,7 +17,7 @@ namespace RhubarbEngine.Components.ImGUI
 {
 
 	[Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
-	public class ColorfSyncObserver : UIWidget, IObserver
+	public class ColorfSyncObserver : UIWidget, IPropertiesElement
 	{
 		public Sync<string> fieldName;
 
@@ -65,7 +65,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (source != null)
 			{
-				var type = source.Referencer.Target?.GetType();
+				var type = source.HolderReferen?.GetType();
 				if (typeof(Sync<Colorf>).IsAssignableFrom(type))
 				{
 					Changeboarder = true;
@@ -103,7 +103,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-                    var e = (Sync<Colorf>)source.Referencer.Target;
+                    var e = (Sync<Colorf>)source.HolderReferen;
 					if (target.Target != null)
                     {
                         if (target.Target.Value == e.Value)

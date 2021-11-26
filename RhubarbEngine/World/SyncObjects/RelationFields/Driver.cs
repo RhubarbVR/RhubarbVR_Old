@@ -73,7 +73,14 @@ namespace RhubarbEngine.World
 				_driven.KillDrive();
 			}
 		}
-		public Driver(World _world, IWorldObject _parent) : base(_world, _parent)
+
+        public override void Dispose()
+        {
+            UnLink();
+            base.Dispose();
+        }
+
+        public Driver(World _world, IWorldObject _parent) : base(_world, _parent)
 		{
 
 		}

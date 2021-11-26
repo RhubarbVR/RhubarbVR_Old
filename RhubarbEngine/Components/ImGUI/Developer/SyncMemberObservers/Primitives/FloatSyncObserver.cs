@@ -17,7 +17,7 @@ namespace RhubarbEngine.Components.ImGUI
 {
 
 	[Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
-	public class FloatSyncObserver : UIWidget, IObserver
+	public class FloatSyncObserver : UIWidget, IPropertiesElement
 	{
 		public Sync<string> fieldName;
 
@@ -65,7 +65,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (source != null)
 			{
-				var type = source.Referencer.Target?.GetType();
+				var type = source.HolderReferen?.GetType();
 				if (typeof(IPrimitiveEditable).IsAssignableFrom(type))
 				{
 					Changeboarder = true;
@@ -102,7 +102,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-					var e = (IPrimitiveEditable)source.Referencer.Target;
+					var e = (IPrimitiveEditable)source.HolderReferen;
 					if (target.Target != null)
                     {
                         target.Target.PrimitiveString = e.PrimitiveString;

@@ -15,5 +15,10 @@ namespace RhubarbEngine.World
 		public void Remove(int index);
 
 		public bool TryToAddToSyncList();
-	}
+
+        public event Action<IWorker, int> ElementRemoved;
+        public event Action<IWorker> ElementAdded;
+        public event Action ClearElements;
+
+    }
 }

@@ -16,21 +16,21 @@ namespace RNumerics
 		{
 			// Compute the mean of the points.
 			Origin = Vector3d.Zero;
-			int numPoints = 0;
-			foreach (Vector3d v in points)
+			var numPoints = 0;
+            foreach (var v in points)
 			{
 				Origin += v;
 				numPoints++;
 			}
-			double invNumPoints = (1.0) / numPoints;
+            var invNumPoints = 1.0 / numPoints;
 			Origin *= invNumPoints;
 
 			// Compute the covariance matrix of the points.
 			double sumXX = (double)0, sumXY = (double)0, sumXZ = (double)0;
 			double sumYY = (double)0, sumYZ = (double)0, sumZZ = (double)0;
-			foreach (Vector3d p in points)
+            foreach (var p in points)
 			{
-				Vector3d diff = p - Origin;
+				var diff = p - Origin;
 				sumXX += diff[0] * diff[0];
 				sumXY += diff[0] * diff[1];
 				sumXZ += diff[0] * diff[2];
@@ -46,16 +46,16 @@ namespace RNumerics
 			sumYZ *= invNumPoints;
 			sumZZ *= invNumPoints;
 
-			double[] matrix = new double[] {
+			var matrix = new double[] {
 				sumXX, sumXY, sumXZ,
 				sumXY, sumYY, sumYZ,
 				sumXZ, sumYZ, sumZZ
 			};
 
 			// Setup the eigensolver.
-			SymmetricEigenSolver solver = new SymmetricEigenSolver(3, 4096);
-			int iters = solver.Solve(matrix, SymmetricEigenSolver.SortType.Decreasing);
-			ResultValid = (iters > 0 && iters < SymmetricEigenSolver.NO_CONVERGENCE);
+			var solver = new SymmetricEigenSolver(3, 4096);
+			var iters = solver.Solve(matrix, SymmetricEigenSolver.SortType.Decreasing);
+            ResultValid = iters is > 0 and < SymmetricEigenSolver.NO_CONVERGENCE;
 
 			Normal = new Vector3d(solver.GetEigenvector(2));
 		}

@@ -270,7 +270,7 @@ namespace RhubarbEngine.Components.Rendering
 		private readonly List<ResourceSet> _shadowRS = new();
 		private bool _loaded;
 
-		public override void Render(GraphicsDevice gd, CommandList cl, UBO ubo)
+		public override void Render(GraphicsDevice gd, CommandList cl, UBO ubo, Framebuffer framebuffer)
 		{
 			try
 			{
@@ -279,7 +279,7 @@ namespace RhubarbEngine.Components.Rendering
 			catch { }
 		}
 
-		public override void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo)
+		public override void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo, Framebuffer framebuffer)
 		{
 			try
 			{

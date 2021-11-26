@@ -17,7 +17,7 @@ namespace RhubarbEngine.Components.ImGUI
 {
 
 	[Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
-	public class Vector3dSyncObserver : UIWidget, IObserver
+	public class Vector3dSyncObserver : UIWidget, IPropertiesElement
 	{
 		public Sync<string> fieldName;
 
@@ -65,7 +65,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (source != null)
 			{
-				var type = source.Referencer.Target?.GetType();
+				var type = source.HolderReferen?.GetType();
 				if (typeof(Sync<Vector3d>).IsAssignableFrom(type))
 				{
 					Changeboarder = true;
@@ -102,7 +102,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-					var e = (Sync<Vector3d>)source.Referencer.Target;
+					var e = (Sync<Vector3d>)source.HolderReferen;
 					if (target.Target != null)
                     {
                         target.Target.Value = e.Value;

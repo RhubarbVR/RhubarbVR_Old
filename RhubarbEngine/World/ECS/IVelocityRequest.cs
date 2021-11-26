@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RhubarbEngine.Components.ImGUI
+namespace RhubarbEngine.World.ECS
 {
-	public interface IObserver : IUIElement
-	{
-	}
+    public interface IVelocityRequest
+    {
+    }
 }

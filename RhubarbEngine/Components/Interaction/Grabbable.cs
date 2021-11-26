@@ -25,7 +25,7 @@ using RhubarbEngine.Components.Interaction;
 namespace RhubarbEngine.Components.Interaction
 {
     [Category(new string[] { "Interaction" })]
-    public class Grabbable : Component, IPhysicsDisableder,IVelocityReqwest
+    public class Grabbable : Component, IPhysicsDisabler, IVelocityRequest
 	{
 		public SyncRef<Entity> lastParent;
 
@@ -33,7 +33,7 @@ namespace RhubarbEngine.Components.Interaction
 
 		public SyncRef<GrabbableHolder> grabbableHolder;
 
-		Vector3d _offset;
+		Vector3 _offset;
 
 		public bool LaserGrabbed;
 
@@ -41,7 +41,7 @@ namespace RhubarbEngine.Components.Interaction
         {
             get
             {
-                return (grabbableHolder.Target != null) && (grabbingUser.Target != null);
+                return (grabbableHolder.Target is not null) && (grabbingUser.Target is not null);
             }
         }
 
@@ -55,6 +55,7 @@ namespace RhubarbEngine.Components.Interaction
 			lastParent = new SyncRef<Entity>(this, newRefIds);
 		}
 
+
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
 			base.CommonUpdate(startTime, Frame);
@@ -63,24 +64,56 @@ namespace RhubarbEngine.Components.Interaction
                 return;
             }
 
+            if (Grabbed)
+            {
+                var scaler = 0f;
+                if (Input.MainWindows.GetKey(Veldrid.Key.ShiftLeft))
+                {
+                    scaler += Input.MainWindows.FrameSnapshot.WheelDelta / 3;
+                }
+                if (scaler != 0)
+                {
+                    Entity.scale.Value = Entity.scale.Value + scaler;
+                }
+                var isClickingPrime = false;
+                switch (grabbableHolder.Target.source.Value)
+                {
+                    case InteractionSource.LeftLaser:
+                        isClickingPrime = Input.PrimaryPress(RhubarbEngine.Input.Creality.Left);
+                        break;
+                    case InteractionSource.RightLaser:
+                        isClickingPrime = Input.PrimaryPress(RhubarbEngine.Input.Creality.Right);
+                        break;
+                    case InteractionSource.HeadLaser:
+                        isClickingPrime = Input.MainWindows.GetMouseButton(Veldrid.MouseButton.Left);
+                       break;
+                    default:
+                        break;
+                }
+                if (isClickingPrime)
+                {
+                    Entity.RotateToUpVector(World.UserRoot?.Entity.parent.Target??World.RootEntity);
+                }
+            }
+
             if (LaserGrabbed && (grabbableHolder.Target != null))
 			{
-				var newpos = Vector3d.Zero;
+				var newpos = Vector3.Zero;
 				switch (grabbableHolder.Target.source.Value)
 				{
 					case InteractionSource.LeftLaser:
-						newpos = Input.LeftLaser.Pos - _offset;
+						newpos = new Vector3(Input.LeftLaser.Pos.X, Input.LeftLaser.Pos.Y, Input.LeftLaser.Pos.Z) - _offset;
 						break;
 					case InteractionSource.RightLaser:
-						newpos = Input.RightLaser.Pos - _offset;
+						newpos = new Vector3(Input.RightLaser.Pos.X, Input.RightLaser.Pos.Y, Input.RightLaser.Pos.Z) - _offset;
 						break;
 					case InteractionSource.HeadLaser:
-						newpos = Input.RightLaser.Pos - _offset;
+						newpos = new Vector3(Input.RightLaser.Pos.X, Input.RightLaser.Pos.Y, Input.RightLaser.Pos.Z) - _offset;
 						break;
 					default:
 						break;
 				}
-				Entity.SetGlobalPos(new Vector3f(newpos.x, newpos.y, newpos.z));
+				Entity.SetGlobalPos(new Vector3f(newpos.X, newpos.Y, newpos.Z));
 			}
 
 		}
@@ -154,28 +187,50 @@ namespace RhubarbEngine.Components.Interaction
 			{
 				lastParent.Target = Entity.parent.Target;
 			}
+            if (Laser)
+            {
+                RhubarbEngine.Input.InteractionLaserSource lasere = null;
+                switch (obj.source.Value)
+                {
+                    case InteractionSource.LeftLaser:
+                        lasere = Input.LeftLaser;
+                        break;
+                    case InteractionSource.RightLaser:
+                        lasere = Input.RightLaser;
+                        break;
+                    case InteractionSource.HeadLaser:
+                        lasere = Input.RightLaser;
+                        break;
+                    default:
+                        break;
+                }
+                if (lasere?.IsLocked ?? false)
+                {
+                    return;
+                }
+            }
 			LaserGrabbed = Laser;
 			if (LaserGrabbed)
 			{
-				var laserpos = Vector3d.Zero;
+				var laserpos = Vector3.Zero;
 				switch (obj.source.Value)
 				{
 					case InteractionSource.LeftLaser:
-						laserpos = Input.LeftLaser.Pos;
+						laserpos = new Vector3(Input.LeftLaser.Pos.X, Input.LeftLaser.Pos.Y, Input.LeftLaser.Pos.Z);
 						Input.LeftLaser.Lock();
 						break;
 					case InteractionSource.RightLaser:
-						laserpos = Input.RightLaser.Pos;
+						laserpos = new Vector3(Input.RightLaser.Pos.X, Input.RightLaser.Pos.Y, Input.RightLaser.Pos.Z);
 						Input.RightLaser.Lock();
 						break;
 					case InteractionSource.HeadLaser:
-						laserpos = Input.RightLaser.Pos;
+						laserpos = new Vector3(Input.RightLaser.Pos.X, Input.RightLaser.Pos.Y, Input.RightLaser.Pos.Z);
 						Input.RightLaser.Lock();
 						break;
 					default:
 						break;
 				}
-				_offset = laserpos - Entity.GlobalPos();
+				_offset = laserpos - Entity.GlobalPos().ToSystemNumrics();
 			}
 			Entity.Manager = World.LocalUser;
 			grabbableHolder.Target = obj;

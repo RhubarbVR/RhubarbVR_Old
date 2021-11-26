@@ -58,7 +58,15 @@ namespace RhubarbEngine.World.ECS
 		{
 			get
 			{
-				var retur = _manager.Target ?? (parent.Target?.Manager);
+                User retur;
+                if (_manager.Target is null)
+                {
+                    retur = (parent.Target?.NullableManager);
+                }
+                else
+                {
+                    retur = _manager.Target;
+                }
                 return retur;
 			}
 		}
@@ -79,7 +87,7 @@ namespace RhubarbEngine.World.ECS
 
 		public Sync<RemderLayers> remderlayer;
 
-		public void AddPhysicsDisableder(IPhysicsDisableder physicsDisableder)
+		public void AddPhysicsDisableder(IPhysicsDisabler physicsDisableder)
 		{
 			try
 			{
@@ -126,7 +134,18 @@ namespace RhubarbEngine.World.ECS
             return (Quaternionf)newrotation;
         }
 
-        public void RemovePhysicsDisableder(IPhysicsDisableder physicsDisableder)
+        public void RotateToUpVector(Entity space)
+        {
+            var roatation = GlobalRot();
+            roatation = space.GlobalRotToLocal(roatation);
+            var temp = roatation * roatation.ClosedVector;
+            var forward = new Vector3f(temp.x, 0, temp.z).Normalized;
+            roatation = Quaternionf.LookRotation(forward, Vector3f.AxisY);
+            roatation = space.LocalRotToGlobal(roatation);
+            SetGlobalRot(roatation);
+        }
+
+        public void RemovePhysicsDisableder(IPhysicsDisabler physicsDisableder)
 		{
 			try
 			{
@@ -142,7 +161,7 @@ namespace RhubarbEngine.World.ECS
 		[NoShow]
 		[NoSave]
 		[NoSync]
-		public List<IPhysicsDisableder> physicsDisableders = new();
+		public List<IPhysicsDisabler> physicsDisableders = new();
         [NoShow]
         [NoSave]
         [NoSync]
@@ -244,6 +263,7 @@ namespace RhubarbEngine.World.ECS
             }
 
             OnGrip?.Invoke(holder, laser);
+            parent.Target?.SendGrip(laser, holder, click);
 		}
 
 		public void SendDrop(bool laser, GrabbableHolder holder, bool click = true)
@@ -254,9 +274,10 @@ namespace RhubarbEngine.World.ECS
             }
 
             OnDrop?.Invoke(holder, laser);
-		}
+            parent.Target?.SendDrop(laser, holder, click);
+        }
 
-		public void SendPrimary(bool laser, bool click = true)
+        public void SendPrimary(bool laser, bool click = true)
 		{
 			if (!click)
             {
@@ -264,8 +285,9 @@ namespace RhubarbEngine.World.ECS
             }
 
             OnPrimary?.Invoke(laser);
-		}
-		public void SendSecondary(bool laser, bool click = true)
+            parent.Target?.SendPrimary(laser, click);
+        }
+        public void SendSecondary(bool laser, bool click = true)
 		{
 			if (!click)
             {
@@ -273,7 +295,8 @@ namespace RhubarbEngine.World.ECS
             }
 
             OnSecondary?.Invoke(laser);
-		}
+            parent.Target?.SendSecondary(laser, click);
+        }
         public bool IsEnabled
         {
             get
@@ -443,7 +466,7 @@ namespace RhubarbEngine.World.ECS
             var calc = false;
             foreach (var item in _components)
             {
-                if (typeof(IVelocityReqwest).IsAssignableFrom(item.GetType()))
+                if (typeof(IVelocityRequest).IsAssignableFrom(item.GetType()))
                 {
                     calc = true;
                 }

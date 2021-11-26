@@ -42,7 +42,7 @@ namespace RNumerics
 			Point2 = point2;
 			Tangent2 = tangent2;
 			Fit();
-			set_output();
+			Set_output();
 		}
 
 		// advanced biarc fit with specified d1. Note that d1 can technically be any value, but
@@ -57,32 +57,32 @@ namespace RNumerics
 			Point2 = point2;
 			Tangent2 = tangent2;
 			Fit(d1);
-			set_output();
+			Set_output();
 		}
 
 
-		void set_output()
+		void Set_output()
 		{
-			if (arc1.IsSegment)
+			if (_arc1.IsSegment)
 			{
 				Arc1IsSegment = true;
-				Segment1 = new Segment2d(arc1.P0, arc1.P1);
+				Segment1 = new Segment2d(_arc1.P0, _arc1.P1);
 			}
 			else
 			{
 				Arc1IsSegment = false;
-				Arc1 = get_arc(0);
+				Arc1 = Get_arc(0);
 			}
 
-			if (arc2.IsSegment)
+			if (_arc2.IsSegment)
 			{
 				Arc2IsSegment = true;
-				Segment2 = new Segment2d(arc2.P1, arc2.P0);
+				Segment2 = new Segment2d(_arc2.P1, _arc2.P0);
 			}
 			else
 			{
 				Arc2IsSegment = false;
-				Arc2 = get_arc(1);
+				Arc2 = Get_arc(1);
 			}
 		}
 
@@ -90,17 +90,17 @@ namespace RNumerics
 
 		public double Distance(Vector2d point)
 		{
-			double d0 = (Arc1IsSegment) ?
+			var d0 = (Arc1IsSegment) ?
 				Math.Sqrt(Segment1.DistanceSquared(point)) : Arc1.Distance(point);
-			double d1 = (Arc2IsSegment) ?
+			var d1 = (Arc2IsSegment) ?
 				Math.Sqrt(Segment2.DistanceSquared(point)) : Arc2.Distance(point);
 			return Math.Min(d0, d1);
 		}
 		public Vector2d NearestPoint(Vector2d point)
 		{
-			Vector2d n1 = (Arc1IsSegment) ?
+			var n1 = (Arc1IsSegment) ?
 				Segment1.NearestPoint(point) : Arc1.NearestPoint(point);
-			Vector2d n2 = (Arc2IsSegment) ?
+			var n2 = (Arc2IsSegment) ?
 				Segment2.NearestPoint(point) : Arc2.NearestPoint(point);
 			return (n1.DistanceSquared(point) < n2.DistanceSquared(point)) ? n1 : n2;
 		}
@@ -109,8 +109,8 @@ namespace RNumerics
 		{
 			get
 			{
-				IParametricCurve2d c1 = (Arc1IsSegment) ? (IParametricCurve2d)Segment1 : (IParametricCurve2d)Arc1;
-				IParametricCurve2d c2 = (Arc2IsSegment) ? (IParametricCurve2d)Segment2 : (IParametricCurve2d)Arc2;
+				var c1 = (Arc1IsSegment) ? (IParametricCurve2d)Segment1 : (IParametricCurve2d)Arc1;
+                var c2 = (Arc2IsSegment) ? (IParametricCurve2d)Segment2 : (IParametricCurve2d)Arc2;
 				return new List<IParametricCurve2d>() { c1, c2 };
 			}
 		}
@@ -166,39 +166,48 @@ namespace RNumerics
 		}
 
 
-		Arc arc1, arc2;
+		Arc _arc1, _arc2;
 
-		void set_arc(int i, Arc a)
+		void Set_arc(int i, Arc a)
 		{
 			if (i == 0)
-				arc1 = a;
-			else
-				arc2 = a;
-		}
+            {
+                _arc1 = a;
+            }
+            else
+            {
+                _arc2 = a;
+            }
+        }
 
 
-		Arc2d get_arc(int i)
+		Arc2d Get_arc(int i)
 		{
-			Arc a = (i == 0) ? arc1 : arc2;
-			double start_deg = a.AngleStartR * MathUtil.Rad2Deg;
-			double end_deg = a.AngleEndR * MathUtil.Rad2Deg;
+			var a = (i == 0) ? _arc1 : _arc2;
+			var start_deg = a.AngleStartR * MathUtil.Rad2Deg;
+			var end_deg = a.AngleEndR * MathUtil.Rad2Deg;
 			if (a.PositiveRotation == true)
 			{
-				double tmp = start_deg;
+				var tmp = start_deg;
 				start_deg = end_deg;
 				end_deg = tmp;
 			}
-			Arc2d arc = new Arc2d(a.Center, a.Radius, start_deg, end_deg);
+			var arc = new Arc2d(a.Center, a.Radius, start_deg, end_deg);
 
 			// [RMS] code above does not preserve CW/CCW of arcs. 
 			//  It would be better to fix that. But for now, just check if
 			//  we preserved start and end points, and if not reverse curves.
 			if (i == 0 && arc.SampleT(0.0).DistanceSquared(Point1) > MathUtil.ZeroTolerance)
-				arc.Reverse();
-			if (i == 1 && arc.SampleT(1.0).DistanceSquared(Point2) > MathUtil.ZeroTolerance)
-				arc.Reverse();
+            {
+                arc.Reverse();
+            }
 
-			return arc;
+            if (i == 1 && arc.SampleT(1.0).DistanceSquared(Point2) > MathUtil.ZeroTolerance)
+            {
+                arc.Reverse();
+            }
+
+            return arc;
 		}
 
 
@@ -221,26 +230,26 @@ namespace RNumerics
 		void Fit()
 		{
 			// get inputs
-			Vector2d p1 = Point1;
-			Vector2d p2 = Point2;
+			var p1 = Point1;
+			var p2 = Point2;
 
-			Vector2d t1 = Tangent1;
-			Vector2d t2 = Tangent2;
+			var t1 = Tangent1;
+			var t2 = Tangent2;
 
 			// fit biarc
-			Vector2d v = p2 - p1;
-			double vMagSqr = v.LengthSquared;
+			var v = p2 - p1;
+			var vMagSqr = v.LengthSquared;
 
 			// set d1 equal to d2
-			Vector2d t = t1 + t2;
-			double tMagSqr = t.LengthSquared;
+			var t = t1 + t2;
+			var tMagSqr = t.LengthSquared;
 
 			// original code used 0.0001 here...
-			bool equalTangents = MathUtil.EpsilonEqual(tMagSqr, 4.0, Epsilon);
+			var equalTangents = MathUtil.EpsilonEqual(tMagSqr, 4.0, Epsilon);
 			//var equalTangents = IsEqualEps(tMagSqr, 4.0);
 
-			double vDotT1 = v.Dot(t1);
-			bool perpT1 = MathUtil.EpsilonEqual(vDotT1, 0.0, Epsilon);
+			var vDotT1 = v.Dot(t1);
+			var perpT1 = MathUtil.EpsilonEqual(vDotT1, 0.0, Epsilon);
 			if (equalTangents && perpT1)
 			{
 				// we have two semicircles
@@ -250,37 +259,37 @@ namespace RNumerics
 				FitD1 = FitD2 = double.PositiveInfinity;
 
 				// draw arcs
-				double angle = Math.Atan2(v.y, v.x);
-				Vector2d center1 = p1 + 0.25 * v;
-				Vector2d center2 = p1 + 0.75 * v;
-				double radius = Math.Sqrt(vMagSqr) * 0.25;
-				double cross = v.x * t1.y - v.y * t1.x;
+				var angle = Math.Atan2(v.y, v.x);
+                var center1 = p1 + (0.25 * v);
+				var center2 = p1 + (0.75 * v);
+				var radius = Math.Sqrt(vMagSqr) * 0.25;
+				var cross = (v.x * t1.y) - (v.y * t1.x);
 
-				arc1 = new Arc(center1, radius, angle, angle + Math.PI, (cross < 0));
-				arc1 = new Arc(center2, radius, angle, angle + Math.PI, (cross > 0));
+				_arc1 = new Arc(center1, radius, angle, angle + Math.PI, (cross < 0));
+				_arc1 = new Arc(center2, radius, angle, angle + Math.PI, (cross > 0));
 
 			}
 			else
 			{
-				double vDotT = v.Dot(t);
+				var vDotT = v.Dot(t);
 
-				// [RMS] this was unused in original code...
-				//bool perpT1 = MathUtil.EpsilonEqual(vDotT1, 0, epsilon);
+                // [RMS] this was unused in original code...
+                //bool perpT1 = MathUtil.EpsilonEqual(vDotT1, 0, epsilon);
 
-				double d1 = 0;
-				if (equalTangents)
+                double d1;
+                if (equalTangents)
 				{
 					d1 = vMagSqr / (4 * vDotT1);
 				}
 				else
 				{
-					double denominator = 2.0 - 2.0 * t1.Dot(t2);
-					double discriminant = vDotT * vDotT + denominator * vMagSqr;
+                    var denominator = 2.0 - (2.0 * t1.Dot(t2));
+                    var discriminant = (vDotT * vDotT) + (denominator * vMagSqr);
 					d1 = (Math.Sqrt(discriminant) - vDotT) / denominator;
 				}
 				FitD1 = FitD2 = d1;
 
-				Vector2d joint = p1 + p2 + d1 * (t1 - t2);
+                var joint = p1 + p2 + (d1 * (t1 - t2));
 				joint *= 0.5;
 
 				// construct arcs
@@ -298,25 +307,22 @@ namespace RNumerics
 		void Fit(double d1)
 		{
 
-			Vector2d p1 = Point1;
-			Vector2d p2 = Point2;
+			var p1 = Point1;
+			var p2 = Point2;
 
-			Vector2d t1 = Tangent1;
-			Vector2d t2 = Tangent2;
+			var t1 = Tangent1;
+			var t2 = Tangent2;
 
 			// fit biarc
-			Vector2d v = p2 - p1;
-			double vMagSqr = v.LengthSquared;
+			var v = p2 - p1;
+			var vMagSqr = v.LengthSquared;
 
-			// set d1 equal to d2
-			Vector2d t = t1 + t2;
-			double tMagSqr = t.LengthSquared;
 
-			double vDotT1 = v.Dot(t1);
+            var vDotT1 = v.Dot(t1);
 
-			double vDotT2 = v.Dot(t2);
-			double t1DotT2 = t1.Dot(t2);
-			double denominator = (vDotT2 - d1 * (t1DotT2 - 1.0));
+			var vDotT2 = v.Dot(t2);
+			var t1DotT2 = t1.Dot(t2);
+            var denominator = vDotT2 - (d1 * (t1DotT2 - 1.0));
 
 			if (MathUtil.EpsilonEqual(denominator, 0.0, MathUtil.ZeroTolerancef))
 			{
@@ -325,8 +331,8 @@ namespace RNumerics
 				FitD1 = d1;
 				FitD2 = double.PositiveInfinity;
 
-				Vector2d joint = p1 + d1 * t1;
-				joint += (vDotT2 - d1 * t1DotT2) * t2;
+                var joint = p1 + (d1 * t1);
+                joint += (vDotT2 - (d1 * t1DotT2)) * t2;
 
 				// construct arcs
 				// [TODO] this might not be right for semi-circle...
@@ -336,10 +342,10 @@ namespace RNumerics
 			}
 			else
 			{
-				double d2 = (0.5 * vMagSqr - d1 * vDotT1) / denominator;
-				double invLen = 1.0 / (d1 + d2);
+                var d2 = ((0.5 * vMagSqr) - (d1 * vDotT1)) / denominator;
+				var invLen = 1.0 / (d1 + d2);
 
-				Vector2d joint = (d1 * d2) * (t1 - t2);
+                var joint = d1 * d2 * (t1 - t2);
 				joint += d1 * p2;
 				joint += d2 * p1;
 				joint *= invLen;
@@ -362,31 +368,35 @@ namespace RNumerics
 
 		void SetArcFromEdge(int i, Vector2d p1, Vector2d t1, Vector2d p2, bool fromP1)
 		{
-			Vector2d chord = p2 - p1;
-			Vector2d n1 = new Vector2d(-t1.y, t1.x);
-			double chordDotN1 = chord.Dot(n1);
+			var chord = p2 - p1;
+			var n1 = new Vector2d(-t1.y, t1.x);
+			var chordDotN1 = chord.Dot(n1);
 
 			if (MathUtil.EpsilonEqual(chordDotN1, 0, Epsilon))
 			{
 				// straight line case
-				set_arc(i, new Arc(p1, p2));
+				Set_arc(i, new Arc(p1, p2));
 
 			}
 			else
 			{
-				double radius = chord.LengthSquared / (2.0 * chordDotN1);
-				Vector2d center = p1 + radius * n1;
+				var radius = chord.LengthSquared / (2.0 * chordDotN1);
+                var center = p1 + (radius * n1);
 
-				Vector2d p1Offset = p1 - center;
-				Vector2d p2Offset = p2 - center;
+				var p1Offset = p1 - center;
+				var p2Offset = p2 - center;
 
 				var p1Ang1 = Math.Atan2(p1Offset.y, p1Offset.x);
 				var p2Ang1 = Math.Atan2(p2Offset.y, p2Offset.x);
-				if (p1Offset.x * t1.y - p1Offset.y * t1.x > 0)
-					set_arc(i, new Arc(center, Math.Abs(radius), p1Ang1, p2Ang1, !fromP1));
-				else
-					set_arc(i, new Arc(center, Math.Abs(radius), p1Ang1, p2Ang1, fromP1));
-			}
+                if ((p1Offset.x * t1.y) - (p1Offset.y * t1.x) > 0)
+                {
+                    Set_arc(i, new Arc(center, Math.Abs(radius), p1Ang1, p2Ang1, !fromP1));
+                }
+                else
+                {
+                    Set_arc(i, new Arc(center, Math.Abs(radius), p1Ang1, p2Ang1, fromP1));
+                }
+            }
 		}
 
 

@@ -19,21 +19,21 @@ namespace RNumerics
 			Box = new Box3d(Vector3d.Zero, Vector3d.One);
 
 			// Compute the mean of the points.
-			int numPoints = 0;
-			foreach (Vector3d v in points)
+			var numPoints = 0;
+			foreach (var v in points)
 			{
 				Box.Center += v;
 				numPoints++;
 			}
-			double invNumPoints = (1.0) / numPoints;
+            var invNumPoints = 1.0 / numPoints;
 			Box.Center *= invNumPoints;
 
 			// Compute the covariance matrix of the points.
 			double sumXX = (double)0, sumXY = (double)0, sumXZ = (double)0;
 			double sumYY = (double)0, sumYZ = (double)0, sumZZ = (double)0;
-			foreach (Vector3d p in points)
+			foreach (var p in points)
 			{
-				Vector3d diff = p - Box.Center;
+                var diff = p - Box.Center;
 				sumXX += diff[0] * diff[0];
 				sumXY += diff[0] * diff[1];
 				sumXZ += diff[0] * diff[2];
@@ -42,7 +42,7 @@ namespace RNumerics
 				sumZZ += diff[2] * diff[2];
 			}
 
-			do_solve(sumXX, sumXY, sumXZ, sumYY, sumYZ, sumZZ, invNumPoints);
+			Do_solve(sumXX, sumXY, sumXZ, sumYY, sumYZ, sumZZ, invNumPoints);
 		}
 
 
@@ -54,30 +54,30 @@ namespace RNumerics
 			Box = new Box3d(Vector3d.Zero, Vector3d.One);
 
 			// Compute the mean of the points.
-			int numPoints = 0;
+			var numPoints = 0;
 			double weightSum = 0;
-			IEnumerator<double> weights_itr = weights.GetEnumerator();
-			foreach (Vector3d v in points)
+			var weights_itr = weights.GetEnumerator();
+            foreach (var v in points)
 			{
 				weights_itr.MoveNext();
-				double w = weights_itr.Current;
+				var w = weights_itr.Current;
 				Box.Center += w * v;
 				weightSum += w;
 				numPoints++;
 			}
-			double invWeightDivide = (1.0) / weightSum;
+			var invWeightDivide = 1.0 / weightSum;
 			Box.Center *= invWeightDivide;
 
 			// Compute the covariance matrix of the points.
 			double sumXX = (double)0, sumXY = (double)0, sumXZ = (double)0;
 			double sumYY = (double)0, sumYZ = (double)0, sumZZ = (double)0;
 			weights_itr = weights.GetEnumerator();
-			foreach (Vector3d p in points)
+			foreach (var p in points)
 			{
 				weights_itr.MoveNext();
-				double w = weights_itr.Current;
+				var w = weights_itr.Current;
 				w *= w;
-				Vector3d diff = p - Box.Center;
+				var diff = p - Box.Center;
 				sumXX += w * diff[0] * diff[0];
 				sumXY += w * diff[0] * diff[1];
 				sumXZ += w * diff[0] * diff[2];
@@ -86,12 +86,12 @@ namespace RNumerics
 				sumZZ += w * diff[2] * diff[2];
 			}
 
-			do_solve(sumXX, sumXY, sumXZ, sumYY, sumYZ, sumZZ, invWeightDivide * invWeightDivide);
+			Do_solve(sumXX, sumXY, sumXZ, sumYY, sumYZ, sumZZ, invWeightDivide * invWeightDivide);
 		}
 
 
 
-		void do_solve(double sumXX, double sumXY, double sumXZ, double sumYY, double sumYZ, double sumZZ, double invSumMultiplier)
+		void Do_solve(double sumXX, double sumXY, double sumXZ, double sumYY, double sumYZ, double sumZZ, double invSumMultiplier)
 		{
 			sumXX *= invSumMultiplier;
 			sumXY *= invSumMultiplier;
@@ -100,20 +100,20 @@ namespace RNumerics
 			sumYZ *= invSumMultiplier;
 			sumZZ *= invSumMultiplier;
 
-			double[] matrix = new double[] {
+			var matrix = new double[] {
 				sumXX, sumXY, sumXZ,
 				sumXY, sumYY, sumYZ,
 				sumXZ, sumYZ, sumZZ
 			};
 
 			// Setup the eigensolver.
-			SymmetricEigenSolver solver = new SymmetricEigenSolver(3, 4096);
-			int iters = solver.Solve(matrix, SymmetricEigenSolver.SortType.Increasing);
-			ResultValid = (iters > 0 && iters < SymmetricEigenSolver.NO_CONVERGENCE);
+			var solver = new SymmetricEigenSolver(3, 4096);
+			var iters = solver.Solve(matrix, SymmetricEigenSolver.SortType.Increasing);
+            ResultValid = iters is > 0 and < SymmetricEigenSolver.NO_CONVERGENCE;
 			if (ResultValid)
 			{
 				Box.Extent = new Vector3d(solver.GetEigenvalues());
-				double[] evectors = solver.GetEigenvectors();
+				var evectors = solver.GetEigenvectors();
 				Box.AxisX = new Vector3d(evectors[0], evectors[1], evectors[2]);
 				Box.AxisY = new Vector3d(evectors[3], evectors[4], evectors[5]);
 				Box.AxisZ = new Vector3d(evectors[6], evectors[7], evectors[8]);

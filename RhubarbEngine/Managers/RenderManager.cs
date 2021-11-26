@@ -342,7 +342,7 @@ namespace RhubarbEngine.Managers
 				renderObj.Render(gd, cl, new UBO(
 				proj,
 				view,
-				renderObj.Entity.GlobalTrans()));
+				renderObj.Entity.GlobalTrans()),fb);
 			}
 		}
 

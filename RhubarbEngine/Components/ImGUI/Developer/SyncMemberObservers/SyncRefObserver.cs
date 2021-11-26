@@ -16,7 +16,7 @@ using Veldrid;
 namespace RhubarbEngine.Components.ImGUI
 {
 	[Category("ImGUI/Developer/SyncMemberObservers")]
-	public class SyncRefObserver<T> : SyncRefObserver, IObserver where T : class, IWorldObject
+	public class SyncRefObserver<T> : SyncRefObserver, IPropertiesElement where T : class, IWorldObject
 	{
 
 		public SyncRefObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
@@ -53,7 +53,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (source != null)
 			{
-				var type = source.Referencer.Target?.GetType();
+				var type = source.HolderReferen?.GetType();
 				if (typeof(T).IsAssignableFrom(type))
 				{
 					Changeboarder = true;
@@ -103,12 +103,12 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-					var type = source.Referencer.Target?.GetType();
+					var type = source.HolderReferen?.GetType();
 					if (typeof(T).IsAssignableFrom(type))
 					{
 						if (target.Target != null)
                         {
-                            target.Target.TargetIWorldObject = source.Referencer.Target;
+                            target.Target.TargetIWorldObject = source.HolderReferen;
                         }
 
                         source.Referencer.Target = null;
@@ -118,7 +118,7 @@ namespace RhubarbEngine.Components.ImGUI
 					{
 						if (target.Target != null)
                         {
-                            target.Target.TargetIWorldObject = ((SyncRef<T>)source.Referencer.Target).Target;
+                            target.Target.TargetIWorldObject = ((SyncRef<T>)source.HolderReferen).Target;
                         }
 
                         source.Referencer.Target = null;
@@ -132,7 +132,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 
 
-	public class SyncRefObserver : UIWidget, IObserver
+	public class SyncRefObserver : UIWidget, IPropertiesElement
 	{
 		public Sync<string> fieldName;
 

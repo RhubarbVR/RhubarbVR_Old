@@ -47,17 +47,16 @@ namespace RNumerics
 		public void InsertLine(Line2d line, int insert_edges_id = -1)
 		{
 			if (insert_edges_id == -1)
-				insert_edges_id = InsertedEdgesID;
-			do_split(line, true, insert_edges_id);
+            {
+                insert_edges_id = InsertedEdgesID;
+            }
+
+            Do_split(line, true, insert_edges_id);
 		}
 
+        readonly DVector<int> _edgeSigns = new DVector<int>();
 
-
-
-
-		DVector<int> EdgeSigns = new DVector<int>();
-
-		struct edge_hit
+		struct Edge_hit
 		{
 			public int hit_eid;
 			public Index2i vtx_signs;
@@ -66,29 +65,34 @@ namespace RNumerics
 			public double line_t;
 		}
 
-		List<edge_hit> hits = new List<edge_hit>();
+        readonly List<Edge_hit> _hits = new List<Edge_hit>();
 
-		protected virtual void do_split(Line2d line, bool insert_edges, int insert_gid)
+		protected virtual void Do_split(Line2d line, bool insert_edges, int insert_gid)
 		{
-			if (EdgeSigns.Length < Graph.MaxVertexID)
-				EdgeSigns.resize(Graph.MaxVertexID);
-			foreach (int vid in Graph.VertexIndices())
+			if (_edgeSigns.Length < Graph.MaxVertexID)
+            {
+                _edgeSigns.resize(Graph.MaxVertexID);
+            }
+
+            foreach (var vid in Graph.VertexIndices())
 			{
-				EdgeSigns[vid] = line.WhichSide(Graph.GetVertex(vid), OnVertexTol);
+				_edgeSigns[vid] = line.WhichSide(Graph.GetVertex(vid), OnVertexTol);
 			}
 
 
-			hits.Clear();
-			foreach (int eid in Graph.EdgeIndices())
+			_hits.Clear();
+			foreach (var eid in Graph.EdgeIndices())
 			{
-				Index2i ev = Graph.GetEdgeV(eid);
-				Index2i signs = new Index2i(EdgeSigns[ev.a], EdgeSigns[ev.b]);
+				var ev = Graph.GetEdgeV(eid);
+				var signs = new Index2i(_edgeSigns[ev.a], _edgeSigns[ev.b]);
 				if (signs.a * signs.b > 0)
-					continue;   // both positive or negative, ignore
+                {
+                    continue;   // both positive or negative, ignore
+                }
 
-				edge_hit hit = new edge_hit() { hit_eid = eid, vtx_signs = signs, hit_vid = -1 };
-				Vector2d a = Graph.GetVertex(ev.a);
-				Vector2d b = Graph.GetVertex(ev.b);
+                var hit = new Edge_hit() { hit_eid = eid, vtx_signs = signs, hit_vid = -1 };
+				var a = Graph.GetVertex(ev.a);
+				var b = Graph.GetVertex(ev.b);
 
 				// parallel-edge case (both are zero)
 				if (signs.a == signs.b)
@@ -102,10 +106,10 @@ namespace RNumerics
 						// and duplicate edges will be inserted
 						hit.hit_vid = ev.a;
 						hit.line_t = line.Project(a);
-						hits.Add(hit);
+						_hits.Add(hit);
 						hit.hit_vid = ev.b;
 						hit.line_t = line.Project(b);
-						hits.Add(hit);
+						_hits.Add(hit);
 					}
 					else
 					{
@@ -128,10 +132,13 @@ namespace RNumerics
 				}
 				else
 				{
-					IntrLine2Segment2 intr = new IntrLine2Segment2(line, new Segment2d(a, b));
+					var intr = new IntrLine2Segment2(line, new Segment2d(a, b));
 					if (intr.Find() == false)
-						throw new Exception("GraphSplitter2d.Split: signs are different but ray did not it?");
-					if (intr.IsSimpleIntersection)
+                    {
+                        throw new Exception("GraphSplitter2d.Split: signs are different but ray did not it?");
+                    }
+
+                    if (intr.IsSimpleIntersection)
 					{
 						hit.hit_pos = intr.Point;
 						hit.line_t = intr.Parameter;
@@ -141,70 +148,84 @@ namespace RNumerics
 						throw new Exception("GraphSplitter2d.Split: got parallel edge case!");
 					}
 				}
-				hits.Add(hit);
+				_hits.Add(hit);
 			}
 
 			// sort by increasing ray-t
-			hits.Sort((hit0, hit1) => { return hit0.line_t.CompareTo(hit1.line_t); });
+			_hits.Sort((hit0, hit1) => hit0.line_t.CompareTo(hit1.line_t));
 
 			// insert segments between successive intersection points
-			int N = hits.Count;
-			for (int i = 0; i < N - 1; ++i)
+			var N = _hits.Count;
+			for (var i = 0; i < N - 1; ++i)
 			{
-				int j = i + 1;
+				var j = i + 1;
 				// note: skipping parallel segments depends on this eid == eid test (see above)
-				if (hits[i].line_t == hits[j].line_t || hits[i].hit_eid == hits[j].hit_eid)
-					continue;
+				if (_hits[i].line_t == _hits[j].line_t || _hits[i].hit_eid == _hits[j].hit_eid)
+                {
+                    continue;
+                }
 
-				int vi = hits[i].hit_vid;
-				int vj = hits[j].hit_vid;
+                var vi = _hits[i].hit_vid;
+				var vj = _hits[j].hit_vid;
 				if (vi == vj && vi >= 0)
-					continue;
+                {
+                    continue;
+                }
 
-				if (vi >= 0 && vj >= 0)
+                if (vi >= 0 && vj >= 0)
 				{
-					int existing = Graph.FindEdge(vi, vj);
+					var existing = Graph.FindEdge(vi, vj);
 					if (existing >= 0)
-						continue;
-				}
+                    {
+                        continue;
+                    }
+                }
 
 				if (vi == -1)
 				{
-					DGraph2.EdgeSplitInfo split;
-					var result = Graph.SplitEdge(hits[i].hit_eid, out split);
-					if (result != MeshResult.Ok)
-						throw new Exception("GraphSplitter2d.Split: first edge split failed!");
-					vi = split.vNew;
-					Graph.SetVertex(vi, hits[i].hit_pos);
-					edge_hit tmp = hits[i];
+                    var result = Graph.SplitEdge(_hits[i].hit_eid, out var split);
+                    if (result != MeshResult.Ok)
+                    {
+                        throw new Exception("GraphSplitter2d.Split: first edge split failed!");
+                    }
+
+                    vi = split.vNew;
+					Graph.SetVertex(vi, _hits[i].hit_pos);
+					var tmp = _hits[i];
 					tmp.hit_vid = vi;
-					hits[i] = tmp;
+					_hits[i] = tmp;
 				}
 
 				if (vj == -1)
 				{
-					DGraph2.EdgeSplitInfo split;
-					var result = Graph.SplitEdge(hits[j].hit_eid, out split);
-					if (result != MeshResult.Ok)
-						throw new Exception("GraphSplitter2d.Split: second edge split failed!");
-					vj = split.vNew;
-					Graph.SetVertex(vj, hits[j].hit_pos);
-					edge_hit tmp = hits[j];
+                    var result = Graph.SplitEdge(_hits[j].hit_eid, out var split);
+                    if (result != MeshResult.Ok)
+                    {
+                        throw new Exception("GraphSplitter2d.Split: second edge split failed!");
+                    }
+
+                    vj = split.vNew;
+					Graph.SetVertex(vj, _hits[j].hit_pos);
+					var tmp = _hits[j];
 					tmp.hit_vid = vj;
-					hits[j] = tmp;
+					_hits[j] = tmp;
 				}
 
 				// check if we actually want to add this segment
 				if (InsideTestF != null)
 				{
-					Vector2d midpoint = 0.5 * (Graph.GetVertex(vi) + Graph.GetVertex(vj));
+					var midpoint = 0.5 * (Graph.GetVertex(vi) + Graph.GetVertex(vj));
 					if (InsideTestF(midpoint) == false)
-						continue;
-				}
+                    {
+                        continue;
+                    }
+                }
 
 				if (insert_edges)
-					Graph.AppendEdge(vi, vj, insert_gid);
-			}
+                {
+                    Graph.AppendEdge(vi, vj, insert_gid);
+                }
+            }
 
 
 		}

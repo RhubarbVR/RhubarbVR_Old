@@ -19,33 +19,37 @@ namespace RhubarbEngine.Components.ImGUI
 
 
 	[Category("ImGUI/Developer")]
-	public class EntityObserver : UIWidget, IObserver
+	public class EntityProperties : UIWidget, IPropertiesElement
 	{
 
 		public SyncRef<Entity> target;
 
-		public SyncRefList<IObserver> children;
+		public SyncRefList<IPropertiesElement> children;
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<Entity>(this, newRefIds);
 			target.Changed += Target_Changed;
-			children = new SyncRefList<IObserver>(this, newRefIds);
+			children = new SyncRefList<IPropertiesElement>(this, newRefIds);
 		}
 
-		private void Target_Changed(IChangeable obj)
+        public override void OnAttach()
+        {
+            base.OnAttach();
+            World.lastEntityObserver = this;
+        }
+        private void Target_Changed(IChangeable obj)
 		{
 			if (Entity.Manager != World.LocalUser)
             {
                 return;
             }
-
-            var e = new Thread(BuildView, 1024)
+            var thread = new Thread(BuildView, 1024)
             {
                 Priority = ThreadPriority.BelowNormal
             };
-            e.Start();
+            thread.Start();
 		}
 		private void ClearOld()
 		{
@@ -54,12 +58,13 @@ namespace RhubarbEngine.Components.ImGUI
 				item.Target?.Dispose();
 			}
 			children.Clear();
-		}
-		public EntityObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+            _e?._children.Clear();
+        }
+		public EntityProperties(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}
-		public EntityObserver()
+		public EntityProperties()
 		{
 		}
 		[NoSave]
@@ -89,7 +94,7 @@ namespace RhubarbEngine.Components.ImGUI
 				{
 					if (typeof(IWorker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
 					{
-						var obs = _e.AttachComponent<WorkerObserver>();
+						var obs = _e.AttachComponent<WorkerProperties>();
 						obs.fieldName.Value = field.Name;
                         obs.target.Target = (IWorker)field.GetValue(target.Target);
 						children.Add().Target = obs;

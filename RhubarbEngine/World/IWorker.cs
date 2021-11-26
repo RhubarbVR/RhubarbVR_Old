@@ -48,12 +48,12 @@ namespace RhubarbEngine.World
 
     public class Worker : IWorker
     {
-        private readonly List<IDisposable> _disposables = new();
+        private readonly SynchronizedCollection<IDisposable> _disposables = new();
         public void AddDisposable(IDisposable add)
         {
             try
             {
-                _disposables.Add(add);
+                _disposables.SafeAdd(add);
             }
             catch { }
         }
@@ -172,7 +172,7 @@ namespace RhubarbEngine.World
 
         public virtual void Destroy()
         {
-            Dispose();
+            Task.Run(Dispose);
         }
         public Worker()
         {
@@ -262,6 +262,11 @@ namespace RhubarbEngine.World
 
         public virtual void Dispose()
         {
+            if (IsRemoved)
+            {
+                return;
+            }
+            IsRemoved = true;
             OnRemoved();
             World.RemoveWorldObj(this);
             foreach (var dep in _disposables)
@@ -272,7 +277,6 @@ namespace RhubarbEngine.World
                 }
                 catch { }
             }
-            IsRemoved = true;
             OnDispose?.Invoke(this);
         }
 

@@ -16,7 +16,7 @@ namespace RNumerics
 		[Key(2)]
 		public double z;
 		[IgnoreMember]
-		public double magnitude { get { return Math.Sqrt((x * x) + (y * y) + (z * z)); } }
+		public double Magnitude { get { return Math.Sqrt((x * x) + (y * y) + (z * z)); } }
 
 		public static implicit operator Vector3(Vector3d v)
 		{
@@ -46,7 +46,11 @@ namespace RNumerics
 		public double this[int key]
 		{
 			get { return (key == 0) ? x : (key == 1) ? y : z; }
-			set { if (key == 0) x = value; else if (key == 1) y = value; else z = value; }
+			set { if (key == 0) { x = value; } else if (key == 1) y = value; else
+                {
+                    z = value;
+                }
+            }
 		}
 		[IgnoreMember]
 		public Vector2d xy
@@ -69,7 +73,7 @@ namespace RNumerics
 		[IgnoreMember]
 		public double LengthSquared
 		{
-			get { return x * x + y * y + z * z; }
+            get { return (x * x) + (y * y) + (z * z); }
 		}
 		[IgnoreMember]
 		public double Length
@@ -91,7 +95,7 @@ namespace RNumerics
 		{
 			get { return Math.Min(x, Math.Min(y, z)); }
 		}
-		public static Vector3d bezier(Vector3d a, Vector3d b, Vector3d c, Vector3d d, float t)
+		public static Vector3d Bezier(Vector3d a, Vector3d b, Vector3d c, Vector3d d, float t)
 		{
 			var it = Lerp(b, c, t);
 			return Lerp(Lerp(Lerp(a, b, t), it, t), Lerp(it, Lerp(c, d, t), t), t);
@@ -116,10 +120,10 @@ namespace RNumerics
 
 		public double Normalize(double epsilon = MathUtil.Epsilon)
 		{
-			double length = Length;
+			var length = Length;
 			if (length > epsilon)
 			{
-				double invLength = 1.0 / length;
+				var invLength = 1.0 / length;
 				x *= invLength;
 				y *= invLength;
 				z *= invLength;
@@ -136,25 +140,27 @@ namespace RNumerics
 		{
 			get
 			{
-				double length = Length;
+				var length = Length;
 				if (length > MathUtil.Epsilon)
 				{
-					double invLength = 1.0 / length;
+					var invLength = 1.0 / length;
 					return new Vector3d(x * invLength, y * invLength, z * invLength);
 				}
 				else
-					return Vector3d.Zero;
-			}
+                {
+                    return Vector3d.Zero;
+                }
+            }
 		}
 		[IgnoreMember]
 		public bool IsNormalized
 		{
-			get { return Math.Abs((x * x + y * y + z * z) - 1) < MathUtil.ZeroTolerance; }
+			get { return Math.Abs((x * x) + (y * y) + (z * z) - 1) < MathUtil.ZeroTolerance; }
 		}
 		[IgnoreMember]
 		public bool IsFinite
 		{
-			get { double f = x + y + z; return double.IsNaN(f) == false && double.IsInfinity(f) == false; }
+			get { var f = x + y + z; return double.IsNaN(f) == false && double.IsInfinity(f) == false; }
 		}
 
 		public void Round(int nDecimals)
@@ -167,7 +173,7 @@ namespace RNumerics
 
 		public double Dot(Vector3d v2)
 		{
-			return x * v2.x + y * v2.y + z * v2.z;
+			return (x * v2.x) + (y * v2.y) + (z * v2.z);
 		}
 		public double Dot(ref Vector3d v2)
 		{
@@ -200,7 +206,7 @@ namespace RNumerics
 
 		public Vector3d UnitCross(ref Vector3d v2)
 		{
-			Vector3d n = new Vector3d(
+			var n = new Vector3d(
 				y * v2.z - z * v2.y,
 				z * v2.x - x * v2.z,
 				x * v2.y - y * v2.x);
@@ -215,7 +221,7 @@ namespace RNumerics
 
 		public double AngleD(Vector3d v2)
 		{
-			double fDot = MathUtil.Clamp(Dot(v2), -1, 1);
+			var fDot = MathUtil.Clamp(Dot(v2), -1, 1);
 			return Math.Acos(fDot) * MathUtil.Rad2Deg;
 		}
 		public static double AngleD(Vector3d v1, Vector3d v2)
@@ -224,7 +230,7 @@ namespace RNumerics
 		}
 		public double AngleR(Vector3d v2)
 		{
-			double fDot = MathUtil.Clamp(Dot(v2), -1, 1);
+			var fDot = MathUtil.Clamp(Dot(v2), -1, 1);
 			return Math.Acos(fDot);
 		}
 		public static double AngleR(Vector3d v1, Vector3d v2)
@@ -349,7 +355,7 @@ namespace RNumerics
 		{
 			unchecked // Overflow is fine, just wrap
 			{
-				int hash = (int)2166136261;
+				var hash = (int)2166136261;
 				// Suitable nullity checks etc, of course :)
 				hash = (hash * 16777619) ^ x.GetHashCode();
 				hash = (hash * 16777619) ^ y.GetHashCode();
@@ -383,12 +389,12 @@ namespace RNumerics
 
 		public static Vector3d Lerp(Vector3d a, Vector3d b, double t)
 		{
-			double s = 1 - t;
+			var s = 1 - t;
 			return new Vector3d(s * a.x + t * b.x, s * a.y + t * b.y, s * a.z + t * b.z);
 		}
 		public static Vector3d Lerp(ref Vector3d a, ref Vector3d b, double t)
 		{
-			double s = 1 - t;
+			var s = 1 - t;
 			return new Vector3d(s * a.x + t * b.x, s * a.y + t * b.y, s * a.z + t * b.z);
 		}
 
@@ -439,24 +445,28 @@ namespace RNumerics
 			// product of vectors A and B.
 
 			// compute u0
-			double minLength = u.Normalize();
+			var minLength = u.Normalize();
 
 			// compute u1
-			double dot0 = u.Dot(v);
+			var dot0 = u.Dot(v);
 			v -= dot0 * u;
-			double l = v.Normalize();
+			var l = v.Normalize();
 			if (l < minLength)
-				minLength = l;
+            {
+                minLength = l;
+            }
 
-			// compute u2
-			double dot1 = v.Dot(w);
+            // compute u2
+            var dot1 = v.Dot(w);
 			dot0 = u.Dot(w);
 			w -= dot0 * u + dot1 * v;
 			l = w.Normalize();
 			if (l < minLength)
-				minLength = l;
+            {
+                minLength = l;
+            }
 
-			return minLength;
+            return minLength;
 		}
 
 
@@ -538,8 +548,8 @@ namespace RNumerics
 		{
 			if (n.z < 0.0)
 			{
-				double a = 1.0 / (1.0 - n.z);
-				double b = n.x * n.y * a;
+				var a = 1.0 / (1.0 - n.z);
+				var b = n.x * n.y * a;
 				//b1 = Vec3f(1.0f - n.x * n.x * a, -b, n.x);
 				//b2 = Vec3f(b, n.y * n.y * a - 1.0f, -n.y);
 				b1.x = 1.0f - n.x * n.x * a;
@@ -551,8 +561,8 @@ namespace RNumerics
 			}
 			else
 			{
-				double a = 1.0 / (1.0 + n.z);
-				double b = -n.x * n.y * a;
+				var a = 1.0 / (1.0 + n.z);
+				var b = -n.x * n.y * a;
 				//b1 = Vec3f(1.0 - n.x * n.x * a, b, -n.x);
 				//b2 = Vec3f(b, 1.0 - n.y * n.y * a, -n.y);
 				b1.x = 1.0 - n.x * n.x * a;

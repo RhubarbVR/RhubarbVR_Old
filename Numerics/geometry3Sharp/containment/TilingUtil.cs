@@ -15,27 +15,31 @@ namespace RNumerics
 		public static List<Vector2d> BoundedRegularTiling2(AxisAlignedBox2d element, AxisAlignedBox2d bounds,
 														   double spacing)
 		{
-			Vector2d oshift = -element.Min;
-			double w = element.Width;
-			double h = element.Height;
+            var oshift = -element.Min;
+            var w = element.Width;
+            var h = element.Height;
 
-			int nx = Math.Max(1, (int)(bounds.Width / w));
-			double spacew = (nx - 1) * spacing;
-			while (nx > 1 && bounds.Width - (w * nx + spacew) < 0)
-				nx--;
+            var nx = Math.Max(1, (int)(bounds.Width / w));
+            var spacew = (nx - 1) * spacing;
+			while (nx > 1 && bounds.Width - ((w * nx) + spacew) < 0)
+            {
+                nx--;
+            }
 
-			int ny = Math.Max(1, (int)(bounds.Height / h));
-			double spaceh = (ny - 1) * spacing;
-			while (ny > 1 && bounds.Height - (h * ny + spaceh) < 0)
-				ny--;
+            var ny = Math.Max(1, (int)(bounds.Height / h));
+            var spaceh = (ny - 1) * spacing;
+			while (ny > 1 && bounds.Height - ((h * ny) + spaceh) < 0)
+            {
+                ny--;
+            }
 
-			List<Vector2d> translations = new List<Vector2d>();
-			for (int yi = 0; yi < ny; ++yi)
+            var translations = new List<Vector2d>();
+			for (var yi = 0; yi < ny; ++yi)
 			{
-				double dy = yi * h + yi * spacing;
-				for (int xi = 0; xi < nx; ++xi)
+                var dy = (yi * h) + (yi * spacing);
+				for (var xi = 0; xi < nx; ++xi)
 				{
-					double dx = xi * w + xi * spacing;
+                    var dx = (xi * w) + (xi * spacing);
 					translations.Add(new Vector2d(dx, dy) + oshift + bounds.Min);
 				}
 			}
@@ -55,68 +59,76 @@ namespace RNumerics
 		public static List<Vector2d> BoundedCircleTiling2(AxisAlignedBox2d element, AxisAlignedBox2d bounds,
 															 double spacing)
 		{
-			Vector2d oshift = -element.Min;
-			double w = element.Width;
-			double h = element.Height;
+			var oshift = -element.Min;
+			var w = element.Width;
+			var h = element.Height;
 			if (MathUtil.EpsilonEqual(w, h, MathUtil.Epsilonf) == false)
-				throw new Exception("BoundedHexTiling2: input box is not square");
+            {
+                throw new Exception("BoundedHexTiling2: input box is not square");
+            }
 
-			// note: this is a circle tiling, not a hex tiling, so even though we are
-			// starting in top-left with a "tip" hex, we don't have to offset down so that tip is inside
-			// the box (circle cuts off)
+            // note: this is a circle tiling, not a hex tiling, so even though we are
+            // starting in top-left with a "tip" hex, we don't have to offset down so that tip is inside
+            // the box (circle cuts off)
 
-			double r = w / 2;
-			Hexagon2d hex = new Hexagon2d(element.Center, r, Hexagon2d.TopModes.Tip);
-			hex.InnerRadius = r;
+            var r = w / 2;
+            var hex = new Hexagon2d(element.Center, r, Hexagon2d.TopModes.Tip)
+            {
+                InnerRadius = r
+            };
 
-			double stepx = hex.HorzSpacing;
-			double stepy = hex.VertSpacing;
+            var stepx = hex.HorzSpacing;
+			var stepy = hex.VertSpacing;
 
-			double spacingy = spacing;
-			double spacingx = spacing;
+			var spacingy = spacing;
+			var spacingx = spacing;
 
 			// half-rows on top and bottom add up to full row-height
-			int ny = Math.Max(1, (int)(bounds.Height / stepy));
+			var ny = Math.Max(1, (int)(bounds.Height / stepy));
 			// reduce count so that we fit w/ spacing
-			double spaceh = (ny - 1) * spacingy;
-			while (ny > 1 && bounds.Height - (stepy * ny + spaceh) < 0)
-				ny--;
+			var spaceh = (ny - 1) * spacingy;
+            while (ny > 1 && bounds.Height - ((stepy * ny) + spaceh) < 0)
+            {
+                ny--;
+            }
 
-			// even rows start at x=0
-			int nx_even = Math.Max(1, (int)(bounds.Width / stepx));
+            // even rows start at x=0
+            var nx_even = Math.Max(1, (int)(bounds.Width / stepx));
 			// reduce count if we spill over w/ spacing
-			double spacew = (nx_even - 1) * spacingx;
-			while (nx_even > 1 && bounds.Width - (stepx * nx_even + spacew) < 0)
-				nx_even--;
+			var spacew = (nx_even - 1) * spacingx;
+            while (nx_even > 1 && bounds.Width - ((stepx * nx_even) + spacew) < 0)
+            {
+                nx_even--;
+            }
 
-			// odd rows have an extra half-step added to left side,
-			// so we may need to reduce count
-			int nx_odd = nx_even;
+            // odd rows have an extra half-step added to left side,
+            // so we may need to reduce count
+            var nx_odd = nx_even;
 			spacew = (nx_odd - 1) * spacingx;
-			if (ny > 0 && (stepx * nx_odd + spacew + stepx * 0.5) > bounds.Width)
+            if (ny > 0 && ((stepx * nx_odd) + spacew + (stepx * 0.5)) > bounds.Width)
 			{
 				nx_odd--;
-				spacew = (nx_odd - 1) * spacingx;
+				//spacew = (nx_odd - 1) * spacingx;
 			}
 
 
-			List<Vector2d> translations = new List<Vector2d>();
-			for (int yi = 0; yi < ny; ++yi)
+			var translations = new List<Vector2d>();
+			for (var yi = 0; yi < ny; ++yi)
 			{
-				double dy = yi * stepy + yi * spacingy;
+                var dy = (yi * stepy) + (yi * spacingy);
 
 				// x shift and count are different on odd rows
-				double shiftx = stepx * 0.5;
-				int nx = nx_odd;
+				var shiftx = stepx * 0.5;
+				var nx = nx_odd;
 				if (yi % 2 == 0)
 				{
 					shiftx = 0;
 					nx = nx_even;
 				}
 
-				for (int xi = 0; xi < nx; ++xi)
+				for (var xi = 0; xi < nx; ++xi)
 				{
-					double dx = shiftx + xi * stepx + xi * spacingx;
+                    var dx = shiftx + (xi * stepx) + (xi * spacingx);
 					translations.Add(new Vector2d(dx, dy) + oshift + bounds.Min);
 				}
 			}

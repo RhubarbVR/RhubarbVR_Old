@@ -17,7 +17,7 @@ namespace RhubarbEngine.Components.ImGUI
 {
 
 	[Category("ImGUI/Developer/SyncMemberObservers/Primitives")]
-	public class QuaternionfSyncObserver : UIWidget, IObserver
+	public class QuaternionfSyncObserver : UIWidget, IPropertiesElement
 	{
 		public Sync<string> fieldName;
 
@@ -65,7 +65,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (source != null)
 			{
-				var type = source.Referencer.Target?.GetType();
+				var type = source.HolderReferen?.GetType();
 				if (typeof(Sync<Quaternionf>).IsAssignableFrom(type))
 				{
 					Changeboarder = true;
@@ -103,7 +103,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-					var e = (Sync<Quaternionf>)source.Referencer.Target;
+					var e = (Sync<Quaternionf>)source.HolderReferen;
                     if (target.Target != null)
                     {
                         target.Target.Value = e.Value;

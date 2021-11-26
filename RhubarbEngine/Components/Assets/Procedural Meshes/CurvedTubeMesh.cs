@@ -84,7 +84,7 @@ namespace RhubarbEngine.Components.Assets.Procedural_Meshes
 			for (var i = 0; i < CurveSteps.Value; i++)
 			{
 				var poser = (float)(i) / ((float)CurveSteps.Value - 1);
-				_generator.Vertices.Add(Vector3d.bezier(Vector3d.Zero, StartHandle.Value, EndHandle.Value, Endpoint.Value, poser));
+				_generator.Vertices.Add(Vector3d.Bezier(Vector3d.Zero, StartHandle.Value, EndHandle.Value, Endpoint.Value, poser));
 			}
 		}
 		RMesh _kite;

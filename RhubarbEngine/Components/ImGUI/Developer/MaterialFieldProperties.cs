@@ -20,22 +20,22 @@ namespace RhubarbEngine.Components.ImGUI
 
 
 	[Category("ImGUI/Developer")]
-	public class MaterialFieldObserver : UIWidget, IObserver
+	public class MaterialFieldProperties : UIWidget, IPropertiesElement
 	{
 
 		public SyncRef<MaterialField> target;
 
-		public SyncRef<IObserver> root;
+		public SyncRef<IPropertiesElement> root;
 
-		public SyncRefList<IObserver> children;
+		public SyncRefList<IPropertiesElement> children;
 
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			base.BuildSyncObjs(newRefIds);
 			target = new SyncRef<MaterialField>(this, newRefIds);
 			target.Changed += Target_Changed;
-			root = new SyncRef<IObserver>(this, newRefIds);
-			children = new SyncRefList<IObserver>(this, newRefIds);
+			root = new SyncRef<IPropertiesElement>(this, newRefIds);
+			children = new SyncRefList<IPropertiesElement>(this, newRefIds);
 		}
 
 		private void Target_Changed(IChangeable obj)
@@ -76,7 +76,7 @@ namespace RhubarbEngine.Components.ImGUI
 				{
 					if (typeof(IWorker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
 					{
-						var obs = Entity.AttachComponent<WorkerObserver>();
+						var obs = Entity.AttachComponent<WorkerProperties>();
 						obs.fieldName.Value = field.Name;
 						obs.target.Target = ((IWorker)field.GetValue(target.Target));
 						children.Add().Target = obs;
@@ -87,11 +87,11 @@ namespace RhubarbEngine.Components.ImGUI
 		}
 
 
-		public MaterialFieldObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+		public MaterialFieldProperties(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}
-		public MaterialFieldObserver()
+		public MaterialFieldProperties()
 		{
 		}
 

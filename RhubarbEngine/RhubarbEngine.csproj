@@ -65,6 +65,7 @@
     <PackageReference Include="OpusDotNet" Version="1.0.3" />
     <PackageReference Include="RhubarbBulletSharpNET5" Version="1.0.3" />
     <PackageReference Include="RhuSettings" Version="1.0.0" />
+    <PackageReference Include="SharpText.Core" Version="0.2.0" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="4.8.1" />
     <PackageReference Include="Veldrid.SPIRV" Version="1.0.14" />
 
@@ -74,6 +75,7 @@
     <ProjectReference Include="..\ImguiVeldrid\VeldridImGui.csproj" />
     <ProjectReference Include="..\Numerics\Numerics.csproj" />
     <ProjectReference Include="..\OpenAL.Net\OpenAL.Net.csproj" />
+    <ProjectReference Include="..\SharpText.Veldrid\SharpText.Veldrid.csproj" />
     <ProjectReference Include="..\veldrid\src\Veldrid.ImageSharp\Veldrid.ImageSharp.csproj" />
     <ProjectReference Include="..\veldrid\src\Veldrid.SDL2\Veldrid.SDL2.csproj" />
     <ProjectReference Include="..\veldrid\src\Veldrid.StartupUtilities\Veldrid.StartupUtilities.csproj" />

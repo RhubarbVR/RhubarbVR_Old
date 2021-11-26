@@ -28,38 +28,30 @@ namespace RNumerics
 	/// </summary>
 	public class ConvexHull2
 	{
-		//QueryNumberType mQueryType = QueryNumberType.QT_DOUBLE;
-		IList<Vector2d> mVertices;
-		int mNumVertices;
-
-		int mDimension;
-		int mNumSimplices;
-
-		double mEpsilon;
-
-		Vector2d[] mSVertices;
-		int[] mIndices;
-
-		Query2 mQuery;
-		Vector2d mLineOrigin;
-		Vector2d mLineDirection;
+        //QueryNumberType mQueryType = QueryNumberType.QT_DOUBLE;
+        readonly IList<Vector2d> _mVertices;
+        readonly int _mNumVertices;
+        readonly int _mNumSimplices;
+        readonly double _mEpsilon;
+        readonly Vector2d[] _mSVertices;
+        readonly int[] _mIndices;
+        readonly Query2 _mQuery;
+        private Vector2d _mLineOrigin;
+        private Vector2d _mLineDirection;
 
 
-		/*
+        /*
          * Outputs
          */
 
-		public int Dimension
-		{
-			get { return mDimension; }
-		}
+        public int Dimension { get; }
 
-		/// <summary>
-		/// Number of convex polygon edges
-		/// </summary>
-		public int NumSimplices
+        /// <summary>
+        /// Number of convex polygon edges
+        /// </summary>
+        public int NumSimplices
 		{
-			get { return mNumSimplices; }
+			get { return _mNumSimplices; }
 		}
 
 
@@ -71,7 +63,7 @@ namespace RNumerics
 		/// </summary>
 		public int[] HullIndices
 		{
-			get { return mIndices; }
+			get { return _mIndices; }
 		}
 
 
@@ -82,26 +74,25 @@ namespace RNumerics
 		public ConvexHull2(IList<Vector2d> vertices, double epsilon, QueryNumberType queryType)
 		{
 			//mQueryType = queryType;
-			mVertices = vertices;
-			mNumVertices = vertices.Count;
-			mDimension = 0;
-			mNumSimplices = 0;
-			mIndices = null;
-			mSVertices = null;
+			_mVertices = vertices;
+			_mNumVertices = vertices.Count;
+			Dimension = 0;
+			_mNumSimplices = 0;
+			_mIndices = null;
+			_mSVertices = null;
 
-			mEpsilon = epsilon;
+			_mEpsilon = epsilon;
 
-			mQuery = null;
+			_mQuery = null;
 
-			mLineOrigin = Vector2d.Zero;
-			mLineDirection = Vector2d.Zero;
+			_mLineOrigin = Vector2d.Zero;
+			_mLineDirection = Vector2d.Zero;
 
-			Vector2d.Information info;
-			Vector2d.GetInformation(mVertices, mEpsilon, out info);
-			if (info.mDimension == 0)
+            Vector2d.GetInformation(_mVertices, _mEpsilon, out var info);
+            if (info.mDimension == 0)
 			{
-				mDimension = 0;
-				mIndices = null;
+				Dimension = 0;
+				_mIndices = null;
 				return;
 			}
 
@@ -109,29 +100,29 @@ namespace RNumerics
 			{
 				// The set is (nearly) collinear.  The caller is responsible for
 				// creating a ConvexHull1 object.
-				mDimension = 1;
-				mLineOrigin = info.mOrigin;
-				mLineDirection = info.mDirection0;
+				Dimension = 1;
+				_mLineOrigin = info.mOrigin;
+				_mLineDirection = info.mDirection0;
 				return;
 			}
 
-			mDimension = 2;
+			Dimension = 2;
 
-			int i0 = info.mExtreme[0];
-			int i1 = info.mExtreme[1];
-			int i2 = info.mExtreme[2];
+			var i0 = info.mExtreme[0];
+			var i1 = info.mExtreme[1];
+			var i2 = info.mExtreme[2];
 
-			mSVertices = new Vector2d[mNumVertices];
+			_mSVertices = new Vector2d[_mNumVertices];
 
-			if (queryType != QueryNumberType.QT_RATIONAL && queryType != QueryNumberType.QT_FILTERED)
+			if (queryType is not QueryNumberType.QT_RATIONAL and not QueryNumberType.QT_FILTERED)
 			{
 
 				// Transform the vertices to the square [0,1]^2.
-				Vector2d minValue = new Vector2d(info.mMin[0], info.mMin[1]);
-				double scale = ((double)1) / info.mMaxRange;
-				for (int i = 0; i < mNumVertices; ++i)
+				var minValue = new Vector2d(info.mMin[0], info.mMin[1]);
+				var scale = ((double)1) / info.mMaxRange;
+				for (var i = 0; i < _mNumVertices; ++i)
 				{
-					mSVertices[i] = (mVertices[i] - minValue) * scale;
+					_mSVertices[i] = (_mVertices[i] - minValue) * scale;
 				}
 
 				double expand;
@@ -140,7 +131,7 @@ namespace RNumerics
 					// Scale the vertices to the square [0,2^{20}]^2 to allow use of
 					// 64-bit integers.
 					expand = (double)(1 << 20);
-					mQuery = new Query2Int64(mSVertices);
+					_mQuery = new Query2Int64(_mSVertices);
 
 				}
 				else if (queryType == QueryNumberType.QT_INTEGER)
@@ -155,13 +146,14 @@ namespace RNumerics
 				{  // queryType == Query::QT_double
 				   // No scaling for floating point.
 					expand = (double)1;
-					mQuery = new Query2d(mSVertices);
+					_mQuery = new Query2d(_mSVertices);
 				}
 
-				for (int i = 0; i < mNumVertices; ++i)
-					mSVertices[i] *= expand;
-
-			}
+				for (var i = 0; i < _mNumVertices; ++i)
+                {
+                    _mSVertices[i] *= expand;
+                }
+            }
 			else
 			{
 				throw new NotImplementedException("ConvexHull2: Query type QT_RATIONAL/QT_FILTERED not currently supported");
@@ -179,39 +171,42 @@ namespace RNumerics
 				//}
 			}
 
+            Edge edge0;
 
-			Edge edge0 = null;
-			Edge edge1 = null;
-			Edge edge2 = null;
+            Edge edge1;
 
-			if (info.mExtremeCCW)
-			{
-				edge0 = new Edge(i0, i1);
-				edge1 = new Edge(i1, i2);
-				edge2 = new Edge(i2, i0);
-			}
-			else
-			{
-				edge0 = new Edge(i0, i2);
-				edge1 = new Edge(i2, i1);
-				edge2 = new Edge(i1, i0);
-			}
+            Edge edge2;
+            if (info.mExtremeCCW)
+            {
+                edge0 = new Edge(i0, i1);
+                edge1 = new Edge(i1, i2);
+                edge2 = new Edge(i2, i0);
+            }
+            else
+            {
+                edge0 = new Edge(i0, i2);
+                edge1 = new Edge(i2, i1);
+                edge2 = new Edge(i1, i0);
+            }
 
-			edge0.Insert(edge2, edge1);
+            edge0.Insert(edge2, edge1);
 			edge1.Insert(edge0, edge2);
 			edge2.Insert(edge1, edge0);
 
-			Edge hull = edge0;
+			var hull = edge0;
 
 			// ideally we insert points in random order. but instead of
 			// generating a permutation, just insert them using modulo-indexing, 
 			// which is in the ballpark...
-			int ii = 0;
+			var ii = 0;
 			do
 			{
 				if (!Update(ref hull, ii))
-					return;
-				ii = (ii + 31337) % mNumVertices;
+                {
+                    return;
+                }
+
+                ii = (ii + 31337) % _mNumVertices;
 			} while (ii != 0);
 
 			// original code, vastly slower in pathological cases
@@ -220,7 +215,7 @@ namespace RNumerics
 			//        return;
 			//}
 
-			hull.GetIndices(ref mNumSimplices, ref mIndices);
+			hull.GetIndices(ref _mNumSimplices, ref _mIndices);
 		}
 
 
@@ -230,8 +225,8 @@ namespace RNumerics
 		/// </summary>
 		public void Get1DHullInfo(out Vector2d origin, out Vector2d direction)
 		{
-			origin = mLineOrigin;
-			direction = mLineDirection;
+			origin = _mLineOrigin;
+			direction = _mLineDirection;
 		}
 
 
@@ -240,14 +235,18 @@ namespace RNumerics
 		/// </summary>
 		public Polygon2d GetHullPolygon()
 		{
-			if (mIndices == null)
-				return null;
+			if (_mIndices == null)
+            {
+                return null;
+            }
 
-			Polygon2d poly = new Polygon2d();
-			for (int i = 0; i < mIndices.Length; ++i)
-				poly.AppendVertex(mVertices[mIndices[i]]);
+            var poly = new Polygon2d();
+			for (var i = 0; i < _mIndices.Length; ++i)
+            {
+                poly.AppendVertex(_mVertices[_mIndices[i]]);
+            }
 
-			return poly;
+            return poly;
 		}
 
 
@@ -273,10 +272,10 @@ namespace RNumerics
 		{
 			// Locate an edge visible to the input point (if possible).
 			Edge visible = null;
-			Edge current = hull;
+			var current = hull;
 			do
 			{
-				if (current.GetSign(i, mQuery) > 0)
+				if (current.GetSign(i, _mQuery) > 0)
 				{
 					visible = current;
 					break;
@@ -293,14 +292,14 @@ namespace RNumerics
 			}
 
 			// Remove the visible edges.
-			Edge adj0 = visible.E0;
+			var adj0 = visible.E0;
 			Debug.Assert(adj0 != null); // "Expecting nonnull adjacent\n");
 			if (adj0 == null)
 			{
 				return false;
 			}
 
-			Edge adj1 = visible.E1;
+			var adj1 = visible.E1;
 			Debug.Assert(adj1 != null); // "Expecting nonnull adjacent\n");
 			if (adj1 == null)
 			{
@@ -309,7 +308,7 @@ namespace RNumerics
 
 			visible.DeleteSelf();
 
-			while (adj0.GetSign(i, mQuery) > 0)
+			while (adj0.GetSign(i, _mQuery) > 0)
 			{
 				hull = adj0;
 				adj0 = adj0.E0;
@@ -322,7 +321,7 @@ namespace RNumerics
 				adj0.E1.DeleteSelf();
 			}
 
-			while (adj1.GetSign(i, mQuery) > 0)
+			while (adj1.GetSign(i, _mQuery) > 0)
 			{
 				hull = adj1;
 				adj1 = adj1.E1;
@@ -337,8 +336,8 @@ namespace RNumerics
 
 			// Insert the new edges formed by the input point and the end points of
 			// the polyline of invisible edges.
-			Edge edge0 = new Edge(adj0.V[1], i);
-			Edge edge1 = new Edge(i, adj1.V[0]);
+			var edge0 = new Edge(adj0.V[1], i);
+			var edge1 = new Edge(i, adj1.V[0]);
 			edge0.Insert(adj0, edge1);
 			edge1.Insert(edge0, adj1);
 			hull = edge0;
@@ -391,16 +390,21 @@ namespace RNumerics
 			public void DeleteSelf()
 			{
 				if (E0 != null)
-					E0.E1 = null;
-				if (E1 != null)
-					E1.E0 = null;
-			}
+                {
+                    E0.E1 = null;
+                }
+
+                if (E1 != null)
+                {
+                    E1.E0 = null;
+                }
+            }
 
 			public void GetIndices(ref int numIndices, ref int[] indices)
 			{
 				// Count the number of edge vertices and allocate the index array.
 				numIndices = 0;
-				Edge current = this;
+				var current = this;
 				do
 				{
 					++numIndices;

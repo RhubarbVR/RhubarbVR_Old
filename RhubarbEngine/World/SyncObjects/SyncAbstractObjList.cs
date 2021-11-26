@@ -25,8 +25,11 @@ namespace RhubarbEngine.World
 		}
 
         public event Action ElementListChange;
+        public event Action<IWorker, int> ElementRemoved;
+        public event Action<IWorker> ElementAdded;
+        public event Action ClearElements;
 
-		public IEnumerator<T> GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
 		{
 			for (var i = 0; i < _synclist.Count; i++)
 			{
@@ -73,15 +76,18 @@ namespace RhubarbEngine.World
 			value.OnDispose += Value_onDispose;
 			AddDisposable(value);
             ElementListChange?.Invoke();
+            ElementAdded?.Invoke(value);
         }
 
         public void RemoveInternal(T value)
 		{
+            var index = _synclist.IndexOf(value);
             _synclist.Remove(value);
 			value.OnDispose -= Value_onDispose;
 			RemoveDisposable(value);
             ElementListChange?.Invoke();
             value.Dispose();
+            ElementRemoved?.Invoke(value, index);
         }
 
         private void Value_onDispose(IWorker worker)
@@ -91,8 +97,9 @@ namespace RhubarbEngine.World
                 var intdex = _synclist.IndexOf((T)worker);
 				_synclist.Remove((T)worker);
                 NetRemove(intdex);
-			}
-			catch
+                ElementRemoved?.Invoke(worker, intdex);
+            }
+            catch
 			{
 
 			}
@@ -147,7 +154,8 @@ namespace RhubarbEngine.World
 		{
 			_synclist.Clear();
 			NetClear();
-		}
+            ClearElements?.Invoke();
+        }
 
 		public void ReceiveData(DataNodeGroup data, Peer peer)
 		{
@@ -181,6 +189,7 @@ namespace RhubarbEngine.World
 				else if (((DataNode<byte>)data.GetValue("Type")).Value == 2)
 				{
                     _synclist.Clear();
+                    ClearElements?.Invoke();
                 }
             }
 			catch (Exception e)

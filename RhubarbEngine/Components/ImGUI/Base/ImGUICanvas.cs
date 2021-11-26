@@ -224,21 +224,39 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 		}
 
-		private void ImGuiUpdate()
-		{
-			var ui = ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize;
-			if (noBackground.Value)
-			{
-				ui |= ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoTitleBar;
-			}
-			bool val;
-			var e = true;
-            val = !noCloseing.Value ? ImGui.Begin(name.Value ?? "Null", ref e, ui) : ImGui.Begin(name.Value ?? "Null", ui);
+        private void ImGuiUpdate()
+        {
+            var ui = ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize;
+            if (noBackground.Value)
+            {
+                ui |= ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoTitleBar;
+            }
+            bool val;
+            var e = true;
+            val = !noCloseing.Value ? ImGui.Begin($"{name.Value ?? "Null"}##{ReferenceID.id}", ref e, ui) : ImGui.Begin($"{name.Value ?? "Null"}##{ReferenceID.id}", ui);
             if (val)
 			{
 				ImGui.SetWindowPos(Vector2.Zero);
 				ImGui.SetWindowSize(new Vector2(scale.Value.x, scale.Value.y));
-				if (element.Target != null)
+                if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+                {
+                    var titleBarHeight = (((int)ui & (int)ImGuiWindowFlags.NoTitleBar) == 1) ? 0f : ImGui.GetFontSize() + (ImGui.GetStyle().FramePadding.Y * 2.0f);
+                    var pos = ImGui.GetWindowPos();
+                    if (ImGui.IsMouseHoveringRect(pos, new Vector2(pos.X + ImGui.GetWindowSize().X, pos.Y + titleBarHeight), false))
+                    {
+                        onHeaderGrab.Target?.Invoke();
+                    }
+                }
+                if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                {
+                    var titleBarHeight = (((int)ui & (int)ImGuiWindowFlags.NoTitleBar) == 1) ? 0f : ImGui.GetFontSize() + (ImGui.GetStyle().FramePadding.Y * 2.0f);
+                    var pos = ImGui.GetWindowPos();
+                    if (ImGui.IsMouseHoveringRect(pos, new Vector2(pos.X + ImGui.GetWindowSize().X, pos.Y + titleBarHeight), false))
+                    {
+                        onHeaderClick.Target?.Invoke();
+                    }
+                }
+                if (element.Target != null)
 				{
 					element.Target.ImguiRender(_igr, this);
 				}
@@ -246,24 +264,6 @@ namespace RhubarbEngine.Components.ImGUI
 				{
 					ImGui.Text("NUll");
 				}
-				if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
-				{
-					var titleBarHeight = (((int)ui & (int)ImGuiWindowFlags.NoTitleBar) == 1) ? 0f : ImGui.GetFontSize() + (ImGui.GetStyle().FramePadding.Y * 2.0f);
-					var pos = ImGui.GetWindowPos();
-					if (ImGui.IsMouseHoveringRect(pos, new Vector2(pos.X + ImGui.GetWindowSize().X, pos.Y + titleBarHeight), false))
-                    {
-                        onHeaderGrab.Target?.Invoke();
-                    }
-                }
-				if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
-				{
-					var titleBarHeight = (((int)ui & (int)ImGuiWindowFlags.NoTitleBar) == 1) ? 0f : ImGui.GetFontSize() + (ImGui.GetStyle().FramePadding.Y * 2.0f);
-					var pos = ImGui.GetWindowPos();
-					if (ImGui.IsMouseHoveringRect(pos, new Vector2(pos.X + ImGui.GetWindowSize().X, pos.Y + titleBarHeight), false))
-                    {
-                        onHeaderClick.Target?.Invoke();
-                    }
-                }
 				if (noKeyboard.Value)
                 {
                     return;
@@ -322,10 +322,10 @@ namespace RhubarbEngine.Components.ImGUI
 				_igr.Render(Engine.RenderManager.Gd, _uIcommandList);
 				_uIcommandList.End();
 				Engine.RenderManager.Gd.SubmitCommands(_uIcommandList);
-			}
+            }
 			catch (Exception e)
 			{
-				Logger.Log("Error Rendering" + e.ToString(), true);
+				Logger.Log("Error Rendering " + e.ToString(), true);
 			}
 		}
 

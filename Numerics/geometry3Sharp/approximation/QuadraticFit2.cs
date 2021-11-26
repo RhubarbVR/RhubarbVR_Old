@@ -40,24 +40,24 @@ namespace RNumerics
 		// The characterization depends on the signs of the d_i.
 		public static double Fit(Vector2d[] points, double[] coefficients)
 		{
-			DenseMatrix A = new DenseMatrix(6, 6);
-			int numPoints = points.Length;
-			for (int i = 0; i < numPoints; ++i)
+			var A = new DenseMatrix(6, 6);
+			var numPoints = points.Length;
+			for (var i = 0; i < numPoints; ++i)
 			{
-				double x = points[i].x;
-				double y = points[i].y;
-				double x2 = x * x;
-				double y2 = y * y;
-				double xy = x * y;
-				double x3 = x * x2;
-				double xy2 = x * y2;
-				double x2y = x * xy;
-				double y3 = y * y2;
-				double x4 = x * x3;
-				double x2y2 = x * xy2;
-				double x3y = x * x2y;
-				double y4 = y * y3;
-				double xy3 = x * y3;
+                var x = points[i].x;
+                var y = points[i].y;
+                var x2 = x * x;
+                var y2 = y * y;
+                var xy = x * y;
+                var x3 = x * x2;
+                var xy2 = x * y2;
+                var x2y = x * xy;
+                var y3 = y * y2;
+                var x4 = x * x3;
+                var x2y2 = x * xy2;
+                var x3y = x * x2y;
+                var y4 = y * y3;
+                var xy3 = x * y3;
 
 				A[0, 1] += x;
 				A[0, 2] += y;
@@ -83,24 +83,24 @@ namespace RNumerics
 			A[2, 5] = A[1, 4];
 			A[5, 5] = A[3, 4];
 
-			for (int row = 0; row < 6; ++row)
+			for (var row = 0; row < 6; ++row)
 			{
-				for (int col = 0; col < row; ++col)
+				for (var col = 0; col < row; ++col)
 				{
 					A[row, col] = A[col, row];
 				}
 			}
 
-			double invNumPoints = 1.0 / (double)numPoints;
-			for (int row = 0; row < 6; ++row)
+            var invNumPoints = 1.0 / (double)numPoints;
+			for (var row = 0; row < 6; ++row)
 			{
-				for (int col = 0; col < 6; ++col)
+				for (var col = 0; col < 6; ++col)
 				{
 					A[row, col] *= invNumPoints;
 				}
 			}
 
-			SymmetricEigenSolver es = new SymmetricEigenSolver(6, 1024);
+            var es = new SymmetricEigenSolver(6, 1024);
 			es.Solve(A.Buffer, SymmetricEigenSolver.SortType.Increasing);
 			es.GetEigenvector(0, coefficients);
 
@@ -119,19 +119,19 @@ namespace RNumerics
 		// -0.5*(C[1],C[2]) and the radius is r = sqrt(xc*xc+yc*yc-C[0]).
 		public static double FitCircle2(Vector2d[] points, out Circle2d circle)
 		{
-			DenseMatrix A = new DenseMatrix(4, 4);
-			int numPoints = points.Length;
-			for (int i = 0; i < numPoints; ++i)
+            var A = new DenseMatrix(4, 4);
+            var numPoints = points.Length;
+			for (var i = 0; i < numPoints; ++i)
 			{
-				double x = points[i].x;
-				double y = points[i].y;
-				double x2 = x * x;
-				double y2 = y * y;
-				double xy = x * y;
-				double r2 = x2 + y2;
-				double xr2 = x * r2;
-				double yr2 = y * r2;
-				double r4 = r2 * r2;
+                var x = points[i].x;
+                var y = points[i].y;
+                var x2 = x * x;
+                var y2 = y * y;
+                var xy = x * y;
+                var r2 = x2 + y2;
+                var xr2 = x * r2;
+                var yr2 = y * r2;
+                var r4 = r2 * r2;
 
 				A[0, 1] += x;
 				A[0, 2] += y;
@@ -146,37 +146,37 @@ namespace RNumerics
 
 			A[0, 0] = (double)numPoints;
 
-			for (int row = 0; row < 4; ++row)
+			for (var row = 0; row < 4; ++row)
 			{
-				for (int col = 0; col < row; ++col)
+				for (var col = 0; col < row; ++col)
 				{
 					A[row, col] = A[col, row];
 				}
 			}
 
-			double invNumPoints = 1.0 / (double)numPoints;
-			for (int row = 0; row < 4; ++row)
+            var invNumPoints = 1.0 / (double)numPoints;
+			for (var row = 0; row < 4; ++row)
 			{
-				for (int col = 0; col < 4; ++col)
+				for (var col = 0; col < 4; ++col)
 				{
 					A[row, col] *= invNumPoints;
 				}
 			}
 
-			SymmetricEigenSolver es = new SymmetricEigenSolver(4, 1024);
+            var es = new SymmetricEigenSolver(4, 1024);
 			es.Solve(A.Buffer, SymmetricEigenSolver.SortType.Increasing);
-			double[] evector = new double[4];
+            var evector = new double[4];
 			es.GetEigenvector(0, evector);
 
-			double inv = 1.0 / evector[3];  // TODO: Guard against zero divide?
-			Vector3d coefficients = Vector3d.Zero;
-			for (int row = 0; row < 3; ++row)
+			var inv = 1.0 / evector[3];  // TODO: Guard against zero divide?
+            var coefficients = Vector3d.Zero;
+			for (var row = 0; row < 3; ++row)
 			{
 				coefficients[row] = inv * evector[row];
 			}
 
-			Vector2d center = new Vector2d(-0.5 * coefficients[1], -0.5 * coefficients[2]);
-			double r = Math.Sqrt(Math.Abs(center.LengthSquared - coefficients[0]));
+            var center = new Vector2d(-0.5 * coefficients[1], -0.5 * coefficients[2]);
+            var r = Math.Sqrt(Math.Abs(center.LengthSquared - coefficients[0]));
 			circle = new Circle2d(center, r);
 
 			// For an exact fit, numeric round-off errors might make the minimum

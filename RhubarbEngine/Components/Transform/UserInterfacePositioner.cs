@@ -52,7 +52,7 @@ namespace RhubarbEngine.Components.Transform
             };
             activationDistance = new Sync<float>(this, newRefIds)
             {
-                Value = 0.75f
+                Value = 0.65f
             };
             activationAngle = new Sync<float>(this, newRefIds)
             {

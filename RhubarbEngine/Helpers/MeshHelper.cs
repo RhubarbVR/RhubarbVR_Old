@@ -69,7 +69,22 @@ namespace RhubarbEngine.Helpers
 
             return (e, bmesh);
         }
+        public static T AddMeshToEntity<T>(Entity e) where T : ProceduralMesh
+        {
+            var shader = e.World.staticAssets.BasicUnlitShader;
+            var bmesh = e.AttachComponent<T>();
+            var mit = e.AttachComponent<RMaterial>();
+            var meshRender = e.AttachComponent<MeshRender>();
+            var textue2DFromUrl = e.AttachComponent<Textue2DFromUrl>();
 
+            mit.Shader.Target = shader;
+            meshRender.Materials.Add().Target = mit;
+            meshRender.Mesh.Target = bmesh;
+            var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
+            field.field.Target = textue2DFromUrl;
+
+            return bmesh;
+        }
         public static (Entity, T, RMaterial) AddMesh<T>(Entity ea, AssetProvider<RShader> shader, string name = "Entity", uint renderOffset = int.MaxValue) where T : ProceduralMesh
         {
             var e = ea.AddChild(name);
@@ -126,7 +141,7 @@ namespace RhubarbEngine.Helpers
             var planecol = floor.AttachComponent<BoxCollider>();
             planemesh.Width.Value = 1000f;
             planemesh.Height.Value = 1000f;
-            planecol.boxExtents.Value = new Vector3f(planemesh.Width.Value, 0.1f, planemesh.Height.Value);
+            planecol.boxExtents.Value = new Vector3f(100f, 0.1f, 100f);
             var meshRender = floor.AttachComponent<MeshRender>();
             meshRender.Materials.Add().Target = mit;
             meshRender.Mesh.Target = planemesh;
@@ -135,7 +150,7 @@ namespace RhubarbEngine.Helpers
 
         public static void BuildLocalWorld(World.World world)
         {
-            var (mit, planemesh, floor, meshRender) = BlankWorld(world);
+            var (mit, _, floor, _) = BlankWorld(world);
             var tilefield = mit.GetField<Render.Material.Fields.Vec2Field>("Tile", Render.Shader.ShaderType.MainFrag);
             tilefield.field.Value = new Vector2f(500, 500);
 

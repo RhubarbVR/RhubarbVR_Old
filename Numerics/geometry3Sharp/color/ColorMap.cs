@@ -11,51 +11,53 @@ namespace RNumerics
 			public Colorf c;
 		}
 
-		List<ColorPoint> points = new List<ColorPoint>();
-		Interval1d validRange;
+        readonly List<ColorPoint> _points = new List<ColorPoint>();
+		Interval1d _validRange;
 
 		public ColorMap()
 		{
-			validRange = Interval1d.Empty;
+			_validRange = Interval1d.Empty;
 		}
 
 		public ColorMap(float[] t, Colorf[] c)
 		{
-			validRange = Interval1d.Empty;
-			for (int i = 0; i < t.Length; ++i)
-				AddPoint(t[i], c[i]);
-		}
+			_validRange = Interval1d.Empty;
+			for (var i = 0; i < t.Length; ++i)
+            {
+                AddPoint(t[i], c[i]);
+            }
+        }
 
 		public void AddPoint(float t, Colorf c)
 		{
-			ColorPoint cp = new ColorPoint() { t = t, c = c };
-			if (points.Count == 0)
+			var cp = new ColorPoint() { t = t, c = c };
+			if (_points.Count == 0)
 			{
-				points.Add(cp);
-				validRange.Contain(t);
+				_points.Add(cp);
+				_validRange.Contain(t);
 			}
-			else if (t < points[0].t)
+			else if (t < _points[0].t)
 			{
-				points.Insert(0, cp);
-				validRange.Contain(t);
+				_points.Insert(0, cp);
+				_validRange.Contain(t);
 			}
 			else
 			{
-				for (int k = 0; k < points.Count; ++k)
+				for (var k = 0; k < _points.Count; ++k)
 				{
-					if (points[k].t == t)
+					if (_points[k].t == t)
 					{
-						points[k] = cp;
+						_points[k] = cp;
 						return;
 					}
-					else if (points[k].t > t)
+					else if (_points[k].t > t)
 					{
-						points.Insert(k, cp);
+						_points.Insert(k, cp);
 						return;
 					}
 				}
-				points.Add(cp);
-				validRange.Contain(t);
+				_points.Add(cp);
+				_validRange.Contain(t);
 			}
 		}
 
@@ -64,21 +66,27 @@ namespace RNumerics
 
 		public Colorf Linear(float t)
 		{
-			if (t <= points[0].t)
-				return points[0].c;
-			int N = points.Count;
-			if (t >= points[N - 1].t)
-				return points[N - 1].c;
-			for (int k = 1; k < points.Count; ++k)
+			if (t <= _points[0].t)
+            {
+                return _points[0].c;
+            }
+
+            var N = _points.Count;
+			if (t >= _points[N - 1].t)
+            {
+                return _points[N - 1].c;
+            }
+
+            for (var k = 1; k < _points.Count; ++k)
 			{
-				if (points[k].t > t)
+				if (_points[k].t > t)
 				{
-					ColorPoint prev = points[k - 1], next = points[k];
-					float a = (t - prev.t) / (next.t - prev.t);
-					return (1.0f - a) * prev.c + (a) * next.c;
+					ColorPoint prev = _points[k - 1], next = _points[k];
+                    var a = (t - prev.t) / (next.t - prev.t);
+                    return ((1.0f - a) * prev.c) + (a * next.c);
 				}
 			}
-			return points[N - 1].c;  // should never get here...
+			return _points[N - 1].c;  // should never get here...
 		}
 
 

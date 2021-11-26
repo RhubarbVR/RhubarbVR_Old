@@ -51,12 +51,12 @@ namespace RhubarbEngine.Render
 
 	public abstract class Renderable : Component, IDisposable
 	{
-		public abstract void Render(GraphicsDevice gd, CommandList cl, UBO ubo);
-		public abstract void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo);
+		public abstract void Render(GraphicsDevice gd, CommandList cl, UBO ubo,Framebuffer framebuffer);
+		public abstract void RenderShadow(GraphicsDevice gd, CommandList cl, UBO ubo, Framebuffer framebuffer);
 
 		public abstract RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition);
 
-		public bool Cull(ref RhubarbEngine.Utilities.BoundingFrustum visibleFrustum, Matrix4x4 view)
+		public virtual bool Cull(ref RhubarbEngine.Utilities.BoundingFrustum visibleFrustum, Matrix4x4 view)
 		{
 			return visibleFrustum.Contains(Veldrid.Utilities.BoundingBox.Transform(BoundingBox, Entity.GlobalTrans() * view)) == ContainmentType.Disjoint;
 		}

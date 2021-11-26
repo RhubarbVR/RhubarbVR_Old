@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RhubarbEngine.Components.Interaction
 {
-	public interface IPhysicsDisableder
+	public interface IPhysicsDisabler
 	{
 	}
 }

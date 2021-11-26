@@ -120,7 +120,7 @@ namespace RhubarbEngine.Components.Physics
             };
             depth = new Sync<float>(this, newRefIds)
             {
-                Value = 0.01f
+                Value = 0.0001f
             };
             pixelSize = new Sync<Vector2u>(this, newRefIds)
             {

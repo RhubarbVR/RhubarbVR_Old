@@ -16,7 +16,7 @@ using Veldrid;
 namespace RhubarbEngine.Components.ImGUI
 {
 	[Category("ImGUI/Developer/SyncMemberObservers")]
-	public class SyncListObserver : SyncListBaseObserver, IObserver
+	public class SyncListObserver : SyncListBaseObserver, IPropertiesElement
 	{
 
 
@@ -31,11 +31,7 @@ namespace RhubarbEngine.Components.ImGUI
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
 			ImGui.Text(fieldName.Value ?? "NUll");
-			if (ImGui.BeginChild(ReferenceID.id.ToString()))
-			{
-				RenderChildren(imGuiRenderer, canvas);
-				ImGui.EndChild();
-			}
+			RenderChildren(imGuiRenderer, canvas);
 			if (ImGui.Button($"Add##{ReferenceID.id}"))
 			{
 				target.Target?.TryToAddToSyncList();

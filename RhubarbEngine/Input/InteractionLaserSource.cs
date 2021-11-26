@@ -68,10 +68,10 @@ namespace RhubarbEngine.Input
 			var f1 = p1 - point;
 			var f2 = p2 - point;
 			var f3 = p3 - point;
-			var a = Vector3d.Cross(p1 - p2, p1 - p3).magnitude;
-			var a1 = Vector3d.Cross(f2, f3).magnitude / a;
-			var a2 = Vector3d.Cross(f3, f1).magnitude / a;
-			var a3 = Vector3d.Cross(f1, f2).magnitude / a;
+			var a = Vector3d.Cross(p1 - p2, p1 - p3).Magnitude;
+			var a1 = Vector3d.Cross(f2, f3).Magnitude / a;
+			var a2 = Vector3d.Cross(f3, f1).Magnitude / a;
+			var a3 = Vector3d.Cross(f1, f2).Magnitude / a;
             var uv = (p1uv * (float)a1) + (p2uv * (float)a2) + (p3uv * (float)a3);
 			return uv;
 		}
@@ -176,53 +176,112 @@ namespace RhubarbEngine.Input
 			try
 			{
 				var inputPlane = (InputPlane)cb.CollisionObject.UserObject;
-				System.Numerics.Matrix4x4.Decompose(inputPlane.Entity.GlobalTrans(), out var scale, out var rotation, out var translation);
+                var ent = inputPlane.Entity;
+                System.Numerics.Matrix4x4.Decompose(inputPlane.Entity.GlobalTrans(), out var scale, out var rotation, out var translation);
 				var size = inputPlane.size.Value;
 				var pixsize = inputPlane.pixelSize.Value;
 
 				var hit = cb.HitPointWorld;
 				var hitnormal = cb.HitNormalWorld;
+                var normal = ((Quaternionf)rotation).Inverse() * new Vector3f(hitnormal.X, hitnormal.Y, hitnormal.Z);
+                if (normal.y < 0)
+                {
+                    var stepone = (hit - new Vector3(translation.X, translation.Y, translation.Z)) / new Vector3(scale.X, scale.Y, scale.Z);
+                    var steptwo = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateTranslation(new System.Numerics.Vector3((float)stepone.X, (float)stepone.Y, (float)stepone.Z));
+                    var stepthree = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateFromQuaternion(System.Numerics.Quaternion.Inverse(rotation));
+                    var stepfour = steptwo * stepthree;
+                    System.Numerics.Matrix4x4.Decompose(stepfour, out var scsdale, out var rotatdsion, out var trans);
+                    var nonescaleedpos = new Vector2f(trans.X, -trans.Z);
+                    var posnopixs = (nonescaleedpos * (1 / size) / 2) + 0.5f;
 
-				var stepone = (hit - new Vector3(translation.X, translation.Y, translation.Z)) / new Vector3(scale.X, scale.Y, scale.Z);
-				var steptwo = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateTranslation(new System.Numerics.Vector3((float)stepone.X, (float)stepone.Y, (float)stepone.Z));
-				var stepthree = System.Numerics.Matrix4x4.CreateScale(1) * System.Numerics.Matrix4x4.CreateFromQuaternion(System.Numerics.Quaternion.Inverse(rotation));
-				var stepfour = steptwo * stepthree;
-				System.Numerics.Matrix4x4.Decompose(stepfour, out var scsdale, out var rotatdsion, out var trans);
-				var nonescaleedpos = new Vector2f(trans.X, -trans.Z);
-				var posnopixs = (nonescaleedpos * (1 / size) / 2) + 0.5f;
+                    var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
 
-				var pospix = posnopixs * new Vector2f(pixsize.x, pixsize.y);
+                    var pos = (System.Numerics.Vector2)pospix;
 
-				var pos = (System.Numerics.Vector2)pospix;
-
-				var source = InteractionSource.None;
-				switch (side)
-				{
-					case Creality.Left:
-						source = InteractionSource.LeftLaser;
-						break;
-					case Creality.Right:
-						source = InteractionSource.RightLaser;
-						break;
-					default:
-						break;
-				}
-				inputPlane.UpdatePos(pos, source);
-				if (HasClicked())
-				{
-					switch (source)
-					{
-						case InteractionSource.LeftLaser:
-							LeftLaser();
-							break;
-						case InteractionSource.RightLaser:
-							RightLaser();
-							break;
-						default:
-							break;
-					}
-					inputPlane.Click(pos, source);
-				}
+                    var source = InteractionSource.None;
+                    switch (side)
+                    {
+                        case Creality.Left:
+                            source = InteractionSource.LeftLaser;
+                            break;
+                        case Creality.Right:
+                            source = InteractionSource.RightLaser;
+                            break;
+                        default:
+                            break;
+                    }
+                    inputPlane.UpdatePos(pos, source);
+                    if (HasClicked())
+                    {
+                        switch (source)
+                        {
+                            case InteractionSource.LeftLaser:
+                                LeftLaser();
+                                break;
+                            case InteractionSource.RightLaser:
+                                RightLaser();
+                                break;
+                            default:
+                                break;
+                        }
+                        inputPlane.Click(pos, source);
+                    }
+                }
+                else
+                {
+                    if (HasClicked())
+                    {
+                        ent.SendClick(true);
+                        var source = InteractionSource.None;
+                        switch (side)
+                        {
+                            case Creality.Left:
+                                source = InteractionSource.LeftLaser;
+                                break;
+                            case Creality.Right:
+                                source = InteractionSource.RightLaser;
+                                break;
+                            default:
+                                break;
+                        }
+                        if (_engine.OutputType == VirtualReality.OutputType.Screen)
+                        {
+                            ent.SendSecondary(Input.MainWindows.GetMouseButton(MouseButton.Middle));
+                            ent.SendPrimary(Input.MainWindows.GetMouseButton(MouseButton.Left));
+                            ent.SendGrip(true, inputPlane.World.HeadLaserGrabbableHolder, Input.MainWindows.GetMouseButton(MouseButton.Right));
+                        }
+                        else
+                        {
+                            switch (source)
+                            {
+                                case InteractionSource.None:
+                                    break;
+                                case InteractionSource.LeftLaser:
+                                    ent.SendTriggerTouching(Input.TriggerTouching(RhubarbEngine.Input.Creality.Left));
+                                    ent.SendSecondary(Input.SecondaryPress(RhubarbEngine.Input.Creality.Left));
+                                    ent.SendPrimary(Input.PrimaryPress(RhubarbEngine.Input.Creality.Left));
+                                    ent.SendGrip(true, inputPlane.World.LeftLaserGrabbableHolder, Input.GrabPress(RhubarbEngine.Input.Creality.Left));
+                                    break;
+                                case InteractionSource.LeftFinger:
+                                    break;
+                                case InteractionSource.RightLaser:
+                                    ent.SendTriggerTouching(Input.TriggerTouching(RhubarbEngine.Input.Creality.Right));
+                                    ent.SendSecondary(Input.SecondaryPress(RhubarbEngine.Input.Creality.Right));
+                                    ent.SendPrimary(Input.PrimaryPress(RhubarbEngine.Input.Creality.Right));
+                                    ent.SendGrip(true, inputPlane.World.RightLaserGrabbableHolder, Input.GrabPress(RhubarbEngine.Input.Creality.Right));
+                                    break;
+                                case InteractionSource.RightFinger:
+                                    break;
+                                case InteractionSource.HeadLaser:
+                                    break;
+                                case InteractionSource.HeadFinger:
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
 				return true;
 			}
 			catch
@@ -294,14 +353,23 @@ namespace RhubarbEngine.Input
 			return true;
 		}
 
-		private void ProssecesHitPoint(Vector3d pos, Vector3d normal)
+		private void ProssecesHitPoint(Vector3 pos, Vector3 normal,bool ovride = false)
 		{
-			Pos = pos;
-			Normal = normal;
-			OnHit?.Invoke(pos, normal, (pos == Vector3d.Zero) && (normal == Vector3d.Zero));
-		}
+            if (ovride)
+            {
+                Pos = pos;
+                Normal = normal;
+                OnHit?.Invoke(pos, normal, (pos == Vector3.Zero) && (normal == Vector3.Zero));
+            }
+            else if (!IsLocked)
+            {
+                Pos = pos;
+                Normal = normal;
+                OnHit?.Invoke(pos, normal, (pos == Vector3.Zero) && (normal == Vector3.Zero));
+            }
+        }
 
-		public void UnLock()
+        public void UnLock()
 		{
 			IsLocked = false;
 			Cursor = Cursors.None;
@@ -311,14 +379,15 @@ namespace RhubarbEngine.Input
 		{
 			IsLocked = true;
 			Cursor = Cursors.Grabbing;
-		}
+            _grabSlider = _lastDistance;
+        }
 
-		public delegate void ProssecesHitPointAction(Vector3d pos, Vector3d normal, bool Hide);
+		public delegate void ProssecesHitPointAction(Vector3 pos, Vector3 normal, bool Hide);
 
 		public event ProssecesHitPointAction OnHit;
 
-		public Vector3d Pos { get; private set; }
-		public Vector3d Normal { get; private set; }
+		public Vector3 Pos { get; private set; }
+		public Vector3 Normal { get; private set; }
 
 		public bool IsLocked { get; private set; }
 
@@ -379,7 +448,11 @@ namespace RhubarbEngine.Input
 		private bool _snaping;
 		private bool _activelySnapping;
 
-		public void SendRayCast(Vector3 _sourcse, Vector3 deriction)
+        private float _grabSlider = 10;
+
+        public Vector3 Distination { get; private set; }
+
+        public void SendRayCast(Vector3 _sourcse, Vector3 deriction)
 		{
 			var dist = _maxDistinatains;
 
@@ -407,12 +480,6 @@ namespace RhubarbEngine.Input
 			{
 				result = 0f;
 			}
-			if (IsLocked)
-			{
-				var point = smoothedSourcse + (smoothedDeriction * _lastDistance);
-				ProssecesHitPoint(new Vector3d(point.X, point.Y, point.Z), -new Vector3d(smoothedDeriction.X, smoothedDeriction.Y, smoothedDeriction.Z));
-				return;
-			}
 			if ((result < SnapDistance) && _snaping)
 			{
 				dist = _lastDistance + 0.5f;
@@ -420,14 +487,28 @@ namespace RhubarbEngine.Input
 			}
 			else
 			{ _activelySnapping = false; }
-			ProsscesRayTestHit(smoothedSourcse, (smoothedDeriction * dist) + smoothedSourcse, smoothedDeriction);
-		}
+            Distination = (smoothedDeriction * dist) + smoothedSourcse;
+            ProsscesRayTestHit(smoothedSourcse, Distination, smoothedDeriction);
+            if (IsLocked)
+            {
+                if(_grabSlider < 0.1f)
+                {
+                    _grabSlider = 0.1f;
+                }
+                if (!(Input.MainWindows.GetKey(Key.ShiftLeft)|| Input.MainWindows.GetKey(Key.ControlLeft) || Input.MainWindows.GetKey(Key.AltLeft)))
+                {
+                    _grabSlider += Input.MainWindows.FrameSnapshot.WheelDelta / 3;
+                }
+                var point = smoothedSourcse + (smoothedDeriction * _grabSlider);
+                ProssecesHitPoint(new Vector3(point.X, point.Y, point.Z), -new Vector3(smoothedDeriction.X, smoothedDeriction.Y, smoothedDeriction.Z),true);
+            }
+        }
 
 		public void UpdateLaserPos(Vector3 _sourcse, Vector3 _destination)
 		{
 			Sourcse = _sourcse;
 			Destination = _destination;
-		}
+        }
 		private void ProsscesRayTestHit(Vector3 _sourcse, Vector3 _destination, Vector3 deriction)
 		{
 			if (!RayTestHitTest(_sourcse, _destination, _engine.WorldManager.PrivateOverlay))
@@ -473,9 +554,8 @@ namespace RhubarbEngine.Input
 				}
 				if ((!HitTest(Sourcse, Destination, _engine.WorldManager.FocusedWorld)) && !hittestbool)
 				{
-					_snaping = false;
-                    Cursor = RhubarbEngine.Input.Cursors.None;
-					ProssecesHitPoint(Vector3d.Zero, Vector3d.Zero);
+                        _snaping = false;
+                        Cursor = RhubarbEngine.Input.Cursors.None;
 				}
 			}
 		}
@@ -521,7 +601,7 @@ namespace RhubarbEngine.Input
             eworld.PhysicsWorld.RayTest(sourcse, destination, cb);
             if (cb.HasHit)
             {
-                ProssecesHitPoint(new Vector3d(cb.HitPointWorld.X, cb.HitPointWorld.Y, cb.HitPointWorld.Z), new Vector3d(cb.HitNormalWorld.X, cb.HitNormalWorld.Y, cb.HitNormalWorld.Z));
+                ProssecesHitPoint(new Vector3(cb.HitPointWorld.X, cb.HitPointWorld.Y, cb.HitPointWorld.Z), new Vector3(cb.HitNormalWorld.X, cb.HitNormalWorld.Y, cb.HitNormalWorld.Z));
                 var type = cb.CollisionObject.UserObject.GetType();
                 if (type == typeof(InputPlane))
                 {
