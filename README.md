@@ -107,7 +107,7 @@ But with either of these, you need to the net5 runtime installed.
     sudo apt install libc6-dev 
    ```
 
-### Compiling Lunix
+### Compiling Linux
 
 1. Clone the repo
    ```sh
