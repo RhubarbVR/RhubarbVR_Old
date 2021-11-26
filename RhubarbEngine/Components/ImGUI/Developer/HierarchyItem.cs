@@ -60,7 +60,7 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			foreach (var item in children)
 			{
-				item.Target?.Dispose();
+                item.Target?.Entity.Destroy();
 			}
 			children.Clear();
 			if (target.Target == null)
@@ -71,7 +71,7 @@ namespace RhubarbEngine.Components.ImGUI
             var index = 0;
 			foreach (var item in target.Target._children)
 			{
-				var newHierarchyItem = Entity.AttachComponent<HierarchyItem>();
+				var newHierarchyItem = Entity.AddChild("HierarchyItem").AttachComponent<HierarchyItem>();
 				children.Add().Target = newHierarchyItem;
 				newHierarchyItem.target.Target = item;
 				index++;
@@ -116,7 +116,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void Children_ElementAdded(IWorker obj)
         {
-            var newHierarchyItem = Entity.AttachComponent<HierarchyItem>();
+            var newHierarchyItem = Entity.AddChild("HierarchyItem").AttachComponent<HierarchyItem>();
             children.Add().Target = newHierarchyItem;
             newHierarchyItem.target.Target = (Entity)obj;
         }
