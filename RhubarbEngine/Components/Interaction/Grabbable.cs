@@ -41,7 +41,7 @@ namespace RhubarbEngine.Components.Interaction
         {
             get
             {
-                return (grabbableHolder.Target != null) && (grabbingUser.Target != null);
+                return (grabbableHolder.Target is not null) && (grabbingUser.Target is not null);
             }
         }
 
@@ -55,12 +55,45 @@ namespace RhubarbEngine.Components.Interaction
 			lastParent = new SyncRef<Entity>(this, newRefIds);
 		}
 
+
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
 			base.CommonUpdate(startTime, Frame);
 			if (grabbingUser.Target != World.LocalUser)
             {
                 return;
+            }
+
+            if (Grabbed)
+            {
+                var scaler = 0f;
+                if (Input.MainWindows.GetKey(Veldrid.Key.ShiftLeft))
+                {
+                    scaler += Input.MainWindows.FrameSnapshot.WheelDelta / 3;
+                }
+                if (scaler != 0)
+                {
+                    Entity.scale.Value = Entity.scale.Value + scaler;
+                }
+                var isClickingPrime = false;
+                switch (grabbableHolder.Target.source.Value)
+                {
+                    case InteractionSource.LeftLaser:
+                        isClickingPrime = Input.PrimaryPress(RhubarbEngine.Input.Creality.Left);
+                        break;
+                    case InteractionSource.RightLaser:
+                        isClickingPrime = Input.PrimaryPress(RhubarbEngine.Input.Creality.Right);
+                        break;
+                    case InteractionSource.HeadLaser:
+                        isClickingPrime = Input.MainWindows.GetMouseButton(Veldrid.MouseButton.Left);
+                       break;
+                    default:
+                        break;
+                }
+                if (isClickingPrime)
+                {
+                    Entity.RotateToUpVector(World.UserRoot?.Entity.parent.Target??World.RootEntity);
+                }
             }
 
             if (LaserGrabbed && (grabbableHolder.Target != null))
@@ -154,6 +187,28 @@ namespace RhubarbEngine.Components.Interaction
 			{
 				lastParent.Target = Entity.parent.Target;
 			}
+            if (Laser)
+            {
+                RhubarbEngine.Input.InteractionLaserSource lasere = null;
+                switch (obj.source.Value)
+                {
+                    case InteractionSource.LeftLaser:
+                        lasere = Input.LeftLaser;
+                        break;
+                    case InteractionSource.RightLaser:
+                        lasere = Input.RightLaser;
+                        break;
+                    case InteractionSource.HeadLaser:
+                        lasere = Input.RightLaser;
+                        break;
+                    default:
+                        break;
+                }
+                if (lasere?.IsLocked ?? false)
+                {
+                    return;
+                }
+            }
 			LaserGrabbed = Laser;
 			if (LaserGrabbed)
 			{

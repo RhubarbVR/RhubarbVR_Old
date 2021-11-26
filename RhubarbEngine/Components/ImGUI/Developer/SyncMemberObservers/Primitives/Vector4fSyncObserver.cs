@@ -65,7 +65,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (source != null)
 			{
-				var type = source.Referencer.Target?.GetType();
+				var type = source.HolderReferen?.GetType();
 				if (typeof(Sync<Vector4f>).IsAssignableFrom(type))
 				{
 					Changeboarder = true;
@@ -103,7 +103,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				if (ImGui.IsItemHovered() && source.DropedRef)
 				{
-					var e = (Sync<Vector4f>)source.Referencer.Target;
+					var e = (Sync<Vector4f>)source.HolderReferen;
 					if (target.Target != null)
                     {
                         target.Target.Value = e.Value;

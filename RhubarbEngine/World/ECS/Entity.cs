@@ -134,6 +134,17 @@ namespace RhubarbEngine.World.ECS
             return (Quaternionf)newrotation;
         }
 
+        public void RotateToUpVector(Entity space)
+        {
+            var roatation = GlobalRot();
+            roatation = space.GlobalRotToLocal(roatation);
+            var temp = roatation * roatation.ClosedVector;
+            var forward = new Vector3f(temp.x, 0, temp.z).Normalized;
+            roatation = Quaternionf.LookRotation(forward, Vector3f.AxisY);
+            roatation = space.LocalRotToGlobal(roatation);
+            SetGlobalRot(roatation);
+        }
+
         public void RemovePhysicsDisableder(IPhysicsDisabler physicsDisableder)
 		{
 			try

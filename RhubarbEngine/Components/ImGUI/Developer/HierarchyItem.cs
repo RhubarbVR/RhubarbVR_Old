@@ -110,8 +110,12 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void Children_ElementRemoved(IWorker arg1, int arg2)
         {
-            children[arg2].Target?.Dispose();
-            children.Remove(arg2);
+            try
+            {
+                children[arg2].Target?.Entity.Destroy();
+                children.Remove(arg2);
+            }
+            catch { }
         }
 
         private void Children_ElementAdded(IWorker obj)
@@ -123,7 +127,7 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void Target_OnDispose(IWorker obj)
         {
-            Dispose();
+            Entity.Destroy();
         }
 
         private void UnBind()
@@ -181,9 +185,9 @@ namespace RhubarbEngine.Components.ImGUI
                 }
                 if (ImGui.IsItemHovered() && source.DropedRef)
                 {
-                    if (typeof(Entity) == source.Referencer.Target.GetType())
+                    if (typeof(Entity) == source.HolderReferen.GetType())
                     {
-                        ((Entity)source.Referencer.Target).parent.Target = target.Target;
+                        ((Entity)source.HolderReferen).parent.Target = target.Target;
                     }
                 }
                 foreach (var item in children)
@@ -235,9 +239,9 @@ namespace RhubarbEngine.Components.ImGUI
                 }
                 if (ImGui.IsItemHovered() && source.DropedRef)
                 {
-                    if (typeof(Entity) == source.Referencer.Target.GetType())
+                    if (typeof(Entity) == source.HolderReferen.GetType())
                     {
-                        ((Entity)source.Referencer.Target).parent.Target = target.Target;
+                        ((Entity)source.HolderReferen).parent.Target = target.Target;
                     }
                 }
             }
@@ -256,7 +260,7 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 			if (source != null)
 			{
-				if (source.Referencer.Target == null)
+				if (source.HolderReferen == null)
 				{
 					source.Referencer.Target = target.Target;
 				}

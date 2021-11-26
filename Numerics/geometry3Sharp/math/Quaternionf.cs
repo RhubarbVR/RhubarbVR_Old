@@ -298,10 +298,31 @@ namespace RNumerics
 				return new Vector3f(twoXZ + twoWY, twoYZ - twoWX, 1 - (twoXX + twoYY));
 			}
 		}
+        [IgnoreMember]
+        public Vector3f ClosedVector
+        {
+            get 
+            {
+                var x = AxisX.MaxAbs;
+                var y = AxisY.MaxAbs;
+                var z = AxisZ.MaxAbs;
+                var max = MathF.Max(x, MathF.Max(y, z));
+                if(max == z)
+                {
+                    return Vector3f.AxisZ;
+                }
+                else if (max == y)
+                {
+                    return Vector3f.AxisY;
+                }
+                else
+                {
+                    return Vector3f.AxisX;
+                }
+            }
+        }
 
-
-
-		public Quaternionf Inverse()
+        public Quaternionf Inverse()
 		{
 			float norm = LengthSquared;
 			if (norm > 0)

@@ -353,14 +353,23 @@ namespace RhubarbEngine.Input
 			return true;
 		}
 
-		private void ProssecesHitPoint(Vector3d pos, Vector3d normal)
+		private void ProssecesHitPoint(Vector3d pos, Vector3d normal,bool ovride = false)
 		{
-			Pos = pos;
-			Normal = normal;
-			OnHit?.Invoke(pos, normal, (pos == Vector3d.Zero) && (normal == Vector3d.Zero));
-		}
+            if (ovride)
+            {
+                Pos = pos;
+                Normal = normal;
+                OnHit?.Invoke(pos, normal, (pos == Vector3d.Zero) && (normal == Vector3d.Zero));
+            }
+            else if (!IsLocked)
+            {
+                Pos = pos;
+                Normal = normal;
+                OnHit?.Invoke(pos, normal, (pos == Vector3d.Zero) && (normal == Vector3d.Zero));
+            }
+        }
 
-		public void UnLock()
+        public void UnLock()
 		{
 			IsLocked = false;
 			Cursor = Cursors.None;
@@ -370,7 +379,8 @@ namespace RhubarbEngine.Input
 		{
 			IsLocked = true;
 			Cursor = Cursors.Grabbing;
-		}
+            _grabSlider = _lastDistance;
+        }
 
 		public delegate void ProssecesHitPointAction(Vector3d pos, Vector3d normal, bool Hide);
 
@@ -438,6 +448,8 @@ namespace RhubarbEngine.Input
 		private bool _snaping;
 		private bool _activelySnapping;
 
+        private float _grabSlider = 10;
+
 		public void SendRayCast(Vector3 _sourcse, Vector3 deriction)
 		{
 			var dist = _maxDistinatains;
@@ -466,12 +478,6 @@ namespace RhubarbEngine.Input
 			{
 				result = 0f;
 			}
-			if (IsLocked)
-			{
-				var point = smoothedSourcse + (smoothedDeriction * _lastDistance);
-				ProssecesHitPoint(new Vector3d(point.X, point.Y, point.Z), -new Vector3d(smoothedDeriction.X, smoothedDeriction.Y, smoothedDeriction.Z));
-				return;
-			}
 			if ((result < SnapDistance) && _snaping)
 			{
 				dist = _lastDistance + 0.5f;
@@ -480,7 +486,20 @@ namespace RhubarbEngine.Input
 			else
 			{ _activelySnapping = false; }
 			ProsscesRayTestHit(smoothedSourcse, (smoothedDeriction * dist) + smoothedSourcse, smoothedDeriction);
-		}
+            if (IsLocked)
+            {
+                if(_grabSlider < 0.1f)
+                {
+                    _grabSlider = 0.1f;
+                }
+                if (!(Input.MainWindows.GetKey(Key.ShiftLeft)|| Input.MainWindows.GetKey(Key.ControlLeft) || Input.MainWindows.GetKey(Key.AltLeft)))
+                {
+                    _grabSlider += Input.MainWindows.FrameSnapshot.WheelDelta / 3;
+                }
+                var point = smoothedSourcse + (smoothedDeriction * _grabSlider);
+                ProssecesHitPoint(new Vector3d(point.X, point.Y, point.Z), -new Vector3d(smoothedDeriction.X, smoothedDeriction.Y, smoothedDeriction.Z),true);
+            }
+        }
 
 		public void UpdateLaserPos(Vector3 _sourcse, Vector3 _destination)
 		{
@@ -532,9 +551,8 @@ namespace RhubarbEngine.Input
 				}
 				if ((!HitTest(Sourcse, Destination, _engine.WorldManager.FocusedWorld)) && !hittestbool)
 				{
-					_snaping = false;
-                    Cursor = RhubarbEngine.Input.Cursors.None;
-					ProssecesHitPoint(Vector3d.Zero, Vector3d.Zero);
+                        _snaping = false;
+                        Cursor = RhubarbEngine.Input.Cursors.None;
 				}
 			}
 		}

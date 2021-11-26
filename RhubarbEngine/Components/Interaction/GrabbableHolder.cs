@@ -38,7 +38,22 @@ namespace RhubarbEngine.Components.Interaction
 
 		bool _gripping = false;
 
-		public void InitializeGrabHolder(InteractionSource _source)
+        public IWorldObject HolderReferen
+        {
+            get
+            {
+                if ((World.HeadLaserGrabbableHolder != this)&& World.HeadLaserGrabbableHolder is not null)
+                {
+                    if(World.HeadLaserGrabbableHolder.HolderReferen is not null)
+                    {
+                        return World.HeadLaserGrabbableHolder.HolderReferen;
+                    }
+                }
+                return Referencer.Target;
+            }
+        }
+
+        public void InitializeGrabHolder(InteractionSource _source)
 		{
 			user.Target = World.LocalUser;
 			source.Value = _source;
@@ -70,7 +85,7 @@ namespace RhubarbEngine.Components.Interaction
         {
             get
             {
-                return (_timeout <= 16) && (_timeout != 0) && !_gripping;
+                return (_timeout <= 4) && (_timeout != 0) && !_gripping;
             }
         }
 
@@ -136,6 +151,13 @@ namespace RhubarbEngine.Components.Interaction
 				else
 				{
 					World.lastHolder = this;
+                    if(Referencer.Target is null)
+                    {
+                        if (holder.Target._children.Count() > 0)
+                        {
+                            Referencer.Target = holder.Target._children[0];
+                        }
+                    }
 				}
 			}
 			if (Referencer.Target == null)
@@ -146,10 +168,10 @@ namespace RhubarbEngine.Components.Interaction
             if (!_gripping)
 			{
 				_timeout++;
-				if (_timeout > 16)
+				if (_timeout > 4)
 				{
 					Referencer.Target = null;
-				}
+                }
 			}
 		}
 
