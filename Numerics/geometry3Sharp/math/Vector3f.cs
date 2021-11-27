@@ -19,7 +19,8 @@ namespace RNumerics
 		public float magnitude { get { return (float)Math.Sqrt(x * x + y * y + z * z); } }
 		public Vector3f(float f) { x = y = z = f; }
 		public Vector3f(float x, float y, float z) { this.x = x; this.y = y; this.z = z; }
-		public Vector3f(float[] v2) { x = v2[0]; y = v2[1]; z = v2[2]; }
+        public Vector3f(float x, float y) { this.x = x; this.y = y; this.z = 0f; }
+        public Vector3f(float[] v2) { x = v2[0]; y = v2[1]; z = v2[2]; }
 		public Vector3f(Vector3f copy) { x = copy.x; y = copy.y; z = copy.z; }
 
 		public Vector3f(double f) { x = y = z = (float)f; }
@@ -157,8 +158,32 @@ namespace RNumerics
 			get { float f = x + y + z; return float.IsNaN(f) == false && float.IsInfinity(f) == false; }
 		}
 
+        public float SqrMagnitude
+        {
+            get 
+            {
+                return (x * x) + (y * y) + (z * z);
+            }
+        }
 
-		public void Round(int nDecimals)
+        public Vector3f RmoveSmallest()
+        {
+            var smallist = MathF.Min(x, MathF.Min(y, z));
+            return y == smallist ? new Vector3f(x, 0, z) : x == smallist ? new Vector3f(0, y, z) : new Vector3f(x, y, 0);
+        }
+
+        public Vector3f SetComponent(float value, int index)
+        {
+            return index switch
+            {
+                0 => new Vector3f(value, y, z),
+                1 => new Vector3f(x, value, z),
+                2 => new Vector3f(x, y, value),
+                _ => throw new ArgumentException("Invalid vector index"),
+            };
+        }
+
+        public void Round(int nDecimals)
 		{
 			x = (float)Math.Round(x, nDecimals);
 			y = (float)Math.Round(y, nDecimals);

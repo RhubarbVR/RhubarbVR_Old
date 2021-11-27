@@ -42,11 +42,11 @@ namespace RhubarbEngine.Components.Interaction
         {
             get
             {
-                if ((World.HeadLaserGrabbableHolder != this)&& World.HeadLaserGrabbableHolder is not null)
+                if ((World.HeadLaserGrabbableHolder.Referencer.Target != this)&& World.HeadLaserGrabbableHolder.Referencer.Target is not null)
                 {
-                    if(World.HeadLaserGrabbableHolder.HolderReferen is not null)
+                    if(World.HeadLaserGrabbableHolder.Referencer.Target is not null)
                     {
-                        return World.HeadLaserGrabbableHolder.HolderReferen;
+                        return World.HeadLaserGrabbableHolder.Referencer.Target;
                     }
                 }
                 return Referencer.Target;
@@ -151,13 +151,6 @@ namespace RhubarbEngine.Components.Interaction
 				else
 				{
 					World.lastHolder = this;
-                    if(Referencer.Target is null)
-                    {
-                        if (holder.Target._children.Count() > 0)
-                        {
-                            Referencer.Target = holder.Target._children[0];
-                        }
-                    }
 				}
 			}
 			if (Referencer.Target == null)

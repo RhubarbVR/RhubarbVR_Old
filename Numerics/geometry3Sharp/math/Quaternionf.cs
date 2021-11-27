@@ -298,30 +298,6 @@ namespace RNumerics
 				return new Vector3f(twoXZ + twoWY, twoYZ - twoWX, 1 - (twoXX + twoYY));
 			}
 		}
-        [IgnoreMember]
-        public Vector3f ClosedVector
-        {
-            get 
-            {
-                var x = AxisX.MaxAbs;
-                var y = AxisY.MaxAbs;
-                var z = AxisZ.MaxAbs;
-                var max = MathF.Max(x, MathF.Max(y, z));
-                if(max == z)
-                {
-                    return Vector3f.AxisZ;
-                }
-                else if (max == y)
-                {
-                    return Vector3f.AxisY;
-                }
-                else
-                {
-                    return Vector3f.AxisX;
-                }
-            }
-        }
-
         public Quaternionf Inverse()
 		{
 			float norm = LengthSquared;
@@ -587,14 +563,20 @@ namespace RNumerics
 				   (float)Math.Abs(z - q2.z) <= epsilon &&
 				   (float)Math.Abs(w - q2.w) <= epsilon;
 		}
-		/// <summary>
-		/// Creates a new Quaternion from the given yaw, pitch, and roll, in radians.
-		/// </summary>
-		/// <param name="yaw">The yaw angle, in radians, around the Y-axis.</param>
-		/// <param name="pitch">The pitch angle, in radians, around the X-axis.</param>
-		/// <param name="roll">The roll angle, in radians, around the Z-axis.</param>
-		/// <returns></returns>
-		public static Quaternionf CreateFromYawPitchRoll(float yaw, float pitch, float roll)
+
+        public static Quaternionf CreateFromYawPitchRoll(Vector3f val) 
+        {
+            return CreateFromYawPitchRoll(val.x, val.y, val.z);
+        }
+
+        /// <summary>
+        /// Creates a new Quaternion from the given yaw, pitch, and roll, in radians.
+        /// </summary>
+        /// <param name="yaw">The yaw angle, in radians, around the Y-axis.</param>
+        /// <param name="pitch">The pitch angle, in radians, around the X-axis.</param>
+        /// <param name="roll">The roll angle, in radians, around the Z-axis.</param>
+        /// <returns></returns>
+        public static Quaternionf CreateFromYawPitchRoll(float yaw, float pitch, float roll)
 		{
 			//  Roll first, about axis the object is facing, then
 			//  pitch upward, then yaw to face into the new heading
@@ -622,7 +604,40 @@ namespace RNumerics
 			return result;
 		}
 
-		public static Quaternionf LookRotation(Vector3f forward, Vector3f up)
+
+        public static Quaternionf FromToRotation(Vector3f from, Vector3f to)
+        {
+            var num = from.Dot(to);
+            if (!(from == to))
+            {
+                var b = Vector3f.Zero;
+                if (!(from == b))
+                {
+                    var b2 = Vector3f.Zero;
+                    if (!(to == b2))
+                    {
+                        var float5 = from.Cross(to);
+                        if (float5.SqrMagnitude <= 1E-08f && num < 0f)
+                        {
+                            b = new Vector3f(1f);
+                            var float6 = b.Cross(from);
+                            if (float6.SqrMagnitude <= 1E-08f)
+                            {
+                                b = new Vector3f(0f, 1f);
+                                float6 = b.Cross(from);
+                            }
+                            return CreateFromYawPitchRoll(float6.Normalized);
+                        }
+                        return new Quaternionf(float5.x, float5.y, float5.z, MathF.Sqrt(from.SqrMagnitude * to.SqrMagnitude) + num).Normalized;
+                    }
+                }
+            }
+            return Identity;
+        }
+
+
+
+        public static Quaternionf LookRotation(Vector3f forward, Vector3f up)
 		{
 			Vector3f b = Vector3f.Zero;
 			if (forward == b)

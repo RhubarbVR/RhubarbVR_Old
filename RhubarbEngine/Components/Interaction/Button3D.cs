@@ -61,11 +61,7 @@ namespace RhubarbEngine.Components.Interaction
             StartPosition = new Sync<Vector3f>(this, newRefIds);
 
 
-            OnClicked = new SyncDelegate(this, newRefIds)
-            {
-                Target = TestFunction
-            };
-
+            OnClicked = new SyncDelegate(this, newRefIds);
             ClickVisual.Changed += ClickVisual_Changed;
         }
         public override void CommonUpdate(DateTime startTime, DateTime Frame)
@@ -107,19 +103,24 @@ namespace RhubarbEngine.Components.Interaction
 
             ClickVisual.Target = child;
         }
+        bool _loaded;
         public override void OnLoaded()
         {
             base.OnLoaded();
+            _loaded = true;
         }
         private void ClickVisual_Changed(IChangeable obj)
         {
+            if (!_loaded)
+            {
+                return;
+            }
             if(_lastVisual is not null)
             {
                 _lastVisual.OnClick -= Target_OnClick;
             }
             if (ClickVisual.Target is not null)
             {
-                
                 ClickVisual.Target.OnClick += Target_OnClick;
                 PositionDriver.SetDriveTarget(ClickVisual.Target.position);
                 StartPosition.Value = ClickVisual.Target.position.Value;
@@ -133,12 +134,6 @@ namespace RhubarbEngine.Components.Interaction
             {
                 _clicking = true;
             }
-        }
-
-        public void TestFunction()
-        {
-            //TODO: testing purposes only, please delete this.
-            Logger.Log("Button3D Clicked", true);
         }
         public Button3D(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
         {
