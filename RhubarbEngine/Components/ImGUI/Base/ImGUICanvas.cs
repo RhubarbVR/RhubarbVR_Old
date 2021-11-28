@@ -48,7 +48,7 @@ namespace RhubarbEngine.Components.ImGUI
 		private bool _uIloaded = false;
 
 		public SyncDelegate onClose;
-		public SyncDelegate onHeaderGrab;
+		public SyncDelegate<Action<GrabbableHolder>> onHeaderGrab;
 		public SyncDelegate onHeaderClick;
 
 		public override void LoadListObject()
@@ -101,7 +101,7 @@ namespace RhubarbEngine.Components.ImGUI
 			noKeyboard = new Sync<bool>(this, newRefIds);
 			onClose = new SyncDelegate(this, newRefIds);
 			onHeaderClick = new SyncDelegate(this, newRefIds);
-			onHeaderGrab = new SyncDelegate(this, newRefIds);
+			onHeaderGrab = new SyncDelegate<Action<GrabbableHolder>>(this, newRefIds);
             backGroundColor = new Sync<Colorf>(this, newRefIds)
             {
                 Value = Colorf.Black
@@ -162,9 +162,8 @@ namespace RhubarbEngine.Components.ImGUI
                 {
                     throw new Exception("UI too Small");
                 }
-
                 _framebuffer = CreateFramebuffer(scale.Value.x, scale.Value.y);
-				_igr = new ImGuiRenderer(Engine.RenderManager.Gd, _framebuffer.OutputDescription, (int)scale.Value.x, (int)scale.Value.y, ColorSpaceHandling.Linear);
+				_igr = new ImGuiRenderer(Engine.RenderManager.Gd, _framebuffer.OutputDescription, (int)scale.Value.x, (int)scale.Value.y, ColorSpaceHandling.Linear,new RenderImguiStyle(Engine.SettingsObject.UISettings.Rounding, Engine.SettingsObject.UISettings.Color));
 				var target = _framebuffer.ColorTargets[0].Target;
 				var view = Engine.RenderManager.Gd.ResourceFactory.CreateTextureView(target);
 				Load(new RTexture2D(view));
@@ -244,7 +243,29 @@ namespace RhubarbEngine.Components.ImGUI
                     var pos = ImGui.GetWindowPos();
                     if (ImGui.IsMouseHoveringRect(pos, new Vector2(pos.X + ImGui.GetWindowSize().X, pos.Y + titleBarHeight), false))
                     {
-                        onHeaderGrab.Target?.Invoke();
+                        if (Engine.OutputType == VirtualReality.OutputType.Screen)
+                        {
+                            onHeaderGrab.Target?.Invoke(World.HeadLaserGrabbableHolder);
+                        }
+                        else
+                        {
+                            GrabbableHolder source = null;
+                            switch (imputPlane.Target?.Source ?? Interaction.InteractionSource.None)
+                            {
+                                case Interaction.InteractionSource.LeftLaser:
+                                    source = World.LeftLaserGrabbableHolder;
+                                    break;
+                                case Interaction.InteractionSource.RightLaser:
+                                    source = World.RightLaserGrabbableHolder;
+                                    break;
+                                case Interaction.InteractionSource.HeadLaser:
+                                    source = World.HeadLaserGrabbableHolder;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            onHeaderGrab.Target?.Invoke(source);
+                        }
                     }
                 }
                 if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))

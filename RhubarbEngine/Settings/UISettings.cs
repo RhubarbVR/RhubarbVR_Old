@@ -16,6 +16,11 @@ namespace RhubarbEngine.Settings
 		[SettingsField("KeyBoard Curve 50 default", "/VR")]
 		public float KeyBoardCurve = 50;
 
-	}
+        [SettingsField("Rounding in px 3 default", "/Theme")]
+        public float Rounding = 3;
+
+        [SettingsField("Rounding in px 3 default", "/Theme")]
+        public ThemeColor Color = ThemeColor.Dark;
+    }
 
 }

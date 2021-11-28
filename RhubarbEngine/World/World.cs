@@ -30,12 +30,6 @@ namespace RhubarbEngine.World
 
 		[NoSync]
 		[NoSave]
-		public GrabbableHolder lastHolder;
-
-
-
-		[NoSync]
-		[NoSave]
 		public GrabbableHolder LeftLaserGrabbableHolder;
 
 		[NoSync]
@@ -528,13 +522,13 @@ namespace RhubarbEngine.World
 
 		private void UserJoined(User user)
 		{
-			foreach (var val in _worldObjects.Values)
-			{
-				if (((IWorker)val) != null)
-				{
-					((IWorker)val).OnUserJoined(user);
-				}
-			}
+            Parallel.ForEach(_worldObjects.Values, (val) =>
+             {
+                 if (((IWorker)val) != null)
+                 {
+                     ((IWorker)val).OnUserJoined(user);
+                 }
+             });
 		}
 
 		public NetModule NetModule { get; private set; }

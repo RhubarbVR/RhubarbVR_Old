@@ -148,10 +148,6 @@ namespace RhubarbEngine.Components.Interaction
 							break;
 					}
 				}
-				else
-				{
-					World.lastHolder = this;
-				}
 			}
 			if (Referencer.Target == null)
             {

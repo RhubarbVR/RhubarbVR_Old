@@ -293,7 +293,7 @@ namespace RhubarbEngine.Components.Interaction
 			World.grabedWindow = null;
 		}
 
-		private void OnGrabHeader()
+		private void OnGrabHeader(GrabbableHolder grabbableHolder)
 		{
 			if (ParentDock.Target != null)
 			{
@@ -301,7 +301,7 @@ namespace RhubarbEngine.Components.Interaction
 			}
 			foreach (var grab in Entity.GetAllComponents<Grabbable>())
 			{
-				grab.RemoteGrab();
+				grab.RemoteGrab(grabbableHolder);
 			}
 			World.grabedWindow = this;
 		}

@@ -47,11 +47,6 @@ namespace RhubarbEngine.World
                 {
                     if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && ((field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length <= 0) || (_netsync && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))))
                     {
-                        //This is for debug purposes 
-                        //if (!netsync)
-                        //{
-                        //    Console.WriteLine(field.FieldType.FullName + "Name: " + field.Name);
-                        //}
                         try
                         {
                             obj.SetValue(field.Name, ((IWorldObject)field.GetValue(@object)).Serialize(this));

@@ -11,22 +11,22 @@ namespace RhubarbEngine.Settings
 	public class MainSettingsObject : SettingsObject
 	{
 		[SettingsField("Render Settings")]
-		public RenderSettings RenderSettings = new RenderSettings();
+		public RenderSettings RenderSettings = new();
 
 		[SettingsField("Physics Settings")]
-		public PhysicsSettings PhysicsSettings = new PhysicsSettings();
+		public PhysicsSettings PhysicsSettings = new();
 
 		[SettingsField("UI Settings")]
-		public UISettings UISettings = new UISettings();
+		public UISettings UISettings = new();
 
 		[SettingsField("Audio Settings")]
-		public AudioSettings AudioSettings = new AudioSettings();
+		public AudioSettings AudioSettings = new();
 
 		[SettingsField("VR Settings")]
-		public VRSettings VRSettings = new VRSettings();
+		public VRSettings VRSettings = new();
 
 		[SettingsField("Interaction Settings")]
-		public InteractionSettings InteractionSettings = new InteractionSettings();
+		public InteractionSettings InteractionSettings = new();
 	}
 
 }

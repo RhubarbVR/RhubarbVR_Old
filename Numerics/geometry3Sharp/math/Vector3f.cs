@@ -16,7 +16,7 @@ namespace RNumerics
 		[Key(2)]
 		public float z;
 		[IgnoreMember]
-		public float magnitude { get { return (float)Math.Sqrt(x * x + y * y + z * z); } }
+		public float Magnitude { get { return (float)Math.Sqrt((x * x) + (y * y) + (z * z)); } }
 		public Vector3f(float f) { x = y = z = f; }
 		public Vector3f(float x, float y, float z) { this.x = x; this.y = y; this.z = z; }
         public Vector3f(float x, float y) { this.x = x; this.y = y; this.z = 0f; }
@@ -157,7 +157,7 @@ namespace RNumerics
 		{
 			get { float f = x + y + z; return float.IsNaN(f) == false && float.IsInfinity(f) == false; }
 		}
-
+        [IgnoreMember]
         public float SqrMagnitude
         {
             get 
@@ -165,13 +165,11 @@ namespace RNumerics
                 return (x * x) + (y * y) + (z * z);
             }
         }
-
         public Vector3f RmoveSmallest()
         {
             var smallist = MathF.Min(x, MathF.Min(y, z));
             return y == smallist ? new Vector3f(x, 0, z) : x == smallist ? new Vector3f(0, y, z) : new Vector3f(x, y, 0);
         }
-
         public Vector3f SetComponent(float value, int index)
         {
             return index switch

@@ -688,37 +688,73 @@ namespace RhubarbEngine.Components.Interaction
             }
 
             var imp = imputPlane.Target;
-			foreach (var item in imp.KeyEvents)
-			{
-				var k = new CefSharp.KeyEvent();
-				var lp = (int)item.Key;
-				k.FocusOnEditableField = true;
-                if (lp is not >= 83 or not <= 108)
-                {
-                    if (lp is >= 109 and <= 118)
-                    {
-                        k.WindowsKeyCode = lp + -109 + 48;
-                    }
-                    else if (lp is >= 67 and <= 118)
-                    {
-                        k.WindowsKeyCode = lp + -67 + 76;
-                    }
-                    else if (lp is >= 10 and <= 33)
-                    {
-                        k.WindowsKeyCode = lp + -10 + 112;
-                    }
-                    else if (lp == 49)
-                    {
-                        k.WindowsKeyCode = lp + -49 + 13;
-                    }
-                    else if (lp == 53)
-                    {
-                        k.WindowsKeyCode = lp + -53 + 8;
-                    }
-                }
-                else
+            foreach (var item in imp.KeyEvents)
+            {
+                var k = new CefSharp.KeyEvent();
+                var lp = (int)item.Key;
+                k.Type = KeyEventType.RawKeyDown;
+                if (lp is >= 83 and <= 108)
                 {
                     k.WindowsKeyCode = lp + -83 + 65;
+                }
+                else if (lp is >= 109 and <= 118)
+                {
+                    k.WindowsKeyCode = lp + -109 + 48;
+                }
+                else if (lp is >= 67 and <= 118)
+                {
+                    k.WindowsKeyCode = lp + -67 + 76;
+                }
+                else if (lp is >= 10 and <= 33)
+                {
+                    k.WindowsKeyCode = lp + -10 + 112;
+                }
+                else if (lp == 49)
+                {
+                    k.WindowsKeyCode = 13;
+                }
+                else if (lp == 50)
+                {
+                    k.WindowsKeyCode = 27;
+                }
+                else if (lp == 51)
+                {
+                    k.WindowsKeyCode = 32;
+                }
+                else if (lp == 52)
+                {
+                    k.WindowsKeyCode = 9;
+                }
+                else if (lp == 53)
+                {
+                    k.WindowsKeyCode = 8;
+                }
+                else if (lp == 54)
+                {
+                    k.WindowsKeyCode = 45;
+                }
+                else if (lp == 55)
+                {
+                    k.WindowsKeyCode = 46;
+                }
+                else if (lp is >= 45 and <= 48)
+                {
+                    if(lp == 45)
+                    {
+                        k.WindowsKeyCode = 38;
+                    }
+                    else if (lp == 46)
+                    {
+                        k.WindowsKeyCode = 40;
+                    }
+                    else if (lp == 47)
+                    {
+                        k.WindowsKeyCode = 37;
+                    }
+                    else if (lp == 48)
+                    {
+                        k.WindowsKeyCode = 39;
+                    }
                 }
                 k.Modifiers = CefEventFlags.None;
 				if ((((int)item.Modifiers) & ((int)ModifierKeys.Alt)) > 0f)
@@ -766,13 +802,10 @@ namespace RhubarbEngine.Components.Interaction
 						break;
 				}
 			}
-
-			_browser.GetBrowser().GetHost().SendMouseMoveEvent(new CefSharp.MouseEvent((int)imp.MousePosition.X, (int)imp.MousePosition.Y, CefEventFlags.None), !imp.Focused);
-			_browser.GetBrowser().GetHost().SendMouseWheelEvent(0, (int)(imp.WheelDelta * 100), 0, (int)(imp.WheelDelta * 100), CefEventFlags.None);
-			_browser.GetBrowser().GetHost().SetAudioMuted(false);
-			_browser.GetBrowser().GetHost().SetFocus(imp.Focused);
-
-		}
+            _browser.GetBrowser().GetHost().SendMouseMoveEvent(new CefSharp.MouseEvent((int)imp.MousePosition.X, (int)imp.MousePosition.Y, CefEventFlags.None), !imp.Focused);
+			_browser.GetBrowser().GetHost().SendFocusEvent(imp.Focused);
+            _browser.GetBrowser().SendMouseWheelEvent(0, (int)(imp.WheelDelta * 100), 0, (int)(imp.WheelDelta * 100), CefEventFlags.None);
+        }
 		public bool GetAudioParameters(IWebBrowser chromiumWebBrowser, IBrowser browser, ref AudioParameters parameters)
 		{
             parameters.ChannelLayout = audioType.Value switch

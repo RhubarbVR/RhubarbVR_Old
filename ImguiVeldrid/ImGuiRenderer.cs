@@ -7,13 +7,40 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using RhubarbEngine;
+
+namespace RhubarbEngine
+{
+    public enum ThemeColor
+    {
+        Dark,
+        Standard,
+        StandardLight,
+        Light,
+        Random,
+    }
+}
 namespace Veldrid
 {
-	/// <summary>
-	/// Can render draw lists produced by ImGui.
-	/// Also provides functions for updating ImGui input.
-	/// </summary>
-	public class ImGuiRenderer : IDisposable
+    public struct RenderImguiStyle
+    {
+        public float Rounding;
+
+        public ThemeColor Color;
+
+        public RenderImguiStyle(float rounding, ThemeColor color)
+        {
+            Rounding = rounding;
+            Color = color;
+        }
+
+    }
+
+    /// <summary>
+    /// Can render draw lists produced by ImGui.
+    /// Also provides functions for updating ImGui input.
+    /// </summary>
+    public class ImGuiRenderer : IDisposable
 	{
 		private GraphicsDevice _gd;
 		private readonly Assembly _assembly;
@@ -49,16 +76,18 @@ namespace Veldrid
 		private readonly List<IDisposable> _ownedResources = new();
 		private int _lastAssignedID = 100;
 		private bool _frameBegun;
-
-		/// <summary>
-		/// Constructs a new ImGuiRenderer.
-		/// </summary>
-		/// <param name="gd">The GraphicsDevice used to create and update resources.</param>
-		/// <param name="outputDescription">The output format.</param>
-		/// <param name="width">The initial width of the rendering target. Can be resized.</param>
-		/// <param name="height">The initial height of the rendering target. Can be resized.</param>
-		public ImGuiRenderer(GraphicsDevice gd, OutputDescription outputDescription, int width, int height)
-			: this(gd, outputDescription, width, height, ColorSpaceHandling.Legacy) { }
+        public RenderImguiStyle style;
+        /// <summary>
+        /// Constructs a new ImGuiRenderer.
+        /// </summary>
+        /// <param name="gd">The GraphicsDevice used to create and update resources.</param>
+        /// <param name="outputDescription">The output format.</param>
+        /// <param name="width">The initial width of the rendering target. Can be resized.</param>
+        /// <param name="height">The initial height of the rendering target. Can be resized.</param>
+        public ImGuiRenderer(GraphicsDevice gd, OutputDescription outputDescription, int width, int height, RenderImguiStyle stylee)
+			: this(gd, outputDescription, width, height, ColorSpaceHandling.Legacy, stylee) 
+        {
+        }
 
 		bool _inshlized;
 
@@ -70,7 +99,7 @@ namespace Veldrid
 		/// <param name="width">The initial width of the rendering target. Can be resized.</param>
 		/// <param name="height">The initial height of the rendering target. Can be resized.</param>
 		/// <param name="colorSpaceHandling">Identifies how the renderer should treat vertex colors.</param>
-		public ImGuiRenderer(GraphicsDevice gd, OutputDescription outputDescription, int width, int height, ColorSpaceHandling colorSpaceHandling)
+		public ImGuiRenderer(GraphicsDevice gd, OutputDescription outputDescription, int width, int height, ColorSpaceHandling colorSpaceHandling, RenderImguiStyle stylee)
 		{
 			_gd = gd;
 			_assembly = typeof(ImGuiRenderer).GetTypeInfo().Assembly;
@@ -78,8 +107,9 @@ namespace Veldrid
 			_windowWidth = width;
 			_windowHeight = height;
 			_outputDescription = outputDescription;
-		}
-		OutputDescription _outputDescription;
+            style = stylee;
+        }
+        OutputDescription _outputDescription;
 		public void WindowResized(int width, int height)
 		{
 			_windowWidth = width;
@@ -353,10 +383,28 @@ namespace Veldrid
 			}
 		}
 
-		/// <summary>
-		/// Updates ImGui input and IO configuration state.
-		/// </summary>
-		public void Update(float deltaSeconds, InputSnapshot snapshot)
+        private float Invert(float val)
+        {
+            return ((val - 0.5f) * -1) + 0.5f;
+        }
+
+        private Vector4 ConvertToLight(Vector4 old)
+        {
+            return new Vector4(Invert(old.X), Invert(old.Y), Invert(old.Z), old.W);
+        }
+        static Random _rand = new Random();
+
+        private Vector4 RandomColor(Vector4 old)
+        {
+            var random = new Vector3((float)_rand.NextDouble(), (float)_rand.NextDouble(), (float)_rand.NextDouble());
+            return new Vector4((old.X + random.X)/2, (old.Y + random.Y) / 2, (old.Z + random.Z) / 2, old.W);
+        }
+
+
+        /// <summary>
+        /// Updates ImGui input and IO configuration state.
+        /// </summary>
+        public void Update(float deltaSeconds, InputSnapshot snapshot)
 		{
 			if (!_inshlized)
             {
@@ -374,36 +422,90 @@ namespace Veldrid
 
 				SetPerFrameImGuiData(1f / 60f);
 
+                var rounding = style.Rounding;
+
+                ImGui.GetStyle().WindowTitleAlign = new Vector2(0.5f, 0.5f);
+                ImGui.GetStyle().FramePadding = new Vector2(5f,4.5f);
+                ImGui.GetStyle().WindowRounding = rounding;
+                ImGui.GetStyle().FrameRounding = rounding;
+                ImGui.GetStyle().ChildRounding = rounding;
+                ImGui.GetStyle().GrabRounding = rounding;
+                ImGui.GetStyle().PopupRounding = rounding;
+                ImGui.GetStyle().ScrollbarRounding = rounding;
+                ImGui.GetStyle().TabRounding = rounding;
+
                 var colors = ImGui.GetStyle().Colors;
-                colors[(int)ImGuiCol.WindowBg] = new Vector4(0.1f, 0.105f, 0.11f, 0.75f);
 
-                // Headers
-                colors[(int)ImGuiCol.Header] = new Vector4( 0.2f, 0.205f, 0.21f, 1.0f );
-                colors[(int)ImGuiCol.HeaderHovered] = new Vector4( 0.3f, 0.305f, 0.31f, 1.0f );
-                colors[(int)ImGuiCol.HeaderActive] = new Vector4( 0.15f, 0.1505f, 0.151f, 1.0f );
+                if(style.Color is ThemeColor.Light or ThemeColor.Dark)
+                {
+                    colors[(int)ImGuiCol.WindowBg] = new Vector4(0.1f, 0.105f, 0.11f, 0.75f);
 
-                // Buttons
-                colors[(int)ImGuiCol.Button] = new Vector4( 0.2f, 0.205f, 0.21f, 1.0f );
-                colors[(int)ImGuiCol.ButtonHovered] = new Vector4( 0.3f, 0.305f, 0.31f, 1.0f );
-                colors[(int)ImGuiCol.ButtonActive] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f );
+                    // Headers
+                    colors[(int)ImGuiCol.Header] = new Vector4(0.2f, 0.205f, 0.21f, 1.0f);
+                    colors[(int)ImGuiCol.HeaderHovered] = new Vector4(0.3f, 0.305f, 0.31f, 1.0f);
+                    colors[(int)ImGuiCol.HeaderActive] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f);
 
-                // Frame BG
-                colors[(int)ImGuiCol.FrameBg] = new Vector4(0.2f, 0.205f, 0.21f, 1.0f );
-                colors[(int)ImGuiCol.FrameBgHovered] = new Vector4(0.3f, 0.305f, 0.31f, 1.0f );
-                colors[(int)ImGuiCol.FrameBgActive] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f );
+                    // Buttons
+                    colors[(int)ImGuiCol.Button] = new Vector4(0.2f, 0.205f, 0.21f, 1.0f);
+                    colors[(int)ImGuiCol.ButtonHovered] = new Vector4(0.3f, 0.305f, 0.31f, 1.0f);
+                    colors[(int)ImGuiCol.ButtonActive] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f);
 
-                // Tabs
-                colors[(int)ImGuiCol.Tab] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f);
-                colors[(int)ImGuiCol.TabHovered] = new Vector4(0.38f, 0.3805f, 0.381f, 1.0f );
-                colors[(int)ImGuiCol.TabActive] = new Vector4(0.28f, 0.2805f, 0.281f, 1.0f );
-                colors[(int)ImGuiCol.TabUnfocused] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f );
-                colors[(int)ImGuiCol.TabUnfocusedActive] = new Vector4(0.2f, 0.205f, 0.21f, 1.0f );
+                    // Frame BG
+                    colors[(int)ImGuiCol.FrameBg] = new Vector4(0.2f, 0.205f, 0.21f, 1.0f);
+                    colors[(int)ImGuiCol.FrameBgHovered] = new Vector4(0.3f, 0.305f, 0.31f, 1.0f);
+                    colors[(int)ImGuiCol.FrameBgActive] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f);
 
-                // Title
-                colors[(int)ImGuiCol.TitleBg] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f );
-                colors[(int)ImGuiCol.TitleBgActive] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f );
-                colors[(int)ImGuiCol.TitleBgCollapsed] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f );
+                    // Tabs
+                    colors[(int)ImGuiCol.Tab] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f);
+                    colors[(int)ImGuiCol.TabHovered] = new Vector4(0.38f, 0.3805f, 0.381f, 1.0f);
+                    colors[(int)ImGuiCol.TabActive] = new Vector4(0.28f, 0.2805f, 0.281f, 1.0f);
+                    colors[(int)ImGuiCol.TabUnfocused] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f);
+                    colors[(int)ImGuiCol.TabUnfocusedActive] = new Vector4(0.2f, 0.205f, 0.21f, 1.0f);
 
+                    // Title
+                    colors[(int)ImGuiCol.TitleBg] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f);
+                    colors[(int)ImGuiCol.TitleBgActive] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f);
+                    colors[(int)ImGuiCol.TitleBgCollapsed] = new Vector4(0.15f, 0.1505f, 0.151f, 1.0f);
+
+                    if(style.Color == ThemeColor.Light)
+                    {
+
+                        foreach (var item in (ImGuiCol[])Enum.GetValues(typeof(ImGuiCol)))
+                        {
+                            try
+                            {
+                                colors[(int)item] = ConvertToLight(colors[(int)item]);
+                            }
+                            catch { }
+                        }
+                    }
+                }
+
+                if (style.Color == ThemeColor.StandardLight)
+                {
+
+                    foreach (var item in (ImGuiCol[])Enum.GetValues(typeof(ImGuiCol)))
+                    {
+                        try
+                        {
+                            colors[(int)item] = ConvertToLight(colors[(int)item]);
+                        }
+                        catch { }
+                    }
+                }
+
+                if (style.Color == ThemeColor.Random)
+                {
+
+                    foreach (var item in (ImGuiCol[])Enum.GetValues(typeof(ImGuiCol)))
+                    {
+                        try
+                        {
+                            colors[(int)item] = RandomColor(colors[(int)item]);
+                        }
+                        catch { }
+                    }
+                }
 
                 ImGui.NewFrame();
 				_frameBegun = true;

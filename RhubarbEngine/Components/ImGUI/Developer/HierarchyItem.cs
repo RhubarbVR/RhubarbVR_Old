@@ -110,6 +110,10 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void Children_ElementRemoved(IWorker arg1, int arg2)
         {
+            if (!dropedDown.Value)
+            {
+                return;
+            }
             try
             {
                 children[arg2].Target?.Entity.Destroy();
@@ -120,6 +124,10 @@ namespace RhubarbEngine.Components.ImGUI
 
         private void Children_ElementAdded(IWorker obj)
         {
+            if (!dropedDown.Value)
+            {
+                return;
+            }
             var newHierarchyItem = Entity.AddChild("HierarchyItem").AttachComponent<HierarchyItem>();
             children.Add().Target = newHierarchyItem;
             newHierarchyItem.target.Target = (Entity)obj;

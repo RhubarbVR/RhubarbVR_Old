@@ -31,33 +31,81 @@ namespace RhubarbEngine.Components.PrivateSpace
 
 		public Sync<bool> open;
 
-		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+        public SyncRef<InputPlane> collider;
+
+
+        private void NormalButton(Action onClick,string name)
+        {
+            ImGui.SetNextItemOpen(false);
+            if(ImGui.TreeNodeEx($"{name}##{name}{ReferenceID.id}", ImGuiTreeNodeFlags.Framed | ImGuiTreeNodeFlags.Bullet))
+            {
+                onClick?.Invoke();
+                ImGui.TreePop();
+            }
+        }
+
+        private void NormalDropDown(Action onClick, string name)
+        {
+            if (ImGui.TreeNodeEx($"{name}##{name}{ReferenceID.id}", ImGuiTreeNodeFlags.Framed))
+            {
+                onClick?.Invoke();
+                ImGui.TreePop();
+            }
+        }
+
+        private void NormalDropDown(Action onClick, string name,string value)
+        {
+            if(ImGui.TreeNodeEx($"{name}{value}##{name}{ReferenceID.id}", ImGuiTreeNodeFlags.Framed))
+            {
+                onClick?.Invoke();
+                ImGui.TreePop();
+            }
+        }
+        
+
+        public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			base.ImguiRender(imGuiRenderer, canvas);
-			var drawlist = ImGui.GetForegroundDrawList();
-			drawlist.AddCircleFilled(new Vector2(300f), 60f, ImGui.GetColorU32(ImGuiCol.WindowBg));
-		}
+            ImGui.GetStyle().FramePadding = new Vector2(6);
+            NormalButton(() => Console.WriteLine("HiThere"), "Hello");
+            NormalButton(() => Console.WriteLine("Still_HiThere"), "Helloeee");
+            NormalDropDown(() => 
+            {
+                NormalButton(() => Console.WriteLine("HiThere"), "Hello1");
+                NormalButton(() => Console.WriteLine("Still_HiThere"), "Helloeee2");
+            }, "Drop down");
+            NormalButton(() => Console.WriteLine("HiThere"), "ILikeTrains");
+            NormalDropDown(() => 
+            {
+                NormalButton(() => Console.WriteLine("Trains Selected"), "Trains");
+                NormalButton(() => Console.WriteLine("Still Trains Selected"), "StillTrains");
+            }, "Mode:", "Trains");
+        }
+
+        private float _closeCoutDown = 0.5f;
 
 		private void FocusLost()
 		{
-			Close();
-		}
+            _closeCoutDown = 0.5f;
+        }
 
 		public override void OnAttach()
 		{
 			base.OnAttach();
 			var (renderentity, mesh, mit) = MeshHelper.AddMesh<PlaneMesh>(Entity, World.staticAssets.OverLayedUnlitShader, "RenderEntity", 10);
 			renderEntity.Target = renderentity;
-			mesh.Width.Value = 0.5f;
-			mesh.Height.Value = 0.5f;
+            var ratio = new Vector2f(1, 1);
+            var reslution = 300;
+			mesh.Width.Value = ratio.x/2;
+			mesh.Height.Value = ratio.y/2;
 			var col = renderentity.AttachComponent<InputPlane>();
+            collider.Target = col;
 			col.onFocusLost.Target = FocusLost;
-			col.pixelSize.Value = new Vector2u(600 * 2);
-			col.size.Value = new Vector2f(0.25f);
+			col.pixelSize.Value = new Vector2u((uint)(ratio.x * reslution), (uint)(ratio.y * reslution));
+			col.size.Value = new Vector2f(ratio.x / 4, ratio.x / 4);
 			var imGUICanvas = renderentity.AttachComponent<ImGUICanvas>();
 			imGUICanvas.noBackground.Value = true;
 			imGUICanvas.imputPlane.Target = col;
-			imGUICanvas.scale.Value = new Vector2u(600);
+			imGUICanvas.scale.Value = new Vector2u((uint)(ratio.x * reslution), (uint)(ratio.y * reslution));
 			imGUICanvas.element.Target = this;
 			imGUICanvas.backGroundColor.Value = Colorf.TransparentWhite;
 			var field = mit.GetField<Render.Material.Fields.Texture2DField>("Texture", Render.Shader.ShaderType.MainFrag);
@@ -76,20 +124,52 @@ namespace RhubarbEngine.Components.PrivateSpace
 			side = new Sync<Creality>(this, newRefIds);
 			renderEntity = new SyncRef<Entity>(this, newRefIds);
 			open = new Sync<bool>(this, newRefIds, true);
-		}
+            collider = new SyncRef<InputPlane>(this, newRefIds);
+
+        }
+
+        private bool _click;
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (ProssesOpenKey())
+            if(collider.Target?.Focused ?? false)
+            {
+                _closeCoutDown = 0.5f;
+            }
+            else if (_closeCoutDown > 0)
+            {
+                _closeCoutDown -= (float)Engine.PlatformInfo.DeltaSeconds;
+            }
+            if (!(collider.Target?.Focused ?? false) && open.Value)
+            {
+                if (_closeCoutDown < 0)
+                {
+                    Close();
+                }
+            }
+
+            if (_click != ProssesOpenKey())
 			{
-				Open();
-			}
-		}
+                if (!_click)
+                {
+                    if (open.Value)
+                    {
+                        Close();
+                    }
+                    else
+                    {
+                        Open();
+                    }
+                }
+            }
+            _click = ProssesOpenKey();
+        }
 
 
-		public void Open()
+        public void Open()
 		{
-			renderEntity.Target.enabled.Value = true;
+            _closeCoutDown = 0.5f;
+            renderEntity.Target.enabled.Value = true;
 			Alline();
 			if (open.Value)
             {
@@ -141,7 +221,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 		private bool ProssesOpenKey()
 		{
             return Engine.OutputType == VirtualReality.OutputType.Screen
-                ? (side.Value != Creality.Left && Input.MainWindows.GetKeyDown(Key.F) && !Input.IsKeyboardinuse)
+                ? (side.Value != Creality.Left && Input.MainWindows.GetMouseButton(MouseButton.Middle))
                 : Input.MenuPress(side.Value);
         }
 

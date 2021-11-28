@@ -238,14 +238,12 @@ namespace RhubarbEngine.Components.Interaction
 			Entity.SetParent(obj.holder.Target);
 		}
 
-		public void RemoteGrab()
+		public void RemoteGrab(GrabbableHolder grabbableHolder)
 		{
-			if (World.lastHolder == null)
+            if (grabbableHolder is not null)
             {
-                return;
+                Entity_onGrip(grabbableHolder, true);
             }
-
-            Entity_onGrip(World.lastHolder, true);
 		}
 
 		public Grabbable(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
