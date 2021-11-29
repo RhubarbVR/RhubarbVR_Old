@@ -124,7 +124,8 @@ void main() {
     
 
     // Optionally scale by a color
-    outputColor = glyphColor.a == 0.0 ? 1.0 - rgba : glyphColor * rgba;
+    vec4 colorout = glyphColor.a == 0.0 ? 1.0 - rgba : glyphColor * rgba;
+    outputColor = vec4(colorout.r,colorout.g,colorout.b,(rgba.r+rgba.g,rgba.b)*((glyphColor.a == 0.0)?1:glyphColor.a));
 }
 ";
     }

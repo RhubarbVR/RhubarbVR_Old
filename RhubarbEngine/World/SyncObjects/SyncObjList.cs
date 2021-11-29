@@ -62,7 +62,11 @@ namespace RhubarbEngine.World
 			_synclist.SafeAdd(value);
 			value.OnDispose += Value_onDispose;
 			AddDisposable(value);
-            ElementAdded?.Invoke(value);
+            try
+            {
+                ElementAdded?.Invoke(value);
+            }
+            catch { }
         }
 
 		public int GetIndexOf(T val)
