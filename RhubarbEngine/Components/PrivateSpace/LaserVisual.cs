@@ -60,7 +60,7 @@ namespace RhubarbEngine.Components.PrivateSpace
             looke.offset.Value = Quaternionf.CreateFromEuler(0f, 90f, 0f);
             var scalere = cDirurs.AttachComponent<DistanceScaler>();
             scalere.scale.Value = 0.025f;
-            scalere.pow.Value = 0.5;
+            scalere.pow.Value = 0.55;
             scalere.offset.Value = new Vector3f(-0.1);
 
             var pos = cmit.GetField<Render.Material.Fields.FloatField>("Zpos", Render.Shader.ShaderType.MainFrag);
@@ -175,17 +175,17 @@ namespace RhubarbEngine.Components.PrivateSpace
 				case InteractionSource.LeftLaser:
 					Currsor.Target.enabled.Value = Input.LeftLaser.Isvisible;
                     CurrsorDir.Target.enabled.Value = Input.LeftLaser.Isvisible && Input.LeftLaser.IsLocked;
-                    Laser.Target.enabled.Value = Input.LeftLaser.Isvisible;
+                    Laser.Target.enabled.Value = Input.LeftLaser.Isvisible && (!Engine.SettingsObject.InteractionSettings.HideinScreenMode || Engine.OutputType != VirtualReality.OutputType.Screen);
 					break;
 				case InteractionSource.RightLaser:
 					Currsor.Target.enabled.Value = Input.RightLaser.Isvisible;
                     CurrsorDir.Target.enabled.Value = Input.RightLaser.Isvisible && Input.RightLaser.IsLocked;
-                    Laser.Target.enabled.Value = Input.RightLaser.Isvisible;
+                    Laser.Target.enabled.Value = Input.RightLaser.Isvisible && (!Engine.SettingsObject.InteractionSettings.HideinScreenMode || Engine.OutputType != VirtualReality.OutputType.Screen);
 					break;
 				case InteractionSource.HeadLaser:
 					Currsor.Target.enabled.Value = Input.RightLaser.Isvisible;
                     CurrsorDir.Target.enabled.Value = Input.RightLaser.Isvisible && Input.RightLaser.IsLocked;
-                    Laser.Target.enabled.Value = Input.RightLaser.Isvisible;
+                    Laser.Target.enabled.Value = Input.RightLaser.Isvisible && (!Engine.SettingsObject.InteractionSettings.HideinScreenMode || Engine.OutputType != VirtualReality.OutputType.Screen);
 					break;
 				default:
 					break;

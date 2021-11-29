@@ -10,7 +10,13 @@ namespace RhubarbEngine.Settings
 {
 	public class InteractionSettings : SettingsObject
 	{
-		[SettingsField("Laser Smoothing 10 default", "/Laser")]
+        [SettingsField("Hide Laser in screen Mode", "/Laser")]
+        public bool HideinScreenMode = true;
+
+        [SettingsField("Laser Smoothing in screen Mode", "/Laser")]
+        public float ScreenModeSmoothing = 0;
+
+        [SettingsField("Laser Smoothing 10 default", "/Laser")]
 		public float Smoothing = 10;
 
 		[SettingsField("Laser Snaping Distance in 100ths 8 default", "/Laser")]

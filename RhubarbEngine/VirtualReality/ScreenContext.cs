@@ -201,6 +201,14 @@ namespace RhubarbEngine.VirtualReality
 
 		private Vector2 _mousePressedPos;
 
+        public bool MouseLocked
+        {
+            get
+            {
+                return _mousePressed;
+            }
+        }
+
 		private bool _mousePressed = false;
 
 

@@ -34,6 +34,7 @@ namespace RhubarbEngine.Managers
         TextureView Solidview { get; }
         TextureView RhubarbSolidview { get; }
         TextureView[] Cursors { get; }
+        bool MouseLocked { get; }
 
         event Action VrContextUpdated;
 
@@ -42,6 +43,21 @@ namespace RhubarbEngine.Managers
 
     public class RenderManager : IRenderManager
     {
+        public bool MouseLocked
+        {
+            get
+            {
+                if(vrContext.GetType() == typeof(ScreenContext))
+                {
+                    return ((ScreenContext)vrContext).MouseLocked;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         public float FieldOfView
         {
             get

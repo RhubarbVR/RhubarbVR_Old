@@ -65,6 +65,11 @@ namespace RhubarbEngine.Components.PrivateSpace
                 return;
             }
 
+            if (!Engine.Rendering)
+            {
+                return;
+            }
+
             if ((Engine.OutputType == VirtualReality.OutputType.Screen) && (source.Value != InteractionSource.HeadLaser))
             {
                 return;
@@ -79,16 +84,22 @@ namespace RhubarbEngine.Components.PrivateSpace
 			{
 				if (source.Value == InteractionSource.HeadLaser)
 				{
-					var mousepos = Engine.InputManager.MainWindows.MousePosition;
-					var size = new System.Numerics.Vector2(Engine.WindowManager.MainWindow?.Width??640, Engine.WindowManager.MainWindow?.Height??640);
-					var x = (2.0f * mousepos.X / size.X) - 1.0f;
-					var y = (2.0f * mousepos.Y / size.Y) - 1.0f;
-					var ar = size.X / size.Y;
-					var tan = (float)Math.Tan(Engine.SettingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
-					var vectforward = new Vector3f(-x * tan * ar, y * tan, 1);
-					var vectup = new Vector3f(0, 1, 0);
-					Entity.rotation.Value = Quaternionf.LookRotation(vectforward, vectup);
-				}
+                    if (!Engine.RenderManager.MouseLocked)
+                    {
+                        var mousepos = Engine.InputManager.MainWindows.MousePosition;
+                        var size = new System.Numerics.Vector2(Engine.WindowManager.MainWindow?.Width ?? 640, Engine.WindowManager.MainWindow?.Height ?? 640);
+                        var x = (2.0f * mousepos.X / size.X) - 1.0f;
+                        var y = (2.0f * mousepos.Y / size.Y) - 1.0f;
+                        var ar = size.X / size.Y;
+                        var tan = (float)Math.Tan(Engine.SettingsObject.RenderSettings.DesktopRenderSettings.fov * Math.PI / 360);
+                        var vectforward = new Vector3f(-x * tan * ar, y * tan, 1);
+                        Entity.rotation.Value = Quaternionf.LookRotation(vectforward, Vector3f.AxisY);
+                    }
+                    else
+                    {
+                        Entity.rotation.Value = Quaternionf.LookRotation(Vector3f.AxisZ, Vector3f.AxisY);
+                    }
+                }
 				System.Numerics.Matrix4x4.Decompose(Entity.GlobalTrans(), out var vsg, out var vrg, out var global);
 				var sourcse = new Vector3(global.X, global.Y, global.Z);
 				var val = Entity.GlobalRot().AxisZ;

@@ -421,7 +421,7 @@ namespace RhubarbEngine.Input
         {
             get
             {
-                return _engine.SettingsObject.InteractionSettings.Smoothing;
+                return (_engine.OutputType == VirtualReality.OutputType.Screen)? _engine.SettingsObject.InteractionSettings.ScreenModeSmoothing : _engine.SettingsObject.InteractionSettings.Smoothing;
             }
         }
 
