@@ -58,7 +58,7 @@ namespace RhubarbEngine.Render
 
 		public virtual bool Cull(ref RhubarbEngine.Utilities.BoundingFrustum visibleFrustum, Matrix4x4 view)
 		{
-			return visibleFrustum.Contains(Veldrid.Utilities.BoundingBox.Transform(BoundingBox, Entity.GlobalTrans() * view)) == ContainmentType.Disjoint;
+			return visibleFrustum.Contains(BoundingBox.Transform(BoundingBox, Entity.GlobalTrans() * view)) == ContainmentType.Disjoint;
 		}
 
 		public abstract BoundingBox BoundingBox { get; }

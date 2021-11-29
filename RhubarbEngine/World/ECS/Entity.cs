@@ -75,6 +75,7 @@ namespace RhubarbEngine.World.ECS
 		private Matrix4x4 _cashedGlobalTrans = Matrix4x4.CreateScale(Vector3.One);
 
 		private Matrix4x4 _cashedLocalMatrix = Matrix4x4.CreateScale(Vector3.One);
+
 		[NoShow]
 		[NoSave]
 		[NoSync]
@@ -646,7 +647,7 @@ namespace RhubarbEngine.World.ECS
 			}
 		}
 
-		public void AddToRenderQueue(RenderQueue gu, Vector3 playpos, RemderLayers layer, RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
+		public void AddToRenderQueue(RenderQueue gu, Vector3 playpos, RemderLayers layer, Utilities.BoundingFrustum frustum, Matrix4x4 view)
 		{
 			if (((int)layer & (int)remderlayer.Value) <= 0)
 			{

@@ -63,7 +63,7 @@ namespace RhubarbEngine.Render
 			}
 		}
 
-		public void Add(Renderable item, Vector3 viewPosition, ref RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
+		public void Add(Renderable item, Vector3 viewPosition, ref Utilities.BoundingFrustum frustum, Matrix4x4 view)
 		{
 			if (item.Cull(ref frustum, view))
 			{

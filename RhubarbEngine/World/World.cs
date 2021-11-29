@@ -265,7 +265,7 @@ namespace RhubarbEngine.World
 		[NoSave]
 		public RhubarbEngine.Components.ImGUI.EntityProperties lastEntityObserver;
 
-		public void AddToRenderQueue(RenderQueue gu, RemderLayers layer, RhubarbEngine.Utilities.BoundingFrustum frustum, Matrix4x4 view)
+		public void AddToRenderQueue(RenderQueue gu, RemderLayers layer,Utilities.BoundingFrustum frustum, Matrix4x4 view)
 		{
 			switch (_focus)
 			{

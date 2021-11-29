@@ -15,8 +15,6 @@ using Veldrid;
 
 namespace RhubarbEngine.Components.ImGUI
 {
-
-
 	[Category("ImGUI/Developer")]
 	public class HierarchyItem : UIWidget
 	{
