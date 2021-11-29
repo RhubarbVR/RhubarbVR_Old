@@ -42,7 +42,7 @@ namespace RhubarbEngine.World
 		{
 			get
 			{
-                return this._target == null || this._target.IsRemoved || this._target.World != World ? null : this._target;
+                return _target == null || (_target?.IsRemoved??false) || _target?.World != World ? null : _target;
             }
             set
 			{

@@ -59,16 +59,6 @@ namespace RhubarbEngine.Components.Interaction
             }
         }
 
-        RollBuffer _frameInputBuffer;
-
-        public byte[] FrameInputBuffer
-        {
-            get
-            {
-                return _frameInputBuffer.array;
-            }
-        }
-
         public Sync<RenderFrequency> renderFrequency;
 		public Sync<Vector2u> scale;
 		public SyncRef<IInputPlane> imputPlane;
@@ -243,7 +233,7 @@ namespace RhubarbEngine.Components.Interaction
 
 		private Task _lastTask;
 
-        public event Action Update;
+        public event Action<byte[]> Update;
         public event Action Reload;
 
         public void StartRenderTask()

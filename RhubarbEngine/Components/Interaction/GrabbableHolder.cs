@@ -118,6 +118,8 @@ namespace RhubarbEngine.Components.Interaction
         }
 
         byte _timeout = 0;
+        bool _primeClick = false;
+
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
 			base.CommonUpdate(startTime, Frame);
@@ -136,6 +138,33 @@ namespace RhubarbEngine.Components.Interaction
                 return;
             }
 
+            var isClickingPrime = false;
+            switch (source.Value)
+            {
+                case InteractionSource.LeftLaser:
+                    isClickingPrime = Input.PrimaryPress(RhubarbEngine.Input.Creality.Left) || Input.MainWindows.GetMouseButton(Veldrid.MouseButton.Left);
+                    break;
+                case InteractionSource.RightLaser:
+                    isClickingPrime = Input.PrimaryPress(RhubarbEngine.Input.Creality.Right) || Input.MainWindows.GetMouseButton(Veldrid.MouseButton.Left);
+                    break;
+                case InteractionSource.HeadLaser:
+                    isClickingPrime = Input.MainWindows.GetMouseButton(Veldrid.MouseButton.Left);
+                    break;
+                default:
+                    break;
+            }
+            if ((_primeClick != isClickingPrime) && isClickingPrime)
+            {
+                try
+                {
+                    HolderReferen?.OpenWindow();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Failed To open Window Error:" + e.ToString());
+                }
+            }
+            _primeClick = isClickingPrime;
             if (source.Value == InteractionSource.HeadLaser)
 			{
 				var mousepos = Engine.InputManager.MainWindows.MousePosition;

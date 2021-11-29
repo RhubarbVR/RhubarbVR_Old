@@ -556,10 +556,7 @@ namespace RhubarbEngine.World.ECS
                 }
 
                 GlobalTransformChange?.Invoke(_cashedGlobalTrans);
-                foreach (var entity in _children)
-                {
-                    entity.UpdateGlobalTrans();
-                }
+                Helper.ThreadSafeForEach (_children, (entity) => ((Entity)entity).UpdateGlobalTrans());
             }
             else
             {
