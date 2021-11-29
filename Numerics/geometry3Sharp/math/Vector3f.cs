@@ -340,7 +340,17 @@ namespace RNumerics
 		{
 			return (a.x != b.x || a.y != b.y || a.z != b.z);
 		}
-		public override bool Equals(object obj)
+
+        public static bool operator >(Vector3f a, Vector3f b)
+        {
+            return (a.x > b.x || a.y > b.y || a.z > b.z);
+        }
+        public static bool operator <(Vector3f a, Vector3f b)
+        {
+            return (a.x < b.x || a.y < b.y || a.z < b.z);
+        }
+
+        public override bool Equals(object obj)
 		{
 			return this == (Vector3f)obj;
 		}

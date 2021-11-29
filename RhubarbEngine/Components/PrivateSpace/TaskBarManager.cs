@@ -34,7 +34,26 @@ namespace RhubarbEngine.Components.PrivateSpace
 		public SyncRef<ImGUICanvas> startcanvas;
 		public Driver<string> dateTextDriver;
 
-		public override void BuildSyncObjs(bool newRefIds)
+        public bool IsOpen
+        {
+            get
+            {
+                return Entity.enabled.Value;
+            }
+        }
+
+        public void Open()
+        {
+            Entity.enabled.Value = true;
+        }
+
+        public void Close()
+        {
+            Entity.enabled.Value = false;
+        }
+
+
+        public override void BuildSyncObjs(bool newRefIds)
 		{
 			root = new SyncRef<Entity>(this, newRefIds);
 			startMenu = new SyncRef<Entity>(this, newRefIds);

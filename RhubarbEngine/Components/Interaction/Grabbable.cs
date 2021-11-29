@@ -29,7 +29,9 @@ namespace RhubarbEngine.Components.Interaction
 	{
 		public SyncRef<Entity> lastParent;
 
-		public SyncRef<User> grabbingUser;
+        public Sync<bool> CanNotDestroy;
+
+        public SyncRef<User> grabbingUser;
 
 		public SyncRef<GrabbableHolder> grabbableHolder;
 
@@ -46,6 +48,14 @@ namespace RhubarbEngine.Components.Interaction
         }
 
 
+        public void DestroyGrabbedObject()
+        {
+            if (!CanNotDestroy.Value)
+            {
+                Entity.Destroy();
+            }
+        }
+
 		public override void BuildSyncObjs(bool newRefIds)
 		{
 			base.BuildSyncObjs(newRefIds);
@@ -53,7 +63,8 @@ namespace RhubarbEngine.Components.Interaction
 			grabbableHolder.Changed += GrabbableHolder_Changed;
 			grabbingUser = new SyncRef<User>(this, newRefIds);
 			lastParent = new SyncRef<Entity>(this, newRefIds);
-		}
+            CanNotDestroy = new Sync<bool>(this, newRefIds);
+        }
 
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
@@ -73,7 +84,11 @@ namespace RhubarbEngine.Components.Interaction
                 }
                 if (scaler != 0)
                 {
-                    Entity.scale.Value = Entity.scale.Value + scaler;
+                    var newscale = (Entity.scale.Value + scaler);
+                    if(!(newscale < Vector3f.Zero))
+                    {
+                        Entity.scale.Value = newscale;
+                    }
                 }
                 var isClickingPrime = false;
                 switch (grabbableHolder.Target.source.Value)
@@ -133,7 +148,12 @@ namespace RhubarbEngine.Components.Interaction
 
 		public override void Dispose()
 		{
-			Entity.RemovePhysicsDisableder(this);
+            try
+            {
+                grabbableHolder.Target.GrabbedObjects.Remove(this);
+            }
+            catch { }
+            Entity.RemovePhysicsDisableder(this);
             base.Dispose();
         }
 
@@ -147,7 +167,12 @@ namespace RhubarbEngine.Components.Interaction
             grabbingUser.Target = null;
 			Entity.SetParent(lastParent.Target);
 			Entity.SendDrop(false, grabbableHolder.Target, true);
-			grabbableHolder.Target = null;
+            try
+            {
+                grabbableHolder.Target.GrabbedObjects.Remove(this);
+            }
+            catch { }
+            grabbableHolder.Target = null;
 			foreach (var item in Entity.GetAllComponents<Collider>())
 			{
 				if (item.NoneStaticBody.Value && (item.collisionObject != null))
@@ -236,7 +261,12 @@ namespace RhubarbEngine.Components.Interaction
 			grabbableHolder.Target = obj;
 			grabbingUser.Target = World.LocalUser;
 			Entity.SetParent(obj.holder.Target);
-		}
+            try
+            {
+                grabbableHolder.Target.GrabbedObjects.Add(this);
+            }
+            catch { }
+        }
 
 		public void RemoteGrab(GrabbableHolder grabbableHolder)
 		{

@@ -36,7 +36,35 @@ namespace RhubarbEngine.Components.Interaction
 
 		public Sync<InteractionSource> source;
 
-		bool _gripping = false;
+        public List<Grabbable> GrabbedObjects = new();
+
+        bool _gripping = false;
+
+        public void DeleteGrabObjects()
+        {
+            foreach (var item in GrabbedObjects)
+            {
+                item.DestroyGrabbedObject();
+            }
+        }
+
+        public bool CanDestroyAnyGabbed {
+            get 
+            {
+                if(GrabbedObjects.Count <= 0)
+                {
+                    return false;
+                }
+                foreach (var item in GrabbedObjects)
+                {
+                    if (!item.CanNotDestroy.Value)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
 
         public IWorldObject HolderReferen
         {
@@ -147,7 +175,8 @@ namespace RhubarbEngine.Components.Interaction
 						default:
 							break;
 					}
-				}
+                    GrabbedObjects.Clear();
+                }
 			}
 			if (Referencer.Target == null)
             {

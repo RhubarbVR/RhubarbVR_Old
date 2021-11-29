@@ -27,7 +27,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 	{
 		public Sync<Creality> side;
 
-		public SyncRef<Entity> renderEntity;
+        public SyncRef<Entity> renderEntity;
 
 		public Sync<bool> open;
 
@@ -66,19 +66,86 @@ namespace RhubarbEngine.Components.PrivateSpace
         public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
             ImGui.GetStyle().FramePadding = new Vector2(6);
-            NormalButton(() => Console.WriteLine("HiThere"), "Hello");
-            NormalButton(() => Console.WriteLine("Still_HiThere"), "Helloeee");
-            NormalDropDown(() => 
+            if (Engine.OutputType == VirtualReality.OutputType.Screen)
             {
-                NormalButton(() => Console.WriteLine("HiThere"), "Hello1");
-                NormalButton(() => Console.WriteLine("Still_HiThere"), "Helloeee2");
-            }, "Drop down");
-            NormalButton(() => Console.WriteLine("HiThere"), "ILikeTrains");
-            NormalDropDown(() => 
+                if ((World.worldManager.FocusedWorld?.HeadLaserGrabbableHolder?.CanDestroyAnyGabbed ?? false) || (World.worldManager.FocusedWorld?.LeftLaserGrabbableHolder?.CanDestroyAnyGabbed ?? false) || (World.worldManager.FocusedWorld?.RightLaserGrabbableHolder?.CanDestroyAnyGabbed ?? false))
+                {
+                    NormalButton(() =>
+                    {
+                            if (World.worldManager.FocusedWorld.HeadLaserGrabbableHolder != null)
+                            {
+                                try
+                                {
+                                    World.worldManager.FocusedWorld.HeadLaserGrabbableHolder.DeleteGrabObjects();
+                                }
+                                catch (Exception e)
+                                {
+                                    Logger.Log("Failed To Delete " + e.ToString(), true);
+                                }
+                            }
+                            if (World.worldManager.FocusedWorld.LeftLaserGrabbableHolder != null)
+                            {
+                                try
+                                {
+                                    World.worldManager.FocusedWorld.LeftLaserGrabbableHolder.DeleteGrabObjects();
+                                }
+                                catch (Exception e)
+                                {
+                                    Logger.Log("Failed To Delete " + e.ToString(), true);
+                                }
+                            }
+                            if (World.worldManager.FocusedWorld.RightLaserGrabbableHolder != null)
+                            {
+                                try
+                                {
+                                    World.worldManager.FocusedWorld.RightLaserGrabbableHolder.DeleteGrabObjects();
+                                }
+                                catch (Exception e)
+                                {
+                                    Logger.Log("Failed To Delete " + e.ToString(), true);
+                                }
+                            }
+                        Close();
+                    }, "Delete");
+                }
+            }
+            else
             {
-                NormalButton(() => Console.WriteLine("Trains Selected"), "Trains");
-                NormalButton(() => Console.WriteLine("Still Trains Selected"), "StillTrains");
-            }, "Mode:", "Trains");
+                if (World.worldManager.FocusedWorld != null)
+                {
+                    var holder = (side.Value == Creality.Left) ? World.worldManager.FocusedWorld.LeftLaserGrabbableHolder : World.worldManager.FocusedWorld.RightLaserGrabbableHolder;
+                    if (holder?.CanDestroyAnyGabbed??false)
+                    {
+                        NormalButton(() => {
+                            try
+                            {
+                                holder.DeleteGrabObjects();
+                            }
+                            catch (Exception e)
+                            {
+                                Logger.Log("Failed To Delete " + e.ToString(), true);
+                            }
+                            Close();
+                        }, "Delete");
+                    }
+
+                }
+            }
+            if (World.worldManager.PersonalSpace?.Taskbar.Target?.IsOpen??false)
+            {
+                NormalButton(() => {
+                    World.worldManager.PersonalSpace?.Taskbar.Target?.Close();
+                    Close();
+                }, "Close Dash");
+            }
+            else
+            {
+                NormalButton(() => {
+                    World.worldManager.PersonalSpace?.Taskbar.Target?.Open();
+                    Close();
+                }, "Open Dash");
+            }
+            NormalButton(() => Close(), "Close");
         }
 
         private float _closeCoutDown = 0.5f;

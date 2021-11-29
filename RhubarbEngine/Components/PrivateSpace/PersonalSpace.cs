@@ -30,14 +30,16 @@ namespace RhubarbEngine.Components.PrivateSpace
 		public SyncRef<Entity> FollowUser;
 		public SyncRef<Entity> Keyboard;
 
+        public SyncRef<TaskBarManager> Taskbar;
 
-		public override void BuildSyncObjs(bool newRefIds)
+        public override void BuildSyncObjs(bool newRefIds)
 		{
 			FollowUser = new SyncRef<Entity>(this, newRefIds);
-			Keyboard = new SyncRef<Entity>(this, newRefIds);
-		}
+            Keyboard = new SyncRef<Entity>(this, newRefIds);
+            Taskbar = new SyncRef<TaskBarManager>(this, newRefIds);
+        }
 
-		public void OpenKeyboard()
+        public void OpenKeyboard()
 		{
 			//    if (engine.outputType == VirtualReality.OutputType.Screen)
 			//    {
@@ -109,7 +111,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 
 			var e = d.AddChild("Main Panel");
 			d.AttachComponent<UserInterfacePositioner>();
-			e.AttachComponent<TaskBarManager>();
+            Taskbar.Target = e.AttachComponent<TaskBarManager>();
 
 			var rootent = World.RootEntity.AddChild();
 			rootent.name.Value = $"PersonalSpace User";
