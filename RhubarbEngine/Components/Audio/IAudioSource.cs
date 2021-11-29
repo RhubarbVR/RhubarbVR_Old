@@ -14,11 +14,8 @@ namespace RhubarbEngine.Components.Audio
 
 		public int ChannelCount { get; }
 
-        public event Action Update;
+        public event Action<byte[]> Update;
 
         public event Action Reload;
-
-		public byte[] FrameInputBuffer { get; }
-
 	}
 }

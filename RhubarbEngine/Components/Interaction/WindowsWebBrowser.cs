@@ -333,16 +333,6 @@ namespace RhubarbEngine.Components.Interaction
             }
         }
 
-        RollBuffer _frameInputBuffer;
-
-        public byte[] FrameInputBuffer
-        {
-            get
-            {
-                return _frameInputBuffer.array;
-            }
-        }
-
         public Sync<RenderFrequency> renderFrequency;
 		public Sync<Vector2u> scale;
 		public SyncRef<IInputPlane> imputPlane;
@@ -372,7 +362,6 @@ namespace RhubarbEngine.Components.Interaction
 		public override void OnLoaded()
 		{
 			base.OnLoaded();
-			_frameInputBuffer = new RollBuffer(Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount);
             if (!Engine.Rendering)
             {
                 return;
@@ -513,7 +502,6 @@ namespace RhubarbEngine.Components.Interaction
 			IsActive = false;
 			try
 			{
-				_frameInputBuffer.Push(new byte[Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount]);
 				_browser.AudioHandler = null;
 				_browser.Dispose();
 			}
@@ -531,7 +519,6 @@ namespace RhubarbEngine.Components.Interaction
 
             if (globalAudio.Value)
 			{
-				_frameInputBuffer.Push(new byte[Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount]);
 				_browser.AudioHandler = null;
 			}
 			else
@@ -577,7 +564,7 @@ namespace RhubarbEngine.Components.Interaction
 		TextureView _view;
 		UpdateDatingTexture2D _target;
 
-        public event Action Update;
+        public event Action<byte[]> Update;
         public event Action Reload;
 
         public void Render()
@@ -857,9 +844,7 @@ namespace RhubarbEngine.Components.Interaction
                     truesamps[j] = (byte)(two & 0xFF);
                     truesamps[j + 1] = (byte)((two >> 8) & 0xFF);
                 }
-
-                _frameInputBuffer.Push(truesamps);
-                Update?.Invoke();
+                Update?.Invoke(truesamps);
             }
 		}
 

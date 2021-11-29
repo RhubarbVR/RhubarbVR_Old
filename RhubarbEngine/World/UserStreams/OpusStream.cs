@@ -100,14 +100,14 @@ namespace RhubarbEngine.World
             }
             var CompresedData = ((DataNode<byte[]>)data.GetValue("Data")).Value;
             _opusDecoder.Decode(CompresedData, CompresedData.Length, _readBuffer, _readBuffer.Length);
-            Update?.Invoke();
+            Update?.Invoke(_readBuffer);
         }
 
         private byte[] _readBuffer;
 
         private OpenAL.CaptureStream _captureStream;
 
-        public event Action Update;
+        public event Action<byte[]> Update;
         public event Action Reload;
 
         public bool IsActive

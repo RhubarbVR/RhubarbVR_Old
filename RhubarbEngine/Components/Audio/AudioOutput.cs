@@ -101,25 +101,27 @@ namespace RhubarbEngine.Components.Audio
             LoadAudio();
         }
 
-        public void UpdateAudio()
+        public void UpdateAudio(byte[] data)
         {
-            if (_stream is null)
+            try
             {
-                return;
-            }
-            if (IsNotCulled)
-            {
-                if (!audioSource.Target.IsActive)
+                if (_stream is null)
                 {
                     return;
                 }
-
-                var data = audioSource.Target.FrameInputBuffer;
-                if (_stream.CanWrite && data != null)
+                if (IsNotCulled)
                 {
-                    _stream.Write(data, 0, data.Length);
+                    if (!audioSource.Target.IsActive)
+                    {
+                        return;
+                    }
+                    if (_stream.CanWrite && data != null)
+                    {
+                        _stream.Write(data, 0, data.Length);
+                    }
                 }
             }
+            catch { }
         }
 
         private PlaybackStream _stream;

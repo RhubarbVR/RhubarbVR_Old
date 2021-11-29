@@ -57,25 +57,18 @@ namespace RhubarbEngine.Components.Audio
             [NonSerialized]
             public AudioSplitter audioParent;
 
-            public event Action Update;
+            public event Action<byte[]> Update;
             public event Action Reload;
 
-            public void InvokeUpdate()
+            public void InvokeUpdate(byte[] data)
             {
-                Update?.Invoke();
+                Update?.Invoke(data);
             }
             public void InvokeReload()
             {
                 Reload?.Invoke();
             }
 
-            public byte[] FrameInputBuffer
-            {
-                get
-                {
-                    return audioParent.GetData(GetPos());
-                }
-            }
 
             public override void OnLoaded()
 			{
@@ -112,12 +105,8 @@ namespace RhubarbEngine.Components.Audio
 
 		public byte[] data;
 
-		public byte[] GetData(int channelminsone)
+		public byte[] GetData(int channelminsone,byte[] data)
 		{
-			if (channelminsone == 0)
-			{
-				data = audioSource.Target.FrameInputBuffer;
-			}
 			var returnData = new byte[Engine.AudioManager.AudioFrameSizeInBytes];
 			var index = 0;
 			for (var i = 0; i < data.Length; i += 8)
@@ -153,11 +142,13 @@ namespace RhubarbEngine.Components.Audio
             }
         }
 
-        private void Target_Update()
+        private void Target_Update(byte[] data)
         {
+            var index = 0;
             foreach (var item in outputs)
             {
-                item.InvokeUpdate();
+                item.InvokeUpdate(GetData(index, data));
+                index++;
             }
         }
 

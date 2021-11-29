@@ -8,6 +8,7 @@ using RhuSettings;
 using System.Collections.Generic;
 using DiscordRPC;
 using System.Threading;
+using System.Runtime;
 
 namespace RhubarbEngine
 {
@@ -96,6 +97,7 @@ namespace RhubarbEngine
 
         public void Initialize<TEngineInitializer, TUnitLogs>(string[] _args, bool _verbose = false, bool createLocalWorld = true) where TEngineInitializer: IEngineInitializer where TUnitLogs : IUnitLogs
         {
+            GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
             try
 			{
                 BulletSharp.Loader.Start();
