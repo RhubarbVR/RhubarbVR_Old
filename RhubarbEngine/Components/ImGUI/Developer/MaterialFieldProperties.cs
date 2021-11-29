@@ -120,10 +120,7 @@ namespace RhubarbEngine.Components.ImGUI
 					source.Referencer.Target = target.Target;
 				}
 			}
-			foreach (var item in children)
-			{
-				item.Target?.ImguiRender(imGuiRenderer, canvas);
-			}
+            Helper.ThreadSafeForEach(children, (item) =>((SyncRef<IPropertiesElement>)item).Target?.ImguiRender(imGuiRenderer, canvas));
 		}
 	}
 }

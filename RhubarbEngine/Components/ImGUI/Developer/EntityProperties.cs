@@ -168,10 +168,7 @@ namespace RhubarbEngine.Components.ImGUI
                     target.Target = c;
                 }
             }
-			foreach (var item in children)
-			{
-				item.Target?.ImguiRender(imGuiRenderer, canvas);
-			}
+            Helper.ThreadSafeForEach(children, (item) => ((SyncRef<IPropertiesElement>)item).Target?.ImguiRender(imGuiRenderer, canvas));
 			ImGui.EndChild();
 			if (ImGui.IsMouseClicked(ImGuiMouseButton.COUNT))
 			{

@@ -11,12 +11,28 @@ using System.Collections;
 
 namespace RhubarbEngine.World
 {
-	public class SyncAbstractObjList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : IWorker
+	public class SyncAbstractObjList<T> : Worker,IReadOnlyList<IWorldObject>, ISyncList, IWorldObject, ISyncMember where T : IWorker
 	{
         public SyncAbstractObjList() { }
         private readonly SynchronizedCollection<T> _synclist = new(25);
 
-		public T this[int i]
+        int IReadOnlyCollection<IWorldObject>.Count
+        {
+            get
+            {
+                return Count();
+            }
+        }
+
+        IWorldObject IReadOnlyList<IWorldObject>.this[int index]
+        {
+            get
+            {
+                return _synclist[index];
+            }
+        }
+
+        public T this[int i]
 		{
 			get
 			{

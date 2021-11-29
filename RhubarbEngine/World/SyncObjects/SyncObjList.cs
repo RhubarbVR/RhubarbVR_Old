@@ -10,10 +10,26 @@ using System.Collections;
 
 namespace RhubarbEngine.World
 {
-    public class SyncObjList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : IWorker, new()
+    public class SyncObjList<T> : Worker,IReadOnlyList<IWorldObject>, ISyncList, IWorldObject, ISyncMember where T : IWorker, new()
     {
         public SyncObjList() { }
         private readonly SynchronizedCollection<T> _synclist = new(25);
+
+        int IReadOnlyCollection<IWorldObject>.Count
+        {
+            get
+            {
+                return Count();
+            }
+        }
+
+        IWorldObject IReadOnlyList<IWorldObject>.this[int index]
+        {
+            get
+            {
+                return _synclist[index];
+            }
+        }
 
         public event Action<IWorker,int> ElementRemoved;
         public event Action<IWorker> ElementAdded;

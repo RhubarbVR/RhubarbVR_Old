@@ -321,10 +321,7 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			foreach (var item in children)
-			{
-				item.Target?.ImguiRender(imGuiRenderer, canvas);
-			}
+            Helper.ThreadSafeForEach(children, (item) => ((SyncRef<ComponentAttacherField>)item).Target?.ImguiRender(imGuiRenderer, canvas));
 		}
 	}
 }

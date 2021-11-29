@@ -198,10 +198,7 @@ namespace RhubarbEngine.Components.ImGUI
                         ((Entity)source.HolderReferen).parent.Target = target.Target;
                     }
                 }
-                foreach (var item in children)
-				{
-					item.Target?.ImguiRender(imGuiRenderer, canvas);
-				}
+                Helper.ThreadSafeForEach(children, (item) =>((SyncRef<HierarchyItem>)item).Target?.ImguiRender(imGuiRenderer, canvas));
 				if (!val)
 				{
 					dropedDown.Value = true;

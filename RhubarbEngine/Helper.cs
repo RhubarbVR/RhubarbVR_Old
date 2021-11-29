@@ -9,6 +9,26 @@ namespace RhubarbEngine
 {
 	public static class Helper
 	{
+        public static void ThreadSafeForEach<T>(IReadOnlyList<T> list,Action<T> action) where T:class
+        {
+            T last = null;
+            var index = 0;
+            var looping = list.Count > 0;
+            while (looping)
+            {
+                if(list[index] != last)
+                {
+                    action.Invoke(list[index]);
+                }
+                last = list[index];
+                index++;
+                if(list.Count == index)
+                {
+                    looping = false;
+                }
+            }
+        }
+
 
 		public static float DistanceFromPoint(this BoundingBox boundingBox, Vector3 fomLocalPos)
 		{

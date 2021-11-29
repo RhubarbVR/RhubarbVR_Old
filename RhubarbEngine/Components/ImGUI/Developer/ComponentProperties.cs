@@ -103,10 +103,7 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				max = ImGui.GetItemRectMax();
 				min = ImGui.GetItemRectMin();
-				foreach (var item in children)
-				{
-					item.Target?.ImguiRender(imGuiRenderer, canvas);
-				}
+                Helper.ThreadSafeForEach(children, (item) => ((SyncRef<IPropertiesElement>)item).Target?.ImguiRender(imGuiRenderer, canvas));
 			}
 			else
 			{

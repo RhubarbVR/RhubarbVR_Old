@@ -316,10 +316,7 @@ namespace RhubarbEngine.World.ECS
 
         private void LoadListObject()
 		{
-			foreach (var item in _components)
-			{
-				item.ListObject(IsEnabled);
-			}
+            Helper.ThreadSafeForEach(_components, (item) => ((Component)item).ListObject(IsEnabled));
 		}
 
 		public void ParentEnabledChange(bool _parentEnabled)
@@ -332,10 +329,7 @@ namespace RhubarbEngine.World.ECS
             if (_parentEnabled != parentEnabled)
 			{
 				parentEnabled = _parentEnabled;
-				foreach (var item in _children)
-				{
-					item.ParentEnabledChange(_parentEnabled);
-				}
+                Helper.ThreadSafeForEach(_children, (item) => ((Entity)item).ParentEnabledChange(_parentEnabled));
 			}
 			LoadListObject();
 			EnabledChanged?.Invoke();
@@ -661,15 +655,15 @@ namespace RhubarbEngine.World.ECS
 			{
 				return;
 			}
-			foreach (object comp in _components)
-			{
-				try
-				{
-					gu.Add((Renderable)comp, playpos, ref frustum, view);
-				}
-				catch
-				{ }
-			}
+            Helper.ThreadSafeForEach(_components, (comp) =>
+             {
+                 try
+                 {
+                     gu.Add((Renderable)comp, playpos, ref frustum, view);
+                 }
+                 catch
+                 { }
+             });
 		}
 
 		public override void Dispose()
