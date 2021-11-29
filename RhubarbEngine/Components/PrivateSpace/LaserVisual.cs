@@ -169,7 +169,7 @@ namespace RhubarbEngine.Components.PrivateSpace
 			var val = Entity.GlobalPos().Distance(new Vector3f(pos.X, pos.Y, pos.Z));
 			mesh.StartHandle.Value = Vector3d.AxisY * (val / 4);
 			var e = Laser.Target.GlobalRot().Inverse() * new Vector3f(hitvector.X, hitvector.Y, hitvector.Z);
-			mesh.EndHandle.Value = e * (val / 6);
+			mesh.EndHandle.Value = Vector3d.AxisY * (val / 4)*-1;
 			switch (source.Value)
 			{
 				case InteractionSource.LeftLaser:

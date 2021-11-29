@@ -238,20 +238,6 @@ namespace RhubarbEngine.Managers
 		{
 			LeftLaser.Update();
 			RightLaser.Update();
-			if (mainWindows.GetKeyDown(Key.F8))
-			{
-				if (_engine.OutputType == OutputType.Screen)
-				{
-					_engine.RenderManager.SwitchVRContext(OutputType.SteamVR);
-				}
-				else
-				{
-					if (_engine.OutputType == OutputType.SteamVR)
-					{
-						_engine.RenderManager.SwitchVRContext(OutputType.Screen);
-					}
-				}
-			}
 		}
 	}
 }

@@ -204,10 +204,10 @@ namespace RhubarbEngine
             OnEngineStarted?.Invoke();
             while (windowManager.MainWindowOpen||!Rendering)
 			{
+                Loop(platformInfo.StartTime, platformInfo.Frame);
                 platformInfo.Frame = DateTime.UtcNow;
                 platformInfo.NextFrame();
-                Loop(platformInfo.StartTime, platformInfo.Frame);
-			}
+            }
 		}
 
 		public double lastTimemark;
@@ -359,7 +359,6 @@ namespace RhubarbEngine
 
         public void Loop(DateTime startTime, DateTime Frame)
 		{
-            platformInfo.Update();
             _waiter.Set();
             _waiter.Reset();
 			discordRpcClient.Invoke();
@@ -368,7 +367,22 @@ namespace RhubarbEngine
 			worldManager.Update(startTime, Frame);
 			renderManager.Update();
             audioManager.Update();
-		}
+            platformInfo.Update();
+            if (inputManager.MainWindows.GetKeyDown(Key.F8))
+            {
+                if (OutputType == OutputType.Screen)
+                {
+                    RenderManager.SwitchVRContext(OutputType.SteamVR);
+                }
+                else
+                {
+                    if (OutputType == OutputType.SteamVR)
+                    {
+                        RenderManager.SwitchVRContext(OutputType.Screen);
+                    }
+                }
+            }
+        }
 
         public void WaitForNextUpdates(int update)
         {

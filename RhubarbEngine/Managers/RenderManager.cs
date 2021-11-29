@@ -15,6 +15,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using System.IO;
 using Veldrid.ImageSharp;
 using Veldrid.StartupUtilities;
+using RhubarbEngine.VirtualReality.Oculus;
 
 namespace RhubarbEngine.Managers
 {
@@ -353,19 +354,44 @@ namespace RhubarbEngine.Managers
 
 		public void SwitchVRContext(OutputType type)
 		{
-			if ((type != _engine.OutputType) || vrContext.Disposed)
-			{
-                VrContextUpdated?.Invoke();
-                _engine.Logger.Log("Output Device Change:" + type.ToString());
-				_engine.OutputType = type;
-				var oldvrContext = vrContext;
-				vrContext = BuildVRContext();
-				vrContext.Initialize(gd);
-				if (!oldvrContext.Disposed)
-				{
-					oldvrContext.Dispose();
-				}
-			}
+            try
+            {
+                if ((type != _engine.OutputType) || vrContext.Disposed)
+                {
+                    switch (type)
+                    {
+                        case OutputType.SteamVR:
+                            if (!VRContext.IsOpenVRSupported())
+                            {
+                                throw new Exception("OpenVR Not Suppoted Or headset not found");
+                            }
+                                break;
+                        case OutputType.OculusVR:
+                            if (!VRContext.IsOculusSupported())
+                            {
+                                throw new Exception("OculusVR Not Suppoted Or headset not found");
+                            }
+                            break;
+                        default:
+                            type = OutputType.Screen;
+                            break;
+                    }
+                    VrContextUpdated?.Invoke();
+                    _engine.Logger.Log("Output Device Change:" + type.ToString());
+                    _engine.OutputType = type;
+                    var oldvrContext = vrContext;
+                    vrContext = BuildVRContext();
+                    vrContext.Initialize(gd);
+                    if (!oldvrContext.Disposed)
+                    {
+                        oldvrContext.Dispose();
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                _engine.Logger.Log($"Failed To Change OutputType To {type} Error {e}",true);
+            }
 
 		}
 
