@@ -204,9 +204,9 @@ namespace RhubarbEngine
             OnEngineStarted?.Invoke();
             while (windowManager.MainWindowOpen||!Rendering)
 			{
-				Loop(platformInfo.StartTime, platformInfo.Frame);
-				platformInfo.Frame = DateTime.UtcNow;
+                platformInfo.Frame = DateTime.UtcNow;
                 platformInfo.NextFrame();
+                Loop(platformInfo.StartTime, platformInfo.Frame);
 			}
 		}
 
@@ -359,9 +359,9 @@ namespace RhubarbEngine
 
         public void Loop(DateTime startTime, DateTime Frame)
 		{
+            platformInfo.Update();
             _waiter.Set();
             _waiter.Reset();
-            platformInfo.Update();
 			discordRpcClient.Invoke();
 			windowManager.Update();
 			inputManager.Update();

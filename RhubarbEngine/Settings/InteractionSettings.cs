@@ -10,8 +10,8 @@ namespace RhubarbEngine.Settings
 {
 	public class InteractionSettings : SettingsObject
 	{
-		[SettingsField("Laser Smoothing 5 default", "/Laser")]
-		public float Smoothing = 5;
+		[SettingsField("Laser Smoothing 10 default", "/Laser")]
+		public float Smoothing = 10;
 
 		[SettingsField("Laser Snaping Distance in 100ths 8 default", "/Laser")]
 		public float SnapDistance = 8;

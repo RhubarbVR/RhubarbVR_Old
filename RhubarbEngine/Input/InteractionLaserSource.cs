@@ -471,7 +471,7 @@ namespace RhubarbEngine.Input
 
 			if (Smoothing != 0)
 			{
-				var poser = _engine.PlatformInfo.DeltaSeconds * 2 * Smoothing;
+				var poser = _engine.PlatformInfo.DeltaSeconds * Smoothing;
 				_iRayCastDeriction = Lerp(_iRayCastDeriction, deriction, poser);
 				_iRayCastsourcse = Lerp(_iRayCastsourcse, _sourcse, poser);
 				smoothedDeriction = Lerp(_lastRayCastDeriction, _iRayCastDeriction, poser);

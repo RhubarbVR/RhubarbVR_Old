@@ -698,13 +698,13 @@ namespace RhubarbEngine.World.ECS
                 _lastPos = _cashedGlobalTrans.Translation;
             }
 
-            foreach (var comp in _components)
-			{
-				if (comp.enabled.Value && !comp.IsRemoved)
-				{
-					comp.CommonUpdate(startTime, Frame);
-				}
-			}
+            Helper.ThreadSafeForEach(_components, (comp) =>
+             {
+                 if (((Component)comp).enabled.Value && !comp.IsRemoved)
+                 {
+                     ((Component)comp).CommonUpdate(startTime, Frame);
+                 }
+             });
 		}
 
 
