@@ -83,7 +83,6 @@ namespace RhubarbEngine.Components.Interaction
 		public override void OnLoaded()
 		{
 			base.OnLoaded();
-            _frameInputBuffer = new RollBuffer(Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount);
 		}
 
 
@@ -143,7 +142,6 @@ namespace RhubarbEngine.Components.Interaction
 			IsActive = false;
 			try
 			{
-				_frameInputBuffer.Push(new byte[Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount]);
 				//_browser.Dispose();
 			}
 			catch { }
@@ -159,7 +157,6 @@ namespace RhubarbEngine.Components.Interaction
 
    //         if (globalAudio.Value)
 			//{
-			//	_frameInputBuffer.Push(new byte[Engine.AudioManager.AudioFrameSizeInBytes * ChannelCount]);
 			//	//_browser.AudioHandler = null;
 			//}
 			//else
