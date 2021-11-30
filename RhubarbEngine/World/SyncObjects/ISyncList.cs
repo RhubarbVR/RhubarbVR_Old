@@ -8,6 +8,8 @@ namespace RhubarbEngine.World
 {
 	public interface ISyncList : ISyncMember, IEnumerable<IWorldObject>
 	{
+        public int IndexOf(IWorldObject worldObject);
+
 		public int Count();
 
         public void Clear();

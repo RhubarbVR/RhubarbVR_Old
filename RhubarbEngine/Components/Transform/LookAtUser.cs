@@ -48,8 +48,13 @@ namespace RhubarbEngine.Components.Transform
 
 		public override void CommonUpdate(DateTime startTime, DateTime Frame)
 		{
-			if (driver.Linked)
-			{
+            UpdateRotation();
+		}
+
+        public void UpdateRotation()
+        {
+            if (driver.Linked)
+            {
                 var tagetPos = positionSource.Value switch
                 {
                     LookAtPace.Root => World.LocalUser.userroot.Target?.Entity.GlobalPos(),
@@ -59,16 +64,17 @@ namespace RhubarbEngine.Components.Transform
                     _ => null,
                 };
                 var tangent = (tagetPos ?? Vector3f.AxisY) + positionOffset.Value - Entity.GlobalPos();
-				tangent.Normalize();
-				var normal = Vector3f.AxisY;
-				var newrot = Quaternionf.LookRotation(tangent, normal) * offset.Value;
-				driver.Drivevalue = Entity.GlobalRotToLocal(newrot, false);
-			}
-			else
-			{
-				driver.Target = Entity.rotation;
-			}
-		}
+                tangent.Normalize();
+                var normal = Vector3f.AxisY;
+                var newrot = Quaternionf.LookRotation(tangent, normal) * offset.Value;
+                driver.Drivevalue = Entity.GlobalRotToLocal(newrot, false);
+            }
+            else
+            {
+                driver.Target = Entity.rotation;
+            }
+        }
+
 		public LookAtUser(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 

@@ -324,5 +324,17 @@ namespace RhubarbEngine.World
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+
+        public int IndexOf(IWorldObject worldObject)
+        {
+            var index = -1;
+            try
+            {
+                index = _synclist.IndexOf((T)worldObject);
+            }
+            catch { }
+            return index;
+        }
+    }
 }

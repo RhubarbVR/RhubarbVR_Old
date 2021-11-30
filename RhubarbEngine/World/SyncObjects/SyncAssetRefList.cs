@@ -191,5 +191,17 @@ namespace RhubarbEngine.World
 			throw new NotSupportedException();
 		}
 
-	}
+
+        public int IndexOf(IWorldObject worldObject)
+        {
+            var index = -1;
+            try
+            {
+                index = _syncreflist.IndexOf((AssetRef<T>)worldObject);
+            }
+            catch { }
+            return index;
+        }
+
+    }
 }

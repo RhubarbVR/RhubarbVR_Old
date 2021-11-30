@@ -247,5 +247,16 @@ namespace RhubarbEngine.World
 		{
             _synclist[index].Dispose();
 		}
-	}
+
+        public int IndexOf(IWorldObject worldObject)
+        {
+            var index = -1;
+            try
+            {
+                index = _synclist.IndexOf((T)worldObject);
+            }
+            catch { }
+            return index;
+        }
+    }
 }

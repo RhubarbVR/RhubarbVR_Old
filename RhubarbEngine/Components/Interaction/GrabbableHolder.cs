@@ -32,7 +32,9 @@ namespace RhubarbEngine.Components.Interaction
 
 		public SyncRef<IWorldObject> Referencer;
 
-		public SyncRef<User> user;
+        public SyncRef<Entity> RefrencerEntity;
+
+        public SyncRef<User> user;
 
 		public Sync<InteractionSource> source;
 
@@ -264,15 +266,37 @@ namespace RhubarbEngine.Components.Interaction
 			source = new Sync<InteractionSource>(this, newRefIds);
 			Referencer = new SyncRef<IWorldObject>(this, newRefIds);
 			Referencer.Changed += Referencer_Changed;
-		}
+            RefrencerEntity = new SyncRef<Entity>(this, newRefIds);
+        }
 
 		private void Referencer_Changed(IChangeable obj)
 		{
 			_timeout = 0;
-			Console.WriteLine("Changed To " + Referencer.Target?.ReferenceID.id.ToHexString());
-		}
+			Console.WriteLine("Referencer Changed To " + Referencer.Target?.ReferenceID.id.ToHexString());
+            RefrencerEntity.Target?.Destroy();
+            if (Referencer.Target is not null)
+            {
+                var entity = ((Engine.OutputType == VirtualReality.OutputType.Screen)? World.HeadLaserGrabbableHolder.Entity:Entity).AddChild("Referencer Visual");
+                RefrencerEntity.Target = entity;
+                var looke = entity.AttachComponent<LookAtUser>();
+                looke.offset.Value = Quaternionf.CreateFromEuler(0f, -90f, 0f);
+                entity.position.Value = (Engine.OutputType == VirtualReality.OutputType.Screen) ? new Vector3f(0.15f, -0.15f, -0.6f) : new Vector3f(0, 0, -0.5f);
+                entity.scale.Value = (Engine.OutputType == VirtualReality.OutputType.Screen) ? new Vector3f(0.02f) : new Vector3f(0.04f);
+                looke.UpdateRotation();
+                var text = entity.AttachComponent<UpdateingTextPlane>();
+                text.TextColor.Value = Colorf.ForestGreen;
+                if (Referencer.Target.GetType().IsAssignableTo(typeof(Entity)))
+                {
+                    text.Text.Value = $"Entity: {((Entity)Referencer.Target).name.Value}{Referencer.Target.GetFieldName()} Parent {(((Entity)Referencer.Target).parent.Target?.name.Value??"Null")} (ID:{Referencer.Target.ReferenceID.id.ToHexString()})";
+                }
+                else
+                {
+                    text.Text.Value = $"{Referencer.Target.GetType().GetFormattedName()}{Referencer.Target.GetFieldName()} on {Referencer.Target.GetExtendedNameString()} (ID:{Referencer.Target.ReferenceID.id.ToHexString()})";
+                }
+            }
+        }
 
-		public GrabbableHolder(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+            public GrabbableHolder(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 		}
 		public GrabbableHolder()

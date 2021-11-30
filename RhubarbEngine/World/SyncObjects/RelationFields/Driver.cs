@@ -20,6 +20,10 @@ namespace RhubarbEngine.World
 			}
 			set
 			{
+                if(Target is null)
+                {
+                    return;
+                }
 				Target.Value = value;
 			}
 		}

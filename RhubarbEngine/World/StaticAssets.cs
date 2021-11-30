@@ -12,7 +12,28 @@ namespace RhubarbEngine.World
 	{
 		private readonly World _world;
 
-		private TilledUnlitShader _tilledUnlitShader;
+
+        private StaticFont _mainFont;
+        public StaticFont MainFont
+        {
+            get
+            {
+                if (_mainFont == null)
+                {
+                    var comp = _world.RootEntity.GetFirstComponent<StaticFont>();
+                    if (comp == null)
+                    {
+                        comp = _world.RootEntity.AttachComponent<StaticFont>();
+                        comp.FontSize.Value = 100;
+                        comp.Type.Value = StaticFont.Fonts.ArialCEBold;
+                    }
+                    _mainFont = comp;
+                }
+                return _mainFont;
+            }
+        }
+
+        private TilledUnlitShader _tilledUnlitShader;
 		public TilledUnlitShader TilledUnlitShader
 		{
 			get
