@@ -293,10 +293,56 @@ namespace RhubarbEngine.Components.Interaction
                 {
                     text.Text.Value = $"{Referencer.Target.GetType().GetFormattedName()}{Referencer.Target.GetFieldName()} on {Referencer.Target.GetExtendedNameString()} (ID:{Referencer.Target.ReferenceID.id.ToHexString()})";
                 }
+                var Visual = entity.AddChild("Visual");
+                Visual.scale.Value = new Vector3f(6.5);
+                Visual.position.Value = new Vector3f(-2.5f, 0,-4f);
+                if (Referencer.Target.GetType().IsAssignableTo(typeof(AssetProvider<RTexture2D>)))
+                {
+                    LoadTextureVisual(Visual,(AssetProvider<RTexture2D>)Referencer.Target);
+                }
+                if (Referencer.Target.GetType().IsAssignableTo(typeof(AssetProvider<RMaterial>)))
+                {
+                    LoadMaterialVisual(Visual, (AssetProvider<RMaterial>)Referencer.Target);
+                }
+                if (Referencer.Target.GetType().IsAssignableTo(typeof(AssetProvider<RMesh>)))
+                {
+                    LoadMeshVisual(Visual, (AssetProvider<RMesh>)Referencer.Target);
+                }
             }
         }
 
-            public GrabbableHolder(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        private void LoadTextureVisual(Entity entity, AssetProvider<RTexture2D> texture)
+        {
+            var plane = Helpers.MeshHelper.AddMeshToEntity<PlaneMesh>(entity, texture);
+            var driver = entity.AttachComponent<TextureRatioDriver>();
+            driver.WidthRatio.Target = plane.Width;
+            driver.texture.Target = texture;
+        }
+
+        private void LoadMaterialVisual(Entity entity, AssetProvider<RMaterial> mit)
+        {
+            Helpers.MeshHelper.AddMeshToEntity<SphereMesh>(entity, mit);
+
+        }
+
+        private void LoadMeshVisual(Entity entity, AssetProvider<RMesh> mesh)
+        {
+            var mit = entity.AttachComponent<RMaterial>();
+            mit.Shader.Target = World.staticAssets.BasicUnlitShader;
+            mit.SetValueAtField("TintColor", Render.Shader.ShaderType.MainFrag, new Colorf(161, 16, 193, 20));
+            Helpers.MeshHelper.AddMeshToEntity<SphereMesh>(entity, mit);
+            var spin = entity.AddChild("spin");
+            var e = spin.AddChild("mesh");
+            var mite = entity.AttachComponent<RMaterial>();
+            mite.Shader.Target = World.staticAssets.WireFrameShader;
+            e.AttachComponent<CenteredMeshDisplay>().Mesh.Target = mesh;
+            var meshRender = e.AttachComponent<MeshRender>();
+            meshRender.Materials.Add().Target = mite;
+            meshRender.Mesh.Target = mesh;
+
+        }
+
+        public GrabbableHolder(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 		}
 		public GrabbableHolder()

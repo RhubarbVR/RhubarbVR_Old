@@ -62,5 +62,10 @@ namespace RhubarbEngine
 
 			return temp;
 		}
+
+        public static string ToLetterString(this int value)
+        {
+            return value.ToString().Replace('0', 'A').Replace('1', 'B').Replace('2', 'C').Replace('3', 'D').Replace('4', 'E').Replace('5', 'F').Replace('6', 'G').Replace('7', 'H').Replace('9', 'L');
+        }
 	}
 }

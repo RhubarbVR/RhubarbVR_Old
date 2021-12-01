@@ -70,7 +70,26 @@ namespace RhubarbEngine.World
 		}
 
 
-		private OverLayedUnlitShader _overLayedUnlitShader;
+        private WireFrameShader _wireFrameShader;
+        public WireFrameShader WireFrameShader
+        {
+            get
+            {
+                if (_wireFrameShader == null)
+                {
+                    var comp = _world.RootEntity.GetFirstComponent<WireFrameShader>();
+                    if (comp == null)
+                    {
+                        comp = _world.RootEntity.AttachComponent<WireFrameShader>();
+                    }
+                    _wireFrameShader = comp;
+                }
+                return _wireFrameShader;
+            }
+        }
+
+
+        private OverLayedUnlitShader _overLayedUnlitShader;
 		public OverLayedUnlitShader OverLayedUnlitShader
 		{
 			get
