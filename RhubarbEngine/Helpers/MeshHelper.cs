@@ -95,6 +95,16 @@ namespace RhubarbEngine.Helpers
             return bmesh;
         }
 
+
+        public static (T, MeshRender) AddMeshToEntityGetRender<T>(Entity e, AssetProvider<RMaterial> mit) where T : ProceduralMesh
+        {
+            var bmesh = e.AttachComponent<T>();
+            var meshRender = e.AttachComponent<MeshRender>();
+            meshRender.Materials.Add().Target = mit;
+            meshRender.Mesh.Target = bmesh;
+            return (bmesh,meshRender);
+        }
+
         public static T AddMeshToEntity<T>(Entity e,AssetProvider<RTexture2D> texture) where T : ProceduralMesh
         {
             var shader = e.World.staticAssets.BasicUnlitShader;

@@ -330,8 +330,10 @@ namespace RhubarbEngine.Components.Interaction
             var mit = entity.AttachComponent<RMaterial>();
             mit.Shader.Target = World.staticAssets.BasicUnlitShader;
             mit.SetValueAtField("TintColor", Render.Shader.ShaderType.MainFrag, new Colorf(161, 16, 193, 20));
-            Helpers.MeshHelper.AddMeshToEntity<SphereMesh>(entity, mit);
+            var(shear,render) =Helpers.MeshHelper.AddMeshToEntityGetRender<SphereMesh>(entity, mit);
+            render.RenderOrderOffset.Value = ((uint)int.MaxValue) - 1;
             var spin = entity.AddChild("spin");
+            spin.AttachComponent<Spinner>().speed.Value = new Vector3f(1);
             var e = spin.AddChild("mesh");
             var mite = entity.AttachComponent<RMaterial>();
             mite.Shader.Target = World.staticAssets.WireFrameShader;
