@@ -34,6 +34,23 @@ namespace RhubarbEngine.World.Asset
 
 		public BoundingBox boundingBox;
 
+        private int[] ToLineIndex(IEnumerable<int> tryangle)
+        {
+            var yep = new List<int>();
+            for (var q = 0; q < tryangle.Count(); q += 3)
+            {
+                var one = tryangle.ElementAt(q);
+                var two = tryangle.ElementAt(q+1);
+                var three = tryangle.ElementAt(q+2);
+                yep.Add(one);
+                yep.Add(two);
+                yep.Add(two);
+                yep.Add(three);
+                yep.Add(three);
+                yep.Add(one);
+            }
+            return yep.ToArray();
+        }
 
 		public void CreateMeshesBuffers(GraphicsDevice _gd)
 		{
@@ -59,7 +76,8 @@ namespace RhubarbEngine.World.Asset
 					UV.ToArray(),
 					BufferUsage.VertexBuffer);
 				var indices = CreateDeviceBuffer(_gd, mesh.RenderIndices().ToArray(), BufferUsage.IndexBuffer);
-				var pic = new MeshPiece(positions, texCoords, indices);
+                var lineIndices = CreateDeviceBuffer(_gd, ToLineIndex(mesh.RenderIndices()), BufferUsage.IndexBuffer);
+                var pic = new MeshPiece(positions, texCoords, indices, lineIndices);
 				AddDisposable(pic);
 				MeshPieces.Add(pic);
 

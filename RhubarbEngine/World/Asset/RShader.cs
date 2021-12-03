@@ -28,19 +28,23 @@ namespace RhubarbEngine.World.Asset
 
 		public ShadowVertShader shadowVertCode = new();
 
-		public Veldrid.Shader mainVertShader;
+		public Shader mainVertShader;
 
-		public Veldrid.Shader mainFragShader;
+		public Shader mainFragShader;
 
-		public Veldrid.Shader shadowVertShader;
+		public Shader shadowVertShader;
 
-		public Veldrid.Shader shadowFragShader;
+		public Shader shadowFragShader;
 
 		public ResourceLayout mainresourceLayout;
 
 		public ResourceLayout shadowresourceLayout;
 
-		public bool shaderLoaded;
+        public ShaderSettings mainShader = new();
+
+        public ShaderSettings shadowShader = new();
+
+        public bool shaderLoaded;
 
 		public List<ShaderUniform> Fields = new();
 
@@ -182,7 +186,11 @@ namespace RhubarbEngine.World.Asset
 				log.Log("creating shader ResourceLayouts");
 				CreateResourceLayouts(gd.ResourceFactory);
 
-				log.Log("Loadded Shader");
+                log.Log("Lodding pipeline settings");
+                mainShader.Compile();
+                shadowShader.Compile();
+
+                log.Log("Loadded Shader");
 				shaderLoaded = true;
 			}
 			catch (Exception e)

@@ -89,6 +89,22 @@ namespace RhubarbEngine.Components.Rendering
 			CheckIsLoaded();
 		}
 
+        private void ClearPipeLine()
+        {
+            for (var i = (_mainPipeline.Count - 1); i >= 0; i--)
+            {
+                var e = _mainPipeline[i];
+                _mainPipeline.RemoveAt(i);
+                e.Dispose();
+                var s = _shadowpipeline[i];
+                _shadowpipeline.RemoveAt(i);
+                s.Dispose();
+
+                _shadowPollyType.RemoveAt(i);
+                _mainPollyType.RemoveAt(i);
+            }
+        }
+
 		private void LoadAllMaterials()
 		{
             if (Gd is null)
@@ -115,7 +131,9 @@ namespace RhubarbEngine.Components.Rendering
 					new VertexElementDescription("UV", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
 				});
 
-			foreach (var mit in Materials)
+            ClearPipeLine();
+
+            foreach (var mit in Materials)
 			{
 				if (mit != null)
 				{
@@ -127,28 +145,28 @@ namespace RhubarbEngine.Components.Rendering
 							{
 
 								var mainPipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
-				BlendStateDescription.SingleAlphaBlend,
-				DepthStencilStateDescription.DepthOnlyLessEqual,
-				RasterizerStateDescription.CullNone,
-				PrimitiveTopology.TriangleList,
+				mit.Shader.Asset.mainShader._blendStateDescription,
+                mit.Shader.Asset.mainShader._depthStencilStateDescription,
+                mit.Shader.Asset.mainShader._rasterizerStateDescription,
+                mit.Shader.Asset.mainShader.primitiveTopology,
 				new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.mainVertShader, mit.Shader.Asset.mainFragShader }),
 				mit.Shader.Asset.mainresourceLayout,
 				Engine.RenderManager.VrContext.LeftEyeFramebuffer.OutputDescription));
 								AddDisposable(mainPipeline);
 								_mainPipeline.Add(mainPipeline);
-
+                                _mainPollyType.Add(mit.Shader.Asset.mainShader.primitiveTopology);
 
 								var shadowPipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
-				BlendStateDescription.SingleAlphaBlend,
-				DepthStencilStateDescription.DepthOnlyLessEqual,
-				RasterizerStateDescription.CullNone,
-				PrimitiveTopology.TriangleList,
-				new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.shadowVertShader, mit.Shader.Asset.shadowFragShader }),
+                mit.Shader.Asset.shadowShader._blendStateDescription,
+                mit.Shader.Asset.shadowShader._depthStencilStateDescription,
+                mit.Shader.Asset.shadowShader._rasterizerStateDescription,
+                mit.Shader.Asset.shadowShader.primitiveTopology,
+                new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { mit.Shader.Asset.shadowVertShader, mit.Shader.Asset.shadowFragShader }),
 				mit.Shader.Asset.shadowresourceLayout,
 				Engine.RenderManager.VrContext.LeftEyeFramebuffer.OutputDescription));
 								AddDisposable(shadowPipeline);
 								_shadowpipeline.Add(mainPipeline);
-
+                                _shadowPollyType.Add(mit.Shader.Asset.mainShader.primitiveTopology);
 
                                 var mainResourceSetDescription = new ResourceSetDescription
                                 {
@@ -264,8 +282,10 @@ namespace RhubarbEngine.Components.Rendering
         }
 
         private readonly List<Pipeline> _mainPipeline = new();
-		private readonly List<Pipeline> _shadowpipeline = new();
-		private DeviceBuffer _wvpBuffer;
+        private readonly List<PrimitiveTopology> _mainPollyType = new();
+        private readonly List<Pipeline> _shadowpipeline = new();
+        private readonly List<PrimitiveTopology> _shadowPollyType = new();
+        private DeviceBuffer _wvpBuffer;
 		private readonly List<ResourceSet> _mainRS = new();
 		private readonly List<ResourceSet> _shadowRS = new();
 		private bool _loaded;
@@ -306,9 +326,9 @@ namespace RhubarbEngine.Components.Rendering
 				cl.SetPipeline(shadow ? _shadowpipeline[b] : _mainPipeline[b]);
 				cl.SetVertexBuffer(0, piece.Positions);
 				cl.SetVertexBuffer(1, piece.TexCoords);
-				cl.SetIndexBuffer(piece.Indices, IndexFormat.UInt32);
+				cl.SetIndexBuffer(((shadow ? _shadowPollyType[b] : _mainPollyType[b])== PrimitiveTopology.LineList)? piece .LineIndices: piece.Indices, IndexFormat.UInt32);
 				cl.SetGraphicsResourceSet(0, shadow ? _shadowRS[b] : _mainRS[b]);
-				cl.DrawIndexed(piece.IndexCount);
+				cl.DrawIndexed(((shadow ? _shadowPollyType[b] : _mainPollyType[b]) == PrimitiveTopology.LineList) ? piece.LineIndexCount : piece.IndexCount);
 			}
 		}
 

@@ -17,17 +17,23 @@ namespace RhubarbEngine.Render
 		public DeviceBuffer Positions { get; }
 		public DeviceBuffer TexCoords { get; }
 		public DeviceBuffer Indices { get; }
-		public uint IndexCount { get; }
 
-		public MeshPiece(DeviceBuffer positions, DeviceBuffer texCoords, DeviceBuffer indices)
+        public DeviceBuffer LineIndices { get; }
+        public uint IndexCount { get; }
+
+        public uint LineIndexCount { get; }
+
+        public MeshPiece(DeviceBuffer positions, DeviceBuffer texCoords, DeviceBuffer indices, DeviceBuffer lineIndices)
 		{
 			Positions = positions;
 			TexCoords = texCoords;
 			Indices = indices;
-			IndexCount = indices.SizeInBytes / sizeof(uint);
-		}
+            LineIndices = lineIndices;
+            IndexCount = indices.SizeInBytes / sizeof(uint);
+            LineIndexCount = lineIndices.SizeInBytes / sizeof(uint);
+        }
 
-		public void Dispose()
+        public void Dispose()
 		{
 			Positions.Dispose();
 			TexCoords.Dispose();
