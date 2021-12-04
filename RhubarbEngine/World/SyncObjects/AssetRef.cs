@@ -9,7 +9,7 @@ using RhubarbEngine.World.Asset;
 
 namespace RhubarbEngine.World
 {
-	public class AssetRef<T> : SyncRef<AssetProvider<T>>, IWorldObject where T : IAsset
+	public class AssetRef<T> : SyncRef<AssetProvider<T>>, IWorldObject where T :class, IAsset
 	{
 		public T Asset
 		{

@@ -70,7 +70,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (!open)
 			{
-				target.Target?.Dispose();
+				target.Target?.Destroy();
 			}
 
 		}

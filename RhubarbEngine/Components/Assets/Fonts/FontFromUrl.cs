@@ -35,6 +35,7 @@ namespace RhubarbEngine.Components.Assets
 
         public override void OnLoaded()
         {
+            Load(null);
             UpdateFont().ConfigureAwait(false);
         }
 

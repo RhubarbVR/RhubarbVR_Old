@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Reflection;
 using System.Threading.Tasks;
-
+using System.Linq;
 using BulletSharp;
 
 using RhubarbDataTypes;
@@ -290,9 +290,17 @@ namespace RhubarbEngine.World
                     }
                     break;
 			}
-			Parallel.ForEach(_entitys, ent =>
+			Parallel.ForEach(_entitys.ToArray(), ent =>
 			{
-				if (ent.enabled.Value && ent.parentEnabled)
+                if(ent is null)
+                {
+                    return;
+                }
+                if (ent.IsRemoved)
+                {
+                    return;
+                }
+                if (ent.enabled.Value && ent.parentEnabled)
 				{
 					ent.AddToRenderQueue(gu, HeadTrans.Translation, layer, frustum, view);
 				}

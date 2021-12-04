@@ -322,8 +322,8 @@ namespace RhubarbEngine.World
 
 		public void Remove(int index)
 		{
-			throw new NotImplementedException();
-		}
+            _synclist[index].Destroy();
+        }
 
 
         public int IndexOf(IWorldObject worldObject)

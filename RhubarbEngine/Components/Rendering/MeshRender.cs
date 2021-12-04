@@ -63,15 +63,9 @@ namespace RhubarbEngine.Components.Rendering
 
             if (Mesh.Target == null)
 			{
-				Logger.Log("no mesh provider");
 				return;
 			}
-			if (Mesh.Target.Value == null)
-			{
-				Logger.Log("no mesh to load");
-				Logger.Log($"{Mesh.Value.GetID()}");
-			}
-			else
+			if (Mesh.Target.Value != null)
 			{
 				_meshPieces = Mesh.Asset.MeshPieces.ToArray();
 			}
@@ -102,6 +96,14 @@ namespace RhubarbEngine.Components.Rendering
 
                 _shadowPollyType.RemoveAt(i);
                 _mainPollyType.RemoveAt(i);
+
+                var ms = _mainRS[i];
+                _mainRS.RemoveAt(i);
+                ms.Dispose();
+
+                var m = _shadowRS[i];
+                _shadowRS.RemoveAt(i);
+                m.Dispose();
             }
         }
 
@@ -116,7 +118,6 @@ namespace RhubarbEngine.Components.Rendering
                 return;
             }
 
-            Logger.Log("load Materials");
 			var factory = Gd.ResourceFactory;
 
             var positionLayoutDesc = new VertexLayoutDescription(
@@ -346,19 +347,27 @@ namespace RhubarbEngine.Components.Rendering
 		{
             if (Gd is null)
             {
-                Logger.Log("Loaded Mesh Render with no rendering");
                 return;
             }
             _wvpBuffer = Engine.RenderManager.Gd.ResourceFactory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 			AddDisposable(_wvpBuffer);
-            Logger.Log("Loading Mesh Render");
-			LoadMesh(null);
-			LoadMaterial(null);
 		}
 		public override void OnChanged()
 		{
 		}
-		public MeshRender(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+
+        public override void Dispose()
+        {
+            try
+            {
+                ClearPipeLine();
+            }
+            catch
+            {
+            }
+            base.Dispose();
+        }
+        public MeshRender(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}

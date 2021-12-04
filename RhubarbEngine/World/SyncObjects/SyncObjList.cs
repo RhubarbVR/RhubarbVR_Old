@@ -35,6 +35,10 @@ namespace RhubarbEngine.World
         public event Action<IWorker> ElementAdded;
         public event Action ClearElements;
 
+        public virtual void OnElementBind(T element)
+        {
+
+        }
         public T this[int i]
 		{
 			get
@@ -67,6 +71,7 @@ namespace RhubarbEngine.World
                 ElementAdded?.Invoke(value);
             }
             catch { }
+            OnElementBind(value);
         }
 
 		public int GetIndexOf(T val)
@@ -245,7 +250,7 @@ namespace RhubarbEngine.World
 		}
 		public void Remove(int index)
 		{
-            _synclist[index].Dispose();
+            _synclist[index].Destroy();
 		}
 
         public int IndexOf(IWorldObject worldObject)

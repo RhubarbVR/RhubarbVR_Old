@@ -11,24 +11,23 @@ using RhubarbEngine.World.Net;
 
 namespace RhubarbEngine.World
 {
-	public class SyncAssetRefList<T> : Worker, ISyncList, IWorldObject, ISyncMember where T : IAsset
+	public class SyncAssetRefList<T> : SyncObjList<AssetRef<T>>where T :class, IAsset
 	{
         public SyncAssetRefList() { }
-        private readonly SynchronizedCollection<AssetRef<T>> _syncreflist = new (5);
-
-		public AssetRef<T> this[int i]
+        
+		public new AssetRef<T> this[int i]
 		{
 			get
 			{
-				return _syncreflist[i];
+				return base[i];
 			}
 		}
 
-		public int Length { get { return _syncreflist.Count; } }
+		public int Length { get { return base.Count(); } }
 
-		public IEnumerator<T> GetEnumerator()
+		public new IEnumerator<T> GetEnumerator()
 		{
-			for (var i = 0; i < _syncreflist.Count; i++)
+			for (var i = 0; i < base.Count(); i++)
 			{
 				yield return this[i].Asset;
 			}
@@ -37,7 +36,7 @@ namespace RhubarbEngine.World
 		public int IndexOf(AssetProvider<T> val)
 		{
 			var returnint = -1;
-			for (var i = 0; i < _syncreflist.Count; i++)
+			for (var i = 0; i < base.Count(); i++)
 			{
 				if (this[i].Target == val)
 				{
@@ -48,160 +47,23 @@ namespace RhubarbEngine.World
 			return returnint;
 		}
 
+        public override void OnElementBind(AssetRef<T> element)
+        {
+            base.OnElementBind(element);
+            element.LoadChange += OnLoad;
+        }
 
-		private void OnLoad(T val)
+        private void OnLoad(T val)
 		{
 			loadChange?.Invoke(val);
 		}
 
 		public Action<T> loadChange;
 
-        public event Action<IWorker, int> ElementRemoved;
-        public event Action<IWorker> ElementAdded;
-        public event Action ClearElements;
-
-        public AssetRef<T> Add(bool RefID = true)
-		{
-			var a = new AssetRef<T>(this, RefID);
-			a.LoadChange += OnLoad;
-			_syncreflist.SafeAdd(a);
-            if (RefID)
-			{
-				NetAdd(a);
-			}
-            ElementAdded?.Invoke(a);
-            return a;
-		}
-
-		private void NetAdd(AssetRef<T> val)
-		{
-			var send = new DataNodeGroup();
-			send.SetValue("Type", new DataNode<byte>(0));
-			var tip = val.Serialize(new WorkerSerializerObject(true));
-			send.SetValue("Data", tip);
-			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, ReferenceID.id);
-		}
-
-		private void NetClear()
-		{
-			var send = new DataNodeGroup();
-			send.SetValue("Type", new DataNode<byte>(1));
-			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, send, ReferenceID.id);
-		}
-
-		public void ReceiveData(DataNodeGroup data, Peer peer)
-		{
-			if (((DataNode<byte>)data.GetValue("Type")).Value == 1)
-			{
-				_syncreflist.Clear();
-                ClearElements?.Invoke();
-            }
-            else
-			{
-				var a = new AssetRef<T>(this, false);
-				a.LoadChange += OnLoad;
-				var actions = new List<Action>();
-				a.DeSerialize((DataNodeGroup)data.GetValue("Data"), actions, false);
-				foreach (var item in actions)
-				{
-					item?.Invoke();
-				}
-				_syncreflist.SafeAdd(a);
-			}
-		}
-
-		public void Clear()
-		{
-			_syncreflist.Clear();
-			NetClear();
-            ClearElements?.Invoke();
-
-        }
-
-		public SyncAssetRefList(IWorldObject _parent, bool newref = true) : base(_parent.World, _parent, newref)
+		public SyncAssetRefList(IWorldObject _parent, bool newref = true) : base(_parent, newref)
 		{
 
 		}
-
-		public override DataNodeGroup Serialize(WorkerSerializerObject workerSerializerObject)
-		{
-			return workerSerializerObject.CommonListSerialize(this,_syncreflist.Cast<IWorldObject>());
-		}
-
-		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
-		{
-			if (data == null)
-			{
-                throw new Exception("Node did not exsets When loading SyncAssetRefList");
-			}
-			if (NewRefIDs)
-			{
-				newRefID.Add(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID(), ReferenceID.GetID());
-				if (latterResign.ContainsKey(((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID()))
-				{
-					foreach (var func in latterResign[((DataNode<NetPointer>)data.GetValue("referenceID")).Value.GetID()])
-					{
-						func(ReferenceID.GetID());
-					}
-				}
-			}
-			else
-			{
-				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
-				World.AddWorldObj(this);
-			}
-			foreach (DataNodeGroup val in (DataNodeList)data.GetValue("list"))
-			{
-				Add(NewRefIDs).DeSerialize(val, onload, NewRefIDs, newRefID, latterResign);
-			}
-		}
-
-		int ISyncList.Count()
-		{
-			return Length;
-		}
-
-		public bool TryToAddToSyncList()
-		{
-			try
-			{
-				Add();
-				return true;
-			}
-			catch
-			{
-				return false;
-			}
-		}
-
-		IEnumerator<IWorldObject> IEnumerable<IWorldObject>.GetEnumerator()
-		{
-			foreach (var item in _syncreflist)
-			{
-				yield return (IWorldObject)item;
-			}
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return ((IEnumerable<IWorldObject>)this).GetEnumerator();
-		}
-		public void Remove(int index)
-		{
-			throw new NotSupportedException();
-		}
-
-
-        public int IndexOf(IWorldObject worldObject)
-        {
-            var index = -1;
-            try
-            {
-                index = _syncreflist.IndexOf((AssetRef<T>)worldObject);
-            }
-            catch { }
-            return index;
-        }
 
     }
 }

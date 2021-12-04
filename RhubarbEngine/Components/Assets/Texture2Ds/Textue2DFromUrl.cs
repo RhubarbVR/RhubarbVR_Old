@@ -70,9 +70,8 @@ namespace RhubarbEngine.Components.Assets
             catch
             {
                 Logger.Log($"Failed to Initialize image");
+                Load(null);
             }
-
-
         }
 
         public Textue2DFromUrl(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)

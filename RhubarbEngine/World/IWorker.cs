@@ -44,6 +44,7 @@ namespace RhubarbEngine.World
 
         public void OnUserJoined(User user);
         void OnFocusChange(World.FocusLevel level);
+        void Destroy();
     }
 
     public class Worker : IWorker
@@ -269,14 +270,18 @@ namespace RhubarbEngine.World
             IsRemoved = true;
             OnRemoved();
             World.RemoveWorldObj(this);
-            foreach (var dep in _disposables)
+            try
             {
-                try
+                Parallel.ForEach(_disposables, (dep) =>
                 {
-                    dep.Dispose();
-                }
-                catch { }
+                    try
+                    {
+                        dep.Dispose();
+                    }
+                    catch { }
+                });
             }
+            catch { }
             OnDispose?.Invoke(this);
         }
 

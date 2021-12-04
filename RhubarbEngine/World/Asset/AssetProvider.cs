@@ -11,7 +11,7 @@ using RhubarbEngine.World;
 
 namespace RhubarbEngine.World.Asset
 {
-	public abstract class AssetProvider<A> : Component where A : IAsset
+	public abstract class AssetProvider<A> : Component where A : class,IAsset
 	{
         public event Action<A> OnLoadedCall;
 
@@ -31,7 +31,13 @@ namespace RhubarbEngine.World.Asset
 
 		public bool loaded = false;
 
-		public AssetProvider(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public override void OnRemoved()
+        {
+            base.OnRemoved();
+            Load(null);
+        }
+
+        public AssetProvider(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}

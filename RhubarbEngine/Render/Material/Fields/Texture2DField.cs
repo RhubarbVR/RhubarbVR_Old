@@ -19,9 +19,15 @@ namespace RhubarbEngine.Render.Material.Fields
 		{
 			field = new AssetRef<RTexture2D>(this, newRefIds);
 			field.LoadChange += AssetChange;
+            field.Changed += Field_Changed;
 		}
 
-		public override void OnUpdate()
+        private void Field_Changed(IChangeable obj)
+        {
+            LoadTextureView();
+        }
+
+        public override void OnUpdate()
 		{
 			base.OnUpdate();
 			if (Input.MainWindows.GetKey(Key.F3))
