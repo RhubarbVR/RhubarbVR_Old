@@ -49,6 +49,13 @@ namespace RhubarbEngine.Components.ImGUI
             base.Dispose();
         }
 
+
+        public override void Destroy()
+        {
+            base.Destroy();
+            Entity.Destroy();
+        }
+
         private void Target_Changed(IChangeable obj)
 		{
 			if (Entity.Manager != World.LocalUser)

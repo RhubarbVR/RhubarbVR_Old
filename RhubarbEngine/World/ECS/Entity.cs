@@ -81,7 +81,15 @@ namespace RhubarbEngine.World.ECS
 		[NoSync]
 		private Entity _internalParent;
 
-		[NoSave]
+        public void ClearChildren()
+        {
+            foreach (var item in _children)
+            {
+                item.Destroy();
+            }
+        }
+
+        [NoSave]
 		public SyncRef<User> _manager;
 
 		public new SyncRef<Entity> parent;

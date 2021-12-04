@@ -39,7 +39,12 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 		}
 
-		public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+        public override void Destroy()
+        {
+            base.Destroy();
+            Entity.Destroy();
+        }
+        public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
             var Changeboarder = false;
 			if (target.Target?.Driven ?? false)

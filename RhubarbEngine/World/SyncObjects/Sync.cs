@@ -121,7 +121,7 @@ namespace RhubarbEngine.World
 		private void UpdateValue()
 		{
 			var obj = new DataNodeGroup();
-			var Value = typeof(T).IsEnum ? new DataNode<int>((int)(object)_value) : (IDataNode)new DataNode<T>(_value);
+			var Value = typeof(T).IsEnum ? WorkerSerializerObject.SetValueEnum(_value) : (IDataNode)new DataNode<T>(_value);
             obj.SetValue("Value", Value);
 			World.NetModule?.AddToQueue(Net.ReliabilityLevel.Reliable, obj, ReferenceID.id);
 		}
@@ -151,6 +151,36 @@ namespace RhubarbEngine.World
             return WorkerSerializerObject.CommonValueSerialize(this, SaveToBytes());
 		}
 
+        public static T GetValueAsEnum(IDataNode node)
+        {
+            var ttype = typeof(T);
+            if (ttype.GetEnumUnderlyingType() == typeof(int))
+            {
+                return (T)(object)((DataNode<int>)node).Value;
+            }
+            else if (ttype.GetEnumUnderlyingType() == typeof(uint))
+            {
+                return (T)(object)((DataNode<uint>)node).Value;
+            }
+            else if (ttype.GetEnumUnderlyingType() == typeof(byte))
+            {
+                return (T)(object)((DataNode<byte>)node).Value;
+            }
+            else if (ttype.GetEnumUnderlyingType() == typeof(sbyte))
+            {
+                return (T)(object)((DataNode<sbyte>)node).Value;
+            }
+            else if (ttype.GetEnumUnderlyingType() == typeof(long))
+            {
+                return (T)(object)((DataNode<long>)node).Value;
+            }
+            else if (ttype.GetEnumUnderlyingType() == typeof(ulong))
+            {
+                return (T)(object)((DataNode<ulong>)node).Value;
+            }
+            throw new Exception("Unknone enum type");
+        }
+
 		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
 		{
 			_value = Defalut();
@@ -174,7 +204,7 @@ namespace RhubarbEngine.World
 				ReferenceID = ((DataNode<NetPointer>)data.GetValue("referenceID")).Value;
 				World.AddWorldObj(this);
 			}
-			_value = typeof(T).IsEnum ? (T)(object)((DataNode<int>)data.GetValue("Value")).Value : ((DataNode<T>)data.GetValue("Value")).Value;
+			_value = typeof(T).IsEnum ?  GetValueAsEnum(data.GetValue("Value")) : ((DataNode<T>)data.GetValue("Value")).Value;
             LoadedFromBytes(NewRefIDs);
 		}
 
@@ -182,6 +212,7 @@ namespace RhubarbEngine.World
 		{
 			if (typeof(T).IsEnum)
 			{
+                GetValueAsEnum(data.GetValue("Value"));
 				_value = (T)(object)((DataNode<int>)data.GetValue("Value")).Value;
 				OnChangeInternal(this);
 			}

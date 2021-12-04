@@ -19,47 +19,8 @@ namespace RhubarbEngine.Components.ImGUI
 
 
 	[Category("ImGUI/Developer")]
-	public class EntityProperties : UIWidget, IPropertiesElement
+	public class EntityProperties : WorkerProperties, IPropertiesElement
 	{
-
-		public SyncRef<Entity> target;
-
-		public SyncRefList<IPropertiesElement> children;
-
-		public override void BuildSyncObjs(bool newRefIds)
-		{
-			base.BuildSyncObjs(newRefIds);
-			target = new SyncRef<Entity>(this, newRefIds);
-			target.Changed += Target_Changed;
-			children = new SyncRefList<IPropertiesElement>(this, newRefIds);
-		}
-
-        public override void OnAttach()
-        {
-            base.OnAttach();
-            World.lastEntityObserver = this;
-        }
-        private void Target_Changed(IChangeable obj)
-		{
-			if (Entity.Manager != World.LocalUser)
-            {
-                return;
-            }
-            var thread = new Thread(BuildView, 1024)
-            {
-                Priority = ThreadPriority.BelowNormal
-            };
-            thread.Start();
-		}
-		private void ClearOld()
-		{
-			foreach (var item in children)
-			{
-				item.Target?.Dispose();
-			}
-			children.Clear();
-            _e?._children.Clear();
-        }
 		public EntityProperties(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
@@ -67,54 +28,15 @@ namespace RhubarbEngine.Components.ImGUI
 		public EntityProperties()
 		{
 		}
-		[NoSave]
-		[NoShow]
-		[NoSync]
-		Entity _e;
-
-		private void BuildView()
-		{
-			try
-			{
-				ClearOld();
-				if (target.Target == null)
-                {
-                    return;
-                }
-
-                var fields = typeof(Entity).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-				//This is a temp fix
-				if (_e == null)
-				{
-					_e = Entity.AddChild("Entity Children");
-					_e.persistence.Value = false;
-				}
-				//I should remove on change update before initialized or add a on initialized check inside this function
-				foreach (var field in fields)
-				{
-					if (typeof(IWorker).IsAssignableFrom(field.FieldType) && (field.GetCustomAttributes(typeof(NoShowAttribute), false).Length <= 0))
-					{
-						var obs = _e.AttachComponent<WorkerProperties>();
-						obs.fieldName.Value = field.Name;
-                        obs.target.Target = (IWorker)field.GetValue(target.Target);
-						children.Add().Target = obs;
-					}
-				}
-			}
-			catch { }
-		}
-
-		public override void Dispose()
-		{
-            if (World.lastEntityObserver == this)
-            {
-                World.lastEntityObserver = null;
-            }
-            base.Dispose();
-		}
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
+            Entity entity = null;
+            try
+            {
+                entity = (Entity)target.Target;
+            }
+            catch { }
 			Interaction.GrabbableHolder source = null;
 			switch (canvas.imputPlane.Target?.Source ?? Interaction.InteractionSource.None)
 			{
@@ -130,7 +52,7 @@ namespace RhubarbEngine.Components.ImGUI
 				default:
 					break;
 			}
-			ImGui.Text($"{target.Target?.name.Value ?? "null"} ID:({target.Target?.ReferenceID.id.ToHexString() ?? "null"})");
+			ImGui.Text($"{entity?.name.Value ?? "null"} ID:({target.Target?.ReferenceID.id.ToHexString() ?? "null"})");
 			if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				if (source != null)
@@ -141,14 +63,14 @@ namespace RhubarbEngine.Components.ImGUI
 			ImGui.SameLine();
 			if (ImGui.Button("X##" + ReferenceID.id.ToString()))
 			{
-				var e = target.Target?.parent.Target;
-				target.Target?.Destroy();
+				var e = entity?.parent.Target;
+                entity?.Destroy();
 				target.Target = e;
 			}
 			ImGui.SameLine();
 			if (ImGui.Button("+##" + ReferenceID.id.ToString()))
 			{
-				var e = target.Target?.AddChild();
+				var e = entity?.AddChild();
 				if (e != null)
                 {
                     target.Target = e;
@@ -157,10 +79,10 @@ namespace RhubarbEngine.Components.ImGUI
 			ImGui.SameLine();
 			if (ImGui.ArrowButton(ReferenceID.id.ToString(), ImGuiDir.Up))
 			{
-				var c = target.Target.parent.Target.AddChild(target.Target.name.Value + "Parent");
+				var c = entity.parent.Target.AddChild(entity.name.Value + "Parent");
 				if (target.Target != null)
                 {
-                    target.Target.parent.Target = c;
+                    entity.parent.Target = c;
                 }
 
                 if (c != null)

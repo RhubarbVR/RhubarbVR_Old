@@ -103,12 +103,43 @@ namespace RhubarbEngine.World
             return obj;
         }
 
+        public static IDataNode SetValueEnum<T>(T value)
+        {
+            var ttype = typeof(T);
+            if (ttype.GetEnumUnderlyingType() == typeof(int))
+            {
+                return new DataNode<int>((int)(object)value);
+            }
+            else if (ttype.GetEnumUnderlyingType() == typeof(uint))
+            {
+                return new DataNode<uint>((uint)(object)value);
+            }
+            else if (ttype.GetEnumUnderlyingType() == typeof(byte))
+            {
+                return new DataNode<byte>((byte)(object)value);
+            }
+            else if (ttype.GetEnumUnderlyingType() == typeof(sbyte))
+            {
+                return new DataNode<sbyte>((sbyte)(object)value);
+            }
+            else if (ttype.GetEnumUnderlyingType() == typeof(long))
+            {
+                return new DataNode<long>((long)(object)value);
+            }
+            else if (ttype.GetEnumUnderlyingType() == typeof(ulong))
+            {
+                return new DataNode<ulong>((ulong)(object)value);
+            }
+            throw new Exception("Unknone enum type");
+        }
+
+
         public static DataNodeGroup CommonValueSerialize<T>(IWorldObject @object, T value) where T : IConvertible
         {
             var obj = new DataNodeGroup();
             var Refid = new DataNode<NetPointer>(@object.ReferenceID);
             obj.SetValue("referenceID", Refid);
-            var Value = typeof(T).IsEnum ? new DataNode<int>((int)(object)value) : (IDataNode)new DataNode<T>(value);
+            var Value = typeof(T).IsEnum ? SetValueEnum(value) : (IDataNode)new DataNode<T>(value);
             obj.SetValue("Value", Value);
             return obj;
         }

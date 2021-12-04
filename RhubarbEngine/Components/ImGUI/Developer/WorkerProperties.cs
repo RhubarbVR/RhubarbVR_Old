@@ -91,19 +91,19 @@ namespace RhubarbEngine.Components.ImGUI
 				target.Target.OnDispose += Target_onDispose;
 				_lastWorker = target.Target;
 				var type = target.Target.GetType();
-				if (typeof(Entity).IsAssignableFrom(type))
+				if (typeof(Entity).IsAssignableFrom(type) && !GetType().IsAssignableTo(typeof(EntityProperties)))
 				{
 					var comp = Entity.AttachComponent<EntityProperties>();
 					comp.target.Target = (Entity)target.Target;
 					root.Target = comp;
 				}
-				else if (typeof(Component).IsAssignableFrom(type))
+				else if (typeof(Component).IsAssignableFrom(type)&& !GetType().IsAssignableTo(typeof(ComponentProperties)))
 				{
 					var comp = Entity.AttachComponent<ComponentProperties>();
 					comp.target.Target = (Component)target.Target;
 					root.Target = comp;
 				}
-				else if (typeof(Render.Material.Fields.MaterialField).IsAssignableFrom(type))
+				else if (typeof(Render.Material.Fields.MaterialField).IsAssignableFrom(type) && !GetType().IsAssignableTo(typeof(MaterialFieldProperties)))
 				{
 					var comp = Entity.AttachComponent<MaterialFieldProperties>();
 					comp.target.Target = (Render.Material.Fields.MaterialField)target.Target;
@@ -111,7 +111,7 @@ namespace RhubarbEngine.Components.ImGUI
 				}
 				else if (typeof(ISyncMember).IsAssignableFrom(type))
 				{
-					BuildSyncMember(type);
+					BuildSyncMember(type,target.Target,fieldName.Value);
 				}
 				else
 				{
@@ -139,212 +139,396 @@ namespace RhubarbEngine.Components.ImGUI
             base.Dispose();
 		}
 
-		[NoSave]
-		[NoShow]
-		[NoSync]
-		Entity _e;
 
 		private void BuildWorker()
 		{
 			var type = target.Target.GetType();
-			//This is a temp fix
-			if (_e == null)
-			{
-				_e = Entity.AddChild(type.Name + "Children");
-				_e.persistence.Value = false;
-			}
 			//I should remove on change update before initialized or add a on initialized check inside this function
 			var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 			foreach (var field in fields)
 			{
                 if (!(!typeof(IWorker).IsAssignableFrom(field.FieldType) || field.GetCustomAttributes(typeof(NoShowAttribute), false).Length > 0))
 				{
-					var obs = _e.AttachComponent<WorkerProperties>();
-					obs.fieldName.Value = field.Name;
-					obs.target.Target = (IWorker)field.GetValue(target.Target);
-					children.Add().Target = obs;
+                    if (typeof(Entity).IsAssignableFrom(field.FieldType))
+                    {
+                        var comp = Entity.AddChild(field.Name).AttachComponent<EntityProperties>();
+                        comp.target.Target = (Entity)field.GetValue(target.Target);
+                        children.Add().Target = comp;
+                    }
+                    else if (typeof(Component).IsAssignableFrom(field.FieldType))
+                    {
+                        var comp = Entity.AddChild(field.Name).AttachComponent<ComponentProperties>();
+                        comp.target.Target = (Component)field.GetValue(target.Target);
+                        children.Add().Target = comp;
+                    }
+                    else if (typeof(Render.Material.Fields.MaterialField).IsAssignableFrom(field.FieldType))
+                    {
+                        var comp = Entity.AddChild(field.Name).AttachComponent<MaterialFieldProperties>();
+                        comp.target.Target = (Render.Material.Fields.MaterialField)field.GetValue(target.Target);
+                        children.Add().Target = comp;
+                    }
+                    else if (typeof(ISyncMember).IsAssignableFrom(field.FieldType))
+                    {
+                        BuildSyncMember(field.FieldType, (IWorker)field.GetValue(target.Target), field.Name, field.GetCustomAttribute<MultiLineSyncAttribute>() != null);
+                    }
+                    else
+                    {
+                        var obs = Entity.AddChild(field.Name).AttachComponent<WorkerProperties>();
+                        obs.fieldName.Value = field.Name;
+                        obs.target.Target = (IWorker)field.GetValue(target.Target);
+                        children.Add().Target = obs;
+                    }
 				}
 			}
 		}
 
-		private void BuildBasicSyncMember(Type type)
+		private void BuildBasicSyncMember(Type type, IWorker worker,string namefield, bool multiLine)
 		{
 			var gType = type.GetGenericArguments()[0];
+            if (multiLine)
+            {
+                var obs = Entity.AddChild(namefield).AttachComponent<MultiLineSyncObserver>();
+                obs.fieldName.Value = namefield;
+                obs.target.Target = (IPrimitiveEditable)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+                return;
+            }
 			if (gType.IsEnum)
 			{
 				if (gType.GetCustomAttribute<FlagsAttribute>() != null)
 				{
 					var a = typeof(FlagsEnumSyncObserver<>).MakeGenericType(gType);
-					var obs = (FlagsEnumSyncObserver)Entity.AddChild(fieldName.Value).AttachComponent(a);
-					obs.fieldName.Value = fieldName.Value;
-					obs.target.Target = (IPrimitiveEditable)target.Target;
-					root.Target = obs;
-				}
+					var obs = (FlagsEnumSyncObserver)Entity.AddChild(namefield).AttachComponent(a);
+					obs.fieldName.Value = namefield;
+					obs.target.Target = (IPrimitiveEditable)worker;
+                    if (worker == target.Target)
+                    {
+                        root.Target = obs;
+                    }
+                    else
+                    {
+                        children.Add().Target = obs;
+                    }
+                }
 				else
 				{
 					var a = typeof(EnumSyncObserver<>).MakeGenericType(gType);
-					var obs = (EnumSyncObserver)Entity.AddChild(fieldName.Value).AttachComponent(a);
-					obs.fieldName.Value = fieldName.Value;
-					obs.target.Target = (IPrimitiveEditable)target.Target;
-					root.Target = obs;
-				}
+					var obs = (EnumSyncObserver)Entity.AddChild(namefield).AttachComponent(a);
+					obs.fieldName.Value = namefield;
+					obs.target.Target = (IPrimitiveEditable)worker;
+                    if (worker == target.Target)
+                    {
+                        root.Target = obs;
+                    }
+                    else
+                    {
+                        children.Add().Target = obs;
+                    }
+                }
 			}
 			else if (gType == typeof(bool))
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<BoolSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (Sync<bool>)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<BoolSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (Sync<bool>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 			else if (gType == typeof(int))
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<IntSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (Sync<int>)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<IntSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (Sync<int>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
             else if (gType == typeof(uint))
             {
-                var obs = Entity.AddChild(fieldName.Value).AttachComponent<UIntSyncObserver>();
-                obs.fieldName.Value = fieldName.Value;
-                obs.target.Target = (Sync<uint>)target.Target;
-                root.Target = obs;
+                var obs = Entity.AddChild(namefield).AttachComponent<UIntSyncObserver>();
+                obs.fieldName.Value = namefield;
+                obs.target.Target = (Sync<uint>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
             }
             else if (gType == typeof(float))
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<FloatSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (Sync<float>)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<FloatSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (Sync<float>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 			else if (gType == typeof(double))
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<DoubleSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (Sync<double>)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<DoubleSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (Sync<double>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 			else if (gType == typeof(Colorf))
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<ColorfSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (Sync<Colorf>)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<ColorfSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (Sync<Colorf>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 			else if (gType == typeof(Vector2f))
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<Vector2fSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (Sync<Vector2f>)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<Vector2fSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (Sync<Vector2f>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 			else if (gType == typeof(Vector3f))
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<Vector3fSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (Sync<Vector3f>)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<Vector3fSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (Sync<Vector3f>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 			else if (gType == typeof(Vector4f))
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<Vector4fSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (Sync<Vector4f>)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<Vector4fSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (Sync<Vector4f>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 			else if (gType == typeof(Quaternionf))
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<QuaternionfSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (Sync<Quaternionf>)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<QuaternionfSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (Sync<Quaternionf>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 			else if (gType == typeof(Vector2d))
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<Vector2dSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (Sync<Vector2d>)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<Vector2dSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (Sync<Vector2d>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 			else if (gType == typeof(Vector3d))
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<Vector3dSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (Sync<Vector3d>)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<Vector3dSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (Sync<Vector3d>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 			else if (gType == typeof(Vector4d))
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<Vector4dSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (Sync<Vector4d>)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<Vector4dSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (Sync<Vector4d>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
             else if (gType == typeof(Vector2u))
             {
-                var obs = Entity.AddChild(fieldName.Value).AttachComponent<Vector2uSyncObserver>();
-                obs.fieldName.Value = fieldName.Value;
-                obs.target.Target = (Sync<Vector2u>)target.Target;
-                root.Target = obs;
+                var obs = Entity.AddChild(namefield).AttachComponent<Vector2uSyncObserver>();
+                obs.fieldName.Value = namefield;
+                obs.target.Target = (Sync<Vector2u>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
             }
             else if (gType == typeof(Vector3u))
             {
-                var obs = Entity.AddChild(fieldName.Value).AttachComponent<Vector3uSyncObserver>();
-                obs.fieldName.Value = fieldName.Value;
-                obs.target.Target = (Sync<Vector3u>)target.Target;
-                root.Target = obs;
+                var obs = Entity.AddChild(namefield).AttachComponent<Vector3uSyncObserver>();
+                obs.fieldName.Value = namefield;
+                obs.target.Target = (Sync<Vector3u>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
             }
             else if (gType == typeof(Vector4u))
             {
-                var obs = Entity.AddChild(fieldName.Value).AttachComponent<Vector4uSyncObserver>();
-                obs.fieldName.Value = fieldName.Value;
-                obs.target.Target = (Sync<Vector4u>)target.Target;
-                root.Target = obs;
+                var obs = Entity.AddChild(namefield).AttachComponent<Vector4uSyncObserver>();
+                obs.fieldName.Value = namefield;
+                obs.target.Target = (Sync<Vector4u>)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
             }
             else
 			{
-				var obs = Entity.AddChild(fieldName.Value).AttachComponent<PrimitiveSyncObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (IPrimitiveEditable)target.Target;
-				root.Target = obs;
-			}
+				var obs = Entity.AddChild(namefield).AttachComponent<PrimitiveSyncObserver>();
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (IPrimitiveEditable)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 		}
 
-		private void BuildSyncAbstractObjListMember(Type type)
+		private void BuildSyncAbstractObjListMember(Type type, IWorker worker, string namefield)
 		{
 			var gType = type.GetGenericArguments()[0];
 			if (gType == typeof(Component))
 			{
 				var obs = Entity.AddChild(fieldName.Value).AttachComponent<SyncComponentListObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (ISyncList)target.Target;
-				root.Target = obs;
-			}
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (ISyncList)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 			else
 			{
-				BuildSyncObjListMember(false);
+				BuildSyncObjListMember(false,worker, namefield);
 			}
 		}
 
-		private void BuildSyncObjListMember(bool withAdd)
+		private void BuildSyncObjListMember(bool withAdd, IWorker worker, string namefield)
 		{
 			if (withAdd)
 			{
 				var obs = Entity.AddChild(fieldName.Value).AttachComponent<SyncListObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (ISyncList)target.Target;
-				root.Target = obs;
-			}
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (ISyncList)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 			else
 			{
 				var obs = Entity.AddChild(fieldName.Value).AttachComponent<NoAddSyncListObserver>();
-				obs.fieldName.Value = fieldName.Value;
-				obs.target.Target = (ISyncList)target.Target;
-				root.Target = obs;
-			}
+				obs.fieldName.Value = namefield;
+				obs.target.Target = (ISyncList)worker;
+                if (worker == target.Target)
+                {
+                    root.Target = obs;
+                }
+                else
+                {
+                    children.Add().Target = obs;
+                }
+            }
 		}
 
-		private void BuildSyncMember(Type type)
+		private void BuildSyncMember(Type type, IWorker worker, string namefield,bool multiLine = false)
 		{
 			var typeg = type;
 			if (type.IsGenericType)
@@ -353,15 +537,15 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			if (typeof(Sync<>).IsAssignableFrom(typeg))
 			{
-				BuildBasicSyncMember(type);
+				BuildBasicSyncMember(type,worker, namefield, multiLine);
 			}
 			else if (typeof(SyncAbstractObjList<>).IsAssignableFrom(typeg))
 			{
-				BuildSyncAbstractObjListMember(type);
+				BuildSyncAbstractObjListMember(type, worker, namefield);
 			}
 			else if (!(!typeof(SyncRefList<>).IsAssignableFrom(typeg) && !typeof(SyncValueList<>).IsAssignableFrom(typeg) && !typeof(SyncAssetRefList<>).IsAssignableFrom(typeg) && !typeof(SyncObjList<>).IsAssignableFrom(typeg)))
 			{
-				BuildSyncObjListMember(true);
+				BuildSyncObjListMember(true, worker, namefield);
 			}
 			else if (!(!typeof(SyncDelegate<>).IsAssignableFrom(typeg) && typeg != typeof(SyncDelegate)))
 			{
@@ -370,24 +554,31 @@ namespace RhubarbEngine.Components.ImGUI
 			else if (typeof(AssetRef<>).IsAssignableFrom(typeg))
 			{
 				var a = typeof(World.Asset.AssetProvider<>).MakeGenericType(type.GetGenericArguments()[0]);
-				BuildSyncRef(a);
+				BuildSyncRef(a, worker, namefield);
 			}
 			else if (typeof(Driver<>).IsAssignableFrom(typeg))
 			{
 				var a = typeof(IDriveMember<>).MakeGenericType(type.GetGenericArguments()[0]);
-				BuildSyncRef(a);
+				BuildSyncRef(a, worker, namefield);
 			}
 			else if (typeof(SyncRef<>).IsAssignableFrom(typeg))
 			{
-				BuildSyncRef(type.GetGenericArguments()[0]);
+				BuildSyncRef(type.GetGenericArguments()[0], worker, namefield);
 			}
 			else if (typeof(SyncUserList).IsAssignableFrom(typeg))
 			{
-				BuildSyncObjListMember(false);
+				BuildSyncObjListMember(false, worker,namefield);
 			}
 			else if (typeof(UserStream).IsAssignableFrom(typeg))
             {
-                BuildWorker();
+                if(worker == target.Target)
+                {
+                    BuildWorker();
+                }
+                else
+                {
+                    
+                }
             }
             else
 			{
@@ -395,14 +586,21 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 		}
 
-		private void BuildSyncRef(Type type)
+		private void BuildSyncRef(Type type, IWorker worker, string namefield)
 		{
 			var a = typeof(SyncRefObserver<>).MakeGenericType(type);
 			var obs = (SyncRefObserver)Entity.AddChild(fieldName.Value).AttachComponent(a);
-			obs.fieldName.Value = fieldName.Value;
-			obs.target.Target = (ISyncRef)target.Target;
-			root.Target = obs;
-		}
+			obs.fieldName.Value = namefield;
+			obs.target.Target = (ISyncRef)worker;
+            if (worker == target.Target)
+            {
+                root.Target = obs;
+            }
+            else
+            {
+                children.Add().Target = obs;
+            }
+        }
 
 		public WorkerProperties(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{

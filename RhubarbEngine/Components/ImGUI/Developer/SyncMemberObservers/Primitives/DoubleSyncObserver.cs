@@ -30,8 +30,13 @@ namespace RhubarbEngine.Components.ImGUI
 			fieldName = new Sync<string>(this, newRefIds);
 		}
 
+        public override void Destroy()
+        {
+            base.Destroy();
+            Entity.Destroy();
+        }
 
-		public DoubleSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public DoubleSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}

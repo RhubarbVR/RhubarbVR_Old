@@ -29,7 +29,13 @@ namespace RhubarbEngine.Components.ImGUI
 		}
 
 
-		public EnumSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public override void Destroy()
+        {
+            base.Destroy();
+            Entity.Destroy();
+        }
+
+        public EnumSyncObserver(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}
@@ -51,6 +57,13 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 		}
 
+
+        public override void Destroy()
+        {
+            base.Destroy();
+            Entity.Destroy();
+        }
+
         readonly string[] _ve = Enum.GetNames(typeof(T));
 
 		public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
@@ -63,7 +76,7 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			var c = Array.IndexOf(_ve, Enum.GetName(typeof(T), ((Sync<T>)target.Target).Value));
 			ImGui.Combo((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref c, _ve, _ve.Length);
-			if (c != (int)(object)((Sync<T>)target.Target).Value)
+			if (c != Array.IndexOf(_ve, Enum.GetName(typeof(T), ((Sync<T>)target.Target).Value)))
 			{
 				((Sync<T>)target.Target).Value = Enum.GetValues<T>()[c];
 			}

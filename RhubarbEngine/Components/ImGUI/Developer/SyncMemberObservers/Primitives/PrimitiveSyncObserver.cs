@@ -39,7 +39,13 @@ namespace RhubarbEngine.Components.ImGUI
 		{
 		}
 
-		public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
+
+        public override void Destroy()
+        {
+            base.Destroy();
+            Entity.Destroy();
+        }
+        public unsafe override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
             var Changeboarder = false;
 			if (target.Target?.Driven ?? false)
@@ -77,7 +83,7 @@ namespace RhubarbEngine.Components.ImGUI
 				ImGui.PushStyleColor(ImGuiCol.Border, Colorf.BlueMetal.ToRGBA().ToSystem());
 			}
 			var val = target.Target?.PrimitiveString ?? "null";
-			if (ImGui.InputText((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref val, (uint)val.Length + 255, ImGuiInputTextFlags.EnterReturnsTrue))
+			if (ImGui.InputText((fieldName.Value ?? "null") + $"##{ReferenceID.id}", ref val, (uint)val.Length + 255, ImGuiInputTextFlags.CtrlEnterForNewLine | ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.AllowTabInput))
 			{
 				if (target.Target != null)
                 {
