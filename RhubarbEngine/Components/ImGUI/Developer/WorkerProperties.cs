@@ -74,7 +74,13 @@ namespace RhubarbEngine.Components.ImGUI
 			children.Clear();
 		}
 
-		private void BuildView()
+        public override void OnSave()
+        {
+            ClearOld();
+            base.OnSave();
+        }
+
+        private void BuildView()
 		{
 			try
 			{
@@ -618,14 +624,14 @@ namespace RhubarbEngine.Components.ImGUI
 			}
 			else
 			{
-                var open = true;
                 Vector2 max;
                 Vector2 min;
-                if (ImGui.CollapsingHeader($"{target.Target?.GetType().GetFormattedName() ?? "null"} ID:({target.Target?.ReferenceID.id.ToHexString() ?? "null"}) ##{ReferenceID.id}", ref open))
+                if (ImGui.TreeNodeEx($"{target.Target?.GetType().GetFormattedName() ?? "null"} ID:({target.Target?.ReferenceID.id.ToHexString() ?? "null"}) ##{ReferenceID.id}", ImGuiTreeNodeFlags.Framed))
                 {
                     max = ImGui.GetItemRectMax();
                     min = ImGui.GetItemRectMin();
                     Helper.ThreadSafeForEach(children, (item) => ((SyncRef<IPropertiesElement>)item).Target?.ImguiRender(imGuiRenderer, canvas));
+                    ImGui.TreePop();
                 }
                 else
                 {

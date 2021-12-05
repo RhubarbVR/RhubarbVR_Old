@@ -42,6 +42,21 @@ namespace RhubarbEngine.World
             DataNodeGroup obj = null;
             if (@object.IsPersistent || _netsync)
             {
+                if (!_netsync)
+                {
+                    if (@object.GetType().IsAssignableTo(typeof(IWorker)))
+                    {
+                        var @objectcast = @object as IWorker;
+                        try
+                        {
+                            @objectcast.OnSave();
+                        }
+                        catch (Exception e)
+                        {
+                            @objectcast.Logger.Log($"Failed to save {@object.GetType().GetFormattedName()} Error:{e}");
+                        }
+                    }
+                }
                 obj = new DataNodeGroup();
                 foreach (var field in fields)
                 {
@@ -49,11 +64,14 @@ namespace RhubarbEngine.World
                     {
                         try
                         {
-                            obj.SetValue(field.Name, ((IWorldObject)field.GetValue(@object)).Serialize(this));
+                            if (!@object.IsRemoved)
+                            {
+                                obj.SetValue(field.Name, ((IWorldObject)field.GetValue(@object)).Serialize(this));
+                            }
                         }
-                        catch
+                        catch(Exception e)
                         {
-                            throw new Exception($"Failed To Serialize {@object.GetType()} , Field {field.Name} , Field Type {field.FieldType.GetFormattedName()}");
+                            throw new Exception($"Failed To Serialize {@object.GetType()} , Field {field.Name} , Field Type {field.FieldType.GetFormattedName()} Error {e}");
                         }
                     }
                 }
@@ -69,17 +87,20 @@ namespace RhubarbEngine.World
             var Refid = new DataNode<NetPointer>(@object.ReferenceID);
             obj.SetValue("referenceID", Refid);
             var list = new DataNodeList();
-            foreach (var val in worldObjects)
+            foreach (var val in worldObjects.ToArray())
             {
-                var tip = val.Serialize(this);
-                var listobj = new DataNodeGroup();
-                if (tip != null)
+                if (!val.IsRemoved)
                 {
-                    listobj.SetValue("Value", tip);
+                    var tip = val.Serialize(this);
+                    var listobj = new DataNodeGroup();
+                    if (tip != null)
+                    {
+                        listobj.SetValue("Value", tip);
+                    }
+                    //Need To add Constant Type Strings for better compression 
+                    listobj.SetValue("Type", new DataNode<string>(val.GetType().FullName));
+                    list.Add(listobj);
                 }
-                //Need To add Constant Type Strings for better compression 
-                listobj.SetValue("Type", new DataNode<string>(val.GetType().FullName));
-                list.Add(listobj);
             }
             obj.SetValue("list", list);
             return obj;

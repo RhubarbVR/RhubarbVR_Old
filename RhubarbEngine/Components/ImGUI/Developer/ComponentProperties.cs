@@ -39,9 +39,13 @@ namespace RhubarbEngine.Components.ImGUI
 			{
 				max = ImGui.GetItemRectMax();
 				min = ImGui.GetItemRectMin();
+                ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
+                ImGui.BeginGroup();
                 Helper.ThreadSafeForEach(children, (item) => ((SyncRef<IPropertiesElement>)item).Target?.ImguiRender(imGuiRenderer, canvas));
-			}
-			else
+                ImGui.EndGroup();
+                ImGui.SetCursorPosX(ImGui.GetCursorPosX() - 15);
+            }
+            else
 			{
 				max = ImGui.GetItemRectMax();
 				min = ImGui.GetItemRectMin();

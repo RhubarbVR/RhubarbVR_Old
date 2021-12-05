@@ -19,7 +19,7 @@ namespace RhubarbEngine.Settings
         [SettingsField("Rounding in px 3 default", "/Theme")]
         public float Rounding = 3;
 
-        [SettingsField("Rounding in px 3 default", "/Theme")]
+        [SettingsField("", "/Theme")]
         public ThemeColor Color = ThemeColor.Dark;
     }
 
