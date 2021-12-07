@@ -21,8 +21,15 @@ namespace RhubarbEngine.Components.ImGUI
 	[Category("ImGUI/Developer")]
 	public class ComponentProperties : WorkerProperties
 	{
+        public Sync<bool> open;
 
-		public ComponentProperties(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
+        public override void BuildSyncObjs(bool newRefIds)
+        {
+            base.BuildSyncObjs(newRefIds);
+            open = new Sync<bool>(this, newRefIds);
+        }
+
+        public ComponentProperties(IWorldObject _parent, bool newRefIds = true) : base(_parent, newRefIds)
 		{
 
 		}
@@ -32,10 +39,11 @@ namespace RhubarbEngine.Components.ImGUI
 
 		public override void ImguiRender(ImGuiRenderer imGuiRenderer, ImGUICanvas canvas)
 		{
-			var open = true;
+			var close = true;
 			Vector2 max;
 			Vector2 min;
-			if (ImGui.CollapsingHeader($"{target.Target?.GetType().GetFormattedName() ?? "null"} ID:({target.Target?.ReferenceID.id.ToHexString() ?? "null"}) ##{ReferenceID.id}", ref open))
+            ImGui.SetNextItemOpen(open.Value);
+			if (ImGui.CollapsingHeader($"{target.Target?.GetType().GetFormattedName() ?? "null"} ID:({target.Target?.ReferenceID.id.ToHexString() ?? "null"}) ##{ReferenceID.id}", ref close))
 			{
 				max = ImGui.GetItemRectMax();
 				min = ImGui.GetItemRectMin();
@@ -43,13 +51,20 @@ namespace RhubarbEngine.Components.ImGUI
                 ImGui.BeginGroup();
                 Helper.ThreadSafeForEach(children, (item) => ((SyncRef<IPropertiesElement>)item).Target?.ImguiRender(imGuiRenderer, canvas));
                 ImGui.EndGroup();
-                ImGui.SetCursorPosX(ImGui.GetCursorPosX() - 15);
+                if (!open.Value)
+                {
+                    open.Value = true;
+                }
             }
             else
 			{
 				max = ImGui.GetItemRectMax();
 				min = ImGui.GetItemRectMin();
-			}
+                if (open.Value)
+                {
+                    open.Value = false;
+                }
+            }
 			if (ImGui.IsMouseHoveringRect(min, max) && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
 			{
 				Interaction.GrabbableHolder source = null;
@@ -72,7 +87,7 @@ namespace RhubarbEngine.Components.ImGUI
 					source.Referencer.Target = target.Target;
 				}
 			}
-			if (!open)
+			if (!close)
 			{
 				target.Target?.Destroy();
 			}

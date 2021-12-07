@@ -713,10 +713,12 @@ namespace RhubarbEngine.World
                 return !_worldObjects.ContainsKey(NetPointer.BuildID(position, user)) ? NetPointer.BuildID(position, user) : BuildRefID();
             }
         }
+        public bool IsDeserializing { get; private set; }
 
-		public void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = true, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
+        public void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = true, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
 		{
-			var fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            IsDeserializing = true;
+            var fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
 			foreach (var field in fields)
 			{
 				if (typeof(IWorldObject).IsAssignableFrom(field.FieldType) && !(NewRefIDs && (field.GetCustomAttributes(typeof(NoSaveAttribute), false).Length > 0)) && (field.GetCustomAttributes(typeof(NoSyncAttribute), false).Length <= 0))
@@ -753,7 +755,8 @@ namespace RhubarbEngine.World
 				}
 				catch(Exception _) { }
 			}
-		}
+            IsDeserializing = false;
+        }
 		public virtual void Dispose()
 		{
             var fields = typeof(World).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);

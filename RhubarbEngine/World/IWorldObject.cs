@@ -164,7 +164,9 @@ namespace RhubarbEngine.World
 		bool IsPersistent { get; }
 
 		bool IsRemoved { get; }
-		DataNodeGroup Serialize(WorkerSerializerObject serializerObject);
+        bool IsDeserializing { get; }
+
+        DataNodeGroup Serialize(WorkerSerializerObject serializerObject);
 
 		void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default);
 

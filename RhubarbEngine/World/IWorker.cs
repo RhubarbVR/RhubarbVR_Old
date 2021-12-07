@@ -23,6 +23,7 @@ namespace RhubarbEngine.World
         public IInputManager Input { get; }
 
         public double DeltaSeconds { get; }
+        bool IsLoading { get; }
 
         public event Action<IWorker> OnDispose;
 
@@ -50,6 +51,23 @@ namespace RhubarbEngine.World
 
     public class Worker : IWorker
     {
+        public bool IsDeserializing
+        {
+            get
+            {
+                return LocalIsDeserializing && (parent?.IsDeserializing ?? false);
+            }
+        }
+        public bool LocalIsDeserializing { get; internal set; }
+
+        public bool IsLoading
+        {
+            get
+            {
+                return IsDeserializing;
+            }
+        }
+
         private readonly SynchronizedCollection<IDisposable> _disposables = new();
         public void AddDisposable(IDisposable add)
         {

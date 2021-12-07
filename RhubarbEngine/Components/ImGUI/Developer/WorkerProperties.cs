@@ -23,9 +23,11 @@ namespace RhubarbEngine.Components.ImGUI
 		[NoSync]
 		private IWorker _lastWorker;
 
-		public SyncRef<IWorker> target;
+        public SyncRef<IWorker> loaded;
 
-		public SyncRef<IPropertiesElement> root;
+        public SyncRef<IWorker> target;
+
+        public SyncRef<IPropertiesElement> root;
 
 		public SyncRefList<IPropertiesElement> children;
 
@@ -42,9 +44,10 @@ namespace RhubarbEngine.Components.ImGUI
         public override void BuildSyncObjs(bool newRefIds)
 		{
 			base.BuildSyncObjs(newRefIds);
-			target = new SyncRef<IWorker>(this, newRefIds);
+            loaded = new SyncRef<IWorker>(this, newRefIds);
+            target = new SyncRef<IWorker>(this, newRefIds);
 			target.Changed += Target_Changed;
-			root = new SyncRef<IPropertiesElement>(this, newRefIds);
+            root = new SyncRef<IPropertiesElement>(this, newRefIds);
 			children = new SyncRefList<IPropertiesElement>(this, newRefIds);
 			fieldName = new Sync<string>(this, newRefIds);
             removeChildrenOnDispose = new Sync<bool>(this, newRefIds, true);
@@ -56,7 +59,6 @@ namespace RhubarbEngine.Components.ImGUI
             {
                 return;
             }
-
             var e = new Thread(BuildView, 1024)
             {
                 Priority = ThreadPriority.BelowNormal
@@ -74,17 +76,22 @@ namespace RhubarbEngine.Components.ImGUI
 			children.Clear();
 		}
 
-        public override void OnSave()
-        {
-            ClearOld();
-            base.OnSave();
-        }
-
         private void BuildView()
 		{
 			try
 			{
-				ClearOld();
+                if (IsLoading)
+                {
+                    Console.WriteLine("WasLoading");
+                    return;
+                }
+                Console.WriteLine("NotLoading");
+                if (loaded.Target == target.Target)
+                {
+                    return;
+                }
+                loaded.Target = target.Target;
+                ClearOld();
 				if (target.Target == null)
                 {
                     return;
@@ -123,7 +130,7 @@ namespace RhubarbEngine.Components.ImGUI
 				{
 					BuildWorker();
 				}
-			}
+            }
 			catch { }
 		}
 

@@ -183,7 +183,8 @@ namespace RhubarbEngine.World
 
 		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
 		{
-			_value = Defalut();
+            LocalIsDeserializing = true;
+            _value = Defalut();
 			if (data == null)
 			{
 				throw new Exception($"Node did not exsets When loading Sync Value { GetType().FullName}");
@@ -206,9 +207,10 @@ namespace RhubarbEngine.World
 			}
 			_value = typeof(T).IsEnum ?  GetValueAsEnum(data.GetValue("Value")) : ((DataNode<T>)data.GetValue("Value")).Value;
             LoadedFromBytes(NewRefIDs);
-		}
+            LocalIsDeserializing = false;
+        }
 
-		public void ReceiveData(DataNodeGroup data, Peer peer)
+        public void ReceiveData(DataNodeGroup data, Peer peer)
 		{
 			if (typeof(T).IsEnum)
 			{

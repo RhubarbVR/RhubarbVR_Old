@@ -232,7 +232,8 @@ namespace RhubarbEngine.World
 		}
 		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
 		{
-			if (data == null)
+            LocalIsDeserializing = true;
+            if (data == null)
 			{
                 throw new Exception("Node did not exsets When loading SyncAbstractObjList");
 			}
@@ -300,9 +301,10 @@ namespace RhubarbEngine.World
 					}
 				}
 			}
-		}
+            LocalIsDeserializing = false;
+        }
 
-		IEnumerator<IWorldObject> IEnumerable<IWorldObject>.GetEnumerator()
+        IEnumerator<IWorldObject> IEnumerable<IWorldObject>.GetEnumerator()
 		{
 			for (var i = 0; i < _synclist.Count; i++)
 			{

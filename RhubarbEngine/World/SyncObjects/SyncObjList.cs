@@ -193,7 +193,8 @@ namespace RhubarbEngine.World
 		}
 		public override void DeSerialize(DataNodeGroup data, List<Action> onload = default, bool NewRefIDs = false, Dictionary<ulong, ulong> newRefID = default, Dictionary<ulong, List<RefIDResign>> latterResign = default)
 		{
-			if (data == null)
+            LocalIsDeserializing = true;
+            if (data == null)
 			{
                 throw new Exception("Node did not exsets When loading SyncObjList");
 			}
@@ -217,8 +218,9 @@ namespace RhubarbEngine.World
 			{
 				Add(NewRefIDs).DeSerialize(val, onload, NewRefIDs, newRefID, latterResign);
 			}
-		}
-		int ISyncList.Count()
+            LocalIsDeserializing = false;
+        }
+        int ISyncList.Count()
 		{
 			return Count();
 		}
